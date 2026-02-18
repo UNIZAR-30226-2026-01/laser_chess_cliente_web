@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 
+// Pruebas automáticas para vierificar que la app funciona correctamente
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
