@@ -7,6 +7,10 @@
   <button routerLink = "/">Home</button>
   <button routerLink="/game">Game</button>
   <button routerLink="/profile">Profile</button>
+  <div class="btn-group" role="group" aria-label="Basic example">
+  <button type="button" class="btn btn-primary">Cerrar Sesión</button>
+  <button type="button" class="btn btn-primary">Iniciar Sesión</button>
+</div>
 </nav>
 
 <header class="app-header">
@@ -16,6 +20,8 @@
 <main class="app-main">
   <router-outlet></router-outlet>
 </main>
+
+<app-dashboard></app-dashboard>
 
 <footer class="app-footer">
   <small>Hopper Studio</small>
