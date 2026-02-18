@@ -1,0 +1,13 @@
+.app-header {
+    padding : 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.app-title {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.app-main {
+    font-size: 1rem;
+}
