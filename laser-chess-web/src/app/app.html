@@ -3,21 +3,11 @@
 <!-- * Incluye la cabecera que se va a compartir en el primer prototipo    * -->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
 
-<nav>
-  <button routerLink = "/">Home</button>
-  <button routerLink="/game">Game</button>
-  <button routerLink="/profile">Profile</button>
-</nav>
+<div class="app-layout">
+  <app-sidebar class="sidebar"></app-sidebar>
 
-<header class="app-header">
-  <h1 class="app-title">Laser Chess Web</h1>
-</header>
-
-<main class="app-main">
-  <router-outlet></router-outlet>
-</main>
-
-<footer class="app-footer">
-  <small>Hopper Studio</small>
-</footer>
+  <main class="app-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
 
