@@ -1,11 +1,11 @@
 // Cerebro del componente principal de la app
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { Sidebar } from './shared/sidebar/sidebar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLinkWithHref, Sidebar],
+  imports: [RouterOutlet, Sidebar],
 
   templateUrl: './app.html',
   // Enlaze con app.css > estilos globales de la app
