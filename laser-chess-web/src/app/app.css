@@ -1,13 +1,18 @@
-.app-header {
-    padding : 1rem;
-    border-bottom: 1px solid #ddd;
+.app-layout {
+  display: flex;
+  min-height: 100vh;
 }
 
-.app-title {
-    margin: 0;
-    font-size: 1.25rem;
+.sidebar {
+  width: 260px;
+  flex: 0 0 260px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
 }
 
 .app-main {
-    font-size: 1rem;
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
 }

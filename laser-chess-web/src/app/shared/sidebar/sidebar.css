@@ -1,0 +1,25 @@
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  background-color: #CDCDCD;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: black;
+    transition: background 0.2s;
+}
+
+.item:hover {
+    background: #A1C2BD;
+}
+
+.item.active {
+    background: #00AA9E;
+}
