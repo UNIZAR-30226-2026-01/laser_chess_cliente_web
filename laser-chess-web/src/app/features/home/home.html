@@ -1,3 +1,13 @@
-<div class="home container">
-    <h1>home</h1>
-</div>
+<section class="home">
+    <div class="profile-card">
+        <div class="profile-picture">
+            <img [src]="pictureURL" />
+        </div>
+
+        <div class="profile-info">
+            <div class="username">{{ username }}</div>
+            <!-- donde próximamente añadiré nivel & barra XP-->
+            <div class="xp-placeholder"></div>
+        </div>
+    </div>
+</section>
