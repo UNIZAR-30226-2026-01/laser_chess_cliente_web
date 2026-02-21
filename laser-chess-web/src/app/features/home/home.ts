@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './home.css',
 })
 export class Home {
-
+  username = 'user';
+  pictureURL = '/assets/picture.jpeg';
 }
