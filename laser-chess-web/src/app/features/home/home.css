@@ -1,0 +1,193 @@
+.home {
+    padding: 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-row {
+    display: flex;
+    align-items: center;
+    gap: 100px;
+}
+
+.bottom-row {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 100px;
+    margin-bottom: 100px;
+}
+
+.profile-card {
+    width: 550px;
+    border: 3px solid #000;
+    background: #fff;
+
+    display: flex; /* todo en una fila */
+    align-items: center;
+    gap: 26px;
+
+    padding: 21px 33px;
+}
+
+.profile-picture {
+    width: 77px;
+    height: 77px;
+    border: 3px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* así se rellena el círculo sin deformar */
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    min-width: 0;
+}
+
+.username {
+    font-size: 25px;
+    font-weight: 700;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-width: 250px;
+}
+
+.xp-placeholder {
+    width: 350px;
+    height: 18px;
+    border: 2px solid #000;
+    border-radius: 4px;
+    opacity: 0.25;
+}
+
+.icon-btn {
+    width: 100px;
+    height: 100px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content:center;
+
+    border: 3px solid #000;
+    background: #fff;
+    cursor: pointer;
+    padding: 0;
+    line-height: 0;
+}
+
+.icon-btn:hover {
+    background: #f2f2f2;
+}
+
+.icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.icon-history {
+    transform: translateX(-6px) translateY(-3px);
+}
+
+.icon-mode {
+    transform: translateX(3px) translateY(3px);
+}
+
+.coin-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 16px;
+    
+    font-weight: 700;
+    font-size: 35px;
+
+    margin-left: auto;
+    margin-right: 50px;
+}
+
+.coin-amount {
+    line-height: 1;
+}
+
+.coin-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.rank-card {
+    flex: 1;
+    max-width: 720px;
+    border: 3px solid #000;
+    background: #fff;
+    padding: 25px 33px;
+
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.rank-badge {
+    border: 3px solid #000;
+    padding: 8px 14px;
+    font-weight: 700;
+    background: #fff;
+}
+
+.rank-progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+}
+
+.rank-points {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 24px;
+    white-space: nowrap;
+}
+
+.elo-icon {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.play-btn {
+    height: 100px;
+    padding: 0 44px;
+    border: 3px solid #000;
+    background: #fff;
+    cursor: pointer;
+
+    font-weight: 900;
+    font-size: 42px;
+    letter-spacing: 1px;
+}
+
+.play-btn:hover {
+    background: #f2f2f2;
+}
