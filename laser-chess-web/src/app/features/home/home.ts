@@ -7,5 +7,8 @@ import { Component } from '@angular/core';
   styleUrl: './home.css',
 })
 export class Home {
-
+  username = 'User';
+  pictureURL = '/assets/picture.jpeg';
+  coins = 1234;
+  rankedPoints = 1234;
 }

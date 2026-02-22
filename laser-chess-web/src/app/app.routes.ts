@@ -13,7 +13,7 @@ import { Ranking } from './features/ranking/ranking';
 // Define las rutas de la aplicación, cada ruta asocia una URL con un componente específico
 
 export const routes: Routes = [
-    { path: '', component: Home },
+    { path: '', pathMatch: 'full', redirectTo: 'home' },
     { path: 'home', component: Home },
     { path: 'game', component: Game },
     { path: 'result', component: Result },
