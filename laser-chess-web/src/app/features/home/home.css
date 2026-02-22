@@ -2,22 +2,28 @@
     padding: 24px;
 }
 
+.top-row {
+    display: flex;
+    align-items: center;
+    gap: 100px;
+}
+
 .profile-card {
-    width: 450px;
+    width: 550px;
     border: 3px solid #000;
     background: #fff;
 
     display: flex; /* todo en una fila */
     align-items: center;
-    gap: 25px;
+    gap: 26px;
 
-    padding: 25px 35px;
+    padding: 21px 33px;
 }
 
 .profile-picture {
-    width: 65px;
-    height: 65px;
-    border: 2px solid #000;
+    width: 77px;
+    height: 77px;
+    border: 3px solid #000;
     border-radius: 50%;
     overflow: hidden;
 
@@ -35,13 +41,13 @@
 .profile-info {
     display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 12px;
 
     min-width: 0;
 }
 
 .username {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: 700;
 
     white-space: nowrap;
@@ -52,9 +58,58 @@
 }
 
 .xp-placeholder {
-    width: 250px;
+    width: 350px;
     height: 18px;
     border: 2px solid #000;
     border-radius: 4px;
     opacity: 0.25;
+}
+
+.icon-btn {
+    width: 100px;
+    height: 100px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content:center;
+
+    border: 3px solid #000;
+    background: #fff;
+    cursor: pointer;
+    padding: 0;
+    line-height: 0;
+}
+
+.icon-btn:hover {
+    background: #f2f2f2;
+}
+
+.icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+
+    transform: translateX(-6px) translateY(-3px);
+}
+
+.coin-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 16px;
+    
+    font-weight: 700;
+    font-size: 30px;
+}
+
+.coin-amount {
+    line-height: 1;
+}
+
+.coin-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
 }
