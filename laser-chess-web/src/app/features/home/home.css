@@ -5,10 +5,20 @@
     flex-direction: column;
 }
 
+/* SECCIONES PRINCIPALES */
 .top-row {
     display: flex;
     align-items: center;
     gap: 100px;
+}
+
+.main-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
 }
 
 .bottom-row {
@@ -19,6 +29,7 @@
     margin-bottom: 100px;
 }
 
+/* PROFILE CARD */
 .profile-card {
     width: 550px;
     border: 3px solid #000;
@@ -76,6 +87,7 @@
     opacity: 0.25;
 }
 
+/* BOTONES DE ICONOS */
 .icon-btn {
     width: 100px;
     height: 100px;
@@ -110,6 +122,7 @@
     transform: translateX(3px) translateY(3px);
 }
 
+/* CONTADOR DE MONEDAS */
 .coin-counter {
     display: inline-flex;
     align-items: center;
@@ -134,6 +147,51 @@
     object-fit: contain;
 }
 
+/* SELECTOR DE MODO DE TIEMPO */
+.time-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.time-icon {
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+    display: block;
+}
+
+.time-label {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+/* SELECTOR DE TABLERO */
+.board-selector {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.board-preview {
+    width: 400px;
+    max-width: 80vw;
+    height: auto;
+    display: block;
+}
+
+.time-selector:hover,
+.board-selector:hover {
+  transform: translateY(-4px);
+}
+
+/* RANGO / ELO */
 .rank-card {
     flex: 1;
     max-width: 720px;
@@ -176,6 +234,7 @@
     object-fit: contain;
 }
 
+/* BOTÓN JUGAR */
 .play-btn {
     height: 100px;
     padding: 0 44px;
