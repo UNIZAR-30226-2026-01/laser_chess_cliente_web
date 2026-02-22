@@ -13,10 +13,10 @@
         </div>
         
         <button class="icon-btn" type="button" aria-label="Historial">
-            <img class="icon" src="assets/icons/history-icon.png" alt="" />
+            <img class="icon icon-history" src="assets/icons/history-icon.png" alt="" />
         </button>
 
-        <button class="icon-btn" type="button" aria-label="Historial">
+        <button class="icon-btn" type="button" aria-label="Ajustes">
             settings-icon
         </button>
 
@@ -24,5 +24,26 @@
             <span class="coin-amount">{{ coins }}</span>
             <img src="assets/icons/coin-icon.png" class="coin-icon" alt="">
         </div>
+    </div>
+
+    <div class="bottom-row">
+        <div class="rank-card">
+            <div class="rank-badge">Rango</div>
+            <div class="rank-progress">
+                <div class="rank-bar">
+                    <div class="rank-fill"></div> <!-- habrá que implementarla y darle estilo -->
+                </div>
+                <div class="rank-points">
+                    {{ rankedPoints }}
+                    <img src="assets/icons/elo-icon.png" class="elo-icon" alt="">
+                </div>
+            </div>
+        </div>
+        <button class="icon-btn mode.btn" type="button" aria-label="Elegir modo">
+            <img class="icon icon-mode" src="assets/icons/ranked-icon.png" alt="" />
+        </button>
+        <button class="play-btn" type="button">
+            JUGAR
+        </button>
     </div>
 </section>
