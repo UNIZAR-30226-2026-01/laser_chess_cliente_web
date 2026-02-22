@@ -26,6 +26,17 @@
         </div>
     </div>
 
+    <div class="main-section">
+        <button class="time-selector" type="button" aria-label="Cambiar modo de tiempo">
+            <img class="time-icon" src="assets/icons/timer-icon.png" alt="" />
+            <span class="time-label">{{ timeModeLabel }}</span>
+        </button>
+
+        <button class="board-selector" type="button" aria-label="Cambiar tablero">
+            <img class="board-preview" [src]="boardPreviewUrl" alt="Tablero seleccionado" />
+        </button>
+    </div>
+
     <div class="bottom-row">
         <div class="rank-card">
             <div class="rank-badge">Rango</div>
@@ -39,7 +50,7 @@
                 </div>
             </div>
         </div>
-        <button class="icon-btn mode.btn" type="button" aria-label="Elegir modo">
+        <button class="icon-btn" type="button" aria-label="Elegir modo">
             <img class="icon icon-mode" src="assets/icons/ranked-icon.png" alt="" />
         </button>
         <button class="play-btn" type="button">
