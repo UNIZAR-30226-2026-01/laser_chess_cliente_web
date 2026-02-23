@@ -17,9 +17,9 @@
 }
 
 .item:hover {
-    background: #A1C2BD;
+    background: #ABC7C6;
 }
 
 .item.active {
-    background: #00AA9E;
+    background: #9EE2DA;
 }
