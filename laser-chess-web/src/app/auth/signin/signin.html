@@ -1,1 +1,23 @@
-<p>signin works!</p>
+<div class="form-container">
+
+  <div class="mb-3">
+    <label for="mail">Email</label>
+    <input type="email" class="form-control" id="mail" placeholder="name@example.com">
+  </div>
+
+  <div class="mb-3">
+    <label for="username">Nombre de usuario</label>
+    <input type="text" class="form-control" id="username" placeholder="Tu nombre">
+  </div>
+
+  <div class="mb-3">
+    <label for="password">Contraseña</label>
+    <input type="password" id="password" class="form-control">
+    <div id="passwordHelpBlock">
+      Tu contraseña debe tener entre 8 y 20 caracteres, contener letras y números.
+    </div>
+  </div>
+
+  <button routerLink="/home">Registrarse</button>
+
+</div>

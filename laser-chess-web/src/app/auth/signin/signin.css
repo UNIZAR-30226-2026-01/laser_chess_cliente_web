@@ -1,0 +1,78 @@
+/* Centrado total en pantalla */
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa, #e4ecff);
+}
+
+/* Tarjeta adaptable */
+.form-container {
+  background: white;
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 1.5rem;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
+
+  width: 100%;
+  max-width: 40rem;   /* se adapta según tamaño base */
+}
+
+/* Título */
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+}
+
+/* Inputs */
+input.form-control {
+  width: 100%;
+  padding: clamp(0.8rem, 1.5vw, 1.2rem);
+  border-radius: 1rem;
+  border: 0.08rem solid #ddd;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  transition: all 0.3s ease;
+}
+
+input.form-control:focus {
+  border-color: #6c8cff;
+  box-shadow: 0 0 0 0.25rem rgba(108, 140, 255, 0.2);
+  outline: none;
+}
+
+/* Texto ayuda */
+#passwordHelpBlock {
+  margin-top: 0.5rem;
+  font-size: clamp(0.75rem, 1vw, 0.85rem);
+  color: #777;
+}
+
+/* Botón */
+button {
+  width: 100%;
+  margin-top: 2rem;
+  padding: clamp(0.9rem, 1.5vw, 1.2rem);
+  border-radius: 1rem;
+  border: none;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  font-weight: 600;
+  background: linear-gradient(135deg, #6c8cff, #4a6fff);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-0.2rem);
+  box-shadow: 0 1rem 2rem rgba(74, 111, 255, 0.3);
+}
