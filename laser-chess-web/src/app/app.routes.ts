@@ -8,6 +8,7 @@ import { Shop } from './features/shop/shop';
 import { Customize } from './features/customize/customize';
 import { Social } from './features/social/social';
 import { Ranking } from './features/ranking/ranking';
+import { Signin } from './auth/signin/signin';
 
 
 // Define las rutas de la aplicación, cada ruta asocia una URL con un componente específico
@@ -22,5 +23,6 @@ export const routes: Routes = [
     { path: 'customize', component: Customize },
     { path: 'social', component: Social },
     { path: 'ranking', component: Ranking },
+    { path: 'signin', component: Signin}
 ];
 
