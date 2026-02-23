@@ -1,4 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+
+type Helix = 'red' | 'white' | null;
+
+interface Cell {
+  r: number;
+  c: number;
+  dark: boolean;
+  coord: string;
+  helix: Helix;
+  corner: boolean;
+}
+
+const FILE = 'ABCDEFGH';
 
 @Component({
   selector: 'app-game',
@@ -6,6 +19,6 @@ import { Component } from '@angular/core';
   templateUrl: './game.html',
   styleUrl: './game.css',
 })
-export class Game {
-  cells = Array(64);
+export class Game implements OnInit {
+
 }

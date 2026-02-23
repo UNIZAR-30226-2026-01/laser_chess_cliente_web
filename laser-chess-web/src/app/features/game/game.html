@@ -1,5 +1,13 @@
 <section class="game">
-    <div class="board">
-        <div class="square" *ngFor="let cell of cells"></div>
+    <div class="board" role="grid" aria-label="Tablero">
+        <ng-container *ngFor="let cell of cells; trackBy: trackCell">
+            <button type="button" class="square" [class.dark]="cell.dark"
+                [class.helix-red]="cell.helix == 'red'"
+                [class.helix-blue]="cell.helix == 'blue'"
+                [class.corner]="cell.corner"
+                [attr.data-coord]="cell.coord"
+                [attr.aria-label]="'Casilla ' + cell.coord"
+            ></button>
+        </ng-container>
     </div>
 </section>
