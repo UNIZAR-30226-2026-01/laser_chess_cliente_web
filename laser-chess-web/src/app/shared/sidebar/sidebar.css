@@ -2,6 +2,7 @@
   width: 200px;
   height: 100vh;
   background-color: #CDCDCD;
+  border-right: 3px solid #9b9b9b;
   display: flex;
   flex-direction: column;
 }
@@ -12,6 +13,7 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    border-bottom: 1px solid #9b9b9b;
     color: black;
     transition: background 0.2s;
 }
@@ -22,4 +24,17 @@
 
 .item.active {
     background: #9EE2DA;
+    box-shadow: inset 5px 0 0 #306CB3;
+}
+
+.icon {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+
+    transition: transform 0.12s ease;
+}
+
+.item.active .icon {
+    transform: scale(1.1);
 }
