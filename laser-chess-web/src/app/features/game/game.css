@@ -1,0 +1,29 @@
+.game {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board {
+    width: 640px;
+    aspect-ratio: 1 / 1;
+
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+
+    border: 4px solid #000;
+}
+
+.square {
+    border: 1px solid #000;
+}
+
+.square:nth-child(odd) {
+    background: #f2f2f2;
+}
+
+.square:nth-child(even) {
+    background: #ffff;
+}
