@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './game.css',
 })
 export class Game {
-
+  cells = Array(64);
 }
