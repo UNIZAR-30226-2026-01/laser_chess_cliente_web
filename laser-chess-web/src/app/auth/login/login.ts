@@ -23,7 +23,7 @@ export class Login {
 
   ngOnInit() {
     this.loginForm = new FormGroup({
-      credential: new FormControl('', [Validators.required, Validators.email]),
+      credential: new FormControl('', [Validators.required]),
       // Puede ser el email o el username -> comprobar
       password: new FormControl('', [Validators.required, Validators.minLength(6)])
     })

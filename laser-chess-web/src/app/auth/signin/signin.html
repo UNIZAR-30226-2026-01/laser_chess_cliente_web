@@ -1,8 +1,8 @@
 <div class="form-container">
   <form [formGroup]="RegisterForm" (ngSubmit)="register()" class="form">
     <div class="mb-3">
-      <label for="mail">Correo electrónico/ username</label>
-      <input type="text" id="mail" class="form-control" formControlName="mail" placeholder="name@example.com / username">
+      <label for="mail">Correo electrónico</label>
+      <input type="text" id="mail" class="form-control" formControlName="mail" placeholder="name@example.com">
       @if (RegisterForm.get('mail')!.invalid && RegisterForm.get('mail')!.touched)
       {
       <span class="error_message_form">
@@ -12,12 +12,12 @@
     </div>
 
     <div class="mb-3">
-      <label for="username">Correo electrónico/ username</label>
-      <input type="text" id="username" class="form-control" formControlName="username" placeholder="name@example.com / username">
+      <label for="username">Username</label>
+      <input type="text" id="username" class="form-control" formControlName="username" placeholder="Tu nombre de usuario">
       @if (RegisterForm.get('username')!.invalid && RegisterForm.get('username')!.touched)
       {
       <span class="error_message_form">
-        Correo electrónico es requerido y tener formato correcto
+        Username es requerido y no debe contener '@'
       </span>
       }
     </div>
@@ -29,6 +29,17 @@
       {
       <span class="error_message_form">
         Contraseña debe tener mínimo 6 caracteres
+      </span>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label for="password_rep">Escriva su contraseña de nuevo</label>
+      <input type="password_rep" id="password_rep" class="form-control" formControlName="password_rep" placeholder="">
+      @if (RegisterForm.get('password_rep')!=RegisterForm.get('password')!)
+      {
+      <span class="error_message_form">
+        La constraseña debe coincidir
       </span>
       }
     </div>
