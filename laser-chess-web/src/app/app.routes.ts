@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { Home } from './features/home/home';
-import { Game } from './features/game/game';
+//import { Game } from './features/game/game';
 import { Result } from './features/result/result';
 import { Profile } from './features/profile/profile';
 import { Shop } from './features/shop/shop';
@@ -31,7 +31,7 @@ export const routes: Routes = [
     component: Layout,
     children: [
       { path: 'home', component: Home },
-      { path: 'game', component: Game },
+      //{ path: 'game', component: Game },
       { path: 'result', component: Result },
       { path: 'profile', component: Profile },
       { path: 'shop', component: Shop },
