@@ -1,16 +1,17 @@
 import { HttpClient } from '@angular/common/http'; // Para hacer peticiones al Backend
 import { inject, Injectable } from '@angular/core'; 
+import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas HTTP
 // Injectable -> marca la clase como servicio inyectable
 // inject -> nueva forma de inyectar dependencias 
 
-import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { Router } from '@angular/router'; // Para redirigir al usuario
 
 import { LoginRequest } from '../message/LoginRequest';
-import { LoginResponse } from '../message/LoginResponse';
+import { RegisterRequest } from '../message/RegisterRequest';
 
 import { API_URL } from '../constants/app.const';
-import { RegisterRequest } from '../message/RegisterRequest';
+
 
 @Injectable({
   providedIn: 'root'
@@ -21,22 +22,31 @@ export class Auth {
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
 
-  login(loginRequest: LoginRequest): Observable<LoginResponse | null> {
-    return this.http.post<LoginResponse>(`${API_URL}/Auth/Login`, loginRequest).pipe(
+  // Solicitud a la API para iniciar sesión
+  login(loginRequest: LoginRequest): Observable<HttpResponse<unknown> | null> {
+    return this.http.post(`${API_URL}/Auth/Login`, loginRequest,{ observe: 'response' }).pipe(
       catchError((err: Error) => {
         return of(null);
       })
     );
   }
 
-  register(registerRequest: RegisterRequest): Observable<LoginResponse | null> {
-    return this.http.post<LoginResponse>(`${API_URL}/Auth/Register`, registerRequest).pipe(
+  // Solicitud a la API para registrar un nuevo usuario
+  register(registerRequest: RegisterRequest): Observable<HttpResponse<unknown> | null> {
+    return this.http.post(`${API_URL}/Auth/Register`, registerRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         return of(null);
       })
     );
   }
-/*
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  MOVIDAS DE TOKENS
+  - ACCESS TOKEN
+  - REFRESH TOKEN 
+
+  -> PENDIENTE DE IMPLEMENTAR EN BACKEND Y REVISAR EN FRONTEND
+
   setTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
@@ -90,7 +100,7 @@ export class Auth {
     // localStorage.removeItem(ACCESS_TOKEN_KEY);
     // localStorage.removeItem(REFRESH_TOKEN_KEY);
     // this.isAuthenticated$.next(false);
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/start']);
   }
 
   logout(): void {
