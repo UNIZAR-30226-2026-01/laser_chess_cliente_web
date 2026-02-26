@@ -15,7 +15,6 @@ import { Login } from './auth/login/login';
 import { Layout } from './features/layout/layout';
 import { Start } from './auth/start/start';
 
-import { AuthService } from './services/auth';
 // import { jwtInterceptor } from './interceptors/jwt.interceptor/jwt.interceptor';
 
 
@@ -43,7 +42,6 @@ export const routes: Routes = [
       { path: 'customize', component: Customize },
       { path: 'social', component: Social },
       { path: 'ranking', component: Ranking },
-      { path: 'auth', component: AuthService}
     ]
   }
 ];
