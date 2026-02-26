@@ -1,0 +1,61 @@
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  position: relative;
+}
+
+.icon {
+  display: block;
+  margin: 0 auto 1rem auto; /* menos espacio abajo */
+  width: clamp(6rem, 14vw, 10rem);
+  height: auto;
+}
+
+/* Tarjeta adaptable */
+.form-container {
+  background: white;
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 1.5rem;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
+
+  width: 100%;
+  max-width: 32rem;   /* se adapta según tamaño base */
+}
+
+h1 {
+  text-align: center;
+  margin: 0 0 1.2rem 0; /* elimina margen superior */
+  font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+}
+
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
+}
+
+/* Botón */
+button {
+  width: 100%;
+  margin-top: 2rem;
+  padding: clamp(0.9rem, 1.5vw, 1.2rem);
+  border-radius: 1rem;
+  border: none;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  font-weight: 600;
+  background: linear-gradient(135deg, #6c8cff, #4a6fff);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-0.2rem);
+  box-shadow: 0 1rem 2rem rgba(74, 111, 255, 0.3);
+}

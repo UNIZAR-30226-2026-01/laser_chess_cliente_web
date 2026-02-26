@@ -1,15 +1,26 @@
 <div class="form-container">
-    
-  <div class="mb-3">
-    <label for="username">Nombre de usuario</label>
-    <input type="text" class="form-control" id="username" placeholder="Tu nombre">
-  </div>
+  <form [formGroup]="loginForm" (ngSubmit)="login()" class="form">
+    <div class="mb-3">
+      <label for="mail">Correo electrónico/ username</label>
+      <input type="text" id="credential" class="form-control" formControlName="credential" placeholder="name@example.com / username">
+      @if (loginForm.get('credential')!.invalid && loginForm.get('credential')!.touched)
+      {
+      <span class="error_message_form">
+        Correo electrónico es requerido y tener formato correcto
+      </span>
+      }
+    </div>
+    <div class="mb-3">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" class="form-control" formControlName="password" placeholder="">
+      @if (loginForm.get('password')!.invalid && loginForm.get('password')!.touched)
+      {
+      <span class="error_message_form">
+        Contraseña debe tener mínimo 6 caracteres
+      </span>
+      }
+    </div>
 
-  <div class="mb-3">
-    <label for="password">Contraseña</label>
-    <input type="password" id="password" class="form-control">
-  </div>
-
-  <button>Iniciar sesión</button>
-
+    <button type="submit" [disabled]="loginForm.invalid" class="form-button">Iniciar Sesión</button>
+  </form>
 </div>

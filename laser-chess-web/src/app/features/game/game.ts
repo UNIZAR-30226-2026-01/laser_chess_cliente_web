@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 type Helix = 'red' | 'blue' | null;
-
+/*
 interface Cell {
   f: number;        // num. de filas
   c: number;        // num. de cols
@@ -47,3 +47,4 @@ export class Game implements OnInit {
     }
   }
 }
+*/

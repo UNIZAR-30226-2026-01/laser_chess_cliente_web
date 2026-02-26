@@ -76,3 +76,10 @@ button:hover {
   transform: translateY(-0.2rem);
   box-shadow: 0 1rem 2rem rgba(74, 111, 255, 0.3);
 }
+
+.error_message_form {
+  margin-top: 1rem;
+  color: #e74c3c;
+  font-size: clamp(0.75rem, 1vw, 0.85rem);
+  text-align: center;
+}
