@@ -2,9 +2,9 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { throwError, from } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../../services/auth';
 // import { EXTERNAL_AUTH_ACTIONS } from '../constants/constants';
-
+/*
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   const authService: AuthService = inject(AuthService);
@@ -14,7 +14,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   //  return next(req);
   //}
 
-  const accessToken = authService.getAccessToken();
+  /*const accessToken = authService.getAccessToken();
 
   if (!accessToken) {
     return next(req);
@@ -62,4 +62,6 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
       return throwError(() => error);
     })
   );
+  
 };
+*/

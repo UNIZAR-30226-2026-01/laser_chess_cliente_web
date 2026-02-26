@@ -15,7 +15,7 @@ import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, API_URL } from '../constants/app.c
   providedIn: 'root'
 })
 export class AuthService {
-  private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
+  private isAuthenticated$ = false; // new BehaviorSubject<boolean>(this.hasToken());
 
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
@@ -27,7 +27,7 @@ export class AuthService {
       })
     );
   }
-
+/*
   setTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
@@ -76,11 +76,11 @@ export class AuthService {
       })
     );
   }
-
+*/
   clearSession(): void {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-    this.isAuthenticated$.next(false);
+    // localStorage.removeItem(ACCESS_TOKEN_KEY);
+    // localStorage.removeItem(REFRESH_TOKEN_KEY);
+    // this.isAuthenticated$.next(false);
     this.router.navigate(['/auth']);
   }
 
