@@ -24,7 +24,7 @@ export class Auth {
 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<unknown> | null> {
-    return this.http.post(`${API_URL}/login`, loginRequest,{ observe: 'response' }).pipe(
+    return this.http.post(`http://localhost:8080/login`, loginRequest,{ observe: 'response' }).pipe(
       catchError((err: Error) => {
         return of(null);
       })
