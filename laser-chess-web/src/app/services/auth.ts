@@ -24,7 +24,7 @@ export class Auth {
 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<unknown> | null> {
-    return this.http.post(`${API_URL}/Auth/Login`, loginRequest,{ observe: 'response' }).pipe(
+    return this.http.post(`${API_URL}/login`, loginRequest,{ observe: 'response' }).pipe(
       catchError((err: Error) => {
         return of(null);
       })
@@ -33,7 +33,7 @@ export class Auth {
 
   // Solicitud a la API para registrar un nuevo usuario
   register(registerRequest: RegisterRequest): Observable<HttpResponse<unknown> | null> {
-    return this.http.post(`${API_URL}/Auth/Register`, registerRequest, { observe: 'response' }).pipe(
+    return this.http.post(`${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         return of(null);
       })

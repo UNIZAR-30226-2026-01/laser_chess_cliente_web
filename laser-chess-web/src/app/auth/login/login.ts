@@ -1,53 +1,70 @@
-import { Component, inject } from '@angular/core';
-import { API_URL } from '../../constants/app.const';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { LoginRequest } from '../../message/LoginRequest';
-import { LoginResponse } from '../../message/LoginResponse';
-
-
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrls: ['./login.css']
 })
-export class Login {
+export class Login implements OnInit {
   loginForm!: FormGroup;
-  private authService: Auth = inject(Auth);
-  private router: Router = inject(Router);
-  private loginUserRequest!: LoginRequest;
+  private authService = inject(Auth);
+  private router = inject(Router);
 
   ngOnInit() {
     this.loginForm = new FormGroup({
-      credential: new FormControl('', [Validators.required]),
-      // Puede ser el email o el username -> comprobar
+      credential: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$|^\w+$/) // email o username
+      ]),
       password: new FormControl('', [Validators.required, Validators.minLength(6)])
-    })
+    });
   }
 
   login() {
-    if (this.loginForm.valid) {
-      this.loginUserRequest = {
-        credential: this.loginForm.value.credential,
-        password: this.loginForm.value.password,
-      };
-      this.authService.login(this.loginUserRequest).subscribe(
-        (response: LoginResponse | null) => {
-          console.log('User logged in successfully', response);
-          // this.authService.setTokens(response!.accessToken, response!.refreshToken)
+    if (this.loginForm.invalid) {
+      console.warn('Form not valid');
+      return;
+    }
+
+    const request: LoginRequest = {
+      credential: this.loginForm.value.credential,
+      password: this.loginForm.value.password
+    };
+
+    // Llamada al servicio Auth.login
+    this.authService.login(request).subscribe({
+      next: (httpResponse) => {
+        if (httpResponse && httpResponse.body) {
+          console.log('User logged in successfully');
           this.router.navigate(['home']);
-        },
-        (error: Error) => {
+          // Suponemos que tu backend devuelve tokens en body
+          /*
+          const body: any = httpResponse.body;
+          if (body.accessToken && body.refreshToken) {
+            //this.authService.setTokens(body.accessToken, body.refreshToken);
+            console.log('User logged in successfully', body);
+            this.router.navigate(['home']);
+          } else {
+            console.error('Login failed: no tokens returned');
+            this.router.navigate(['error']);
+          }
+            */
+        } else {
+          console.error('Login failed: null response');
           this.router.navigate(['error']);
         }
-      );
-    } else {
-      console.log("Form not valid");
-    }
+      },
+      error: (err) => {
+        console.error('HTTP error during login', err);
+        this.router.navigate(['error']);
+      }
+    });
   }
-
 }
