@@ -12,6 +12,7 @@ import { Signin } from './auth/signin/signin';
 import { Login } from './auth/login/login';
 import { Layout } from './features/layout/layout';
 import { Start } from './auth/start/start';
+import { Error } from './auth/error/error'
 
 
 // Define las rutas de la aplicación, cada ruta asocia una URL con un componente específico
@@ -37,7 +38,8 @@ export const routes: Routes = [
       { path: 'shop', component: Shop },
       { path: 'customize', component: Customize },
       { path: 'social', component: Social },
-      { path: 'ranking', component: Ranking }
+      { path: 'ranking', component: Ranking },
+      { path: 'error', component: Error}
     ]
   }
 ];

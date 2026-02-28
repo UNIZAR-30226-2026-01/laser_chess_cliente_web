@@ -1,4 +1,4 @@
-export const API_URL = 'http://';
+export const API_URL = 'http://localhost:8080';
 
 // Sería necesario añadir las acciones de autenticación
 
