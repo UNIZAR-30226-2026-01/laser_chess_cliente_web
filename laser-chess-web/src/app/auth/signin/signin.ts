@@ -1,11 +1,26 @@
 import { Component, inject } from '@angular/core';
 import { API_URL } from '../../constants/app.const';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { RegisterRequest } from '../../message/RegisterRequest';
-import { LoginResponse } from '../../message/LoginResponse';
+import { UserData } from '../../message/UserData';
+import { signal } from '@angular/core';
 
+export const passwordMatchValidator: ValidatorFn =
+  (control: AbstractControl): ValidationErrors | null => {
+
+    const password = control.get('password')?.value;
+    const passwordRep = control.get('password_rep')?.value;
+
+    if (!password || !passwordRep) {
+      return null;
+    }
+
+    return password === passwordRep
+      ? null
+      : { passwordMismatch: true };
+};
 
 @Component({
   selector: 'app-signin',
@@ -13,53 +28,61 @@ import { LoginResponse } from '../../message/LoginResponse';
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
+
+
 export class Signin {
   RegisterForm!: FormGroup;
-  private authService: Auth = inject(Auth);
-  private router: Router = inject(Router);
-  private registerRequest!: RegisterRequest;
-
-  forbiddenAt(control: AbstractControl): ValidationErrors | null {
-    return control.value && control.value.includes('@') ? { forbiddenAt: true } : null;
-  }
+  private authService = inject(Auth);
+  private router = inject(Router);
+  public showError = signal(false);
+  public errorMessage = signal('');
+  
 
   ngOnInit() {
     this.RegisterForm = new FormGroup({
-      mail: new FormControl('', [Validators.required, Validators.email]),
-      username: new FormControl('', [Validators.required, this.forbiddenAt]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]) // Añadir más validaciones
-    })
-  }
-
-  register() {
-    if (this.RegisterForm.valid) {
-      this.registerRequest = {
-        mail: this.RegisterForm.value.mail,
-        username: this.RegisterForm.value.username,
-        password: this.RegisterForm.value.password
-      };
-      this.authService.register(this.registerRequest).subscribe(
-        (response) => {
-          if (response && response.status === 201) { // Con que empiece con 2 ya es correcto
-            console.log('Usuario creado correctamente', response.body);
-            this.router.navigate(['home']);
-          } else if (response) {
-            console.log('Respuesta inesperada', response.status, response.body);
-          } else {
-            console.log('No se recibió respuesta del servidor');
-          }
-        },
-        (error) => {
-          console.error('Error en el registro', error);
-          this.router.navigate(['error']);
-        }
-      );
-    } else {
-      console.log("Form not valid");
-    }
+      mail: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$|^\w+$/) // email
+      ]),
+      username: new FormControl('', [Validators.required]),
+      password: new FormControl('', [Validators.required]),
+      password_rep: new FormControl('', [Validators.required, passwordMatchValidator]), 
+    });
   }
 
   
+  
+  register() {
+    if (this.RegisterForm.invalid) {
+      console.warn('Form not valid');
+      return;
+    }
+  
+    const request: RegisterRequest = {
+      mail: this.RegisterForm.value.mail,
+      username: this.RegisterForm.value.username,
+      password: this.RegisterForm.value.password
+    };
+  
+    // Llamada al servicio Auth.login
+    this.authService.register(request).subscribe({
+      next: (httpResponse) => {
+        if (httpResponse && httpResponse.body) {
+          console.log('User registered successfully');
+          this.router.navigate(['login']);
+          this.showError.set(false);
+          this.errorMessage.set('');
 
+        } else {
+          this.showError.set(true);
+          this.errorMessage.set('Registro fallido');
+        }
+      },
+      error: (err) => {
+        console.error('HTTP error during registration', err);
+        this.showError.set(true);
+        this.errorMessage.set('Error al registrar el usuario');
+      }
+    });
+  }
 }
-

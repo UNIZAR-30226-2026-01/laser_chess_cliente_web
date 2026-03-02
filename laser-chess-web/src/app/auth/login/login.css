@@ -83,3 +83,14 @@ button:hover {
   font-size: clamp(0.75rem, 1vw, 0.85rem);
   text-align: center;
 }
+
+.popup-error {
+  position: fixed;
+  background: white;
+  color: black;
+  border-radius: 5px;
+  border-color: #f44336;
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 1.5rem;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
+}

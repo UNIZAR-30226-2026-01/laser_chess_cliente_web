@@ -1,7 +1,5 @@
 export const API_URL = 'http://localhost:8080';
 
 // Sería necesario añadir las acciones de autenticación
-
-// Por ahora no usaremos los tokens
-export const ACCESS_TOKEN_KEY = 'accessToken';
-export const REFRESH_TOKEN_KEY = 'refreshToken';
+export const ACCESS_TOKEN = 'access';
+// El refresh_token se guarda en el propio navegador como cookie httpOnly

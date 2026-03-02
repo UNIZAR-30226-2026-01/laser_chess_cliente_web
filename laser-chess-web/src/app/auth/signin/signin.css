@@ -76,3 +76,13 @@ button:hover {
   transform: translateY(-0.2rem);
   box-shadow: 0 1rem 2rem rgba(74, 111, 255, 0.3);
 }
+
+.popup-error {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #f44336;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+}

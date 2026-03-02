@@ -4,38 +4,39 @@ import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas 
 // Injectable -> marca la clase como servicio inyectable
 // inject -> nueva forma de inyectar dependencias 
 
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, tap, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router'; // Para redirigir al usuario
 
 import { LoginRequest } from '../message/LoginRequest';
 import { RegisterRequest } from '../message/RegisterRequest';
 
-import { API_URL } from '../constants/app.const';
+import { API_URL, ACCESS_TOKEN } from '../constants/app.const';
+import { LoginResponse } from '../message/LoginResponse';
+import { UserData } from '../message/UserData';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class Auth {
-  private isAuthenticated$ = false; // new BehaviorSubject<boolean>(this.hasToken());
-
+  private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
 
   // Solicitud a la API para iniciar sesión
-  login(loginRequest: LoginRequest): Observable<HttpResponse<unknown> | null> {
-    return this.http.post(`http://localhost:8080/login`, loginRequest,{ observe: 'response' }).pipe(
+  login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
+    return this.http.post<LoginResponse>(`${API_URL}/login`, loginRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
-        return of(null);
+        throw new Error('Error during login');
       })
     );
   }
 
   // Solicitud a la API para registrar un nuevo usuario
-  register(registerRequest: RegisterRequest): Observable<HttpResponse<unknown> | null> {
-    return this.http.post(`${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
+  register(registerRequest: RegisterRequest): Observable<HttpResponse<UserData> | null> {
+    return this.http.post<UserData>(`${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
-        return of(null);
+        throw new Error('Error during registration');
       })
     );
   }
@@ -46,29 +47,25 @@ export class Auth {
   - REFRESH TOKEN 
 
   -> PENDIENTE DE IMPLEMENTAR EN BACKEND Y REVISAR EN FRONTEND
-
-  setTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+*/
+  setTokens(accessToken: string): void {
+    localStorage.setItem(ACCESS_TOKEN, accessToken);
     this.isAuthenticated$.next(true);
   }
 
   private hasToken(): boolean {
-    return !!localStorage.getItem(ACCESS_TOKEN_KEY);
+    return !!localStorage.getItem(ACCESS_TOKEN);
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
-  }
-
-  getRefreshToken(): string | null {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    return localStorage.getItem(ACCESS_TOKEN);
   }
 
   isTokenExpired(token: string): boolean {
     if (!token) return true;
 
     try {
+      // Comprobación del si el token ha expirado
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.exp < Date.now() / 1000;
     } catch (error) {
@@ -77,36 +74,33 @@ export class Auth {
   }
 
   refreshToken() {
+    // Hacer refresh del access token usando el refresh token
     const accessToken = this.getAccessToken();
-    const refreshToken = this.getRefreshToken();
-    if (!refreshToken) {
-      this.logout();
-      return;
-    }
-
-    return this.http.post<any>(`${API_URL}/Auth/refreshToken`, { expiredAccessToken: accessToken, refreshToken }).pipe(
+    
+    // Tengo dudas sobre el refresh token, si me lo pasan como cookie
+    return this.http.post<any>(`${API_URL}/refresh`, { expiredAccessToken: accessToken }, { withCredentials: true }).pipe(
       tap((response) => {
-        this.setTokens(response.accessToken, response.refreshToken);
+        this.setTokens(response.accessToken);
       }),
       catchError(() => {
         this.logout();
-        this.clearSession();
+        this.logout();
         throw new Error('Session expired');
       })
     );
   }
-*/
-  clearSession(): void {
-    // localStorage.removeItem(ACCESS_TOKEN_KEY);
-    // localStorage.removeItem(REFRESH_TOKEN_KEY);
-    // this.isAuthenticated$.next(false);
-    this.router.navigate(['/start']);
-  }
+
 
   logout(): void {
-    // codigo pendiente
     console.log('User logged out');
-    this.clearSession();
+
+    // El usuario ya no está logeado
+    this.isAuthenticated$.next(false);
+
+    // Eliminamos tokens
+    localStorage.removeItem(ACCESS_TOKEN);
+    this.router.navigate(['/start']);
+    
   }
 
 }
