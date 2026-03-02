@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { LoginRequest } from '../../message/LoginRequest';
 import { CommonModule } from '@angular/common';
+import { signal } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -12,12 +13,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
+
 export class Login implements OnInit {
   loginForm!: FormGroup;
   private authService = inject(Auth);
   private router = inject(Router);
+  public showError = signal(false);
+  public errorMessage = signal('');
 
   ngOnInit() {
+    // Configuación del formulario de login con validaciones
     this.loginForm = new FormGroup({
       credential: new FormControl('', [
         Validators.required,
@@ -42,28 +47,29 @@ export class Login implements OnInit {
     this.authService.login(request).subscribe({
       next: (httpResponse) => {
         if (httpResponse && httpResponse.body) {
-          console.log('User logged in successfully');
-          this.router.navigate(['home']);
-          // Suponemos que tu backend devuelve tokens en body
-          /*
           const body: any = httpResponse.body;
-          if (body.accessToken && body.refreshToken) {
-            //this.authService.setTokens(body.accessToken, body.refreshToken);
+          if (body.access_token) { // Por ahora no recibo el access, solo el refresh
+            this.authService.setTokens(body.access_token);
             console.log('User logged in successfully', body);
+
+            // Redirigir a la página principal después del login exitoso
+            this.showError.set(false);
+            this.errorMessage.set('');
             this.router.navigate(['home']);
+
           } else {
-            console.error('Login failed: no tokens returned');
-            this.router.navigate(['error']);
+
+            // Si no se reciben tokens, mostrar error
+            this.showError.set(true);
+            this.errorMessage.set('Login failed: no tokens returned');
           }
-            */
-        } else {
-          console.error('Login failed: null response');
-          this.router.navigate(['error']);
-        }
+            
+        } 
       },
       error: (err) => {
-        console.error('HTTP error during login', err);
-        this.router.navigate(['error']);
+        // En caso de error HTTP, mostrar mensaje de error
+        this.showError.set(true);
+        this.errorMessage.set('Usuario/mail o contraseña incorrectos');
       }
     });
   }

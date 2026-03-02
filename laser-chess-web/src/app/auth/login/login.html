@@ -1,3 +1,9 @@
+@if(showError()) {
+  <div class="popup-error">
+    {{ errorMessage() }}
+    <button (click)="showError.set(false)">Cerrar</button>
+  </div>
+}
 <div class="form-container">
   <form [formGroup]="loginForm" (ngSubmit)="login()" class="form">
     <div class="mb-3">

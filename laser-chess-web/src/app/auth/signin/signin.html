@@ -1,3 +1,10 @@
+@if(showError()) {
+  <div class="popup-error">
+    {{ errorMessage() }}
+    <button (click)="showError.set(false)">Cerrar</button>
+  </div>
+}
+
 <div class="form-container">
   <form [formGroup]="RegisterForm" (ngSubmit)="register()" class="form">
     <div class="mb-3">
@@ -24,8 +31,8 @@
 
     <div class="mb-3">
       <label for="password">Contraseña</label>
-      <input type="password" id="password" class="form-control" formControlName="password" placeholder="">
-      @if (RegisterForm.get('password')!.invalid && RegisterForm.get('password')!.touched)
+      <input type="password" id="password" class="form-control" formControlName="password_rep" placeholder="">
+      @if (RegisterForm.get('password_rep')!.invalid && RegisterForm.get('password_rep')!.touched)
       {
       <span class="error_message_form">
         Contraseña debe tener mínimo 6 caracteres
@@ -34,16 +41,16 @@
     </div>
 
     <div class="mb-3">
-      <label for="password_rep">Escriva su contraseña de nuevo</label>
-      <input type="password_rep" id="password_rep" class="form-control" formControlName="password_rep" placeholder="">
-      @if (RegisterForm.get('password_rep')!=RegisterForm.get('password')!)
-      {
+      <label for="password_rep">Escriba su contraseña de nuevo</label>
+      <input type="password" id="password_rep" class="form-control" formControlName="password" placeholder="">
+      @if (RegisterForm.hasError('passwordMismatch')
+      && RegisterForm.get('password_rep')?.touched) {
       <span class="error_message_form">
         La constraseña debe coincidir
       </span>
       }
     </div>
 
-    <button type="submit" [disabled]="RegisterForm.invalid" class="form-button">IRegistrarse</button>
+    <button type="submit" [disabled]="RegisterForm.invalid" class="form-button">Registrarse</button>
   </form>
 </div>
