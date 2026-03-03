@@ -84,13 +84,23 @@ button:hover {
   text-align: center;
 }
 
-.popup-error {
+
+
+
+.overlay {
   position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-error {
   background: white;
   color: black;
-  border-radius: 5px;
-  border-color: #f44336;
-  padding: clamp(2rem, 5vw, 4rem);
-  border-radius: 1.5rem;
-  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border-radius: 0.75rem;
+  width: clamp(18rem, 90vw, 30rem);
 }
