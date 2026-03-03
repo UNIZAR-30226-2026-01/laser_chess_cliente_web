@@ -1,7 +1,9 @@
 @if(showError()) {
-  <div class="popup-error">
-    {{ errorMessage() }}
-    <button (click)="showError.set(false)">Cerrar</button>
+  <div id="overlay" class="overlay">
+    <div class="popup-error">
+      {{ errorMessage() }}
+      <button (click)="showError.set(false)">Cerrar</button>
+    </div>
   </div>
 }
 
