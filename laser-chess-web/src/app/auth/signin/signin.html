@@ -1,6 +1,6 @@
 @if(showError()) {
-  <div id="overlay" class="overlay">
-    <div class="popup-error">
+  <div id="overlay" class="overlay" (click)="showError.set(false)">
+    <div class="popup-error" (click)="$event.stopPropagation()">
       {{ errorMessage() }}
       <button (click)="showError.set(false)">Cerrar</button>
     </div>
