@@ -12,7 +12,8 @@ import { Signin } from './auth/signin/signin';
 import { Login } from './auth/login/login';
 import { Layout } from './features/layout/layout';
 import { Start } from './auth/start/start';
-import { Error } from './auth/error/error'
+import { Settings } from './features/settings/settings';
+import { History } from './features/history/history';
 
 
 // Define las rutas de la aplicación, cada ruta asocia una URL con un componente específico
@@ -32,6 +33,8 @@ export const routes: Routes = [
     component: Layout,
     children: [
       { path: 'home', component: Home },
+      { path: 'settings', component: Settings },
+      { path: 'history', component: History },
       //{ path: 'game', component: Game },
       { path: 'result', component: Result },
       { path: 'profile', component: Profile },
@@ -39,7 +42,6 @@ export const routes: Routes = [
       { path: 'customize', component: Customize },
       { path: 'social', component: Social },
       { path: 'ranking', component: Ranking },
-      { path: 'error', component: Error}
     ]
   }
 ];

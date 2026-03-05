@@ -45,47 +45,125 @@
   <div class="folder-container">
 
     <div class="tabs-header">
+      @if (state()){
       <div class="tab active">SOCIAL</div>
-      <div class="tab">IN PROGRESS</div>
+      <div class="tab" (click)="state.set(false)">IN PROGRESS</div>
+      }
+      @else {
+        <div class="tab" (click)="state.set(true)">SOCIAL</div>
+        <div class="tab active">IN PROGRESS</div>
+      } 
     </div>
 
     <div class="folder-body">
-
-      <div class="row_friend-requests">
-        <div class="left">
-          <span class="avatar"></span>
-          <span>Solicitudes de amistad</span>
+      @if (state()){
+        <div class="row_friend-requests">
+          <div class="left">
+            <span class="avatar"></span>
+            <span>Solicitudes de amistad</span>
+          </div>
         </div>
-      </div>
 
-      <ul class="user-list">
-        <li class="user-item">
-          <div class="left">
-            <span class="avatar"></span>
-            Usuario 1
-          </div>
-          <div class="right">1234 XP</div>
-        </li>
+        <ul class="user-list">
+          <li class="user-item">
+            <div class="left">
+              <span class="avatar"></span>
+              Usuario 1
+            </div>
+            <div class="right">1234 XP</div>
+          </li>
 
-        <li class="user-item">
-          <div class="left">
-            <span class="avatar"></span>
-            Usuario 2
-          </div>
-          <div class="right">1233 XP</div>
-        </li>
+          <li class="user-item">
+            <div class="left">
+              <span class="avatar"></span>
+              Usuario 2
+            </div>
+            <div class="right">1233 XP</div>
+          </li>
 
-        <li class="user-item">
-          <div class="left">
-            <span class="avatar"></span>
-            Usuario 3
-          </div>
-          <div class="right">1232 XP</div>
-        </li>
-      </ul>
+          <li class="user-item">
+            <div class="left">
+              <span class="avatar"></span>
+              Usuario 3
+            </div>
+            <div class="right">1232 XP</div>
+          </li>
+        </ul>
 
-      <button class="fab-plus" (click)="nuevoAmigo()">+</button>
+        <button class="fab-plus" (click)="nuevoAmigo()">+</button>
+      }
+      @else{
+        <ul class="game-list">
+          <li class="game-item">
+              <div class="player">
+                <span class="name">Yo</span>
+                <span class="time">10:50</span>
+              </div>
+              <div class="vs">VS</div>
+              <div class="player">
+                <span class="name">Usuario1</span>
+                <span class="time">10:30</span>
+              </div>
+              <div class="details">
+                <span>Modo_tiempo</span>
+                <span>Tablero</span>
+              </div>
+              <button class="btn-play">RETOMAR</button>
+          </li>
 
+          <li class="game-item">
+              <div class="player">
+                <span class="name">Yo</span>
+                <span class="time">12:50</span>
+              </div>
+              <div class="vs">VS</div>
+              <div class="player">
+                <span class="name">Usuario2</span>
+                <span class="time">10:34</span>
+              </div>
+              <div class="details">
+                <span>Modo_tiempo</span>
+                <span>Tablero</span>
+              </div>
+              <button class="btn-play">RETOMAR</button>
+          </li>
+
+          <li class="game-item">
+              <div class="player">
+                <span class="name">Yo</span>
+                <span class="time">11:50</span>
+              </div>
+              <div class="vs">VS</div>
+              <div class="player">
+                <span class="name">Usuario3</span>
+                <span class="time">9:30</span>
+              </div>
+              <div class="details">
+                <span>Modo_tiempo</span>
+                <span>Tablero</span>
+              </div>
+              <button class="btn-play">RETOMAR</button>
+          </li>
+
+          <li class="game-item">
+              <div class="player">
+                <span class="name">Yo</span>
+                <span class="time">0:50</span>
+              </div>
+              <div class="vs">VS</div>
+              <div class="player">
+                <span class="name">Usuario4</span>
+                <span class="time">10:40</span>
+              </div>
+              <div class="details">
+                <span>Modo_tiempo</span>
+                <span>Tablero</span>
+              </div>
+              <button class="btn-play">RETOMAR</button>
+          </li>
+
+        </ul>
+      }
     </div>
   </div>
 
