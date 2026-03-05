@@ -1,1 +1,96 @@
-<p>social works!</p>
+<div class="page">
+
+  <div class="top-row">
+    <div class="profile-card">
+      <div class="profile-picture">
+        <img [src]="pictureURL" />
+      </div>
+
+      <div class="profile-info">
+        <div class="username">{{ username }}</div>
+        <div class="xp-placeholder"></div>
+      </div>
+    </div>
+
+    <div class="coin-counter">
+      <span class="coin-amount">{{ coins }}</span>
+      <img src="assets/icons/coin-icon.png" class="coin-icon">
+    </div>
+  </div>
+
+  @if(popUP_nuevoAmigo()) {
+    <div id="overlay" class="overlay" (click)="popUP_nuevoAmigo.set(false)">
+        <div class="popup-amigo" (click)="$event.stopPropagation()">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col">
+                        <h2>AÑADIR</h2>
+                        <h3>Escribe su nombre de usuario</h3>
+                        <input type="text" id="username" class="form-control" placeholder="username">
+                        <button class="form-button">ENVIAR SOLICITUD</button>
+                        <h3>O espera a ser aceptad@</h3>
+                    </div>
+                    <div class="col">
+                        <h3> Enviale el siguiente enlace:</h3>
+                        <div class="link-container">
+                        <span class="link">{{ 'https://laserchess.com/invite/' + username }}</span>
+                        <button class="copy-button" (click)="copyLink()">Copiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+  <div class="folder-container">
+
+    <div class="tabs-header">
+      <div class="tab active">SOCIAL</div>
+      <div class="tab">IN PROGRESS</div>
+    </div>
+
+    <div class="folder-body">
+
+      <div class="row friend-requests">
+        <div class="left">
+          <span class="avatar">🕒</span>
+          <span>Solicitudes de amistad</span>
+        </div>
+
+        <div class="right">
+          0 <span class="arrow" (click)="onArrowClick()">›</span>
+        </div>
+      </div>
+
+      <ul class="user-list">
+        <li class="user-item">
+          <div class="left">
+            <span class="avatar"></span>
+            Usuario 1
+          </div>
+          <div class="right">1234 XP</div>
+        </li>
+
+        <li class="user-item">
+          <div class="left">
+            <span class="avatar"></span>
+            Usuario 2
+          </div>
+          <div class="right">1233 XP</div>
+        </li>
+
+        <li class="user-item">
+          <div class="left">
+            <span class="avatar"></span>
+            Usuario 3
+          </div>
+          <div class="right">1232 XP</div>
+        </li>
+      </ul>
+
+      <button class="fab-plus" (click)="nuevoAmigo()">+</button>
+
+    </div>
+  </div>
+
+</div>
