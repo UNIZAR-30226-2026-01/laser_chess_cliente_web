@@ -22,19 +22,19 @@
     <div id="overlay" class="overlay" (click)="popUP_nuevoAmigo.set(false)">
         <div class="popup-amigo" (click)="$event.stopPropagation()">
             <div class="container text-center">
-                <div class="row">
-                    <div class="col">
+                <div class="row-popup">
+                    <div class="col-popup">
                         <h2>AÑADIR</h2>
                         <h3>Escribe su nombre de usuario</h3>
                         <input type="text" id="username" class="form-control" placeholder="username">
                         <button class="form-button">ENVIAR SOLICITUD</button>
                         <h3>O espera a ser aceptad@</h3>
                     </div>
-                    <div class="col">
+                    <div class="col-popup">
                         <h3> Enviale el siguiente enlace:</h3>
                         <div class="link-container">
                         <span class="link">{{ 'https://laserchess.com/invite/' + username }}</span>
-                        <button class="copy-button" (click)="copyLink()">Copiar</button>
+                        <button class="copy-button" (click)="copyLink()">COPIAR</button>
                         </div>
                     </div>
                 </div>
@@ -51,14 +51,10 @@
 
     <div class="folder-body">
 
-      <div class="row friend-requests">
+      <div class="row_friend-requests">
         <div class="left">
-          <span class="avatar">🕒</span>
+          <span class="avatar"></span>
           <span>Solicitudes de amistad</span>
-        </div>
-
-        <div class="right">
-          0 <span class="arrow" (click)="onArrowClick()">›</span>
         </div>
       </div>
 
