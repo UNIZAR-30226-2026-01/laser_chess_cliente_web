@@ -1,0 +1,409 @@
+body{
+  font-family: "Comic Neue", cursive;
+}
+
+/* TOP ROW */
+
+.top-row{
+  display:flex;
+  align-items:center;
+  padding:30px 50px;
+}
+
+
+/* PROFILE CARD */
+
+.profile-card{
+
+  display:flex;
+  align-items:center;
+  gap:20px;
+
+  border:3px solid black;
+  padding:20px 30px;
+  background:white;
+
+  width:550px;
+}
+
+.profile-picture{
+
+  width:75px;
+  height:75px;
+
+  border:3px solid black;
+  border-radius:50%;
+  overflow:hidden;
+}
+
+.profile-picture img{
+
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+
+.profile-info{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.username{
+  font-size:28px;
+  font-weight:bold;
+}
+
+
+/* XP BAR */
+
+.xp-container{
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.xp-bar{
+  width:220px;
+  height:14px;
+  border:2px solid black;
+}
+
+.xp-fill{
+  width:50%;
+  height:100%;
+  background:#cfcfcf;
+}
+
+.xp-label{
+  font-size:14px;
+}
+
+.xp-value{
+  font-size:14px;
+}
+
+
+/* COINS */
+
+.coin-counter{
+
+  margin-left:auto;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  font-size:36px;
+  font-weight:bold;
+}
+
+.coin-icon{
+  width:45px;
+}
+
+
+/* FOLDER */
+
+.folder-container{
+
+  width:90%;
+  max-width:1200px;
+
+  margin:60px auto;
+}
+
+
+/* TABS */
+
+.tabs-header{
+
+  display:flex;
+}
+
+.tab{
+
+  padding:20px 60px;
+
+  border:3px solid black;
+  border-bottom:none;
+
+  background:#dcdcdc;
+
+  font-size:24px;
+
+  position:relative;
+}
+
+.tab.active{
+
+  background:white;
+  z-index:2;
+}
+
+
+/* BODY */
+
+.folder-body{
+
+  border:3px solid black;
+
+  padding:40px;
+
+  margin-top:-3px;
+
+  background:white;
+
+  position:relative;
+}
+
+
+/* ROW */
+
+.row{
+  border:3px solid black;
+  padding:20px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+
+/* USER LIST */
+
+.user-list{
+  list-style:none;
+  padding:0;
+  border:3px solid black;
+}
+
+.user-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 25px;
+  border-bottom:3px solid black;
+}
+
+.user-item:last-child{
+  border-bottom:none;
+}
+
+
+/* LEFT SIDE */
+.left{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+
+/* AVATAR */
+
+.avatar{
+  width:35px;
+  height:35px;
+  border:2px solid black;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+}
+
+
+/* RIGHT */
+
+.right{
+  font-weight:bold;
+}
+
+
+/* ARROW */
+
+.arrow{
+  font-size:22px;
+  margin-left:10px;
+}
+
+
+/* FLOAT BUTTON */
+
+.fab-plus{
+  position:absolute;
+  right:25px;
+  bottom:-35px;
+  width:70px;
+  height:70px;
+  border:3px solid black;
+  border-radius:50%;
+  background:white;
+  font-size:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:5px 5px 0 black;
+}
+
+/* Añadir amigo */
+
+/* OVERLAY */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    width:100vw;
+    height:100vh;
+    background:rgba(0,0,0,0.55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:3vh 3vw;
+    z-index:1000;
+}
+
+
+/* POPUP */
+.popup-amigo{
+    background:white;
+    border:0.18rem solid black;
+    padding:3vh 3vw;
+    width:60vw;
+    max-width:70rem;
+    box-shadow:0.5rem 0.5rem 0 black;
+    display:flex;
+    flex-direction:column;
+    gap:2vh;
+    animation:popupAppear 0.2s ease;
+}
+
+
+/* ANIMACIÓN */
+@keyframes popupAppear{
+    from{
+        transform:scale(0.95);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+
+/* GRID INTERNO */
+.container .row{
+    display:flex;
+    gap:4vw;
+    flex-wrap:wrap;
+    align-items:center;
+    border: none;
+}
+
+
+/* COLUMNAS */
+.container .col{
+    flex:1;
+    min-width:20rem;
+    display:flex;
+    flex-direction:column;
+    gap:1.5vh;
+}
+
+
+/* TITULOS */
+.popup-amigo h2{
+    font-size:3rem;
+}
+
+.popup-amigo h3{
+    font-size:1.8rem;
+}
+
+.popup-amigo h4{
+    font-size:1.1rem;
+}
+
+
+/* INPUT */
+.form-control{
+    width:100%;
+    padding:0.7rem 1rem;
+    border:0.15rem solid black;
+    border-radius:0.4rem;
+    font-size:1rem;
+}
+
+
+/* BOTÓN PRINCIPAL */
+.form-button{
+    align-self:flex-start;
+    padding:0.6rem 1.4rem;
+    border:none;
+    background:black;
+    color:white;
+    font-weight:bold;
+    border-radius:0.4rem;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.form-button:hover{
+    background:#333;
+}
+
+
+/* LINK */
+.link-container{
+    display:flex;
+    align-items:center;
+    gap:1vw;
+    flex-wrap:wrap;
+}
+
+
+/* TEXTO LINK */
+.link{
+    padding:0.6rem 0.8rem;
+    border:0.15rem solid black;
+    border-radius:0.4rem;
+    background:#f5f5f5;
+    font-size:0.9rem;
+    word-break:break-all;
+}
+
+
+/* BOTÓN COPIAR */
+.copy-button{
+    padding:0.5rem 1rem;
+    border:0.15rem solid black;
+    background:white;
+    border-radius:0.4rem;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.copy-button:hover{
+    background:#eee;
+}
+
+
+/* BOTÓN CERRAR */
+.popup-amigo > button{
+    align-self:flex-end;
+    padding:0.6rem 1.4rem;
+    border:0.15rem solid black;
+    background:white;
+    border-radius:0.4rem;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.popup-amigo > button:hover{
+    background:#eee;
+}
