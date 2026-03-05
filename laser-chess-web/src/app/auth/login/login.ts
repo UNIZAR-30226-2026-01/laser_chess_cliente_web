@@ -28,7 +28,7 @@ export class Login implements OnInit {
         Validators.required,
         Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$|^\w+$/) // email o username
       ]),
-      password: new FormControl('', [Validators.required, Validators.minLength(2)])
+      password: new FormControl('', [Validators.required])
     });
   }
 

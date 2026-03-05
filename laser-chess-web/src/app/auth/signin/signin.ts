@@ -46,8 +46,9 @@ export class Signin {
       ]),
       username: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
-      password_rep: new FormControl('', [Validators.required, passwordMatchValidator]), 
-    });
+      password_rep: new FormControl('', [Validators.required]),
+     }, { validators: passwordMatchValidator }); 
+    
   }
 
   
