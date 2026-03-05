@@ -15,6 +15,8 @@ export class Social {
   coins = 1234;
   rankedPoints = 1234;
   public popUP_nuevoAmigo = signal(false);
+  public state = signal(true); // State == true -> Social, State == false -> In Progress
+
 
   onArrowClick() {
     // Llamada al backend para obetener solicitudes de amistad?

@@ -7,7 +7,6 @@
   overflow-x: hidden;
 }
 
-
 /* TOP ROW - Mejorar comportamiento responsive */
 .top-row {
   display: flex;
@@ -115,36 +114,22 @@
   object-fit: contain;
 }
 
-.row_friend-requests {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;  
-  padding: 0.8rem 1.2rem;  
-  border: 0.15rem solid black;  
-  background: white;
-  flex-wrap: wrap;
-}
-
-.row_friend-requests:hover{
-    background-color: hsl(261deg 80% 48%);
-    color: hsl(0, 0%, 100%);
-    box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
-}
-
-.left{
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
-
-
-
 /* FOLDER */
 .folder-container {
   width: 90%;
   max-width: 70rem; 
-  margin: clamp(0.5rem, 2vh, 2rem) auto;
+  margin: clamp(2.5rem, 2vh, 4rem) auto;
   flex: 1;
+}
+
+/* FOLDER BODY */
+.folder-body {
+  border: 0.2rem solid black; 
+  padding: clamp(1rem, 2vw, 2rem);
+  margin-top: -0.2rem; 
+  background: white;
+  position: relative;
+  box-sizing: border-box;
 }
 
 /* TABS */
@@ -164,7 +149,6 @@
 
 .tab:not(.active):hover {
   background-color: hsl(0, 0%, 60%);
-  box-shadow: rgb(121, 121, 121) 0px 7px 29px 0px;
 }
 
 .tab.active {
@@ -172,18 +156,7 @@
   z-index: 2;
 }
 
-/* FOLDER BODY */
-.folder-body {
-  border: 0.2rem solid black; 
-  padding: clamp(1rem, 2vw, 2rem);
-  margin-top: -0.2rem; 
-  background: white;
-  position: relative;
-  box-sizing: border-box;
-}
-
-/* USER LIST - Ancho completo */
-.user-list {
+.user-list, .game-list {
   list-style: none;
   padding: 0;
   border: 0.2rem solid black;
@@ -191,7 +164,7 @@
   box-sizing: border-box;
 }
 
-.user-item {
+.user-item, .game-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -203,8 +176,32 @@
   gap: 0.5rem;
 }
 
-.user-item:last-child {
+.user-item:last-child, .game-item:last-child {
   border-bottom: none;
+}
+
+/* ----------------------------------------- */
+/* ------------ PANTALLA SOCIAL ------------ */
+/* ----------------------------------------- */
+
+.row_friend-requests {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;  
+  padding: 0.8rem 1.2rem;  
+  border: 0.15rem solid black;  
+  background: white;
+  flex-wrap: wrap;
+}
+
+.row_friend-requests:hover{
+  background-color: hsl(0, 0%, 60%);
+}
+
+.left{
+  display:flex;
+  align-items:center;
+  gap:15px;
 }
 
 
@@ -229,7 +226,7 @@
   background: white;
   border: 0.15rem solid black;
   padding: 1.5rem;
-  width: min(90%, 50rem); 
+  width: min(90%, 60rem); 
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0.4rem 0.4rem 0 black;
@@ -294,7 +291,7 @@
 
 .copy-button, .form-button {
   padding: clamp(0.4rem, 1vh, 0.6rem) clamp(0.8rem, 2vw, 1.1rem);
-  box-shadow: rgb(0 0 0 / 10%) 0 0 8px;
+  box-shadow: rgb(0 0 0 / 30%) 0 0 8px;
   border: 0;
   background: white;
   border-radius: 0.4rem;
@@ -343,3 +340,53 @@
   z-index: 10;
 }
 
+.fab-plus:hover{
+  background-color: hsl(0, 0%, 60%);
+}
+
+
+/* ----------------------------------------- */
+/* --------- PANTALLA IN PROGRESS ---------- */
+/* ----------------------------------------- */
+
+.btn-play{
+  padding: clamp(0.4rem, 1vh, 0.6rem) clamp(0.8rem, 2vw, 1.1rem);
+  box-shadow: rgb(0 0 0 / 30%) 0 0 8px;
+  border: 0;
+  background: white;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  flex: 0 0 auto;
+  font-size: clamp(0.85rem, 1vw, 0.9rem);
+  box-sizing: border-box;
+}
+
+.btn-play:hover{
+  background-color: hsl(261deg 80% 48%);
+  color: hsl(0, 0%, 100%);
+  box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
+}
+
+.btn-play:active{
+  background-color: hsl(261deg 80% 48%);
+  color: hsl(0, 0%, 100%);
+  box-shadow: rgb(93 24 220) 0px 0px 0px 0px;
+  transform: scale(0.97);
+  transition: 100ms;
+}
+
+.player, .time{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.name, .time{ font-weight: bold; font-size: 1.2rem; }
+.vs { font-weight: bold; font-size: 1.8rem; }
+
+.details {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
