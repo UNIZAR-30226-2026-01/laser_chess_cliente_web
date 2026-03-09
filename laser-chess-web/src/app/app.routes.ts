@@ -14,6 +14,7 @@ import { Layout } from './features/layout/layout';
 import { Start } from './auth/start/start';
 import { Settings } from './features/settings/settings';
 import { History } from './features/history/history';
+import { Pieza } from './features/pieza/pieza';
 
 
 // Define las rutas de la aplicación, cada ruta asocia una URL con un componente específico
@@ -42,6 +43,7 @@ export const routes: Routes = [
       { path: 'customize', component: Customize },
       { path: 'social', component: Social },
       { path: 'ranking', component: Ranking },
+      { path: 'pieza', component: Pieza },
     ]
   }
 ];

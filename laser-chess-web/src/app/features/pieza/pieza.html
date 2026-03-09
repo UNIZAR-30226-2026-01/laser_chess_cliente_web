@@ -1,0 +1,47 @@
+<div class="board">
+
+  <!-- PIEZA -->
+  <div
+    class="pieza"
+    [style.gridColumn]="position().x"
+    [style.gridRow]="position().y"
+    (click)="toggleSpots()"
+  ></div>
+
+  @if (showSpots() && position().y > 1) {
+    <div
+      class="spot"
+      [style.gridColumn]="position().x"
+      [style.gridRow]="position().y - 1"
+      (click)="move(0, -1)"
+    ></div>
+  }
+
+  @if (showSpots() && position().y < boardSize) {
+    <div
+      class="spot"
+      [style.gridColumn]="position().x"
+      [style.gridRow]="position().y + 1"
+      (click)="move(0, 1)"
+    ></div>
+  }
+
+  @if (showSpots() && position().x > 1) {
+    <div
+      class="spot"
+      [style.gridColumn]="position().x - 1"
+      [style.gridRow]="position().y"
+      (click)="move(-1, 0)"
+    ></div>
+  }
+
+  @if (showSpots() && position().x < boardSize) {
+    <div
+      class="spot"
+      [style.gridColumn]="position().x + 1"
+      [style.gridRow]="position().y"
+      (click)="move(1, 0)"
+    ></div>
+  }
+
+</div>
