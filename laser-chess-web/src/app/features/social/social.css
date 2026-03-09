@@ -28,8 +28,8 @@
   border: 0.15rem solid black;  
   padding: 0.8rem 1.2rem;  
   background: white;
-  flex: 0 1 auto;  
-  min-width: min(350px, 100%);  
+  flex: 1 1 250px;  
+  min-width: 200px;  
   max-width: 35rem;  
   box-sizing: border-box;
 }
@@ -114,12 +114,42 @@
   object-fit: contain;
 }
 
+.profile-picture img, .coin-icon {
+  max-width: 100%;
+  height: auto;
+}
+
 /* FOLDER */
 .folder-container {
   width: 90%;
   max-width: 70rem; 
-  margin: clamp(2.5rem, 2vh, 4rem) auto;
-  flex: 1;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Declaración de medias queries para verificar la correcta visualización  del contenido*/
+@media (max-width: 768px) {
+  .top-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .xp-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .coin-counter {
+    justify-content: center;
+  }
 }
 
 /* FOLDER BODY */
@@ -240,9 +270,9 @@
 
 /* GRID DEL POPUP */
 .row-popup {
-  display: flex;
-  flex-wrap: wrap; 
-  gap: clamp(0.5rem, 2vw, 3rem);  
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: clamp(0.5rem, 2vw, 3rem); 
   justify-content: left;
 }
 
@@ -344,6 +374,15 @@
   background-color: hsl(0, 0%, 60%);
 }
 
+@media (max-width: 480px) {
+  .fab-plus {
+    right: 0.5rem;
+    bottom: 1rem;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.8rem;
+  }
+}
 
 /* ----------------------------------------- */
 /* --------- PANTALLA IN PROGRESS ---------- */
