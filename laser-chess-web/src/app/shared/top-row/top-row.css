@@ -1,0 +1,113 @@
+/* ---------------- TOP ROW ---------------- */
+.top-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 40px);
+    flex-wrap: wrap; /* elementos se mueven si no caben */
+    justify-content: space-between;
+}
+
+/* PROFILE CARD */
+.profile-card {
+    flex: 1 1 min(200px, 100%);
+    max-width: 450px;
+    border: 2px solid #000;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 18px);
+    padding: clamp(8px, 1.5vh, 16px) clamp(12px, 2vw, 24px);
+    box-sizing: border-box;
+}
+
+.profile-picture {
+    width: clamp(50px, 6vw, 60px);
+    height: clamp(50px, 6vw, 60px);
+    border: 2px solid #000;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 1vw, 10px);
+    min-width: 0;
+}
+
+.username {
+    font-size: clamp(16px, 1.5vw, 20px);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.xp-placeholder {
+    width: 100%;
+    max-width: 250px;
+    height: 14px;
+    border: 1.5px solid #000;
+    border-radius: 4px;
+    opacity: 0.25;
+}
+
+/* ---------------- BOTONES ICONOS ---------------- */
+.icon-btn {
+    width: clamp(50px, 6vw, 70px);
+    height: clamp(50px, 6vw, 70px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #000;
+    background: #fff;
+    cursor: pointer;
+    padding: 0;
+    line-height: 0;
+    flex-shrink: 0;
+}
+
+.icon-btn:hover {
+    background: #f2f2f2;
+}
+
+.icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.icon-history { transform: translateX(-4px) translateY(-2px); }
+.icon-mode { transform: translateX(2px) translateY(2px); }
+
+/* ---------------- CONTADOR DE MONEDAS ---------------- */
+.coin-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(4px, 1vw, 6px);
+    padding: clamp(4px, 1vh, 8px) clamp(8px, 1.5vw, 12px);
+    font-weight: 700;
+    font-size: clamp(18px, 2vw, 24px);
+    margin-left: auto;
+    flex-shrink: 0;
+    border: 0.15rem solid black;
+}
+
+.coin-amount { line-height: 1; }
+
+.coin-icon {
+    width: clamp(24px, 3vw, 36px);
+    height: clamp(24px, 3vw, 36px);
+    object-fit: contain;
+}

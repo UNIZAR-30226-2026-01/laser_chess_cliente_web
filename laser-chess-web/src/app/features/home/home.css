@@ -112,6 +112,7 @@
     font-size: clamp(18px, 2vw, 24px);
     margin-left: auto;
     flex-shrink: 0;
+    border: 0.15rem solid black;
 }
 
 .coin-amount { line-height: 1; }
