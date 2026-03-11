@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { signal } from '@angular/core';
+import { TopRow } from '../../shared/top-row/top-row';
 
 @Component({
   selector: 'app-social',
-  imports: [],
+  imports: [TopRow],
   templateUrl: './social.html',
   styleUrl: './social.css',
 })

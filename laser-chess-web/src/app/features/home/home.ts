@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterLink } from "@angular/router";
+import { TopRow } from '../../shared/top-row/top-row';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, TopRow],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

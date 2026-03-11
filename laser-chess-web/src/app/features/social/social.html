@@ -1,22 +1,7 @@
 <div class="page">
 
-  <div class="top-row">
-    <div class="profile-card">
-      <div class="profile-picture">
-        <img [src]="pictureURL" />
-      </div>
-
-      <div class="profile-info">
-        <div class="username">{{ username }}</div>
-        <div class="xp-placeholder"></div>
-      </div>
-    </div>
-
-    <div class="coin-counter">
-      <span class="coin-amount">{{ coins }}</span>
-      <img src="assets/icons/coin-icon.png" class="coin-icon">
-    </div>
-  </div>
+  <app-top-row class="main-top-row">
+  </app-top-row>
 
   @if(popUP_nuevoAmigo()) {
     <div id="overlay" class="overlay" (click)="popUP_nuevoAmigo.set(false)">

@@ -1,10 +1,16 @@
 /* ---------------- TOP ROW ---------------- */
-.top-row {
+:host {
     display: flex;
     align-items: center;
-    gap: clamp(12px, 2vw, 40px);
-    flex-wrap: wrap; /* elementos se mueven si no caben */
-    justify-content: space-between;
+    justify-content: space-between; /* Distribuye los extremos */
+    gap: 1rem;
+    padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 3vh;
+    flex-wrap: nowrap; /* Fuerza una sola línea */
+
 }
 
 /* PROFILE CARD */
