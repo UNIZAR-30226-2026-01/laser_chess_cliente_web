@@ -1,5 +1,12 @@
-<section class="game">
-    <div class="board" role="grid" aria-label="Tablero">
-        
-    </div>
-</section>
+<div class="board-container">
+  <div class="board">
+  @for (p of listaPiezas(); track p.id) {
+    <app-pieza 
+      [initialX]="p.x" 
+      [initialY]="p.y" 
+      [cols]="columnas"
+      [rows]="filas"
+      [player]="$any(p.color)">
+    </app-pieza>
+  }
+</div>

@@ -1,29 +1,23 @@
-.game {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .board {
-    width: 640px;
-    aspect-ratio: 1 / 1;
+  width: 95%;
+  max-width: 600px;
+  /* Relación de aspecto basada en tus columnas/filas */
+  aspect-ratio: 10 / 8; 
 
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-
-    border: 4px solid #000;
-}
-
-.square {
-    border: 1px solid #000;
-}
-
-.square:nth-child(odd) {
-    background: #f2f2f2;
-}
-
-.square:nth-child(even) {
-    background: #ffff;
+  display: grid;
+  /* Usamos las variables para que el grid sea exacto */
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  
+  border: 3px solid #2c3e50;
+  background-color: #f8f9fa;
+  
+  /* Ajustamos el fondo para que las líneas coincidan con 8x10 */
+  background-image: 
+    linear-gradient(to right, #dee2e6 1px, transparent 1px),
+    linear-gradient(to bottom, #dee2e6 1px, transparent 1px);
+  background-size: calc(100% / 10) calc(100% / 8);
+  
+  margin: 0 auto;
+  position: relative;
 }

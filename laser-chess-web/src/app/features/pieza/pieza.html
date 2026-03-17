@@ -1,47 +1,42 @@
-<div class="board">
+<div
+  class="pieza"
+  [style.gridColumn]="position().x"
+  [style.gridRow]="position().y"
+  [style.transform]="'rotate(' + rotation() + 'deg)'"
+  [style.--player]="player()"
+  (click)="toggle()"
+>P</div>
 
-  <!-- PIEZA -->
-  <div
-    class="pieza"
-    [style.gridColumn]="position().x"
-    [style.gridRow]="position().y"
-    (click)="toggleSpots()"
-  ></div>
-
-  @if (showSpots() && position().y > 1) {
-    <div
-      class="spot"
-      [style.gridColumn]="position().x"
-      [style.gridRow]="position().y - 1"
-      (click)="move(0, -1)"
-    ></div>
+@if (showSpots()) {
+  @if (position().y > 1) {
+    <div class="spot" [style.gridColumn]="position().x" [style.gridRow]="position().y - 1" (click)="move(0, -1)"></div>
   }
-
-  @if (showSpots() && position().y < boardSize) {
-    <div
-      class="spot"
-      [style.gridColumn]="position().x"
-      [style.gridRow]="position().y + 1"
-      (click)="move(0, 1)"
-    ></div>
+  @if (position().y < rows()) {
+    <div class="spot" [style.gridColumn]="position().x" [style.gridRow]="position().y + 1" (click)="move(0, 1)"></div>
   }
-
-  @if (showSpots() && position().x > 1) {
-    <div
-      class="spot"
-      [style.gridColumn]="position().x - 1"
-      [style.gridRow]="position().y"
-      (click)="move(-1, 0)"
-    ></div>
+  @if (position().x > 1) {
+    <div class="spot" [style.gridColumn]="position().x - 1" [style.gridRow]="position().y" (click)="move(-1, 0)"></div>
   }
-
-  @if (showSpots() && position().x < boardSize) {
-    <div
-      class="spot"
-      [style.gridColumn]="position().x + 1"
-      [style.gridRow]="position().y"
-      (click)="move(1, 0)"
-    ></div>
+  @if (position().x < cols()) {
+    <div class="spot" [style.gridColumn]="position().x + 1" [style.gridRow]="position().y" (click)="move(1, 0)"></div>
   }
+  @if (position().y > 1 && position().x > 1) {
+    <div class="spot" [style.gridColumn]="position().x - 1" [style.gridRow]="position().y - 1" (click)="move(-1, -1)"></div>
+  }
+  @if (position().y < rows() && position().x < cols()) {
+    <div class="spot" [style.gridColumn]="position().x + 1" [style.gridRow]="position().y + 1" (click)="move(1, 1)"></div>
+  }
+  @if (position().x > 1 && position().y < rows()) {
+    <div class="spot" [style.gridColumn]="position().x - 1" [style.gridRow]="position().y + 1" (click)="move(-1, 1)"></div>
+  }
+  @if (position().x < cols() && position().y > 1) {
+    <div class="spot" [style.gridColumn]="position().x + 1" [style.gridRow]="position().y - 1" (click)="move(1, -1)"></div>
+  }
+}
 
+<div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 100;">
+  @if (moverDisp()) {
+    <button class="girar_btn" (click)="rotate(-90)">Girar izq</button>
+    <button class="girar_btn" (click)="rotate(90)">Girar der</button>
+  }
 </div>

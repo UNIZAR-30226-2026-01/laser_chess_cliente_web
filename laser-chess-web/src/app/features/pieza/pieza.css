@@ -1,27 +1,35 @@
-.board {
-  width: 300px;
-  height: 300px;
+/* pieza.css */
 
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-
-  border: 2px solid black;
-  margin: 40px auto;
+/* ¡ESTO ES LA CLAVE! */
+:host {
+  display: contents; 
 }
+
 
 .pieza {
   width: 100%;
   height: 100%;
-  background-color: royalblue;
+  background-color: var(--player, royalblue);
   border-radius: 10px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  z-index: 2; /* Por encima de los spots */
+  transform-origin: center;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .spot {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,200,0,0.4);
+  width: 70%;
+  height: 70%;
+  margin: auto;
+  background-color: rgba(0, 200, 0, 0.4);
   border-radius: 50%;
   cursor: pointer;
+  z-index: 1; /* Por debajo de la pieza */
 }
+
+/* El resto de tus botones (.girar_btn, etc) se mantienen igual */
