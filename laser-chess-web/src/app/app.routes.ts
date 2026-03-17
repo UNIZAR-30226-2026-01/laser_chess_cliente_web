@@ -36,7 +36,6 @@ export const routes: Routes = [
       { path: 'home', component: Home },
       { path: 'settings', component: Settings },
       { path: 'history', component: History },
-      { path: 'game', component: Game },
       { path: 'result', component: Result },
       { path: 'profile', component: Profile },
       { path: 'shop', component: Shop },
@@ -45,6 +44,7 @@ export const routes: Routes = [
       { path: 'ranking', component: Ranking },
       { path: 'pieza', component: Pieza },
     ]
-  }
+  },
+  { path: 'game', component: Game },
 ];
 
