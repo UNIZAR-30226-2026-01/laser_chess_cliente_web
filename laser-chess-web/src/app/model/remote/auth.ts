@@ -7,12 +7,12 @@ import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas 
 import { catchError, Observable, of, tap, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router'; // Para redirigir al usuario
 
-import { LoginRequest } from '../message/LoginRequest';
-import { RegisterRequest } from '../message/RegisterRequest';
+import { LoginRequest } from '../auth/LoginRequest';
+import { RegisterRequest } from '../auth/RegisterRequest';
 
-import { API_URL, ACCESS_TOKEN } from '../constants/app.const';
-import { LoginResponse } from '../message/LoginResponse';
-import { UserData } from '../message/UserData';
+import { API_URL, ACCESS_TOKEN } from '../../constants/app.const';
+import { LoginResponse } from '../auth/LoginResponse';
+import { UserData } from '../auth/UserData';
 
 
 @Injectable({
