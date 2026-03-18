@@ -23,8 +23,36 @@ const COLS = 'ABCDEFGHIJ';
 export class Game {
   columnas = 10;
   filas = 8;
+  selectedPieza = signal<Pieza | null>(null);
 
   listaPiezas = signal([
     { id: 1, x: 4, y: 5, color:'red'}, // Una pieza en el centro aproximado
   ]);
+
+  piezaActiva = signal<Pieza | null>(null);
+
+  seleccionarPieza(pieza: Pieza) {
+    if (this.piezaActiva()) {
+      this.piezaActiva()?.showSpots.set(false);
+    }
+
+    if (this.piezaActiva() === pieza) {
+      this.piezaActiva.set(null); // Si le das click de nuevo a la misma pieza
+      this.piezaActiva()?.showSpots.set(false);
+    } else {
+      // Guardo la nueva pieza
+      this.piezaActiva.set(pieza);
+    }
+  }
+
+  deseleccionar() {
+    this.piezaActiva.set(null);
+  }
+  rotateSelected(angle: number) {
+    const pieza = this.piezaActiva();
+    if (pieza) {
+      pieza.rotate(angle);
+      this.deseleccionar(); // Esto hará que los botones se oculten tras el giro
+    }
+  }
 }

@@ -18,6 +18,27 @@
     linear-gradient(to bottom, #dee2e6 1px, transparent 1px);
   background-size: calc(100% / 10) calc(100% / 8);
   
-  margin: 0 auto;
+  margin: 1rem auto;
   position: relative;
+}
+
+.controls-panel{ /* Falta por completar */
+  display: flex;
+  gap: 12px;
+}
+
+.btn-girar{ /* Falta por completar */
+  margin: 1 auto black;
+  position: relative;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.1s,  0.2s;
+}
+
+.btn-girar:hover{
+  background-color: rgb(162, 162, 162);
 }

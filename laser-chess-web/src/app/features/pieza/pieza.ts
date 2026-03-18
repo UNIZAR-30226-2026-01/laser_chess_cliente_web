@@ -1,9 +1,9 @@
-import { Component, signal,  input } from '@angular/core';
+import { Component, signal,  input, output} from '@angular/core';
 
 @Component({
   selector: 'app-pieza',
   standalone: true,
-  imports: [], // ← aquí incluimos la directiva
+  imports: [], 
   templateUrl: './pieza.html',
   styleUrls: ['./pieza.css'],
 })
@@ -15,6 +15,8 @@ export class Pieza {
   cols = input(10);
   rows = input(8);
   
+  selected = output<Pieza>();
+  endMoved = output<void>();
 
   // Posición de la pieza
   position = signal({ x: 0, y: 0 });
@@ -35,10 +37,9 @@ export class Pieza {
   
   }
   
-
-  toggle() {
-    this.showSpots.set(!this.showSpots());
-    this.moverDisp.set(!this.moverDisp());
+  select() {
+    this.showSpots.set(true);
+    this.selected.emit(this);
   }
 
   move(dx: number, dy: number) {
@@ -50,13 +51,16 @@ export class Pieza {
         newY >= 1 && newY <= this.rows()) {
       this.position.set({ x: newX, y: newY });
     }
-    this.toggle();
+    this.showSpots.set(false);
+
+    // Aviso al padre de que la pieza se ha movido para que oculte los botones
+    this.endMoved.emit()
   }
 
   rotate(angle: number) {
     // Rotar la pieza
     this.rotation.update(prev => prev + angle);
-    this.toggle();
+    this.showSpots.set(false);
   }
 
 

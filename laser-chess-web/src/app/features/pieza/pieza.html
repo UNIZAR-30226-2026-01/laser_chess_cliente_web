@@ -4,7 +4,7 @@
   [style.gridRow]="position().y"
   [style.transform]="'rotate(' + rotation() + 'deg)'"
   [style.--player]="player()"
-  (click)="toggle()"
+  (click)="select()"
 >P</div>
 
 @if (showSpots()) {
@@ -33,10 +33,3 @@
     <div class="spot" [style.gridColumn]="position().x + 1" [style.gridRow]="position().y - 1" (click)="move(1, -1)"></div>
   }
 }
-
-<div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 100;">
-  @if (moverDisp()) {
-    <button class="girar_btn" (click)="rotate(-90)">Girar izq</button>
-    <button class="girar_btn" (click)="rotate(90)">Girar der</button>
-  }
-</div>

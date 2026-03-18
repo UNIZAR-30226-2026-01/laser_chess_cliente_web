@@ -1,6 +1,5 @@
 /* pieza.css */
 
-/* ¡ESTO ES LA CLAVE! */
 :host {
   display: contents; 
 }
@@ -32,4 +31,6 @@
   z-index: 1; /* Por debajo de la pieza */
 }
 
-/* El resto de tus botones (.girar_btn, etc) se mantienen igual */
+.spot:hover{
+  background-color: rgba(0, 153, 0, 0.4);
+}
