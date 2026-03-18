@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../model/remote/auth';
-import { LoginRequest } from '../../message/LoginRequest';
+import { LoginRequest } from '../../model/auth/LoginRequest';
 import { CommonModule } from '@angular/common';
 import { signal } from '@angular/core';
 

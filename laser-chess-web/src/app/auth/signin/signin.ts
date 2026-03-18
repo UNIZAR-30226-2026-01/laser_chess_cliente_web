@@ -3,8 +3,7 @@ import { API_URL } from '../../constants/app.const';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../model/remote/auth';
-import { RegisterRequest } from '../../message/RegisterRequest';
-import { UserData } from '../../message/UserData';
+import { RegisterRequest } from '../../model/auth/RegisterRequest';
 import { signal } from '@angular/core';
 
 export const passwordMatchValidator: ValidatorFn =

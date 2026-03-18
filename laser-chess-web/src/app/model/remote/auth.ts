@@ -12,7 +12,7 @@ import { RegisterRequest } from '../auth/RegisterRequest';
 
 import { API_URL, ACCESS_TOKEN } from '../../constants/app.const';
 import { LoginResponse } from '../auth/LoginResponse';
-import { UserData } from '../auth/UserData';
+import { AccountResponse } from '../auth/AccountResponse';
 
 
 @Injectable({
@@ -33,8 +33,8 @@ export class Auth {
   }
 
   // Solicitud a la API para registrar un nuevo usuario
-  register(registerRequest: RegisterRequest): Observable<HttpResponse<UserData> | null> {
-    return this.http.post<UserData>(`${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
+  register(registerRequest: RegisterRequest): Observable<HttpResponse<AccountResponse> | null> {
+    return this.http.post<AccountResponse>(`${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during registration');
       })
