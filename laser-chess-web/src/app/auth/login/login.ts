@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Auth } from '../../model/remote/auth';
+import { Remote} from '../../model/remote/remote';
 import { LoginRequest } from '../../model/auth/LoginRequest';
 import { CommonModule } from '@angular/common';
 import { signal } from '@angular/core';
@@ -16,7 +16,7 @@ import { signal } from '@angular/core';
 
 export class Login implements OnInit {
   loginForm!: FormGroup;
-  private authService = inject(Auth);
+  private authService = inject(Remote);
   private router = inject(Router);
   public showError = signal(false);
   public errorMessage = signal('');
@@ -48,7 +48,7 @@ export class Login implements OnInit {
       next: (httpResponse) => {
         if (httpResponse && httpResponse.body) {
           const body: any = httpResponse.body;
-          if (body.access_token) { // Por ahora no recibo el access, solo el refresh
+          if (body.access_token) { 
             this.authService.setTokens(body.access_token);
             console.log('User logged in successfully', body);
 

@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { API_URL } from '../../constants/app.const';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Auth } from '../../model/remote/auth';
+import { Remote } from '../../model/remote/remote';
 import { RegisterRequest } from '../../model/auth/RegisterRequest';
 import { signal } from '@angular/core';
 
@@ -31,10 +30,12 @@ export const passwordMatchValidator: ValidatorFn =
 
 export class Signin {
   RegisterForm!: FormGroup;
-  private authService = inject(Auth);
+  private authService = inject(Remote);
   private router = inject(Router);
   public showError = signal(false);
   public errorMessage = signal('');
+
+  private id_account: number | null = null;
   
 
   ngOnInit() {
@@ -72,6 +73,7 @@ export class Signin {
           this.router.navigate(['login']);
           this.showError.set(false);
           this.errorMessage.set('');
+          this.id_account = httpResponse.body.account_id;
 
         } else {
           this.showError.set(true);

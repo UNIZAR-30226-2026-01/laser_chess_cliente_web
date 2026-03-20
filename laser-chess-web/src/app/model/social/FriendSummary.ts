@@ -1,5 +1,5 @@
 export interface FriendSummary {
-    id: String;
+    userId: String;
     username: String;
     avatar: number;
     xp: number;

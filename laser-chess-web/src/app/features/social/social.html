@@ -3,16 +3,16 @@
   <app-top-row class="main-top-row">
   </app-top-row>
 
-  @if(popUP_nuevoAmigo()) {
-    <div id="overlay" class="overlay" (click)="popUP_nuevoAmigo.set(false)">
+  @if(popUP_newFriend()) {
+    <div id="overlay" class="overlay" (click)="popUP_newFriend.set(false)">
         <div class="popup-amigo" (click)="$event.stopPropagation()">
             <div class="container text-center">
                 <div class="row-popup">
                     <div class="col-popup">
                         <h2>AÑADIR</h2>
                         <h3>Escribe su nombre de usuario</h3>
-                        <input type="text" id="username" class="form-control" placeholder="username">
-                        <button class="form-button">ENVIAR SOLICITUD</button>
+                        <input type="text" #usernameInput class="form-control" placeholder="username">
+                        <button class="form-button" (click)="addFriend(usernameInput.value)">ENVIAR SOLICITUD</button>
                         <h3>O espera a ser aceptad@</h3>
                     </div>
                     <div class="col-popup">
@@ -27,6 +27,31 @@
         </div>
     </div>
 }
+
+@if(popUP_request()) {
+    <div id="overlay" class="overlay" (click)="popUP_request.set(false)">
+        <div class="popup-amigo" (click)="$event.stopPropagation()">
+            <div class="container text-center">
+               <ul class="user-list">
+                  @if (friendshipsRequests.length == 0) {
+                    <p>No tienes ningua solicitud de amistad pendiente</p>
+                  } @else {
+                    @for (friendship of friendshipsRequests; track friendship.userId) {
+                      <li class="user-item">
+                        <div class="left">
+                        <span class="avatar"></span>
+                            {{ friendship.username }}
+                        </div>
+                        <div class="right">{{ friendship.xp }} XP</div>
+                      </li>
+                    }
+                  } 
+                </ul> 
+            </div>
+        </div>
+    </div>
+}
+
   <div class="folder-container">
 
     <div class="tabs-header">
@@ -45,35 +70,26 @@
         <div class="row_friend-requests">
           <div class="left">
             <span class="avatar"></span>
-            <span>Solicitudes de amistad</span>
+            <span (click)="pedingRequest()">Solicitudes de amistad</span>
           </div>
         </div>
-
         <ul class="user-list">
-          <li class="user-item">
-            <div class="left">
+        @if (!friendsInfo()) {
+          <p>Cargando...</p>
+        } @else if (friends.length === 0) {
+          <p>No tienes amigos</p>
+        } @else {
+          @for (friend of friends; track friend.userId) {
+            <li class="user-item">
+              <div class="left">
               <span class="avatar"></span>
-              Usuario 1
-            </div>
-            <div class="right">1234 XP</div>
-          </li>
-
-          <li class="user-item">
-            <div class="left">
-              <span class="avatar"></span>
-              Usuario 2
-            </div>
-            <div class="right">1233 XP</div>
-          </li>
-
-          <li class="user-item">
-            <div class="left">
-              <span class="avatar"></span>
-              Usuario 3
-            </div>
-            <div class="right">1232 XP</div>
-          </li>
-        </ul>
+                  {{ friend.username }}
+              </div>
+              <div class="right">{{ friend.xp }} XP</div>
+            </li>
+          }
+        } 
+      </ul>
 
         <button class="fab-plus" (click)="nuevoAmigo()">+</button>
       }

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { signal } from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
+import { FriendSummary } from '../../model/social/FriendSummary'
+import { Remote } from '../../model/remote/remote';
 
 @Component({
   selector: 'app-social',
@@ -15,9 +17,29 @@ export class Social {
   boardPreviewUrl = '/assets/picture.jpeg';
   coins = 1234;
   rankedPoints = 1234;
-  public popUP_nuevoAmigo = signal(false);
+  // Llamada a remote para obtener datos
+
+  public popUP_newFriend = signal(false);
+  public popUP_request = signal(false);
   public state = signal(true); // State == true -> Social, State == false -> In Progress
 
+  friends: FriendSummary[] = []; // Lista de amigos del usuario
+  friendshipsRequests: FriendSummary[] = [];
+  private friendService = inject(Remote);
+  public friendsInfo = signal(false);
+
+  ngOnInit(): void {
+      this.friendService.getFriends().subscribe({
+        next: (data) => {
+          this.friends = data;
+          console.log(this.friends);
+          this.friendsInfo.set(true);
+        },
+        error: (err) => {
+          console.error(err);
+        }
+      });
+  }
 
   onArrowClick() {
     // Llamada al backend para obetener solicitudes de amistad?
@@ -27,7 +49,32 @@ export class Social {
 
   nuevoAmigo(){
     console.log('Abrir pop-up para introducir datos de nuevo amigo');
-    this.popUP_nuevoAmigo.set(true);
+    this.popUP_newFriend.set(true);
+  }
+
+  addFriend(username:string) {
+  this.friendService.addFriend(username).subscribe({
+    next: () => {
+      console.log('Friendship request sended');
+      this.popUP_newFriend.set(false)
+    },
+    error: (err) => {
+      console.error(err);
+    }
+  });
+}
+
+  pedingRequest(){
+    this.friendService.getRequestFriends().subscribe({
+    next: () => {
+      console.log('Friendship requests available');
+      this.popUP_request.set(true);
+    },
+    error: (err) => {
+      console.error(err);
+    }
+  });
+    
   }
 
   copyLink(){}

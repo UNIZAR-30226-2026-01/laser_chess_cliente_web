@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Auth } from './auth';
+import { Remote } from './remote';
 
-describe('Auth', () => {
-  let service: Auth;
+describe('Remote', () => {
+  let service: Remote;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Auth);
+    service = TestBed.inject(Remote);
   });
 
   it('should be created', () => {

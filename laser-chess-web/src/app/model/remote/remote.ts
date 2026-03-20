@@ -4,7 +4,7 @@ import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas 
 // Injectable -> marca la clase como servicio inyectable
 // inject -> nueva forma de inyectar dependencias 
 
-import { catchError, Observable, of, tap, BehaviorSubject } from 'rxjs';
+import { catchError, Observable, tap, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router'; // Para redirigir al usuario
 
 import { LoginRequest } from '../auth/LoginRequest';
@@ -14,14 +14,18 @@ import { API_URL, ACCESS_TOKEN } from '../../constants/app.const';
 import { LoginResponse } from '../auth/LoginResponse';
 import { AccountResponse } from '../auth/AccountResponse';
 
+import { FriendSummary } from '../social/FriendSummary';
+import { UpdateAccountRequest } from '../auth/UpdateAccountRequest'
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class Auth {
+export class Remote {
   private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
+  private accessToken: string = "";
 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
@@ -41,6 +45,77 @@ export class Auth {
     );
   }
 
+  // Solicitud a la API para obtener los detalles de la cuenta
+  // Conviene tener varias llamadas -> solo info de la caja (todas las pantallas)
+  getAccount(id_account: number){
+    return this.http.get<AccountResponse>(`${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during getting info from de account with id_account');
+      })
+    );
+  }
+
+  // Solicitud a la API para actualizar los dellates de la cuenta
+  updateAccount(updateRequest: UpdateAccountRequest){
+    return this.http.post<AccountResponse>(`${API_URL}/account/update`, updateRequest, { observe: 'response' }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during updating account');
+      })
+    );
+  }
+
+  // Solicitud a a la API para borrar la cuenta
+  deleteAccount(){
+    return this.http.post(`${API_URL}/account/delete`, { observe: 'response' }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during deleteing account');
+      })
+    );
+  }
+
+
+  // Solicitud a la API para obtener la lista de amigos
+  getFriends() : Observable<FriendSummary[]>{
+    return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship`, {
+    headers: {
+      Authorization: `Bearer ${this.accessToken}`
+    }
+    }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during getting info about friends');
+      })
+    );
+  }
+
+  // Solicitud a la API para obtener la lista de solicitudes de amigos
+  getRequestFriends() : Observable<FriendSummary[]>{
+    return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship/pending`, {
+    headers: {
+      Authorization: `Bearer ${this.accessToken}`
+    }
+    }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during getting info about friend requests');
+      })
+    );
+  }
+
+  addFriend(username: string) : Observable<void> {
+    return this.http.post<void>(`${API_URL}/api/friendship`, { receiverUsername: username }, {
+    headers: {
+      Authorization: `Bearer ${this.accessToken}`
+    }
+    }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during adding friend');
+      })
+    );
+  }
+
+
+
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   MOVIDAS DE TOKENS
   - ACCESS TOKEN
@@ -49,16 +124,16 @@ export class Auth {
   -> PENDIENTE DE IMPLEMENTAR EN BACKEND Y REVISAR EN FRONTEND
 */
   setTokens(accessToken: string): void {
-    localStorage.setItem(ACCESS_TOKEN, accessToken);
+    this.accessToken = accessToken;
     this.isAuthenticated$.next(true);
   }
 
   private hasToken(): boolean {
-    return !!localStorage.getItem(ACCESS_TOKEN);
+    return this.accessToken == null;
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem(ACCESS_TOKEN);
+    return this.accessToken;
   }
 
   isTokenExpired(token: string): boolean {
