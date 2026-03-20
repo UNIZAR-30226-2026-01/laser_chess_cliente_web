@@ -11,8 +11,8 @@
                     <div class="col-popup">
                         <h2>AÑADIR</h2>
                         <h3>Escribe su nombre de usuario</h3>
-                        <input type="text" #usernameInput class="form-control" placeholder="username">
-                        <button class="form-button" (click)="addFriend(usernameInput.value)">ENVIAR SOLICITUD</button>
+                        <input #usernameInput type="text" class="form-control" placeholder="username">
+                        <button class="form-button" (click)="addFriend()">ENVIAR SOLICITUD</button>
                         <h3>O espera a ser aceptad@</h3>
                     </div>
                     <div class="col-popup">
@@ -33,16 +33,17 @@
         <div class="popup-amigo" (click)="$event.stopPropagation()">
             <div class="container text-center">
                <ul class="user-list">
-                  @if (friendshipsRequests.length == 0) {
+                  @if (request.length == 0) {
                     <p>No tienes ningua solicitud de amistad pendiente</p>
                   } @else {
-                    @for (friendship of friendshipsRequests; track friendship.userId) {
+                    @for (friendship of request; track friendship.userId) {
                       <li class="user-item">
                         <div class="left">
                         <span class="avatar"></span>
                             {{ friendship.username }}
                         </div>
                         <div class="right">{{ friendship.xp }} XP</div>
+                        <button (click)="acceptRequest()">Aceptar</button>
                       </li>
                     }
                   } 
@@ -70,7 +71,7 @@
         <div class="row_friend-requests">
           <div class="left">
             <span class="avatar"></span>
-            <span (click)="pedingRequest()">Solicitudes de amistad</span>
+            <button (click)="pedingRequest()">Solicitudes de amistad</button>
           </div>
         </div>
         <ul class="user-list">

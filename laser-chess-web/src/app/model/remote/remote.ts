@@ -16,6 +16,7 @@ import { AccountResponse } from '../auth/AccountResponse';
 
 import { FriendSummary } from '../social/FriendSummary';
 import { UpdateAccountRequest } from '../auth/UpdateAccountRequest'
+import { FriendshipRequest } from '../social/FriendshipRequest';
 
 
 @Injectable({
@@ -27,6 +28,7 @@ export class Remote {
   private router: Router = inject(Router);
   private accessToken: string = "";
 
+  /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
     return this.http.post<LoginResponse>(`${API_URL}/login`, loginRequest, { observe: 'response' }).pipe(
@@ -73,7 +75,7 @@ export class Remote {
     );
   }
 
-
+  /*--------------- SOCIAL ---------------*/ 
   // Solicitud a la API para obtener la lista de amigos
   getFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship`, {
@@ -100,8 +102,8 @@ export class Remote {
     );
   }
 
-  addFriend(username: string) : Observable<void> {
-    return this.http.post<void>(`${API_URL}/api/friendship`, { receiverUsername: username }, {
+  addFriend(request:FriendshipRequest) : Observable<void> {
+    return this.http.post<void>(`${API_URL}/api/friendship`, request , {
     headers: {
       Authorization: `Bearer ${this.accessToken}`
     }
@@ -111,6 +113,21 @@ export class Remote {
       })
     );
   }
+
+  acceptRequest(friend: String) : Observable<void> {
+    return this.http.put<void>(`${API_URL}/api/friendship/${friend}`, {
+    headers: {
+      Authorization: `Bearer ${this.accessToken}`
+    }
+    }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during adding friend');
+      })
+    );
+  }
+
+  
+
 
 
 
