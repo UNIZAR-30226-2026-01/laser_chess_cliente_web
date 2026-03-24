@@ -11,7 +11,7 @@ export class Pieza {
   // Recibimos la posición inicial y el tamaño desde el padre
   initialX = input.required<number>();
   initialY = input.required<number>();
-  player = input.required<'red' | 'royalblue'>();
+  player = input.required<'red' | 'blue'>();
   cols = input(10);
   rows = input(8);
   
