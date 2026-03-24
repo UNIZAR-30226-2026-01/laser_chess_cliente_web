@@ -1,17 +1,29 @@
+<div class="player_card">Usuario 1</div>
 <div class="board-container">
   <div class="board">
   @for (p of listaPiezas(); track p.id) {
-    <app-pieza 
-      #piezaRef
-      [initialX]="p.x" 
-      [initialY]="p.y" 
-      [cols]="columnas"
-      [rows]="filas"
-      [player]="$any(p.color)"
-      (selected)="seleccionarPieza(piezaRef)"
-      (endMoved)="deseleccionar()">
-    </app-pieza>
+    @if (p.esMia) {
+      <app-pieza 
+        #piezaRef
+        [initialX]="p.x" 
+        [initialY]="p.y" 
+        [cols]="columnas"
+        [rows]="filas"
+        [player]="$any(p.color)"
+        (selected)="seleccionarPieza(piezaRef)"
+        (endMoved)="deseleccionar(p.id, piezaRef.position())">
+      </app-pieza>
+    } @else {
+      <app-pieza-rival 
+        [x]="p.x" 
+        [y]="p.y"
+        [rotation]="p.rotation"
+        [color]="p.color">
+      </app-pieza-rival>
+    }
   }
+</div>
+
 </div>
 <div class="controls-panel">
     @if (piezaActiva()) {
@@ -19,3 +31,4 @@
       <button class="btn-girar" (click)="rotateSelected(90)">Girar der</button>
     }
   </div>
+<div class="player_card">Usuario 2</div>

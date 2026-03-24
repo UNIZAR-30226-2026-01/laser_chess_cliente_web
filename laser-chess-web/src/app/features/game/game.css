@@ -42,3 +42,8 @@
 .btn-girar:hover{
   background-color: rgb(162, 162, 162);
 }
+
+.player-card{
+  margin: 1 auto black;
+  position: relative;
+}
