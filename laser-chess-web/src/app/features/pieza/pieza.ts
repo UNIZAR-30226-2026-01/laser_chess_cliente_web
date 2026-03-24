@@ -1,4 +1,4 @@
-import { Component, signal,  input, output} from '@angular/core';
+import { Component, signal,  input, output, SimpleChanges} from '@angular/core';
 
 @Component({
   selector: 'app-pieza',
@@ -11,12 +11,13 @@ export class Pieza {
   // Recibimos la posición inicial y el tamaño desde el padre
   initialX = input.required<number>();
   initialY = input.required<number>();
-  player = input.required<'red' | 'blue'>();
   cols = input(10);
   rows = input(8);
+  moveRequested = output<{ x: number, y: number }>();
+
   
   selected = output<Pieza>();
-  endMoved = output<void>();
+  endMoved = output<{ origen: {x: number, y: number}, destino: {x: number, y: number} }>();
 
   // Posición de la pieza
   position = signal({ x: 0, y: 0 });
@@ -30,37 +31,26 @@ export class Pieza {
   // Indica si los spots deben mostrarse
   showSpots = signal(false);
 
-
   ngOnInit() {
     // Al iniciar, colocamos la pieza en su sitio
     this.position.set({ x: this.initialX(), y: this.initialY() });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Al iniciar, colocamos la pieza en su sitio
+    if (changes['initialX'] || changes['initialY']) {
+      this.position.set({ x: this.initialX(), y: this.initialY() });
+    }
   
   }
   
   select() {
-    this.showSpots.set(true);
+    //this.showSpots.set(true);
     this.selected.emit(this);
   }
 
-  move(dx: number, dy: number) {
-    const { x, y } = this.position();
-    const newX = x + dx;
-    const newY = y + dy;
-
-    if (newX >= 1 && newX <= this.cols() &&
-        newY >= 1 && newY <= this.rows()) {
-      this.position.set({ x: newX, y: newY });
-    }
-    this.showSpots.set(false);
-
-    // Aviso al padre de que la pieza se ha movido para que oculte los botones
-    this.endMoved.emit()
-  }
-
-  rotate(angle: number) {
-    // Rotar la pieza
-    this.rotation.update(prev => prev + angle);
-    this.showSpots.set(false);
+  solicitarMovimiento(nx: number, ny: number) {
+    this.moveRequested.emit({ x: nx, y: ny });
   }
 
 

@@ -9,16 +9,14 @@
         [initialY]="p.y" 
         [cols]="columnas"
         [rows]="filas"
-        [player]="$any(p.color)"
         (selected)="seleccionarPieza(piezaRef)"
-        (endMoved)="deseleccionar(p.id, piezaRef.position())">
+        (moveRequested)="gestionarMovimiento($event)">
       </app-pieza>
     } @else {
       <app-pieza-rival 
         [x]="p.x" 
         [y]="p.y"
-        [rotation]="p.rotation"
-        [color]="p.color">
+        [rotation]="p.rotation">
       </app-pieza-rival>
     }
   }
@@ -32,3 +30,4 @@
     }
   </div>
 <div class="player_card">Usuario 2</div>
+<button (click)="esMiTurno.set(true)">Cambiar turno para comprobar funcionamiento</button>
