@@ -1,49 +1,148 @@
-.board {
-  width: 95%;
-  max-width: 600px;
-  /* Relación de aspecto basada en tus columnas/filas */
-  aspect-ratio: 10 / 8; 
+/* Contenedor Principal: Distribución Horizontal */
+.game-screen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: #ffffff;
+  gap: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
+/* Paneles laterales para Jugadores y Botones */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 15rem; /* Tamaño fijo para laterales */
+  height: 80vh;
+}
+
+/* Contenedor del Tablero (Centro) */
+/* Contenedor que envuelve al tablero para darle margen */
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Reducimos el padding para que el tablero tenga más espacio */
+  padding: 1rem; 
+  overflow: hidden;
+}
+
+.board {
+  /* Usamos vmin para que el tablero escale según el espacio disponible 
+     pero manteniendo celdas cuadradas. 
+     Como tenemos 10 columnas, 80vmin de ancho da celdas de 8vmin cada una. */
+  width: 95vmin; 
+  height: 76vmin; 
+  
   display: grid;
-  /* Usamos las variables para que el grid sea exacto */
+  /* Definimos tamaños exactos para que no haya deformación */
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(8, 1fr);
   
-  border: 3px solid #2c3e50;
-  background-color: #f8f9fa;
+  border: 1px solid #2c3e50; 
+  background-color: #fff;
   
-  /* Ajustamos el fondo para que las líneas coincidan con 8x10 */
+  /* Ajustamos las guías para que sean casi imperceptibles */
   background-image: 
-    linear-gradient(to right, #dee2e6 1px, transparent 1px),
-    linear-gradient(to bottom, #dee2e6 1px, transparent 1px);
-  background-size: calc(100% / 10) calc(100% / 8);
+    linear-gradient(to right, #f0f0f0 1.5px, transparent 1.5px),
+    linear-gradient(to bottom, #f0f0f0 1.5px, transparent 1.5px);
+  background-size: 10% 12.5%; /* 100/10 y 100/8 */
   
-  margin: 1rem auto;
   position: relative;
 }
 
-.controls-panel{ /* Falta por completar */
+/* Tarjetas de Jugador */
+.player_card {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
 }
 
-.btn-girar{ /* Falta por completar */
-  margin: 1 auto black;
-  position: relative;
-  background-color: rgb(255, 255, 255);
-  cursor: pointer;
+.avatar {
+  font-size: 2.5rem;
+  background: #f0f0f0;
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: transform 0.1s,  0.2s;
 }
 
-.btn-girar:hover{
-  background-color: rgb(162, 162, 162);
+.timer {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.2rem 1rem;
+  border: 2px solid #e74c3c;
+  color: #333;
 }
 
-.player-card{
-  margin: 1 auto black;
-  position: relative;
+.player_card.my-user .timer {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.2rem 1rem;
+  border: 2px solid royalblue;
+  color: #333;
+}
+
+/* Paneles de Control */
+.controls-panel {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-girar {
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid #333;
+  background-color: #ffebcc;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-girar:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.btn-girar:hover {
+  background-color: #ffd1a3;
+}
+
+/* Botón de Debug */
+.debug-btn {
+  margin-top: auto;
+  font-size: 0.8rem;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* MEDIA QUERIES para móviles (cambio a vertical) */
+@media (max-width: 900px) {
+  .game-screen {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  .side-panel {
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    order: 2;
+  }
+  
+  .main-content {
+    order: 1;
+    width: 95%;
+  }
 }

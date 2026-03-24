@@ -169,6 +169,7 @@ export class Game implements OnInit {
           return { ...p, x: hasta.x, y: hasta.y };
         }
 
+        // Caso de permutaciones de piezas
         if (p.x === hasta.x && p.y === hasta.y) {
         console.log("Intercambiando pieza de destino a origen");
         return { ...p, x: desde.x, y: desde.y };
