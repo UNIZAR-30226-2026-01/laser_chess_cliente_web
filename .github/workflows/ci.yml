@@ -19,11 +19,11 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd laser_chess_web
+          cd laser-chess-web
           npm install
           npm install ws
 
       - name: Build
         run: |
-          cd laser_chess_web
+          cd laser-chess-web
           npm run build
