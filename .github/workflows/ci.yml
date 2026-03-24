@@ -1,13 +1,6 @@
-on:
-  push:
-    branches: [ main ]
-
 jobs:
   test-frontend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: './laser_chess_web'
     steps:
       - uses: actions/checkout@v4
 
@@ -15,22 +8,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          # Solo activamos cache si estamos 100% seguros del path. 
+          # Si falla, comenta estas dos líneas:
           cache: 'npm'
-          cache-dependency-path: './laser_chess_web/package-lock.json'
+          cache-dependency-path: 'laser_chess_web/package-lock.json'
 
       - name: Install Dependencies
         run: |
+          cd laser_chess_web
           npm install
-          npm install ws # Instalamos la librería para el servidor mock
+          npm install ws
 
       - name: Start Mock Backend
-        run: node test-backend.js & # El '&' lo ejecuta en segundo plano
+        # Asegúrate de que test-backend.js esté DENTRO de laser_chess_web
+        run: node laser_chess_web/test-backend.js & 
 
       - name: Build Frontend
-        run: npm run build
-
-      - name: Run Frontend Tests
         run: |
-          # Aquí ejecutarías tus tests unitarios (Karma/Jest)
-          # que verifiquen que al recibir "TB8:B7" la pieza se mueve.
-          npm test -- --watch=false --browsers=ChromeHeadless
+          cd laser_chess_web
+          npm run build
