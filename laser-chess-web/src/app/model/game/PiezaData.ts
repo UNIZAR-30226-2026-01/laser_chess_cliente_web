@@ -3,6 +3,5 @@ export interface PiezaData {
   x: number;
   y: number;
   rotation: number;
-  color: 'red' | 'blue';
   esMia: boolean;
 }

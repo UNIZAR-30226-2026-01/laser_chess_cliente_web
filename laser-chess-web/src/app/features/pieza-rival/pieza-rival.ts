@@ -1,4 +1,4 @@
-import { Component,  signal, input} from '@angular/core';
+import { Component,  signal, input, SimpleChanges} from '@angular/core';
 
 
 
@@ -13,7 +13,20 @@ export class PiezaRival {
   x = input.required<number>();
   y = input.required<number>();
   rotation = input.required<number>();
-  color = input.required<string>();
 
   position = signal({ x: 0, y: 0 });
+
+  ngOnInit() {
+    // Al iniciar, colocamos la pieza en su sitio
+    this.position.set({ x: this.x(), y: this.y() });
+  
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Al iniciar, colocamos la pieza en su sitio
+    if (changes['x'] || changes['y']) {
+      this.position.set({ x: this.x(), y: this.y() });
+    }
+  
+  }
 }
