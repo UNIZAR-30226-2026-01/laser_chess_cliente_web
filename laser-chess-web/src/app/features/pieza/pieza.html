@@ -2,7 +2,8 @@
   class="pieza"
   [style.gridColumn]="position().x"
   [style.gridRow]="position().y"
-  [style.transform]="'rotate(' + rotation() + 'deg)'"
+  [style.transform]="'rotate(' + rotationInput() + 'deg)'" 
+  style="transition: transform 0.3s ease-in-out;"
   (click)="select()"
 >P</div>
 

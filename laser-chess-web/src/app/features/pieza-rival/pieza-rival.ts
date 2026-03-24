@@ -12,7 +12,8 @@ import { Component,  signal, input, SimpleChanges} from '@angular/core';
 export class PiezaRival {
   x = input.required<number>();
   y = input.required<number>();
-  rotation = input.required<number>();
+  rotationInput = input.required<number>();
+  
 
   position = signal({ x: 0, y: 0 });
 

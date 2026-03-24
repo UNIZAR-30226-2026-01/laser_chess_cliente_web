@@ -16,7 +16,7 @@
   justify-content: center;
   color: white;
   font-weight: bold;
-  z-index: 2; /* Por encima de los spots */
+  z-index: 1; /* Por encima de los spots */
   transform-origin: center;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -28,7 +28,7 @@
   background-color: rgba(0, 200, 0, 0.4);
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1; /* Por debajo de la pieza */
+  z-index: 999; /* Por debajo de la pieza */
 }
 
 .spot:hover{

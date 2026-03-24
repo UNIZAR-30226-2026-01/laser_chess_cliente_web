@@ -1,4 +1,4 @@
-import { Component, signal,  input, output, SimpleChanges} from '@angular/core';
+import { Component, signal,  input, output, SimpleChanges, OnChanges, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-pieza',
@@ -7,7 +7,7 @@ import { Component, signal,  input, output, SimpleChanges} from '@angular/core';
   templateUrl: './pieza.html',
   styleUrls: ['./pieza.css'],
 })
-export class Pieza {
+export class Pieza implements OnInit, OnChanges{
   // Recibimos la posición inicial y el tamaño desde el padre
   initialX = input.required<number>();
   initialY = input.required<number>();
@@ -26,7 +26,7 @@ export class Pieza {
   moverDisp = signal(false);
 
   // Necesitaría un signal por componente o algún tipo de variable
-  rotation = signal(0); // Ángulo de rotación en grados
+  rotationInput = input.required<number>();
 
   // Indica si los spots deben mostrarse
   showSpots = signal(false);

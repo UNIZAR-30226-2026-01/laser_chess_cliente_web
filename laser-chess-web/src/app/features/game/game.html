@@ -7,6 +7,7 @@
         #piezaRef
         [initialX]="p.x" 
         [initialY]="p.y" 
+        [rotationInput]="p.rotation"
         [cols]="columnas"
         [rows]="filas"
         (selected)="seleccionarPieza(piezaRef)"
@@ -16,7 +17,7 @@
       <app-pieza-rival 
         [x]="p.x" 
         [y]="p.y"
-        [rotation]="p.rotation">
+        [rotationInput]="p.rotation">
       </app-pieza-rival>
     }
   }

@@ -117,8 +117,9 @@ export class Game implements OnInit {
 
 
   /*****************************************************************************/
-  /*                Procesamiento confirmación del backend                     */
+  /*                  Procesamiento mensaje  del backend                       */
   /*****************************************************************************/
+
   private procesarAccion(msg: string) {
     const tipoAccion = msg[0];
     if (tipoAccion === 'T') {
@@ -147,6 +148,7 @@ export class Game implements OnInit {
     }
 
     // Hay que añadir la actualización del tiempo
+    // Captura de piezas + laser
 
   }
 
@@ -166,6 +168,11 @@ export class Game implements OnInit {
           console.log("Moviendo pieza");
           return { ...p, x: hasta.x, y: hasta.y };
         }
+
+        if (p.x === hasta.x && p.y === hasta.y) {
+        console.log("Intercambiando pieza de destino a origen");
+        return { ...p, x: desde.x, y: desde.y };
+        }
         return p;
       })
     );
@@ -176,9 +183,8 @@ export class Game implements OnInit {
     this.listaPiezas.update(piezas => 
       piezas.map(p => {
         if (p.x === pos.x && p.y === pos.y) {
-          const angulo = (direccion === 'R') ? 90 : -90;
-          // Importante: sumamos al ángulo que ya tenía
-          return { ...p, rotation: p.rotation + angulo };
+          const angulo = (direccion === 'R') ? 90 : -90; 
+          return { ...p, rotation: (p.rotation + angulo) };
         }
         return p;
       })
