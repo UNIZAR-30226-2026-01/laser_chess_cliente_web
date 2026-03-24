@@ -22,7 +22,8 @@ import { Pieza } from './features/pieza/pieza';
 export const routes: Routes = [
 
   // Pantalla inicial
-  { path: '', component: Start },
+  //{ path: '', component: Start },
+  { path: 'home', component: Home },
 
   // Rutas públicas
   { path: 'signin', component: Signin },

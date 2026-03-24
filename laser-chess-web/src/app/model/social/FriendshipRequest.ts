@@ -1,3 +1,3 @@
 export interface FriendshipRequest{
-    receiver_username: String;
+    receiver_username: string;
 }

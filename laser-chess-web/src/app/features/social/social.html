@@ -28,30 +28,53 @@
     </div>
 }
 
-@if(popUP_request()) {
+ @if(popUP_request()) {
     <div id="overlay" class="overlay" (click)="popUP_request.set(false)">
-        <div class="popup-amigo" (click)="$event.stopPropagation()">
-            <div class="container text-center">
-               <ul class="user-list">
-                  @if (request.length == 0) {
-                    <p>No tienes ningua solicitud de amistad pendiente</p>
-                  } @else {
-                    @for (friendship of request; track friendship.userId) {
-                      <li class="user-item">
-                        <div class="left">
-                        <span class="avatar"></span>
-                            {{ friendship.username }}
+        <div class="popup-solicitudes" (click)="$event.stopPropagation()">
+            <div class="popup-header">
+              <h2>Solicitudes de amistad</h2>
+              <button class="close-button" (click)="popUP_request.set(false)">✕</button>
+            </div>
+            
+            <div class="popup-content">
+              @if (!requestInfo()) {
+                <div class="loading-state">
+                  <p>Cargando solicitudes...</p>
+                </div>
+              } @else if (request.length === 0) {
+                <div class="empty-state">
+                  <p>No tienes solicitudes de amistad pendientes</p>
+                </div>
+              } @else {
+                <ul class="request-list">
+                  @for (friendship of request; track friendship.userId) {
+                    <li class="request-item">
+                      <div class="request-info">
+                        <div class="avatar-placeholder">
+                          <span class="avatar-icon">👤</span>
                         </div>
-                        <div class="right">{{ friendship.xp }} XP</div>
-                        <button (click)="acceptRequest()">Aceptar</button>
-                      </li>
-                    }
-                  } 
-                </ul> 
+                        <div class="request-details">
+                          <span class="request-username">{{ friendship.username }}</span>
+                          <span class="request-xp">{{ friendship.xp }} XP</span>
+                        </div>
+                      </div>
+                      <div class="request-actions">
+                        <button class="btn-accept" (click)="acceptRequest(friendship.username)">
+                          <span>✓</span> Aceptar
+                        </button>
+                        <button class="btn-reject" (click)="rejectRequest(friendship.username)">
+                          <span>✗</span> Rechazar
+                        </button>
+                      </div>
+                    </li>
+                  }
+                </ul>
+              }
             </div>
         </div>
     </div>
-}
+  }
+
 
   <div class="folder-container">
 
@@ -68,12 +91,18 @@
 
     <div class="folder-body">
       @if (state()){
-        <div class="row_friend-requests">
+        <div class="friend-request-button" (click)="openRequestPopup()">
           <div class="left">
-            <span class="avatar"></span>
-            <button (click)="pedingRequest()">Solicitudes de amistad</button>
+            <span class="avatar">👥</span>
+            <span class="request-text">Solicitudes de amistad</span>
+          </div>
+          <div class="right">
+            @if (request.length > 0) {
+              <span class="notification-badge">{{ request.length }}</span>
+            }
           </div>
         </div>
+
         <ul class="user-list">
         @if (!friendsInfo()) {
           <p>Cargando...</p>
@@ -83,7 +112,7 @@
           @for (friend of friends; track friend.userId) {
             <li class="user-item">
               <div class="left">
-              <span class="avatar"></span>
+              <span class="avatar">👤</span>
                   {{ friend.username }}
               </div>
               <div class="right">{{ friend.xp }} XP</div>
@@ -110,7 +139,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
           <li class="game-item">
@@ -127,7 +156,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
           <li class="game-item">
@@ -144,7 +173,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
           <li class="game-item">
@@ -161,7 +190,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
         </ul>

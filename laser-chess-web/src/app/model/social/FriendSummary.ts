@@ -1,6 +1,6 @@
 export interface FriendSummary {
-    userId: String;
-    username: String;
+    userId: string;
+    username: string;
     avatar: number;
     xp: number;
 }
