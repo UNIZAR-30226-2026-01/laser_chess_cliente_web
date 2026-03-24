@@ -1,5 +1,13 @@
+name: Test Frontend
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 jobs:
-  test-frontend:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -8,10 +16,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # Solo activamos cache si estamos 100% seguros del path. 
-          # Si falla, comenta estas dos líneas:
-          cache: 'npm'
-          cache-dependency-path: 'laser_chess_web/package-lock.json'
 
       - name: Install Dependencies
         run: |
@@ -19,11 +23,7 @@ jobs:
           npm install
           npm install ws
 
-      - name: Start Mock Backend
-        # Asegúrate de que test-backend.js esté DENTRO de laser_chess_web
-        run: node laser_chess_web/test-backend.js & 
-
-      - name: Build Frontend
+      - name: Build
         run: |
           cd laser_chess_web
           npm run build
