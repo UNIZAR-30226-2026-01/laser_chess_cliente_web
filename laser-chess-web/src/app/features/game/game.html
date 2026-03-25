@@ -29,6 +29,9 @@
           </app-pieza-rival>
         }
       }
+      @if (laserPath().length > 0) {
+        <app-laser [path]="laserPath()"></app-laser>
+      }
 </div>
   </main>
 

@@ -3,6 +3,7 @@ import { Pieza } from '../pieza/pieza';
 import { PiezaData } from '../../model/game/PiezaData';
 import { PiezaRival } from '../pieza-rival/pieza-rival';
 import { Websocket } from '../../model/remote/websocket'; // Ajusta la ruta
+import { Laser } from '../laser/laser';
 
 const COL_LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 
@@ -20,7 +21,7 @@ function fromChess(coord: string): {x: number, y: number} {
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [Pieza, PiezaRival],
+  imports: [Pieza, PiezaRival, Laser],
   templateUrl: './game.html',
   styleUrl: './game.css',
 })
@@ -32,6 +33,7 @@ export class Game implements OnInit {
   private wsService = inject(Websocket);
   esMiTurno = signal(true);
   piezaActiva = signal<Pieza | null>(null);
+  laserPath = signal<{x: number, y: number}[]>([]);
   columnas = 10;
   filas = 8;
 
@@ -136,6 +138,16 @@ export class Game implements OnInit {
       this.rotarPiezaEnTablero(pos, tipoAccion);
     }
 
+    // No va a llegar como mensaje externo, va a llegar dentro del mismo que antes pero por simplificar
+    // y tener una primera aproximación de como sería el laser
+    if (msg.startsWith('LASER:')) { 
+       // Imaginando que el backend manda: "LASER:a1,a3,c3"
+       const coordsRaw = msg.substring(6).split(',');
+       const path = coordsRaw.map(c => fromChess(c));
+       
+       this.dispararLaser(path);
+    }
+
     if(this.esMiTurno()){
       this.esMiTurno.set(false); // Bloqueamos turno
       this.piezaActiva()?.showSpots.set(false);
@@ -190,6 +202,12 @@ export class Game implements OnInit {
         return p;
       })
     );
+  }
+
+  dispararLaser(path: {x: number, y: number}[]) {
+    this.laserPath.set(path);
+    // Limpiar el láser después de 2 segundos 
+    setTimeout(() => this.laserPath.set([]), 3000);
   }
 
   

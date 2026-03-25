@@ -12,6 +12,7 @@ export class Websocket {
   /**
    * Conecta al servidor. 
    */
+  // Hay que hacer una llamada la backend a un endpoint para obtener el WebSocket
   public connect(url: string): void {
     this.socket$ = webSocket({
       url: url,
