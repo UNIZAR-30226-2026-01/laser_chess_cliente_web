@@ -81,6 +81,83 @@
   border-bottom: none;
 }
 
+/* Para los botones de iniciar amistosa y borrar */
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.username {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.user-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.friend-xp {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: normal;
+}
+
+.friend-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-challenge, .btn-delete {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.btn-challenge {
+    background: #4caf50;
+    color: white;
+}
+
+.btn-challenge:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+.btn-delete {
+    background: #f44336;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #da190b;
+    transform: scale(1.05);
+}
+
+.btn-challenge:active, .btn-delete:active {
+    transform: scale(0.95);
+}
+
 /* ----------------------------------------- */
 /* ------------ PANTALLA SOCIAL ------------ */
 /* ----------------------------------------- */
@@ -259,7 +336,6 @@
 .request-item:hover {
   background: white;
   box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
 }
 
 .request-info {
@@ -527,5 +603,167 @@
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+
+/* POPUP INFORMACIÓN DE USUARIO */
+.popup-userinfo {
+  background: white;
+  border: 0.15rem solid black;
+  width: min(90%, 35rem);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0.4rem 0.4rem 0 black;
+  animation: popupAppear 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.user-info-detail {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  border-bottom: 0.1rem solid #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.user-avatar-large {
+  flex-shrink: 0;
+}
+
+.avatar-placeholder-large {
+  width: 6rem;
+  height: 6rem;
+  background: linear-gradient(135deg, hsl(261deg 80% 48%), hsl(261deg 80% 38%));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-icon-large {
+  font-size: 3rem;
+  color: white;
+}
+
+.user-avatar-large img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 0.15rem solid black;
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.3rem 0;
+  border-bottom: 0.05rem solid #f0f0f0;
+}
+
+.detail-label {
+  font-weight: bold;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.user-actions-popup {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.btn-challenge-popup, .btn-delete-popup {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-challenge-popup {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-challenge-popup:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+.btn-delete-popup {
+  background: #f44336;
+  color: white;
+}
+
+.btn-delete-popup:hover {
+  background: #da190b;
+  transform: scale(1.05);
+}
+
+.btn-challenge-popup:active, .btn-delete-popup:active {
+  transform: scale(0.98);
+}
+
+/* Hacer los items clickeables */
+.user-item, .request-item {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-item:hover, .request-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Asegurar que los botones no se vean afectados por el cursor pointer del item */
+.user-item .friend-actions button,
+.request-item .request-actions button {
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .user-info-detail {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .user-actions-popup {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-challenge-popup, .btn-delete-popup {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -36,12 +36,55 @@ export class Social {
   private router = inject(Router);
   public friendsInfo = signal(false);
   public requestInfo = signal(false);
+  public popUP_userInfo = signal(false);
+  public selectedUser: FriendSummary | null = null;
   
 
   ngOnInit(): void {
       this.loadFriends();
+      this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn 
   }
 
+  onArrowClick() {
+    // Llamada al backend para obetener solicitudes de amistad?
+    console.log('Arrow clicked');
+    // Redirigir a pantalla de solicitudes de amistad
+  }
+
+  nuevoAmigo(){
+    console.log('Abrir pop-up para introducir datos de nuevo amigo');
+    this.popUP_newFriend.set(true);
+  }
+
+  // Abrir pop-up de solicitudes
+  openRequestPopup() {
+    this.loadRequests();
+    this.popUP_request.set(true);
+  }
+
+  // abrir pop-up con información del usuario
+  openUserInfo(user: FriendSummary) {
+    this.selectedUser = user;
+    this.popUP_userInfo.set(true);
+  }
+
+  // Cerrar pop-up de información
+  closeUserInfo() {
+    this.popUP_userInfo.set(false);
+    this.selectedUser = null;
+  }
+
+  copyLink() {
+    console.log('Copiar enlace');
+  }
+  
+  //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
+  resumeGame(gameId?: string) {
+    console.log('Retomando partida...');
+    this.router.navigate(['/game']); 
+  }
+
+  //Cargar lista de amigos
   loadFriends(): void {
     this.friendService.getFriends().subscribe({
       next: (data : FriendSummary[]) => {
@@ -55,6 +98,7 @@ export class Social {
     });
   }
 
+  //Cargar solicitudes de amistad recibidas
   loadRequests(): void {
     this.requestInfo.set(false);
     this.friendService.getRequestFriends().subscribe({
@@ -70,17 +114,12 @@ export class Social {
     });
   }
 
-  onArrowClick() {
-    // Llamada al backend para obetener solicitudes de amistad?
-    console.log('Arrow clicked');
-    // Redirigir a pantalla de solicitudes de amistad
-  }
+  //Load sentRequest
 
-  nuevoAmigo(){
-    console.log('Abrir pop-up para introducir datos de nuevo amigo');
-    this.popUP_newFriend.set(true);
-  }
+  // Cancelar una solicitud de amistad enviada
+  //deleteSentReques(friend):void{}
 
+  //Añadir amigo
   addFriend() {
     const username = this.usernameInput.nativeElement.value.trim();
     if (!username) return; 
@@ -99,14 +138,21 @@ export class Social {
         console.error(err);
       }
     });
-}
-
-
-  // Abrir pop-up de solicitudes
-  openRequestPopup() {
-    this.loadRequests();
-    this.popUP_request.set(true);
   }
+
+  // Eliminar amigo
+  deleteFriend(friendUsername: string): void {
+      this.friendService.deleteFriend(friendUsername).subscribe({
+        next: () => {
+            console.log('Amigo eliminado:', friendUsername);
+            // Recargar la lista de amigos
+            this.loadFriends();
+        },
+        error: (err: any) => {
+            console.error('Error al eliminar amigo:', err);
+        }
+    });
+}
 
   // Aceptar solicitud de amistad
   acceptRequest(requestUsername: string) {
@@ -154,15 +200,22 @@ export class Social {
     */
   }
 
-  copyLink() {
-    console.log('Copiar enlace');
+
+  // Inciiar a una partida amistosa
+  challengeFriend(friendUsername: string): void {
+    this.friendService.challengeFriend(friendUsername).subscribe({
+      next: (response) => {
+        console.log('Reto enviado a:', friendUsername);
+        this.router.navigate(['/game']); //Demomento se le manda a la pantalla de juego
+      },
+      error: (err: any) => {
+        console.error('Error al enviar reto:', err);
+      }
+    });
   }
-  
-  //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
-  resumeGame(gameId?: string) {
-    console.log('Retomando partida...');
-    this.router.navigate(['/game']); 
-  }
+
+  // Cancelar challengeRequest
+  //
 
 
 }
