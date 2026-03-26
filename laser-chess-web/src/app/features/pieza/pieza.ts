@@ -1,4 +1,5 @@
 import { Component, signal,  input, output, SimpleChanges, OnChanges, OnInit} from '@angular/core';
+import { TipoPieza } from '../../model/game/TipoPieza'
 
 @Component({
   selector: 'app-pieza',
@@ -11,13 +12,16 @@ export class Pieza implements OnInit, OnChanges{
   // Recibimos la posición inicial y el tamaño desde el padre
   initialX = input.required<number>();
   initialY = input.required<number>();
+
   cols = input(10);
   rows = input(8);
-  moveRequested = output<{ x: number, y: number }>();
 
-  
+  moveRequested = output<{ x: number, y: number }>();
+  tipoPieza = input.required<TipoPieza>();
+  interfazPieza: string = "";
+
+  // Pieza seleccionada
   selected = output<Pieza>();
-  endMoved = output<{ origen: {x: number, y: number}, destino: {x: number, y: number} }>();
 
   // Posición de la pieza
   position = signal({ x: 0, y: 0 });
@@ -34,6 +38,26 @@ export class Pieza implements OnInit, OnChanges{
   ngOnInit() {
     // Al iniciar, colocamos la pieza en su sitio
     this.position.set({ x: this.initialX(), y: this.initialY() });
+
+    // Inicialización de la interfaz de la pieza, en función de tipoPieza
+    switch(this.tipoPieza()){
+        case TipoPieza.DEFLECTOR :
+          this.interfazPieza = "assets/icons/blue_deflector.png";
+          break;
+        case TipoPieza.ESCUDO :
+          this.interfazPieza = "assets/icons/blue_shield.png";
+          break;
+        case TipoPieza.LASER :
+          this.interfazPieza = "assets/icons/blue_lasser.png";
+          break;
+        case TipoPieza.REY :
+          this.interfazPieza = "assets/icons/blue_king.png";
+          break;
+        case TipoPieza.SWITCH :
+          this.interfazPieza = "assets/icons/blue_switch.png";       
+          break;
+    }
+
   }
 
   ngOnChanges(changes: SimpleChanges) {

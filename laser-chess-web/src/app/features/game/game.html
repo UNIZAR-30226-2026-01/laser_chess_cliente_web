@@ -18,6 +18,7 @@
             [rotationInput]="p.rotation"
             [cols]="columnas"
             [rows]="filas"
+            [tipoPieza]="p.tipoPieza"
             (selected)="seleccionarPieza(piezaRef)"
             (moveRequested)="gestionarMovimiento($event)">
           </app-pieza>
@@ -25,7 +26,9 @@
           <app-pieza-rival 
             [x]="p.x" 
             [y]="p.y"
-            [rotationInput]="p.rotation">
+            [tipoPieza]="p.tipoPieza"
+            [rotationInput]="p.rotation"
+            >
           </app-pieza-rival>
         }
       }

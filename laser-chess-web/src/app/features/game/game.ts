@@ -4,8 +4,17 @@ import { PiezaData } from '../../model/game/PiezaData';
 import { PiezaRival } from '../pieza-rival/pieza-rival';
 import { Websocket } from '../../model/remote/websocket'; // Ajusta la ruta
 import { Laser } from '../laser/laser';
+import { TipoPieza } from '../../model/game/TipoPieza'
 
 const COL_LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+
+/*
+  @param board: representación del tablero inicial
+*/
+function parseBoard(board: string) { // No tengo claro si te pasan un string o jsn o csv
+
+}
+
 
 function toChess(x: number, y: number): string {
   return `${COL_LETTERS[x-1]}${8 - y + 1}`;
@@ -40,8 +49,33 @@ export class Game implements OnInit {
   
   // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
   listaPiezas = signal<PiezaData[]>([
-    { id: 1, x: 2, y: 5, rotation: 0, esMia: true },
-    { id: 2, x: 2, y: 1, rotation: 0, esMia: false },
+    { id: 1, x: 1, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.LASER },
+    { id: 2, x: 6, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.REY },
+    { id: 3, x: 1, y: 4, rotation: 0, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 4, x: 1, y: 5, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 5, x: 3, y: 2, rotation: -180, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 6, x: 8, y: 1, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 7, x: 8, y: 4, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 8, x: 8, y: 5, rotation: 0, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 9, x: 7, y: 6, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 10, x: 5, y: 4, rotation: 0, esMia: true, tipoPieza: TipoPieza.SWITCH },
+    { id: 11, x: 6, y: 4, rotation: 90, esMia: true, tipoPieza: TipoPieza.SWITCH },
+    { id: 12, x: 5, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.ESCUDO },
+    { id: 13, x: 7, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.ESCUDO },
+
+    { id: 14, x: 10, y: 8, rotation: 180, esMia: false, tipoPieza: TipoPieza.LASER },
+    { id: 25, x: 5, y: 8, rotation: 180, esMia: false, tipoPieza: TipoPieza.REY },
+    { id: 16, x: 10, y: 4, rotation: -90, esMia: false, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 17, x: 10, y: 5, rotation: 180, esMia: false, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 18, x: 8, y: 7, rotation: 0, esMia: false, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 19, x: 3, y: 8, rotation: -90, esMia: false, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 20, x: 3, y: 4, rotation: 180, esMia: false, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 21, x: 3, y: 5, rotation: -90, esMia: false, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 22, x: 4, y: 3, rotation: -90, esMia: false, tipoPieza: TipoPieza.DEFLECTOR },
+    { id: 23, x: 5, y: 5, rotation: -90, esMia: false, tipoPieza: TipoPieza.SWITCH },
+    { id: 24, x: 6, y: 5, rotation: 0, esMia: false, tipoPieza: TipoPieza.SWITCH },
+    { id: 25, x: 4, y: 8, rotation: 180, esMia: false, tipoPieza: TipoPieza.ESCUDO },
+    { id: 26, x: 6, y: 8, rotation: 180, esMia: false, tipoPieza: TipoPieza.ESCUDO },
   ]);
 
   
@@ -85,18 +119,24 @@ export class Game implements OnInit {
   }
 
   seleccionarPieza(pieza: Pieza) {
-    if (this.esMiTurno()){
-      if (this.piezaActiva()) {
-        this.piezaActiva()?.showSpots.set(true);
-      }
-      if (this.piezaActiva() === pieza) {
-        this.piezaActiva.set(null);
-        pieza.showSpots.set(false);
-      } else {
-        this.piezaActiva.set(pieza);
-        this.piezaActiva()?.showSpots.set(true);
-      }
+  if (!this.esMiTurno()) return;
+    const anterior = this.piezaActiva();
+
+    // Si seleccionas la misma pieza, la deseleccionamos
+    if (anterior === pieza) {
+      pieza.showSpots.set(false);
+      this.piezaActiva.set(null);
+      return;
     }
+
+    // Si había otra pieza activa, apagar sus spots
+    if (anterior) {
+      anterior.showSpots.set(false);
+    }
+
+    // Activamos la nueva pieza y mostramos sus spots
+    this.piezaActiva.set(pieza);
+    pieza.showSpots.set(true);
   }
 
   
