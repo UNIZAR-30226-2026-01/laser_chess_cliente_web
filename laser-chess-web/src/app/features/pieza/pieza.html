@@ -12,8 +12,8 @@
 
 <!--  En caso del láser, solo puede rotar
       En el caso de switch no puede permutar, ese movimiento no debería salir como disponible -->
-      
-@if (showSpots()) {
+
+@if (showSpots() && (tipoPieza() != TipoPieza.LASER)) {
   @if (position().y > 1) {
     <div class="spot" [style.gridColumn]="position().x" [style.gridRow]="position().y - 1" (click)="solicitarMovimiento(position().x, position().y - 1)"></div>
   }

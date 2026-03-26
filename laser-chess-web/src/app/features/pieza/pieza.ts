@@ -9,10 +9,11 @@ import { TipoPieza } from '../../model/game/TipoPieza'
   styleUrls: ['./pieza.css'],
 })
 export class Pieza implements OnInit, OnChanges{
+  TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
+  
   // Recibimos la posición inicial y el tamaño desde el padre
   initialX = input.required<number>();
   initialY = input.required<number>();
-
   cols = input(10);
   rows = input(8);
 
@@ -28,6 +29,7 @@ export class Pieza implements OnInit, OnChanges{
 
   // Señal para marcar como disponible el botón de girar
   moverDisp = signal(false);
+
 
   // Necesitaría un signal por componente o algún tipo de variable
   rotationInput = input.required<number>();
@@ -57,6 +59,8 @@ export class Pieza implements OnInit, OnChanges{
           this.interfazPieza = "assets/icons/blue_switch.png";       
           break;
     }
+
+    
 
   }
 

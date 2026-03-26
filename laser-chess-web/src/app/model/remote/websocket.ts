@@ -1,45 +1,44 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { MessageGame } from '../game/MessageGame';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Websocket {
-  // WebSocketSubject gestiona internamente la conexión, reconexión y serialización
   private socket$!: WebSocketSubject<any>;
+  // Este Subject es el "túnel" que nunca falla aunque el socket se reinicie
+  private gameMessages$ = new Subject<MessageGame>();
 
-  /**
-   * Conecta al servidor. 
-   */
-  // Hay que hacer una llamada la backend a un endpoint para obtener el WebSocket
   public connect(url: string): void {
-    this.socket$ = webSocket({
-      url: url,
-      deserializer: (msg) => msg.data,
-      serializer: (msg) => msg
+    this.socket$ = webSocket(url); // Configuración por defecto (maneja JSON solo)
+
+    // Nos suscribimos internamente al socket para pasarle los datos al Subject
+    this.socket$.subscribe({
+      next: (msg) => {
+        console.log("Servicio recibió:", msg);
+        this.gameMessages$.next(msg);
+      },
+      error: (err) => console.error("Error WS:", err),
+      complete: () => console.warn("Conexión cerrada")
     });
 
     console.log("Conectado a: " + url);
   }
 
-  // Exposición como Observable para recibir mensajes del backend
-  public get gameUpdates$(): Observable<string> {
-    // Devolvemos los que hemos recibido del backend
-    return this.socket$.asObservable();
+  public get gameUpdates$(): Observable<MessageGame> {
+    // El componente se suscribe a este Subject, no al socket directo
+    return this.gameMessages$.asObservable();
   }
 
-  // Envío de la acción realizada al backend parseada a string
-  public sendAction(action: string): void {
+  public sendAction(action: any): void {
     if (this.socket$) {
       this.socket$.next(action); 
-    } else {
-      console.error("No hay conexión activa.");
     }
   }
 
-  // Cierre del WebSocket
   public close(): void {
-    this.socket$.complete();
+    if (this.socket$) this.socket$.complete();
   }
 }
