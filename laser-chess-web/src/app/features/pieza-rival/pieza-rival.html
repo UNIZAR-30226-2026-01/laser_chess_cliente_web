@@ -2,4 +2,7 @@
   class="pieza"
   [style.gridColumn]="position().x"
   [style.gridRow]="position().y"
->R</div>
+  [style.backgroundImage]="'url(' + interfazPieza + ')'"
+  [style.transform]="'rotate(' + rotationInput() + 'deg)'" 
+  style="transition: transform 0.3s ease-in-out;"
+></div>

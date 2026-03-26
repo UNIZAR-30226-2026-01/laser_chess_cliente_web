@@ -1,33 +1,58 @@
-<div class="player_card">Usuario 1</div>
-<div class="board-container">
-  <div class="board">
-  @for (p of listaPiezas(); track p.id) {
-    @if (p.esMia) {
-      <app-pieza 
-        #piezaRef
-        [initialX]="p.x" 
-        [initialY]="p.y" 
-        [cols]="columnas"
-        [rows]="filas"
-        (selected)="seleccionarPieza(piezaRef)"
-        (moveRequested)="gestionarMovimiento($event)">
-      </app-pieza>
-    } @else {
-      <app-pieza-rival 
-        [x]="p.x" 
-        [y]="p.y"
-        [rotation]="p.rotation">
-      </app-pieza-rival>
-    }
-  }
-</div>
+<div class="game-screen">
+  <aside class="side-panel">
+    <div class="player_card my-user">
+      <div class="timer">13:00</div>
+      <div class="avatar">👤</div>
+      <span>Mi usuario</span>
+    </div>
+  </aside>
 
+  <main class="main-content">
+    <div class="board">
+      @for (p of listaPiezas(); track p.id) {
+        @if (p.esMia) {
+          <app-pieza 
+            #piezaRef
+            [initialX]="p.x" 
+            [initialY]="p.y" 
+            [rotationInput]="p.rotation"
+            [cols]="columnas"
+            [rows]="filas"
+            [tipoPieza]="p.tipoPieza"
+            (selected)="seleccionarPieza(piezaRef)"
+            (moveRequested)="gestionarMovimiento($event)">
+          </app-pieza>
+        } @else {
+          <app-pieza-rival 
+            [x]="p.x" 
+            [y]="p.y"
+            [tipoPieza]="p.tipoPieza"
+            [rotationInput]="p.rotation"
+            >
+          </app-pieza-rival>
+        }
+      }
+      @if (laserPath().length > 0) {
+        <app-laser [path]="laserPath()"></app-laser>
+      }
 </div>
-<div class="controls-panel">
-    @if (piezaActiva()) {
-      <button class="btn-girar" (click)="rotateSelected(-90)">Girar izq</button>
-      <button class="btn-girar" (click)="rotateSelected(90)">Girar der</button>
-    }
-  </div>
-<div class="player_card">Usuario 2</div>
-<button (click)="esMiTurno.set(true)">Cambiar turno para comprobar funcionamiento</button>
+  </main>
+
+  <aside class="side-panel">
+    <div class="player_card">
+      <div class="avatar">👤</div>
+      <span>Usuario 1</span>
+      <div class="timer">13:00</div>
+    </div>
+
+    <div class="controls-panel">
+      @if (piezaActiva()) {
+        <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
+        <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
+        
+      }
+    </div>
+    
+    <button class="debug-btn" (click)="esMiTurno.set(true)">Check Turno</button>
+  </aside>
+</div>

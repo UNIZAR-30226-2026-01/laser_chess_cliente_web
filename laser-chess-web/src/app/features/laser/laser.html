@@ -1,0 +1,18 @@
+<!-- tablero virtual -->
+<svg class="laser-svg" viewBox="0 0 100 100" preserveAspectRatio="none"> 
+      <defs>
+        <!-- definicón del estilo de láser -->
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="0.5" result="blur" /> 
+          <!-- ligero desenfoque del láser -->
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          <!-- superposición de la línea original para crear el efecto láser neón -->
+        </filter>
+      </defs>
+      <!-- inyección de coordenadas del láser y aplicación del filtro -->
+      <polyline
+        [attr.points]="pointsString()" 
+        class="laser-path"
+        filter="url(#glow)"
+      />
+    </svg>
