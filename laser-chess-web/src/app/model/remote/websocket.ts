@@ -1,44 +1,54 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { MessageGame } from '../game/MessageGame';
+import { Remote } from './remote'; // <--- Importa tu servicio
+import { API_URL, ACCESS_TOKEN } from '../../constants/app.const';
 
-@Injectable({
-  providedIn: 'root',
-})
+
+@Injectable({ providedIn: 'root' })
 export class Websocket {
-  private socket$!: WebSocketSubject<any>;
-  // Este Subject es el "túnel" que nunca falla aunque el socket se reinicie
-  private gameMessages$ = new Subject<MessageGame>();
+  private socket$?: WebSocketSubject<any>;
+  private gameMessages$ = new Subject<any>();
 
-  public connect(url: string): void {
-    this.socket$ = webSocket(url); // Configuración por defecto (maneja JSON solo)
+  constructor(private remote: Remote) {} // <--- Inyectamos Remote
 
-    // Nos suscribimos internamente al socket para pasarle los datos al Subject
-    this.socket$.subscribe({
-      next: (msg) => {
-        console.log("Servicio recibió:", msg);
-        this.gameMessages$.next(msg);
-      },
-      error: (err) => console.error("Error WS:", err),
-      complete: () => console.warn("Conexión cerrada")
+  public connect(endpoint: string, params: any): void {
+    if (this.socket$) return;
+
+    // 1. Obtener el token directamente desde Remote
+    const token = this.remote.getAccessToken(); 
+
+    // 2. Construir la URL con el token como query param para el backend en Go
+    const searchParams = new URLSearchParams(params);
+    if (token) {
+      searchParams.append('token', token); 
+    }
+    
+    const url = `ws:${API_URL}/api/rt/${endpoint}?${searchParams.toString()}`;
+
+    this.socket$ = webSocket({
+      url: url,
+      // Opcional: si el backend no manda JSON puro, puedes añadir un deserializer
+      deserializer: (msg) => JSON.parse(msg.data)
     });
 
-    console.log("Conectado a: " + url);
+    this.socket$.subscribe({
+      next: (msg) => this.gameMessages$.next(msg),
+      error: (err) => {
+        console.error("Error WS:", err);
+        this.socket$ = undefined;
+      },
+      complete: () => {
+        this.socket$ = undefined;
+      }
+    });
   }
 
-  public get gameUpdates$(): Observable<MessageGame> {
-    // El componente se suscribe a este Subject, no al socket directo
+  public get gameUpdates$(): Observable<any> {
     return this.gameMessages$.asObservable();
   }
 
   public sendAction(action: any): void {
-    if (this.socket$) {
-      this.socket$.next(action); 
-    }
-  }
-
-  public close(): void {
-    if (this.socket$) this.socket$.complete();
+    this.socket$?.next(action);
   }
 }

@@ -6,6 +6,7 @@ import { Websocket } from '../../model/remote/websocket'; // Ajusta la ruta
 import { Laser } from '../laser/laser';
 import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
+import { SendAction } from '../../model/game/SendAction'
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
@@ -71,19 +72,15 @@ export class Game implements OnInit {
   
 
   ngOnInit() {
-    // 1. Conectar al abrir el juego
-    this.wsService.connect('ws://localhost:8080'); // No sé que URL se usa
-    // Ésto ahora da ERROR
+  // NO LLAMAR A connect() AQUÍ. 
+  // La conexión ya se ha creado.
 
-    // 2. Escuchar al rival
-    this.wsService.gameUpdates$.subscribe((msg) => {
-      this.procesarAccion(msg);
-    });
-
-    // Según loq ue nos diga el backend de si somo rojo azul se actualiza el valor de la signal
-  }
-
-
+  // 2. Escuchar lo que llega por el túnel existente
+  this.wsService.gameUpdates$.subscribe((msg) => {
+    console.log("Mensaje recibido en el tablero:", msg);
+    this.procesarAccion(msg);
+  });
+}
 
   /*
    Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
@@ -190,28 +187,7 @@ fromChess(coord: string): {x: number, y: number} {
   /*****************************************************************************/
   /*               Procesamiento de piezas de jugador principal                */
   /*****************************************************************************/
-
-  gestionarMovimiento(destino: {x: number, y: number}) {
-    if (!this.esMiTurno()) return;
-
-    const pieza = this.piezaActiva();
-    if (!pieza) return;
-
-    const origenPos = pieza.position();
-    
-    // 1. Traducimos a formato backend (invirtiendo la Y)
-    const origenAjedrez = this.toChess(origenPos.x, origenPos.y);
-    const destinoAjedrez = this.toChess(destino.x, destino.y);
-
-    // 2. Formamos el mensaje: "Te8:e7"
-    const mensaje = `T${origenAjedrez}:${destinoAjedrez}`;
-    
-    console.log("Pidiendo permiso para mover:", mensaje);
-
-    // 3. Enviamos y bloqueamos (NO movemos la pieza aún)
-    this.wsService.sendAction(mensaje as any);
-  }
-
+  
   seleccionarPieza(pieza: Pieza) {
   if (!this.esMiTurno()) return;
     const anterior = this.piezaActiva();
@@ -233,7 +209,25 @@ fromChess(coord: string): {x: number, y: number} {
     pieza.showSpots.set(true);
   }
 
-  
+  gestionarMovimiento(destino: {x: number, y: number}) {
+    if (!this.esMiTurno()) return;
+
+    const pieza = this.piezaActiva();
+    if (!pieza) return;
+
+    const origenPos = pieza.position();
+    
+    // 1. Traducimos a formato backend (invirtiendo la Y)
+    const origenAjedrez = this.toChess(origenPos.x, origenPos.y);
+    const destinoAjedrez = this.toChess(destino.x, destino.y);
+
+    // 2. Formamos el mensaje: "Te8:e7"
+    const mensaje = `T${origenAjedrez}:${destinoAjedrez}`;
+    
+    console.log("Pidiendo permiso para mover:", mensaje);
+
+    this.sendMovement(mensaje);
+  }
 
   rotateSelected(angle: number) {
     const pieza = this.piezaActiva();
@@ -245,12 +239,20 @@ fromChess(coord: string): {x: number, y: number} {
       const mensaje = `${direction}${pos}`;
       console.log("Pidiendo permiso para rotar" + mensaje);
 
-      this.wsService.sendAction(mensaje as any);
+      this.sendMovement(mensaje);
       
     }
   }
 
+  sendMovement(content:string){
+    const request: SendAction = {
+          tipo: "Move",
+          contenido: content
+    };
 
+    // 3. Enviamos y bloqueamos (NO movemos la pieza aún)
+    this.wsService.sendAction(request as any);
+  }
 
   /*****************************************************************************/
   /*                  Procesamiento mensaje  del backend                       */

@@ -31,7 +31,7 @@ export class Remote {
   /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
-    return this.http.post<LoginResponse>(`${API_URL}/login`, loginRequest, { observe: 'response' }).pipe(
+    return this.http.post<LoginResponse>(`http:${API_URL}/login`, loginRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during login');
       })
@@ -40,7 +40,7 @@ export class Remote {
 
   // Solicitud a la API para registrar un nuevo usuario
   register(registerRequest: RegisterRequest): Observable<HttpResponse<AccountResponse> | null> {
-    return this.http.post<AccountResponse>(`${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
+    return this.http.post<AccountResponse>(`http:${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during registration');
       })
@@ -50,7 +50,7 @@ export class Remote {
   // Solicitud a la API para obtener los detalles de la cuenta
   // Conviene tener varias llamadas -> solo info de la caja (todas las pantallas)
   getAccount(id_account: number){
-    return this.http.get<AccountResponse>(`${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
+    return this.http.get<AccountResponse>(`http:${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during getting info from de account with id_account');
       })
@@ -59,7 +59,7 @@ export class Remote {
 
   // Solicitud a la API para actualizar los dellates de la cuenta
   updateAccount(updateRequest: UpdateAccountRequest){
-    return this.http.post<AccountResponse>(`${API_URL}/account/update`, updateRequest, { observe: 'response' }).pipe(
+    return this.http.post<AccountResponse>(`http:${API_URL}/account/update`, updateRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during updating account');
       })
@@ -78,7 +78,7 @@ export class Remote {
   /*--------------- SOCIAL ---------------*/ 
   // Solicitud a la API para obtener la lista de amigos
   getFriends() : Observable<FriendSummary[]>{
-    return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship`, {
+    return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship`, {
     headers: {
       Authorization: `Bearer ${this.accessToken}`
     }
@@ -91,7 +91,7 @@ export class Remote {
 
   // Solicitud a la API para obtener la lista de solicitudes de amigos
   getRequestFriends() : Observable<FriendSummary[]>{
-    return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship/pending`, {
+    return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship/pending`, {
     headers: {
       Authorization: `Bearer ${this.accessToken}`
     }
@@ -103,7 +103,7 @@ export class Remote {
   }
 
   addFriend(request:FriendshipRequest) : Observable<void> {
-    return this.http.post<void>(`${API_URL}/api/friendship`, request , {
+    return this.http.post<void>(`http:${API_URL}/api/friendship`, request , {
     headers: {
       Authorization: `Bearer ${this.accessToken}`
     }
@@ -115,7 +115,7 @@ export class Remote {
   }
 
   acceptRequest(friend: String) : Observable<void> {
-    return this.http.put<void>(`${API_URL}/api/friendship/${friend}`, {
+    return this.http.put<void>(`http:${API_URL}/api/friendship/${friend}`, {
     headers: {
       Authorization: `Bearer ${this.accessToken}`
     }
