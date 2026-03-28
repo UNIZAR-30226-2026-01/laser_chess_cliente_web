@@ -17,6 +17,8 @@ import { AccountResponse } from '../auth/AccountResponse';
 import { FriendSummary } from '../social/FriendSummary';
 import { UpdateAccountRequest } from '../auth/UpdateAccountRequest'
 import { FriendshipRequest } from '../social/FriendshipRequest';
+import { ChallengeResume } from '../game/ChallengeResume'; // Ajusta la ruta
+
 
 
 @Injectable({
@@ -146,7 +148,7 @@ export class Remote {
 
   //Como tal no esta aun pero aproximacion
   challengeFriend(friendUsername: string): Observable<any> {
-    return this.http.post<any>(`${API_URL}/api/games/challenge`, 
+    return this.http.post<any>(`${API_URL}/api/rt/challenge`, 
         { opponent_username: friendUsername, game_type: 'friendly' },
         {
             headers: {
@@ -160,6 +162,25 @@ export class Remote {
         })
     );
 }
+
+// partida.service.ts
+
+checkSolicitudes(): Observable<ChallengeResume[]> {
+  return this.http.get<ChallengeResume[]>(`${API_URL}/api/rt/challenges`, 
+        {
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`
+            }
+        }
+    ).pipe(
+        catchError((err: Error) => {
+            console.error('Error getting challenge requests:', err);
+            throw new Error('Error');
+        })
+    );
+}
+
+
   
 
 

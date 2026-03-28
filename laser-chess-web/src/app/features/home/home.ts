@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { TopRow } from '../../shared/top-row/top-row';
+import { Notification } from '../../shared/notification/notification'
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, TopRow],
+  imports: [RouterLink, TopRow, Notification],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
