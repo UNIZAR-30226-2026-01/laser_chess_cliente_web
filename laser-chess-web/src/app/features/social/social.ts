@@ -5,7 +5,10 @@ import { Router } from '@angular/router';
 import { FriendSummary } from '../../model/social/FriendSummary'
 import { Remote } from '../../model/remote/remote';
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
+import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
+import { MessageGame } from '../../model/game/MessageGame'
 
+import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 
 @Component({
   selector: 'app-social',
@@ -15,7 +18,7 @@ import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 })
 
 
-export class Social {
+export class Social  {
   username = 'User';
   pictureURL = '/assets/picture.jpeg';
   timeModeLabel = 'Modo de tiempo';
@@ -32,17 +35,41 @@ export class Social {
 
   friends: FriendSummary[] = []; // Lista de amigos del usuario
   request: FriendSummary[] = [];
+  sentRequests: FriendSummary[] = []; // Lista solicitudes enviadas pendientes
   private friendService = inject(Remote);
   private router = inject(Router);
   public friendsInfo = signal(false);
   public requestInfo = signal(false);
   public popUP_userInfo = signal(false);
   public selectedUser: FriendSummary | null = null;
-  
+  public requestTabState = signal<'received' | 'sent'>('received'); //Para diferenciar entre enviadas y recibidas
+  public sentRequestsInfo = signal(false);
+
+  //WEBSOCKET
+  public popUP_waiting = signal(false);// Para el nuevo pop-up del ESPERANDO
+  private websocket = inject(Websocket);// Para meter el websocket en social
+  private wsSubscription: any;//Para limpiar la sub del socket despues
 
   ngOnInit(): void {
       this.loadFriends();
-      this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn 
+      this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn
+      this.loadSentRequests(); 
+  }
+
+  // Limpiar WebSocket
+  ngOnDestroy(): void {
+    if (this.websocket) {
+      this.websocket.close();
+    }
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
+    }
+  }
+
+  // Cancelar la espera y cerrar WebSocket
+  cancelWaiting(): void {
+    this.websocket.close();
+    this.popUP_waiting.set(false);
   }
 
   onArrowClick() {
@@ -59,6 +86,8 @@ export class Social {
   // Abrir pop-up de solicitudes
   openRequestPopup() {
     this.loadRequests();
+    this.loadSentRequests(); 
+    this.requestTabState.set('received'); //?
     this.popUP_request.set(true);
   }
 
@@ -66,12 +95,35 @@ export class Social {
   openUserInfo(user: FriendSummary) {
     this.selectedUser = user;
     this.popUP_userInfo.set(true);
+      if (user.userId) {
+      const userIdNumber = Number(user.userId);
+      this.friendService.getAllRatings(userIdNumber).subscribe({
+        next: (ratings: AllRatingsDTO) => {
+          if (this.selectedUser && this.selectedUser.username === user.username) {
+            this.selectedUser.blitzElo = ratings.blitz;
+            this.selectedUser.rapidElo = ratings.rapid;
+            this.selectedUser.classicElo = ratings.classic;
+            this.selectedUser.extendedElo = ratings.extended;
+          }
+        },
+        error: (err) => {
+          console.error('Error al obtener ELOs:', err);
+        }
+      });
+    } else {
+      console.warn('El usuario no tiene ID, no se pueden obtener ELOs');
+    }
   }
 
   // Cerrar pop-up de información
   closeUserInfo() {
     this.popUP_userInfo.set(false);
     this.selectedUser = null;
+  }
+
+  // Cambiar en el popup de solicitudes
+  setRequestTab(tab: 'received' | 'sent') {
+    this.requestTabState.set(tab);
   }
 
   copyLink() {
@@ -104,7 +156,7 @@ export class Social {
     this.friendService.getRequestFriends().subscribe({
       next: (data:FriendSummary[]) => {
         console.log('Solicitudes de amistad disponibles:', data);
-        this.request = data;
+        this.request = data || [];
         this.requestInfo.set(true);
       },
       error: (err:any) => {
@@ -115,9 +167,43 @@ export class Social {
   }
 
   //Load sentRequest
+  loadSentRequests(): void {
+    this.sentRequestsInfo.set(false);
+    this.friendService.getSentRequests().subscribe({
+      next: (data: FriendSummary[]) => {
+        console.log('Solicitudes de amistad enviadas:', data);
+        this.sentRequests = data || [];
+        this.sentRequestsInfo.set(true);
+      },
+      error: (err: any) => {
+        console.error('Error al cargar solicitudes enviadas:', err);
+        this.sentRequestsInfo.set(true);
+      }
+    });
+  }
 
   // Cancelar una solicitud de amistad enviada
-  //deleteSentReques(friend):void{}
+  cancelSentRequest(requestUsername: string) {
+    if (!requestUsername) return;
+    console.log('Cancelando solicitud de amistad enviada a:', requestUsername);
+
+    // DeleteFriend porq tmb sirve y hayy q avanzar
+    this.friendService.deleteFriend(requestUsername).subscribe({
+      next: () => {
+        console.log('Solicitud de amistad cancelada correctamente');
+        // Elimnar la solicitud de la lista local de enviadas
+        this.sentRequests = this.sentRequests.filter(req => req.username !== requestUsername);
+        
+        // Si no quedan solicitudes enviadas, actualizar la vista
+        if (this.sentRequests.length === 0 && this.requestTabState() === 'sent') {
+          // Opcional: mantener el popup abierto si hay solicitudes recibidas
+        }
+      },
+      error: (err: any) => {
+        console.error('Error al cancelar solicitud:', err);
+      }
+    });
+  }
 
   //Añadir amigo
   addFriend() {
@@ -161,7 +247,7 @@ export class Social {
     this.friendService.acceptRequest(requestUsername).subscribe({
       next: () => {
         console.log('Solicitud de amistad aceptada');
-        // Remover la solicitud de la lista local
+        // Eliminar la solicitud de la lista local
         this.request = this.request.filter(req => req.username !== requestUsername);
         // Recargar la lista de amigos
         this.loadFriends();
@@ -180,42 +266,67 @@ export class Social {
   // Rechazar solicitud de amistad
   rejectRequest(requestUsername: string) {
     if (!requestUsername) return;
-     console.log('Solicitud de amistad rechazada (a priori):', requestUsername);
+     console.log('Solicitud de amistad rechazada:', requestUsername);
 
-    /* 
-    this.friendService.rejectRequest(requestUsername).subscribe({
+    // DeleteFriend porq tmb sirve y hayy q avanzar
+    this.friendService.deleteFriend(requestUsername).subscribe({
       next: () => {
-        console.log('Solicitud de amistad rechazada');
-        this.request = this.request.filter((req: FriendSummary) => req.username !== requestUsername);
+        console.log('Solicitud de amistad rechazada correctamente');
+        // Eliminar la solicitud de la lista local
+        this.request = this.request.filter(req => req.username !== requestUsername);
         
         // Si no quedan solicitudes, cerrar el pop-up
         if (this.request.length === 0) {
           this.popUP_request.set(false);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al rechazar solicitud:', err);
       }
     });
-    */
   }
 
 
   // Inciiar a una partida amistosa
   challengeFriend(friendUsername: string): void {
-    this.friendService.challengeFriend(friendUsername).subscribe({
-      next: (response) => {
-        console.log('Reto enviado a:', friendUsername);
-        this.router.navigate(['/game']); //Demomento se le manda a la pantalla de juego
+    if (!friendUsername) return;
+
+    // si falla algo mirar esto xd
+    // Parámetros, de momento estan por defecto, luego ya ser vera
+    const board = 1;                 // ID del tablero
+    const startingTime = 300;        // 5 minutos
+    const timeIncrement = 10;        // incremento de 10 segundos
+
+    const endpoint = 'challenge';
+    const params = {
+      username: friendUsername,
+      board: board,
+      starting_time: startingTime,
+      time_increment: timeIncrement
+    };
+
+  this.websocket.connect(endpoint, params);
+
+    // Suscribirse a los mensajes entrantes para poder manejar la aceptación
+    if (this.wsSubscription) this.wsSubscription.unsubscribe();
+    this.wsSubscription = this.websocket.gameUpdates$.subscribe({
+      next: (msg: MessageGame) => {
+        // partida está lista, cerrar popup y navegar
+        // cerrar el popup al recibir mensaje
+        this.popUP_waiting.set(false);
+        this.websocket.close();
+        // ir a la pantalla de juego
+        this.router.navigate(['/game']);
       },
-      error: (err: any) => {
-        console.error('Error al enviar reto:', err);
+      error: (err) => {
+        console.error('Error en WebSocket:', err);
+        this.popUP_waiting.set(false);
+        this.websocket.close();
       }
     });
+
+    // Mostrar popup de espera
+    this.popUP_waiting.set(true);
   }
-
-  // Cancelar challengeRequest
-  //
-
 
 }

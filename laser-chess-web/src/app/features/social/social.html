@@ -26,53 +26,110 @@
             </div>
         </div>
     </div>
-}
+  }
 
- @if(popUP_request()) {
+  @if(popUP_request()) {
     <div id="overlay" class="overlay" (click)="popUP_request.set(false)">
-        <div class="popup-solicitudes" (click)="$event.stopPropagation()">
-            <div class="popup-header">
-              <h2>Solicitudes de amistad</h2>
-              <button class="close-button" (click)="popUP_request.set(false)">✕</button>
-            </div>
-            
-            <div class="popup-content">
-              @if (!requestInfo()) {
-                <div class="loading-state">
-                  <p>Cargando solicitudes...</p>
-                </div>
-              } @else if (request.length === 0) {
-                <div class="empty-state">
-                  <p>No tienes solicitudes de amistad pendientes</p>
-                </div>
-              } @else {
-                <ul class="request-list">
-                  @for (friendship of request; track friendship.userId) {
-                      <li class="request-item" (click)="openUserInfo(friendship)">
-                                  <div class="request-info">
-                                      <div class="avatar-placeholder">
-                                          <span class="avatar-icon">👤</span>
-                                      </div>
-                                      <div class="request-details">
-                                          <span class="request-username">{{ friendship.username }}</span>
-                                          <span class="request-xp">Nivel {{ friendship.level }}</span>
-                                      </div>
-                                  </div>
-                                  <div class="request-actions" (click)="$event.stopPropagation()">
-                                      <button class="btn-accept" (click)="acceptRequest(friendship.username)">
-                                          <span>✓</span> Aceptar
-                                      </button>
-                                      <button class="btn-reject" (click)="rejectRequest(friendship.username)">
-                                          <span>✗</span> Rechazar
-                                      </button>
-                                  </div>
-                              </li>
-                          }
-                      </ul>
-                  }
-              </div>
+      <div class="popup-solicitudes" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h2>Solicitudes de amistad</h2>
+          <button class="close-button" (click)="popUP_request.set(false)">✕</button>
+        </div>
+        
+        <!-- PESTAÑAS -->
+        <div class="popup-tabs">
+          <div class="popup-tab" [class.active]="requestTabState() === 'received'" (click)="setRequestTab('received')">
+            Recibidas
+            @if(request.length > 0) {
+              <span class="tab-badge">{{ request.length }}</span>
+            }
           </div>
+          <div class="popup-tab" [class.active]="requestTabState() === 'sent'" (click)="setRequestTab('sent')">
+            Enviadas
+            @if(sentRequests.length > 0) {
+              <span class="tab-badge">{{ sentRequests.length }}</span>
+            }
+          </div>
+        </div>
+        
+        <div class="popup-content">
+          <!-- PESTAÑA RECIBIDAS -->
+          @if (requestTabState() === 'received') {
+            @if (!requestInfo()) {
+              <div class="loading-state">
+                <p>Cargando solicitudes...</p>
+              </div>
+            } @else if (request.length === 0) {
+              <div class="empty-state">
+                <p>No tienes solicitudes de amistad pendientes</p>
+              </div>
+            } @else {
+              <ul class="requests-list">
+                @for (friendship of request; track friendship.username) {
+                  <li class="request-item" (click)="openUserInfo(friendship)">
+                    <div class="request-info">
+                      <div class="avatar-placeholder">
+                        <span class="avatar-icon">👤</span>
+                      </div>
+                      <div class="request-details">
+                        <span class="request-username">{{ friendship.username }}</span>
+                        <span class="request-xp">Nivel {{ friendship.level }}</span>
+                      </div>
+                    </div>
+                    <div class="request-actions" (click)="$event.stopPropagation()">
+                      <button class="btn-accept" (click)="acceptRequest(friendship.username)">
+                        <span>✓</span> Aceptar
+                      </button>
+                      <button class="btn-reject" (click)="rejectRequest(friendship.username)">
+                        <span>✗</span> Rechazar
+                      </button>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          }
+          
+          <!-- PESTAÑA ENVIADAS -->
+          @if (requestTabState() === 'sent') {
+            @if (!sentRequestsInfo()) {
+              <div class="loading-state">
+                <p>Cargando solicitudes enviadas...</p>
+              </div>
+            } @else if (sentRequests.length === 0) {
+              <div class="empty-state">
+                <p>No has enviado solicitudes de amistad pendientes</p>
+              </div>
+            } @else {
+              <ul class="requests-list">
+                @for (friendship of sentRequests; track friendship.username) {
+                  <li class="request-item" (click)="openUserInfo(friendship)">
+                    <div class="request-info">
+                      <div class="avatar-placeholder">
+                        <span class="avatar-icon">👤</span>
+                      </div>
+                      <div class="request-details">
+                        <span class="request-username">{{ friendship.username }}</span>
+                        <span class="request-xp">Nivel {{ friendship.level }}</span>
+                      </div>
+                      <div class="request-actions" (click)="$event.stopPropagation()">
+                        <span class="request-status">Pendiente</span>
+                      </div>
+                    </div>
+                    
+                    <div class="request-actions" (click)="$event.stopPropagation()">
+                      <button class="btn-cancel" (click)="cancelSentRequest(friendship.username)">
+                        <span>✗</span> Cancelar
+                      </button>
+                    </div>
+                  </li>
+                }
+              </ul>
+            }
+          }
+        </div>
       </div>
+    </div>
   }
 
   <!-- Pop-up de la info del user -->
@@ -105,6 +162,24 @@
                         <div class="detail-row">
                             <span class="detail-label">Nivel:</span>
                             <span class="detail-value">{{ selectedUser.level || 'N/A' }}</span>
+                        </div>
+
+                        <!-- filas de ELO -->
+                        <div class="detail-row">
+                          <span class="detail-label">ELO Blitz:</span>
+                          <span class="detail-value">{{ selectedUser.blitzElo ?? 'N/A' }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">ELO Rápido:</span>
+                          <span class="detail-value">{{ selectedUser.rapidElo ?? 'N/A' }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">ELO Clásico:</span>
+                          <span class="detail-value">{{ selectedUser.classicElo ?? 'N/A' }}</span>
+                        </div>
+                        <div class="detail-row">
+                          <span class="detail-label">ELO Extendido:</span>
+                          <span class="detail-value">{{ selectedUser.extendedElo ?? 'N/A' }}</span>
                         </div>
                     </div>
                 </div>
@@ -148,7 +223,7 @@
             } @else if (friends.length === 0) {
                 <p>No tienes amigos</p>
             } @else {
-                @for (friend of friends; track friend.userId) {
+                @for (friend of friends; track friend.username) {
                     <li class="user-item" (click)="openUserInfo(friend)">
                         <div class="user-info">
                             <div class="left">
@@ -249,5 +324,22 @@
       }
     </div>
   </div>
+
+  <!-- Popup de espera -->
+  @if(popUP_waiting()) {
+    <div id="overlay" class="overlay" (click)="cancelWaiting()">
+      <div class="popup-waiting" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h2>Esperando respuesta</h2>
+          <button class="close-button" (click)="cancelWaiting()">✕</button>
+        </div>
+        <div class="popup-content waiting-content">
+          <p>Enviando reto... Esperando que el oponente acepte.</p>
+          <div class="spinner"></div>
+          <button class="btn-cancel-waiting" (click)="cancelWaiting()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
 
 </div>

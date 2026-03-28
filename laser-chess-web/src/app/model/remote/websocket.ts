@@ -20,6 +20,7 @@ export class Websocket {
 
     // 2. Construir la URL con el token como query param para el backend en Go
     const searchParams = new URLSearchParams(params);
+    console.log('Token obtenido:', token);
     if (token) {
       searchParams.append('token', token); 
     }
@@ -51,4 +52,12 @@ export class Websocket {
   public sendAction(action: any): void {
     this.socket$?.next(action);
   }
+
+  public close(): void {
+  if (this.socket$) {
+    this.socket$.complete();
+    this.socket$ = undefined;
+  }
+}
+
 }

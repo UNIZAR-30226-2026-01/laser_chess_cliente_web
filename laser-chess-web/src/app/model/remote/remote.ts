@@ -19,6 +19,8 @@ import { UpdateAccountRequest } from '../auth/UpdateAccountRequest'
 import { FriendshipRequest } from '../social/FriendshipRequest';
 import { ChallengeResume } from '../game/ChallengeResume'; // Ajusta la ruta
 
+import { AllRatingsDTO } from '../rating/AllRatingsDTO'; //Para los elos en los perfiles
+
 
 
 @Injectable({
@@ -29,6 +31,18 @@ export class Remote {
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
   private accessToken: string = "";
+
+  constructor() {
+    this.cargarTokenDelAlmacenamiento();
+  }
+
+  private cargarTokenDelAlmacenamiento(): void {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+      this.accessToken = token;
+      this.isAuthenticated$.next(true);
+    }
+  }
 
   /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
@@ -78,7 +92,6 @@ export class Remote {
   }
 
   /*--------------- SOCIAL ---------------*/ 
-  // Solicitud a la API para obtener la lista de amigos
   getFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship`, {
     headers: {
@@ -91,7 +104,6 @@ export class Remote {
     );
   }
 
-  // Solicitud a la API para obtener la lista de solicitudes de amigos
   getRequestFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship/pending`, {
     headers: {
@@ -100,6 +112,18 @@ export class Remote {
     }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during getting info about friend requests');
+      })
+    );
+  }
+
+  getSentRequests(): Observable<FriendSummary[]> {
+    return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship/sent`, {
+      headers: {
+        Authorization: `Bearer ${this.accessToken}`
+      }
+    }).pipe(
+      catchError((err: Error) => {
+        throw new Error('Error during getting info about sent friend requests');
       })
     );
   }
@@ -145,6 +169,16 @@ export class Remote {
     );
   }
 
+  getAllRatings(userId: number): Observable<AllRatingsDTO> {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/rating/elos/${userId}`, {
+      headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting ratings:', err);
+        throw new Error('Error during getting ratings');
+      })
+    );
+  }
 
   //Como tal no esta aun pero aproximacion
   challengeFriend(friendUsername: string): Observable<any> {
@@ -201,7 +235,7 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
   }
 
   private hasToken(): boolean {
-    return this.accessToken == null;
+    return this.accessToken != null && !this.isTokenExpired(this.accessToken);
   }
 
   getAccessToken(): string | null {
@@ -230,8 +264,7 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
         this.setTokens(response.accessToken);
       }),
       catchError(() => {
-        this.logout();
-        this.logout();
+        this.logout(); //Antes habia dos 
         throw new Error('Session expired');
       })
     );
