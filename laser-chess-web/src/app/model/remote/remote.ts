@@ -114,18 +114,52 @@ export class Remote {
     );
   }
 
+  deleteFriend(friendUsername: string): Observable<void> {
+    return this.http.delete<void>(`${API_URL}/api/friendship/${friendUsername}`, {
+        headers: {
+            Authorization: `Bearer ${this.accessToken}`
+        }
+    }).pipe(
+        catchError((err: Error) => {
+            console.error('Error deleting friend:', err);
+            throw new Error('Error during deleting friend');
+        })
+    );
+  }
+
+
   acceptRequest(friend: String) : Observable<void> {
-    return this.http.put<void>(`http:${API_URL}/api/friendship/${friend}`, {
-    headers: {
-      Authorization: `Bearer ${this.accessToken}`
-    }
+
+    return this.http.put<void>(`${API_URL}/api/friendship/${friend}`, null, {
+      headers: {
+        Authorization: `Bearer ${this.accessToken}`
+      }
+
     }).pipe(
       catchError((err: Error) => {
-        throw new Error('Error during adding friend');
+        console.error('Error accepting friend request:', err);
+        throw new Error('Error during accepting friend request');
       })
     );
   }
 
+
+  //Como tal no esta aun pero aproximacion
+  challengeFriend(friendUsername: string): Observable<any> {
+    return this.http.post<any>(`${API_URL}/api/games/challenge`, 
+        { opponent_username: friendUsername, game_type: 'friendly' },
+        {
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`
+            }
+        }
+    ).pipe(
+        catchError((err: Error) => {
+            console.error('Error challenging friend:', err);
+            throw new Error('Error during challenging friend');
+        })
+    );
+}
   
 
 

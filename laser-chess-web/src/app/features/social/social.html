@@ -28,30 +28,92 @@
     </div>
 }
 
-@if(popUP_request()) {
+ @if(popUP_request()) {
     <div id="overlay" class="overlay" (click)="popUP_request.set(false)">
-        <div class="popup-amigo" (click)="$event.stopPropagation()">
-            <div class="container text-center">
-               <ul class="user-list">
-                  @if (request.length == 0) {
-                    <p>No tienes ningua solicitud de amistad pendiente</p>
-                  } @else {
-                    @for (friendship of request; track friendship.userId) {
-                      <li class="user-item">
-                        <div class="left">
-                        <span class="avatar"></span>
-                            {{ friendship.username }}
+        <div class="popup-solicitudes" (click)="$event.stopPropagation()">
+            <div class="popup-header">
+              <h2>Solicitudes de amistad</h2>
+              <button class="close-button" (click)="popUP_request.set(false)">✕</button>
+            </div>
+            
+            <div class="popup-content">
+              @if (!requestInfo()) {
+                <div class="loading-state">
+                  <p>Cargando solicitudes...</p>
+                </div>
+              } @else if (request.length === 0) {
+                <div class="empty-state">
+                  <p>No tienes solicitudes de amistad pendientes</p>
+                </div>
+              } @else {
+                <ul class="request-list">
+                  @for (friendship of request; track friendship.userId) {
+                      <li class="request-item" (click)="openUserInfo(friendship)">
+                                  <div class="request-info">
+                                      <div class="avatar-placeholder">
+                                          <span class="avatar-icon">👤</span>
+                                      </div>
+                                      <div class="request-details">
+                                          <span class="request-username">{{ friendship.username }}</span>
+                                          <span class="request-xp">Nivel {{ friendship.level }}</span>
+                                      </div>
+                                  </div>
+                                  <div class="request-actions" (click)="$event.stopPropagation()">
+                                      <button class="btn-accept" (click)="acceptRequest(friendship.username)">
+                                          <span>✓</span> Aceptar
+                                      </button>
+                                      <button class="btn-reject" (click)="rejectRequest(friendship.username)">
+                                          <span>✗</span> Rechazar
+                                      </button>
+                                  </div>
+                              </li>
+                          }
+                      </ul>
+                  }
+              </div>
+          </div>
+      </div>
+  }
+
+  <!-- Pop-up de la info del user -->
+  @if(popUP_userInfo() && selectedUser) {
+    <div id="overlay" class="overlay" (click)="closeUserInfo()">
+        <div class="popup-userinfo" (click)="$event.stopPropagation()">
+            <div class="popup-header">
+                <h2>Información de usuario</h2>
+                <button class="close-button" (click)="closeUserInfo()">✕</button>
+            </div>
+            
+            <div class="popup-content">
+                <div class="user-info-detail">
+                    <div class="user-avatar-large">
+                        @if (selectedUser.avatar) {
+                            <img [src]="'assets/avatars/' + selectedUser.avatar + '.png'" alt="Avatar">
+                        } @else {
+                            <div class="avatar-placeholder-large">
+                                <span class="avatar-icon-large">👤</span>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="user-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Nombre de usuario:</span>
+                            <span class="detail-value">{{ selectedUser.username }}</span>
                         </div>
-                        <div class="right">{{ friendship.xp }} XP</div>
-                        <button (click)="acceptRequest()">Aceptar</button>
-                      </li>
-                    }
-                  } 
-                </ul> 
+                        
+                        <div class="detail-row">
+                            <span class="detail-label">Nivel:</span>
+                            <span class="detail-value">{{ selectedUser.level || 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-}
+  }
+
+
 
   <div class="folder-container">
 
@@ -68,29 +130,48 @@
 
     <div class="folder-body">
       @if (state()){
-        <div class="row_friend-requests">
+        <div class="friend-request-button" (click)="openRequestPopup()">
           <div class="left">
-            <span class="avatar"></span>
-            <button (click)="pedingRequest()">Solicitudes de amistad</button>
+            <span class="avatar">👥</span>
+            <span class="request-text">Solicitudes de amistad</span>
+          </div>
+          <div class="right">
+            @if (request.length > 0) {
+              <span class="notification-badge">{{ request.length }}</span>
+            }
           </div>
         </div>
+
         <ul class="user-list">
-        @if (!friendsInfo()) {
-          <p>Cargando...</p>
-        } @else if (friends.length === 0) {
-          <p>No tienes amigos</p>
-        } @else {
-          @for (friend of friends; track friend.userId) {
-            <li class="user-item">
-              <div class="left">
-              <span class="avatar"></span>
-                  {{ friend.username }}
-              </div>
-              <div class="right">{{ friend.xp }} XP</div>
-            </li>
-          }
-        } 
-      </ul>
+            @if (!friendsInfo()) {
+                <p>Cargando...</p>
+            } @else if (friends.length === 0) {
+                <p>No tienes amigos</p>
+            } @else {
+                @for (friend of friends; track friend.userId) {
+                    <li class="user-item" (click)="openUserInfo(friend)">
+                        <div class="user-info">
+                            <div class="left">
+                                <span class="avatar">👤</span>
+                                <span class="username">{{ friend.username }}</span>
+                            </div>
+                            <div class="user-stats">
+                                <span class="friend-xp">Nivel {{ friend.level }}</span>
+                                <div class="friend-actions" (click)="$event.stopPropagation()">
+                                    <button class="btn-challenge" (click)="challengeFriend(friend.username)" title="Retar a partida">
+                                        Retar
+                                    </button>
+                                    <button class="btn-delete" (click)="deleteFriend(friend.username)" title="Eliminar amigo">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+
 
         <button class="fab-plus" (click)="nuevoAmigo()">+</button>
       }
@@ -110,7 +191,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
           <li class="game-item">
@@ -127,7 +208,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
           <li class="game-item">
@@ -144,7 +225,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
           <li class="game-item">
@@ -161,7 +242,7 @@
                 <span>Modo_tiempo</span>
                 <span>Tablero</span>
               </div>
-              <button class="btn-play">RETOMAR</button>
+              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
           </li>
 
         </ul>
