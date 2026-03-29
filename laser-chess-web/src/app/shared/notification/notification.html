@@ -1,7 +1,7 @@
 <section class="lobby">
   <h2>Retos Disponibles</h2>
 
-  @for (reto of solicitudes; track reto.ChallengerID) {
+  @for (reto of solicitudes(); track reto.ChallengerID) {
     <div class="card-reto">
       <div class="info">
         <strong>{{ reto.ChallengerUsername }}</strong>
@@ -21,7 +21,7 @@
     </div>
   }
 
-  @if (solicitudes.length > 5) {
+  @if (solicitudes().length > 5) {
     <p class="warning">¡Tienes muchos retos pendientes!</p>
   }
 </section>
