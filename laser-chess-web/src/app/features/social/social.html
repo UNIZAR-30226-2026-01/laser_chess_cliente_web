@@ -219,8 +219,8 @@
 
         <ul class="user-list">
             @if (!friendsInfo()) {
-                <p>Cargando...</p>
-            } @else if (friends.length === 0) {
+                <p>No tienes amigos</p>
+            } @else if (friends === null) {
                 <p>No tienes amigos</p>
             } @else {
                 @for (friend of friends; track friend.username) {
