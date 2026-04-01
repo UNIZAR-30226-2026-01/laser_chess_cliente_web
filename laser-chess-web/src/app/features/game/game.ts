@@ -320,7 +320,7 @@ fromChess(coord: string): {x: number, y: number} {
     
 
     // Hay que añadir la actualización del tiempo + captura
-    
+    console.log("No entiendo que mensaje me pasan: " + msg.tipo);
 
   }
 
