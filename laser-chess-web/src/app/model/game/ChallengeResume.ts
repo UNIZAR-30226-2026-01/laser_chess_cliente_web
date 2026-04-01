@@ -1,7 +1,7 @@
 export interface ChallengeResume {
-	ChallengerID : number
-	ChallengerUsername : string,
-	Board : number,
-	StartingTime : number,
-	TimeIncrement : number,
+	challenger_id : number
+	challenger_username : string,
+	board : number,
+	starting_time : number,
+	time_increment : number,
 }
