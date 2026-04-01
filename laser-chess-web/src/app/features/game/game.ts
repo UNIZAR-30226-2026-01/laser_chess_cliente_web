@@ -7,6 +7,8 @@ import { Laser } from '../laser/laser';
 import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
 import { SendAction } from '../../model/game/SendAction'
+import { Signin } from '../../auth/signin/signin';
+import { Remote } from '../../model/remote/remote';
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
@@ -27,6 +29,8 @@ const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 export class Game implements OnInit {
   // Inyectamos el servicio de Websocket
   private wsService = inject(Websocket);
+  private remoteService = inject(Remote);
+
   esMiTurno = signal(true);
   piezaActiva = signal<Pieza | null>(null);
   laserPath = signal<{x: number, y: number}[]>([]);
@@ -34,10 +38,12 @@ export class Game implements OnInit {
   filas = 8;
   soyAzul = signal(true);
   cont = 1; // Contado incremental para creación de piezas (id)
+  id = this.remoteService.getAccountId();
+  
 
   
   // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
-  listaPiezas = signal<PiezaData[]> ([])
+  listaPiezas = signal<PiezaData[]> ([]);
   /*([
     { id: 1, x: 1, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.LASER },
     { id: 2, x: 6, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.REY },
@@ -158,7 +164,7 @@ importarTablero(board: string) {
   
   // Hay que revisarlo
 toChess(x: number, y: number): string {
-  if (true){//this.soyAzul()){
+  if (this.soyAzul()){
       return `${COL_LETTERS_AZUL[x-1]}${8 - y + 1}`;
   }else{
       return `${COL_LETTERS_ROJO[x-1]}${y}`;
@@ -265,6 +271,13 @@ fromChess(coord: string): {x: number, y: number} {
     if (msg.tipo === "InitialState"){
       console.log("Procesando el estado inicial");
       this.importarTablero(msg.contenido);
+      if (Number(msg.extra) !== this.id) {
+        this.soyAzul.set(true);
+        console.log("Soy el jugador azul");
+      } else {
+        this.soyAzul.set(false);
+        console.log("Soy el jugador rojo");
+      }
       
     }else if ( msg.tipo === "Move"){
       console.log("me dicen que me mueva");
@@ -286,7 +299,7 @@ fromChess(coord: string): {x: number, y: number} {
       }
 
       // Disparo del láser
-      const coordsRaw = msg.laser.substring(0).split(',');
+      const coordsRaw = msg.extra.substring(0).split(',');
       const path = coordsRaw.map(c => this.fromChess(c));
       this.dispararLaser(path);
       
