@@ -4,7 +4,7 @@ import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas 
 // Injectable -> marca la clase como servicio inyectable
 // inject -> nueva forma de inyectar dependencias 
 
-import { catchError, Observable, tap, BehaviorSubject } from 'rxjs';
+import { catchError, Observable, tap, BehaviorSubject, of, map } from 'rxjs';
 import { Router } from '@angular/router'; // Para redirigir al usuario
 
 import { LoginRequest } from '../auth/LoginRequest';
@@ -27,7 +27,7 @@ import { AllRatingsDTO } from '../rating/AllRatingsDTO'; //Para los elos en los 
   providedIn: 'root'
 })
 export class Remote {
-  private isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
+  public  isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken()); //Para poder usarlo en guard
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
   private accessToken: string = "";
@@ -273,6 +273,21 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
     localStorage.removeItem(ACCESS_TOKEN);
     this.router.navigate(['/start']);
     
+  }
+  
+  
+  // Intenta restaurar la sesion con el refresh_token para no iniciar sesion todo el rato
+  autoLogin(): Observable<boolean> {
+    // Mirar si esta autenticado
+    if (this.hasToken()) {
+      return of(true);
+    }
+
+    //No lo esta, nuevo access_token con el refresh_token
+    return this.refreshToken().pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
   }
 
 }

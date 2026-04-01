@@ -16,6 +16,7 @@ import { Settings } from './features/settings/settings';
 import { History } from './features/history/history';
 import { Pieza } from './features/pieza/pieza';
 
+import { AuthGuard } from './model/token/guard';
 
 // Define las rutas de la aplicación, cada ruta asocia una URL con un componente específico
 
@@ -33,6 +34,7 @@ export const routes: Routes = [
   {
     path: '',
     component: Layout,
+    canActivate: [AuthGuard], //el guard para proteger las privadas
     children: [
       { path: 'home', component: Home },
       { path: 'settings', component: Settings },
