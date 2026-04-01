@@ -7,8 +7,9 @@ import { Laser } from '../laser/laser';
 import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
 import { SendAction } from '../../model/game/SendAction'
-import { Signin } from '../../auth/signin/signin';
 import { Remote } from '../../model/remote/remote';
+import { GameMessageType } from "../../model/game/GameMessageType";
+
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
@@ -77,14 +78,14 @@ export class Game implements OnInit {
 
   
 
-  ngOnInit() {
-  // NO LLAMAR A connect() AQUÍ. 
-  // La conexión ya se ha creado.
-
-  // 2. Escuchar lo que llega por el túnel existente
-  this.wsService.gameUpdates$.subscribe((msg) => {
-    console.log("Mensaje recibido en el tablero:", msg);
-    this.procesarAccion(msg);
+  ngOnInit(): void {
+  console.log('Suscribiéndome a WS en Game...');
+  this.wsService.gameMessages$.subscribe({
+    next: (msg) => {
+      console.log('Mensaje recibido en Game:', msg);
+      this.procesarAccion(msg);
+    },
+    error: (err) => console.error('Error WS en Game:', err)
   });
 }
 
@@ -177,7 +178,7 @@ fromChess(coord: string): {x: number, y: number} {
   console.log("estoy traduciendo");
   let x : number;
   let y : number;
-  if (true){//this.soyAzul()){
+  if (this.soyAzul()){
     x = COL_LETTERS_AZUL.indexOf(coord[0]) + 1;
     y = 8 - parseInt(coord[1]) + 1;
   }else{
@@ -252,8 +253,8 @@ fromChess(coord: string): {x: number, y: number} {
 
   sendMovement(content:string){
     const request: SendAction = {
-          tipo: "Move",
-          contenido: content
+          Type: "Move",
+          Content: content
     };
 
     // 3. Enviamos y bloqueamos (NO movemos la pieza aún)
@@ -265,13 +266,13 @@ fromChess(coord: string): {x: number, y: number} {
   /*****************************************************************************/
 
   private procesarAccion(msg: MessageGame) {
-    console.log("Tipo:", msg.tipo);
-    console.log("Contenido:", msg.contenido);
+    console.log("Tipo:", msg.Type);
+    console.log("Contenido:", msg.Content);
 
-    if (msg.tipo === "InitialState"){
+    if (msg.Type === "InitialState"){
       console.log("Procesando el estado inicial");
-      this.importarTablero(msg.contenido);
-      if (Number(msg.extra) !== this.id) {
+      this.importarTablero(msg.Content);
+      if (Number(msg.Extra) !== this.id) {
         this.soyAzul.set(true);
         console.log("Soy el jugador azul");
       } else {
@@ -279,13 +280,13 @@ fromChess(coord: string): {x: number, y: number} {
         console.log("Soy el jugador rojo");
       }
       
-    }else if ( msg.tipo === "Move"){
+    }else if ( msg.Type === "Move"){
       console.log("me dicen que me mueva");
-      const tipoAccion= msg.contenido[0];
+      const tipoAccion= msg.Content[0];
       if (tipoAccion === 'T') {
         // "Te8:e7" -> de e8 a e7
-        console.log("me toca mover " + msg.contenido);
-        const partes = msg.contenido.substring(1).split(':');
+        console.log("me toca mover " + msg.Content);
+        const partes = msg.Content.substring(1).split(':');
         const desde = this.fromChess(partes[0]);
         const hasta = this.fromChess(partes[1]);
         console.log("desde " + desde + " hasta " + hasta);
@@ -294,12 +295,12 @@ fromChess(coord: string): {x: number, y: number} {
       } else if (tipoAccion === 'L' || tipoAccion === 'R') {
         // "La1"
         console.log("me toca girar");
-        const pos = this.fromChess(msg.contenido.substring(1));
+        const pos = this.fromChess(msg.Content.substring(1));
         this.rotarPiezaEnTablero(pos, tipoAccion);
       }
 
       // Disparo del láser
-      const coordsRaw = msg.extra.substring(0).split(',');
+      const coordsRaw = msg.Extra.substring(0).split(',');
       const path = coordsRaw.map(c => this.fromChess(c));
       this.dispararLaser(path);
       
@@ -320,7 +321,7 @@ fromChess(coord: string): {x: number, y: number} {
     
 
     // Hay que añadir la actualización del tiempo + captura
-    console.log("No entiendo que mensaje me pasan: " + msg.tipo);
+    console.log("No entiendo que mensaje me pasan: " + msg.Type);
 
   }
 

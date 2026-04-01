@@ -46,35 +46,30 @@ export class Home {
     }
   
 
-  aceptar(challenger_id: number, board: number, challenger_username: string, starting_time: number, time_increment: number) {
-    console.log('Aceptando partida de:', challenger_id);
+  accept(challenger_id: number, board: number, challenger_username: string, starting_time: number, time_increment: number) {
     const endpoint = 'challenge/accept';
-        const params = {
-          username: challenger_username,
-          board: board,
-          starting_time: starting_time,
-          time_increment: time_increment
-        };
-    
-      this.websocket.connect(endpoint, params);
-    
-        // Suscribirse a los mensajes entrantes para poder manejar la aceptación
-        if (this.wsSubscription) this.wsSubscription.unsubscribe();
-        this.wsSubscription = this.websocket.gameUpdates$.subscribe({
-          next: (msg: MessageGame) => {
-            // partida está lista, cerrar popup y navegar
-            // cerrar el popup al recibir mensaje
-            this.popUPNotis.set(false);
-            this.websocket.close();
-            // ir a la pantalla de juego
-            this.router.navigate(['/game']);
-          },
-          error: (err) => {
-            console.error('Error en WebSocket:', err);
-            this.popUPNotis.set(false);
-            this.websocket.close();
-          }
-        });
+    const params = {
+      username: challenger_username,
+      board,
+      starting_time,
+      time_increment
+    };
 
+    this.websocket.connect(endpoint, params);
+
+    if (this.wsSubscription) this.wsSubscription.unsubscribe();
+    this.wsSubscription = this.websocket.gameMessages$.subscribe({
+      next: (msg) => {
+        console.log('Mensaje recibido en Social (accept):', msg);
+        this.popUPNotis.set(false);
+        this.websocket.close();
+        this.router.navigate(['/game']);
+      },
+      error: (err) => {
+        console.error('Error en WS Social (accept):', err);
+        this.popUPNotis.set(false);
+        this.websocket.close();
+      }
+    });
   }
 }

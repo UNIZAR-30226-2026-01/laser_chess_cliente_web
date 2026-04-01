@@ -291,41 +291,35 @@ export class Social  {
   challengeFriend(friendUsername: string): void {
     if (!friendUsername) return;
 
-    // si falla algo mirar esto xd
-    // Parámetros, de momento estan por defecto, luego ya ser vera
-    const board = 1;                 // ID del tablero
-    const startingTime = 300;        // 5 minutos
-    const timeIncrement = 10;        // incremento de 10 segundos
+    const board = 1;
+    const startingTime = 300;
+    const timeIncrement = 10;
 
     const endpoint = 'challenge';
     const params = {
       username: friendUsername,
-      board: board,
+      board,
       starting_time: startingTime,
       time_increment: timeIncrement
     };
 
-  this.websocket.connect(endpoint, params);
+    this.websocket.connect(endpoint, params);
 
-    // Suscribirse a los mensajes entrantes para poder manejar la aceptación
     if (this.wsSubscription) this.wsSubscription.unsubscribe();
-    this.wsSubscription = this.websocket.gameUpdates$.subscribe({
-      next: (msg: MessageGame) => {
-        // partida está lista, cerrar popup y navegar
-        // cerrar el popup al recibir mensaje
+    this.wsSubscription = this.websocket.gameMessages$.subscribe({
+      next: (msg) => {
+        console.log('Mensaje recibido en Social:', msg);
         this.popUP_waiting.set(false);
         this.websocket.close();
-        // ir a la pantalla de juego
         this.router.navigate(['/game']);
       },
       error: (err) => {
-        console.error('Error en WebSocket:', err);
+        console.error('Error en WS Social:', err);
         this.popUP_waiting.set(false);
         this.websocket.close();
       }
     });
 
-    // Mostrar popup de espera
     this.popUP_waiting.set(true);
   }
 
