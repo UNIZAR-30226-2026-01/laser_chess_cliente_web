@@ -47,7 +47,12 @@ export class Remote {
   /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
-    return this.http.post<LoginResponse>(`http:${API_URL}/login`, loginRequest, { observe: 'response' }).pipe(
+    return this.http.post<LoginResponse>(`http:${API_URL}/login`, loginRequest, { observe: 'response', withCredentials: true }).pipe( //WithCredentials es para los interceptores
+      tap((response) => {
+        if (response.body?.access_token) {
+          this.setTokens(response.body.access_token);
+        }
+      }),
       catchError((err: Error) => {
         throw new Error('Error during login');
       })
@@ -94,9 +99,7 @@ export class Remote {
   /*--------------- SOCIAL ---------------*/ 
   getFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship`, {
-    headers: {
-      Authorization: `Bearer ${this.accessToken}`
-    }
+    //headers: { Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during getting info about friends');
@@ -106,9 +109,7 @@ export class Remote {
 
   getRequestFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship/pending`, {
-    headers: {
-      Authorization: `Bearer ${this.accessToken}`
-    }
+    //headers: {Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during getting info about friend requests');
@@ -118,9 +119,7 @@ export class Remote {
 
   getSentRequests(): Observable<FriendSummary[]> {
     return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship/sent`, {
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`
-      }
+      //headers: { Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during getting info about sent friend requests');
@@ -130,9 +129,7 @@ export class Remote {
 
   addFriend(request:FriendshipRequest) : Observable<void> {
     return this.http.post<void>(`http:${API_URL}/api/friendship`, request , {
-    headers: {
-      Authorization: `Bearer ${this.accessToken}`
-    }
+    //headers: {Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during adding friend');
@@ -142,9 +139,7 @@ export class Remote {
 
   deleteFriend(friendUsername: string): Observable<void> {
     return this.http.delete<void>(`${API_URL}/api/friendship/${friendUsername}`, {
-        headers: {
-            Authorization: `Bearer ${this.accessToken}`
-        }
+        //headers: {   Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
         catchError((err: Error) => {
             console.error('Error deleting friend:', err);
@@ -157,9 +152,7 @@ export class Remote {
   acceptRequest(friend: String) : Observable<void> {
 
     return this.http.put<void>(`${API_URL}/api/friendship/${friend}`, null, {
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`
-      }
+      //headers: {  Authorization: `Bearer ${this.accessToken}`}
 
     }).pipe(
       catchError((err: Error) => {
@@ -171,7 +164,7 @@ export class Remote {
 
   getAllRatings(userId: number): Observable<AllRatingsDTO> {
     return this.http.get<AllRatingsDTO>(`${API_URL}/rating/elos/${userId}`, {
-      headers: { Authorization: `Bearer ${this.accessToken}` }
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
     }).pipe(
       catchError((err: Error) => {
         console.error('Error getting ratings:', err);
@@ -185,9 +178,7 @@ export class Remote {
     return this.http.post<any>(`${API_URL}/api/rt/challenge`, 
         { opponent_username: friendUsername, game_type: 'friendly' },
         {
-            headers: {
-                Authorization: `Bearer ${this.accessToken}`
-            }
+            //headers: {    Authorization: `Bearer ${this.accessToken}`}
         }
     ).pipe(
         catchError((err: Error) => {
@@ -202,9 +193,7 @@ export class Remote {
 checkSolicitudes(): Observable<ChallengeResume[]> {
   return this.http.get<ChallengeResume[]>(`${API_URL}/api/rt/challenges`, 
         {
-            headers: {
-                Authorization: `Bearer ${this.accessToken}`
-            }
+            //headers: {Authorization: `Bearer ${this.accessToken}`}
         }
     ).pipe(
         catchError((err: Error) => {
@@ -231,6 +220,7 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
 */
   setTokens(accessToken: string): void {
     this.accessToken = accessToken;
+    localStorage.setItem(ACCESS_TOKEN, accessToken); //Hay que guardarlo para el interceptor
     this.isAuthenticated$.next(true);
   }
 
@@ -256,12 +246,14 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
 
   refreshToken() {
     // Hacer refresh del access token usando el refresh token
-    const accessToken = this.getAccessToken();
+    //const accessToken = this.getAccessToken(); //no se usa pero lo comento por si acaso
     
-    // Tengo dudas sobre el refresh token, si me lo pasan como cookie
-    return this.http.post<any>(`${API_URL}/refresh`, { expiredAccessToken: accessToken }, { withCredentials: true }).pipe(
+    // Ahora sin body, solo con la cookie de httpOnly
+    return this.http.post<any>(`${API_URL}/refresh`, {}, { withCredentials: true }).pipe(
       tap((response) => {
-        this.setTokens(response.accessToken);
+        if (response.access_token) {
+          this.setTokens(response.access_token);
+        }
       }),
       catchError(() => {
         this.logout(); //Antes habia dos 
