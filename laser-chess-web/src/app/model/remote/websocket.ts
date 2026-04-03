@@ -1,42 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { ReplaySubject } from 'rxjs';
 import { Remote } from './remote'; // <--- Importa tu servicio
-import { API_URL, ACCESS_TOKEN } from '../../constants/app.const';
-
+import { API_URL } from '../../constants/app.const';
 
 @Injectable({ providedIn: 'root' })
 export class Websocket {
   private socket$?: WebSocketSubject<any>;
-  private gameMessages$ = new Subject<any>();
+  
+  // ReplaySubject(1) guarda el último mensaje para nuevas suscripciones
+  public gameMessages$ = new ReplaySubject<any>(1);
 
-  constructor(private remote: Remote) {} // <--- Inyectamos Remote
+  constructor(private remote: Remote) {}
 
   public connect(endpoint: string, params: any): void {
     if (this.socket$) return;
 
-    // 1. Obtener el token directamente desde Remote
     const token = this.remote.getAccessToken(); 
-
-    // 2. Construir la URL con el token como query param para el backend en Go
     const searchParams = new URLSearchParams(params);
-    console.log('Token obtenido:', token);
-    if (token) {
-      searchParams.append('token', token); 
-    }
-    
+    if (token) searchParams.append('token', token);
+
     const url = `ws:${API_URL}/api/rt/${endpoint}?${searchParams.toString()}`;
+    console.log('Conectando WS a:', url);
 
     this.socket$ = webSocket({
       url: url,
-      // Opcional: si el backend no manda JSON puro, puedes añadir un deserializer
       deserializer: (msg) => JSON.parse(msg.data)
     });
 
     this.socket$.subscribe({
-      next: (msg) => this.gameMessages$.next(msg),
+      next: (msg) => {
+        console.log('Mensaje WS recibido:', msg); // debug
+        this.gameMessages$.next(msg);
+      },
       error: (err) => {
-        console.error("Error WS:", err);
+        console.error('Error WS:', err);
         this.socket$ = undefined;
       },
       complete: () => {
@@ -44,20 +42,16 @@ export class Websocket {
       }
     });
   }
-
-  public get gameUpdates$(): Observable<any> {
-    return this.gameMessages$.asObservable();
-  }
-
   public sendAction(action: any): void {
     this.socket$?.next(action);
   }
 
   public close(): void {
-  if (this.socket$) {
-    this.socket$.complete();
-    this.socket$ = undefined;
+    if (this.socket$) {
+      this.socket$.complete();
+      this.socket$ = undefined;
+    }
   }
 }
 
-}
+

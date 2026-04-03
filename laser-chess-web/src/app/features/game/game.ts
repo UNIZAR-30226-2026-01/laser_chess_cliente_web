@@ -7,6 +7,9 @@ import { Laser } from '../laser/laser';
 import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
 import { SendAction } from '../../model/game/SendAction'
+import { Remote } from '../../model/remote/remote';
+import { GameMessageType } from "../../model/game/GameMessageType";
+
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
@@ -27,6 +30,8 @@ const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 export class Game implements OnInit {
   // Inyectamos el servicio de Websocket
   private wsService = inject(Websocket);
+  private remoteService = inject(Remote);
+
   esMiTurno = signal(true);
   piezaActiva = signal<Pieza | null>(null);
   laserPath = signal<{x: number, y: number}[]>([]);
@@ -34,10 +39,12 @@ export class Game implements OnInit {
   filas = 8;
   soyAzul = signal(true);
   cont = 1; // Contado incremental para creación de piezas (id)
+  id = this.remoteService.getAccountId();
+  
 
   
   // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
-  listaPiezas = signal<PiezaData[]> ([])
+  listaPiezas = signal<PiezaData[]> ([]);
   /*([
     { id: 1, x: 1, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.LASER },
     { id: 2, x: 6, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.REY },
@@ -71,14 +78,14 @@ export class Game implements OnInit {
 
   
 
-  ngOnInit() {
-  // NO LLAMAR A connect() AQUÍ. 
-  // La conexión ya se ha creado.
-
-  // 2. Escuchar lo que llega por el túnel existente
-  this.wsService.gameUpdates$.subscribe((msg) => {
-    console.log("Mensaje recibido en el tablero:", msg);
-    this.procesarAccion(msg);
+  ngOnInit(): void {
+  console.log('Suscribiéndome a WS en Game...');
+  this.wsService.gameMessages$.subscribe({
+    next: (msg) => {
+      console.log('Mensaje recibido en Game:', msg);
+      this.procesarAccion(msg);
+    },
+    error: (err) => console.error('Error WS en Game:', err)
   });
 }
 
@@ -158,7 +165,7 @@ importarTablero(board: string) {
   
   // Hay que revisarlo
 toChess(x: number, y: number): string {
-  if (true){//this.soyAzul()){
+  if (this.soyAzul()){
       return `${COL_LETTERS_AZUL[x-1]}${8 - y + 1}`;
   }else{
       return `${COL_LETTERS_ROJO[x-1]}${y}`;
@@ -171,7 +178,7 @@ fromChess(coord: string): {x: number, y: number} {
   console.log("estoy traduciendo");
   let x : number;
   let y : number;
-  if (true){//this.soyAzul()){
+  if (this.soyAzul()){
     x = COL_LETTERS_AZUL.indexOf(coord[0]) + 1;
     y = 8 - parseInt(coord[1]) + 1;
   }else{
@@ -246,8 +253,8 @@ fromChess(coord: string): {x: number, y: number} {
 
   sendMovement(content:string){
     const request: SendAction = {
-          tipo: "Move",
-          contenido: content
+          Type: "Move",
+          Content: content
     };
 
     // 3. Enviamos y bloqueamos (NO movemos la pieza aún)
@@ -259,20 +266,27 @@ fromChess(coord: string): {x: number, y: number} {
   /*****************************************************************************/
 
   private procesarAccion(msg: MessageGame) {
-    console.log("Tipo:", msg.tipo);
-    console.log("Contenido:", msg.contenido);
+    console.log("Tipo:", msg.Type);
+    console.log("Contenido:", msg.Content);
 
-    if (msg.tipo === "InitialState"){
+    if (msg.Type === "InitialState"){
       console.log("Procesando el estado inicial");
-      this.importarTablero(msg.contenido);
+      this.importarTablero(msg.Content);
+      if (Number(msg.Extra) !== this.id) {
+        this.soyAzul.set(true);
+        console.log("Soy el jugador azul");
+      } else {
+        this.soyAzul.set(false);
+        console.log("Soy el jugador rojo");
+      }
       
-    }else if ( msg.tipo === "Move"){
+    }else if ( msg.Type === "Move"){
       console.log("me dicen que me mueva");
-      const tipoAccion= msg.contenido[0];
+      const tipoAccion= msg.Content[0];
       if (tipoAccion === 'T') {
         // "Te8:e7" -> de e8 a e7
-        console.log("me toca mover " + msg.contenido);
-        const partes = msg.contenido.substring(1).split(':');
+        console.log("me toca mover " + msg.Content);
+        const partes = msg.Content.substring(1).split(':');
         const desde = this.fromChess(partes[0]);
         const hasta = this.fromChess(partes[1]);
         console.log("desde " + desde + " hasta " + hasta);
@@ -281,12 +295,12 @@ fromChess(coord: string): {x: number, y: number} {
       } else if (tipoAccion === 'L' || tipoAccion === 'R') {
         // "La1"
         console.log("me toca girar");
-        const pos = this.fromChess(msg.contenido.substring(1));
+        const pos = this.fromChess(msg.Content.substring(1));
         this.rotarPiezaEnTablero(pos, tipoAccion);
       }
 
       // Disparo del láser
-      const coordsRaw = msg.laser.substring(0).split(',');
+      const coordsRaw = msg.Extra.substring(0).split(',');
       const path = coordsRaw.map(c => this.fromChess(c));
       this.dispararLaser(path);
       
@@ -307,7 +321,7 @@ fromChess(coord: string): {x: number, y: number} {
     
 
     // Hay que añadir la actualización del tiempo + captura
-    
+    console.log("No entiendo que mensaje me pasan: " + msg.Type);
 
   }
 

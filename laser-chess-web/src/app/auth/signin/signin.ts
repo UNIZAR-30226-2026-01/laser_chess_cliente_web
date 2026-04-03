@@ -33,10 +33,7 @@ export class Signin {
   private authService = inject(Remote);
   private router = inject(Router);
   public showError = signal(false);
-  public errorMessage = signal('');
-
-  private id_account: number | null = null;
-  
+  public errorMessage = signal('');  
 
   ngOnInit() {
     this.RegisterForm = new FormGroup({
@@ -73,7 +70,7 @@ export class Signin {
           this.router.navigate(['login']);
           this.showError.set(false);
           this.errorMessage.set('');
-          this.id_account = httpResponse.body.account_id;
+          this.authService.setAccountId(httpResponse.body.account_id);
 
         } else {
           this.showError.set(true);

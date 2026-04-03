@@ -44,6 +44,16 @@ export class Remote {
     }
   }
 
+  private accountId: number | null = null;
+
+  setAccountId(id: number) {
+    this.accountId = id;
+  }
+
+  getAccountId(): number | null {
+    return this.accountId;
+  }
+
   /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {

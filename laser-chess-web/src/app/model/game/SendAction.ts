@@ -1,4 +1,4 @@
 export interface SendAction {
-    tipo: string,
-    contenido : string,
+    Type: string,
+    Content: string,
 }

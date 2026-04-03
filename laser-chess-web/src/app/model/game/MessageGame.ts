@@ -1,5 +1,7 @@
+import { GameMessageType } from "./GameMessageType";
+
 export interface MessageGame {
-    tipo: string,
-    contenido : string,
-    laser : string
+    Type: string,
+    Content : string,
+    Extra : string
 }
