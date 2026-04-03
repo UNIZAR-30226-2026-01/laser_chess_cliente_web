@@ -46,23 +46,18 @@ export class Home {
     }
   
 
-  accept(challenger_id: number, board: number, challenger_username: string, starting_time: number, time_increment: number) {
+  accept(challenger_username: string) {
     const endpoint = 'challenge/accept';
     const params = {
       username: challenger_username,
-      board,
-      starting_time,
-      time_increment
     };
 
-    this.websocket.connect(endpoint, params);
+    this.websocket.initConnection(endpoint, params);
 
-    if (this.wsSubscription) this.wsSubscription.unsubscribe();
-    this.wsSubscription = this.websocket.gameMessages$.subscribe({
+    this.websocket.gameMessages$.subscribe({
       next: (msg) => {
         console.log('Mensaje recibido en Social (accept):', msg);
         this.popUPNotis.set(false);
-        this.websocket.close();
         this.router.navigate(['/game']);
       },
       error: (err) => {

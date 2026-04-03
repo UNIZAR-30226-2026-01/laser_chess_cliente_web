@@ -31,7 +31,7 @@
                         ⏱️ {{ reto.starting_time }} min + {{ reto.time_increment }}s
                     </div>
 
-                    <button (click)="accept(reto.challenger_id, reto.board, reto.challenger_username, reto.starting_time, reto.time_increment)">Jugar</button>
+                    <button (click)="accept(reto.challenger_username)">Jugar</button>
                     </div>
                 } @empty {
                     <div class="no-data">

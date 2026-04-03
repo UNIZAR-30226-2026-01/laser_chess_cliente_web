@@ -303,14 +303,13 @@ export class Social  {
       time_increment: timeIncrement
     };
 
-    this.websocket.connect(endpoint, params);
+    this.websocket.initConnection(endpoint, params);
 
     if (this.wsSubscription) this.wsSubscription.unsubscribe();
     this.wsSubscription = this.websocket.gameMessages$.subscribe({
       next: (msg) => {
         console.log('Mensaje recibido en Social:', msg);
         this.popUP_waiting.set(false);
-        this.websocket.close();
         this.router.navigate(['/game']);
       },
       error: (err) => {

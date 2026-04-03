@@ -9,6 +9,7 @@ import { MessageGame } from '../../model/game/MessageGame'
 import { SendAction } from '../../model/game/SendAction'
 import { Remote } from '../../model/remote/remote';
 import { GameMessageType } from "../../model/game/GameMessageType";
+import { Subscription } from 'rxjs';
 
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
@@ -31,6 +32,7 @@ export class Game implements OnInit {
   // Inyectamos el servicio de Websocket
   private wsService = inject(Websocket);
   private remoteService = inject(Remote);
+  private wsSubscription?: Subscription;
 
   esMiTurno = signal(true);
   piezaActiva = signal<Pieza | null>(null);
@@ -79,15 +81,20 @@ export class Game implements OnInit {
   
 
   ngOnInit(): void {
-  console.log('Suscribiéndome a WS en Game...');
-  this.wsService.gameMessages$.subscribe({
-    next: (msg) => {
-      console.log('Mensaje recibido en Game:', msg);
-      this.procesarAccion(msg);
-    },
-    error: (err) => console.error('Error WS en Game:', err)
-  });
-}
+    console.log('Suscribiéndome a WS en Game...');
+    
+    // Suscribimos al ReplaySubject que recibe los mensajes
+    this.wsSubscription = this.wsService.gameMessages$.subscribe({
+      next: (msg: MessageGame) => this.procesarAccion(msg),
+      error: (err: any) => console.error('WS ERROR:', err),
+      complete: () => console.log('WS COMPLETADO'),
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.wsSubscription?.unsubscribe();
+    this.wsService.close(); // opcional: cerrar la conexión al salir de Game
+  }
 
   /*
    Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)

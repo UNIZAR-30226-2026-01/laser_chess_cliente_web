@@ -7,16 +7,15 @@ import { API_URL } from '../../constants/app.const';
 @Injectable({ providedIn: 'root' })
 export class Websocket {
   private socket$?: WebSocketSubject<any>;
-  
-  // ReplaySubject(1) guarda el último mensaje para nuevas suscripciones
-  public gameMessages$ = new ReplaySubject<any>(1);
+  public gameMessages$ = new ReplaySubject<any>(1); // ya lo tenías
 
   constructor(private remote: Remote) {}
 
-  public connect(endpoint: string, params: any): void {
-    if (this.socket$) return;
+  // Método para iniciar la conexión si no existe
+  public initConnection(endpoint: string, params: any): void {
+    if (this.socket$) return; // Ya está conectado, no hacer nada
 
-    const token = this.remote.getAccessToken(); 
+    const token = this.remote.getAccessToken();
     const searchParams = new URLSearchParams(params);
     if (token) searchParams.append('token', token);
 
@@ -25,32 +24,33 @@ export class Websocket {
 
     this.socket$ = webSocket({
       url: url,
-      deserializer: (msg) => JSON.parse(msg.data)
+      deserializer: msg => JSON.parse(msg.data),
+      openObserver: { next: () => console.log('S conectado') },
+      closeObserver: { next: () => console.log('WS cerrado') }
     });
 
+    // Suscripción única
     this.socket$.subscribe({
-      next: (msg) => {
-        console.log('Mensaje WS recibido:', msg); // debug
-        this.gameMessages$.next(msg);
-      },
-      error: (err) => {
+      next: msg => this.gameMessages$.next(msg),
+      error: err => {
         console.error('Error WS:', err);
         this.socket$ = undefined;
       },
       complete: () => {
+        console.log('WS COMPLETADO');
         this.socket$ = undefined;
       }
     });
   }
+
   public sendAction(action: any): void {
-    this.socket$?.next(action);
+    console.log('Enviando acción:', action);
+    this.socket$?.next(JSON.stringify(action));
   }
 
   public close(): void {
-    if (this.socket$) {
-      this.socket$.complete();
-      this.socket$ = undefined;
-    }
+    this.socket$?.complete();
+    this.socket$ = undefined;
   }
 }
 
