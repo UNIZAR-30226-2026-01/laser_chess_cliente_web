@@ -91,10 +91,7 @@ export class Game implements OnInit {
     });
   }
 
-  ngOnDestroy(): void {
-    this.wsSubscription?.unsubscribe();
-    this.wsService.close(); // opcional: cerrar la conexión al salir de Game
-  }
+  
 
   /*
    Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
@@ -279,6 +276,7 @@ fromChess(coord: string): {x: number, y: number} {
     if (msg.Type === "InitialState"){
       console.log("Procesando el estado inicial");
       this.importarTablero(msg.Content);
+      console.log("Mi id es " + this.id + " y el extra que me han dado es " + msg.Extra);
       if (Number(msg.Extra) !== this.id) {
         this.soyAzul.set(true);
         console.log("Soy el jugador azul");
@@ -328,7 +326,6 @@ fromChess(coord: string): {x: number, y: number} {
     
 
     // Hay que añadir la actualización del tiempo + captura
-    console.log("No entiendo que mensaje me pasan: " + msg.Type);
 
   }
 

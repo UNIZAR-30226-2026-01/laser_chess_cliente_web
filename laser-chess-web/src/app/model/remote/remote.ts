@@ -10,7 +10,7 @@ import { Router } from '@angular/router'; // Para redirigir al usuario
 import { LoginRequest } from '../auth/LoginRequest';
 import { RegisterRequest } from '../auth/RegisterRequest';
 
-import { API_URL, ACCESS_TOKEN } from '../../constants/app.const';
+import { API_URL, ACCESS_TOKEN, ACCOUNT_ID } from '../../constants/app.const';
 import { LoginResponse } from '../auth/LoginResponse';
 import { AccountResponse } from '../auth/AccountResponse';
 
@@ -34,6 +34,8 @@ export class Remote {
 
   constructor() {
     this.cargarTokenDelAlmacenamiento();
+    this.cargarAccountId();
+
   }
 
   private cargarTokenDelAlmacenamiento(): void {
@@ -44,16 +46,54 @@ export class Remote {
     }
   }
 
+  private cargarAccountId(): void {
+    const stored = localStorage.getItem(ACCOUNT_ID);
+    if (stored) {
+      this.accountId = Number(stored);
+    }
+  } 
+
   private accountId: number | null = null;
+
+  getAccountIdFromToken(): number | null {
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub ?? null;
+    } catch (e) {
+      console.error("Error decodificando token", e);
+      return null;
+    }
+  }
 
   setAccountId(id: number) {
     this.accountId = id;
-  }
+    localStorage.setItem(ACCOUNT_ID, id.toString());
+  } 
 
   getAccountId(): number | null {
-    return this.accountId;
+    if (this.accountId !== null) return this.accountId;
+
+    // 👇 NUEVO: sacarlo del token
+    const idFromToken = this.getAccountIdFromToken();
+    if (idFromToken !== null) {
+      this.accountId = idFromToken;
+      return idFromToken;
+    }
+
+    // fallback (por si acaso)
+    const stored = localStorage.getItem(ACCOUNT_ID);
+    if (stored) {
+      this.accountId = Number(stored);
+      return this.accountId;
+    }
+
+    return null;
   }
 
+  
   /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
@@ -281,6 +321,9 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
 
     // Eliminamos tokens
     localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(ACCOUNT_ID);
+
+    this.accountId = null;
     this.router.navigate(['/start']);
     
   }

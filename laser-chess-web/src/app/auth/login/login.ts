@@ -50,6 +50,10 @@ export class Login implements OnInit {
           const body: any = httpResponse.body;
           if (body.access_token) { 
             this.authService.setTokens(body.access_token);
+            const id = this.authService.getAccountIdFromToken();
+            if (id) {
+              this.authService.setAccountId(id);
+            }
             console.log('User logged in successfully', body);
 
             // Redirigir a la página principal después del login exitoso
