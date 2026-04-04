@@ -56,15 +56,6 @@ export class Social  {
       this.loadSentRequests(); 
   }
 
-  // Limpiar WebSocket
-  ngOnDestroy(): void {
-    if (this.websocket) {
-      this.websocket.close();
-    }
-    if (this.wsSubscription) {
-      this.wsSubscription.unsubscribe();
-    }
-  }
 
   // Cancelar la espera y cerrar WebSocket
   cancelWaiting(): void {
@@ -310,6 +301,8 @@ export class Social  {
       next: (msg) => {
         console.log('Mensaje recibido en Social:', msg);
         this.popUP_waiting.set(false);
+        console.log("Entra a partida desde social");
+
         this.router.navigate(['/game']);
       },
       error: (err) => {

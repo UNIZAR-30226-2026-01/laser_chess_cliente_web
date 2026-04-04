@@ -47,37 +47,6 @@ export class Game implements OnInit {
   
   // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
   listaPiezas = signal<PiezaData[]> ([]);
-  /*([
-    { id: 1, x: 1, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.LASER },
-    { id: 2, x: 6, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.REY },
-    { id: 3, x: 1, y: 4, rotation: 0, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 4, x: 1, y: 5, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 5, x: 3, y: 2, rotation: -180, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 6, x: 8, y: 1, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 7, x: 8, y: 4, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 8, x: 8, y: 5, rotation: 0, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 9, x: 7, y: 6, rotation: 90, esMia: true, tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 10, x: 5, y: 4, rotation: 0, esMia: true, tipoPieza: TipoPieza.SWITCH },
-    { id: 11, x: 6, y: 4, rotation: 90, esMia: true, tipoPieza: TipoPieza.SWITCH },
-    { id: 12, x: 5, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.ESCUDO },
-    { id: 13, x: 7, y: 1, rotation: 0, esMia: true, tipoPieza: TipoPieza.ESCUDO },
-
-    { id: 14, x: 10, y: 8, rotation: 180, esMia: !this.soyAzul(), tipoPieza: TipoPieza.LASER },
-    { id: 25, x: 5, y: 8, rotation: 180, esMia: !this.soyAzul(), tipoPieza: TipoPieza.REY },
-    { id: 16, x: 10, y: 4, rotation: -90, esMia: !this.soyAzul(), tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 17, x: 10, y: 5, rotation: 180, esMia: !this.soyAzul(), tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 18, x: 8, y: 7, rotation: 0, esMia: !this.soyAzul(), tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 19, x: 3, y: 8, rotation: -90, esMia: !this.soyAzul(), tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 20, x: 3, y: 4, rotation: 180, esMia: !this.soyAzul(), tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 21, x: 3, y: 5, rotation: -90, esMia: !this.soyAzul(), tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 22, x: 4, y: 3, rotation: -90, esMia: !this.soyAzul(), tipoPieza: TipoPieza.DEFLECTOR },
-    { id: 23, x: 5, y: 5, rotation: -90, esMia: !this.soyAzul(), tipoPieza: TipoPieza.SWITCH },
-    { id: 24, x: 6, y: 5, rotation: 0, esMia: !this.soyAzul(), tipoPieza: TipoPieza.SWITCH },
-    { id: 25, x: 4, y: 8, rotation: 180, esMia: !this.soyAzul(), tipoPieza: TipoPieza.ESCUDO },
-    { id: 26, x: 6, y: 8, rotation: 180, esMia: !this.soyAzul(), tipoPieza: TipoPieza.ESCUDO },
-  ]);
-  */
-
   
 
   ngOnInit(): void {
@@ -280,9 +249,11 @@ fromChess(coord: string): {x: number, y: number} {
       if (Number(msg.Extra) !== this.id) {
         this.soyAzul.set(true);
         console.log("Soy el jugador azul");
+        this.esMiTurno.set(false); // El jugador azul empieza segundo
       } else {
         this.soyAzul.set(false);
         console.log("Soy el jugador rojo");
+        this.esMiTurno.set(true); // El jugador rojo empieza primero
       }
       
     }else if ( msg.Type === "Move"){

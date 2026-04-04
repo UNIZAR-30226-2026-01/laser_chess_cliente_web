@@ -25,7 +25,7 @@ export class Websocket {
     this.socket$ = webSocket({
       url: url,
       deserializer: msg => JSON.parse(msg.data),
-      openObserver: { next: () => console.log('S conectado') },
+      openObserver: { next: () => console.log('WS conectado') },
       closeObserver: { next: () => console.log('WS cerrado') }
     });
 
@@ -45,7 +45,7 @@ export class Websocket {
 
   public sendAction(action: any): void {
     console.log('Enviando acción:', action);
-    this.socket$?.next(JSON.stringify(action));
+    this.socket$?.next(action);
   }
 
   public close(): void {
