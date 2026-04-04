@@ -92,10 +92,7 @@ export class Game implements OnInit {
     });
   }
 
-  ngOnDestroy(): void {
-    this.wsSubscription?.unsubscribe();
-    this.wsService.close(); // opcional: cerrar la conexión al salir de Game
-  }
+  
 
   /*
    Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
