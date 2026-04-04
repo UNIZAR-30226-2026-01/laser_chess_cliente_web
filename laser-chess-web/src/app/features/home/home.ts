@@ -65,6 +65,9 @@ export class Home {
       next: (msg:  MessageGame) => {
         console.log('Mensaje recibido en Social (accept):', msg);
         this.popUPNotis.set(false);
+        console.log("Entra a partida desde home (acepto reto)");
+        
+
         this.router.navigate(['/game']);
       },
       error: (err) => {

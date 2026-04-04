@@ -49,14 +49,9 @@ export class Websocket {
   }
 
   public sendAction(action: any): void {
-    let msg: string;
-    if (typeof action === 'string') {
-      msg = action;
-    } else {
-      msg = JSON.stringify(action);
-    }
-    console.log('Enviando acción:', msg);
-    this.socket$?.next(msg);
+    console.log('Enviando acción:', action);
+    this.socket$?.next(action);
+
   }
 
   public close(): void {
