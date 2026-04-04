@@ -33,6 +33,12 @@ export class Home {
     this.loadFriends();     
   }
 
+  ngOnDestroy() {
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
+    }
+  }
+
   loadFriends(): void {
       this.notificationService.checkSolicitudes().subscribe({
         next: (data : ChallengeResume[]) => {
@@ -54,8 +60,9 @@ export class Home {
 
     this.websocket.initConnection(endpoint, params);
 
-    this.websocket.gameMessages$.subscribe({
-      next: (msg) => {
+    if (this.wsSubscription) this.wsSubscription.unsubscribe();
+    this.wsSubscription = this.websocket.gameMessages$.subscribe({
+      next: (msg:  MessageGame) => {
         console.log('Mensaje recibido en Social (accept):', msg);
         this.popUPNotis.set(false);
         this.router.navigate(['/game']);

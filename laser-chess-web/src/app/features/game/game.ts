@@ -33,6 +33,7 @@ export class Game implements OnInit {
   private wsService = inject(Websocket);
   private remoteService = inject(Remote);
   private wsSubscription?: Subscription;
+  private waitingForConfirmation = false;
 
   esMiTurno = signal(true);
   piezaActiva = signal<Pieza | null>(null);
@@ -183,6 +184,7 @@ toChess(x: number, y: number): string {
 // Y la inversa para cuando recibas del backend -> hay que revisarlo
 fromChess(coord: string): {x: number, y: number} {
   console.log("estoy traduciendo");
+  /*
   let x : number;
   let y : number;
   if (this.soyAzul()){
@@ -194,6 +196,21 @@ fromChess(coord: string): {x: number, y: number} {
   }
   console.log("he traducido a esto" + y + x);
   return { x, y };
+  */
+
+  const colLetter = coord[0];
+  const rowDigit = parseInt(coord[1]);
+  let x: number, y: number;
+  if (this.soyAzul()) {
+    x = COL_LETTERS_AZUL.indexOf(colLetter) + 1;
+    y = 9 - rowDigit;   // porque toChess: y_ajedrez = 9 - y_interna
+  } else {
+    x = COL_LETTERS_ROJO.indexOf(colLetter) + 1;
+    y = rowDigit;       // para rojo, la fila de ajedrez es la misma que la interna
+  }
+  return { x, y };
+
+
 }
 
 
@@ -236,7 +253,7 @@ fromChess(coord: string): {x: number, y: number} {
     const destinoAjedrez = this.toChess(destino.x, destino.y);
 
     // 2. Formamos el mensaje: "Te8:e7"
-    const mensaje = `T${origenAjedrez}:${destinoAjedrez}`;
+    const mensaje = `T${origenAjedrez}:${destinoAjedrez}`; //He quitado la T? la he vuelto a poner?
     
     console.log("Pidiendo permiso para mover:", mensaje);
 
@@ -259,13 +276,12 @@ fromChess(coord: string): {x: number, y: number} {
   }
 
   sendMovement(content:string){
-    const request: SendAction = {
-          Type: "Move",
-          Content: content
-    };
-
-    // 3. Enviamos y bloqueamos (NO movemos la pieza aún)
-    this.wsService.sendAction(request as any);
+    if (!this.esMiTurno()) return;
+    const request: SendAction = { Type: "Move", Content: content}; 
+    // Enviar y bloquear (NO movemos la pieza aún)
+    this.wsService.sendAction(JSON.stringify(request));
+    this.esMiTurno.set(false);        // Bloquear turno local
+    this.waitingForConfirmation = true;
   }
 
   /*****************************************************************************/
@@ -279,11 +295,13 @@ fromChess(coord: string): {x: number, y: number} {
     if (msg.Type === "InitialState"){
       console.log("Procesando el estado inicial");
       this.importarTablero(msg.Content);
-      if (Number(msg.Extra) !== this.id) {
+      if (Number(msg.Extra) !== this.id) {         //Ns q es el extra pero siempre es true esto (al final no siempre es true)
         this.soyAzul.set(true);
+        this.esMiTurno.set(true);   // El azul empieza
         console.log("Soy el jugador azul");
       } else {
         this.soyAzul.set(false);
+        this.esMiTurno.set(false);   // El rojo espera
         console.log("Soy el jugador rojo");
       }
       
@@ -311,27 +329,32 @@ fromChess(coord: string): {x: number, y: number} {
       const path = coordsRaw.map(c => this.fromChess(c));
       this.dispararLaser(path);
       
-      // Cambio de turno
-      if(this.esMiTurno()) {
-        this.esMiTurno.set(false); // Bloqueamos turno
-        this.piezaActiva()?.showSpots.set(false);
-        this.piezaActiva.set(null);
-        console.log("Mi turno ha acabado");
+      // Limpiar selección
+      this.piezaActiva()?.showSpots.set(false);
+      this.piezaActiva.set(null);
 
+      // Cambio de turno
+      if (this.waitingForConfirmation) {
+        // Esto es confirmación de mi propio movimiento
+        this.waitingForConfirmation = false;
+        // El turno ya está en false (lo pusimos al enviar), no se cambia
+        console.log("Movimiento propio confirmado, turno para el rival");
       } else {
-        this.esMiTurno.set(true); // LLega acción de rival
-        console.log("Mi turno ha comenzado");
+        // Esto es movimiento del rival
+        this.esMiTurno.set(true);
+        console.log("Movimiento del rival recibido, ahora es mi turno");
       }
 
+    }else if (msg.Type === "Error") {
+      console.error("Error del servidor:", msg.Content);
+      // Si estábamos esperando confirmación, algo salió mal
+      if (this.waitingForConfirmation) {
+        this.waitingForConfirmation = false;
+        // Podrías recuperar el turno (depende de la política del juego)
+        this.esMiTurno.set(true);
+      }
     }
-
-    
-
-    // Hay que añadir la actualización del tiempo + captura
-    console.log("No entiendo que mensaje me pasan: " + msg.Type);
-
   }
-
 
   /*****************************************************************************/
   /*                     Tras confirmación del backend                         */

@@ -58,12 +58,10 @@ export class Social  {
 
   // Limpiar WebSocket
   ngOnDestroy(): void {
-    if (this.websocket) {
-      this.websocket.close();
-    }
     if (this.wsSubscription) {
       this.wsSubscription.unsubscribe();
     }
+    //this.websocket.close(); //No cerrar el websocket cuando se cambie de pestaña
   }
 
   // Cancelar la espera y cerrar WebSocket
@@ -307,7 +305,7 @@ export class Social  {
 
     if (this.wsSubscription) this.wsSubscription.unsubscribe();
     this.wsSubscription = this.websocket.gameMessages$.subscribe({
-      next: (msg) => {
+      next: (msg:  MessageGame) => {
         console.log('Mensaje recibido en Social:', msg);
         this.popUP_waiting.set(false);
         this.router.navigate(['/game']);

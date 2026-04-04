@@ -231,6 +231,18 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
   setTokens(accessToken: string): void {
     this.accessToken = accessToken;
     localStorage.setItem(ACCESS_TOKEN, accessToken); //Hay que guardarlo para el interceptor
+    
+    // Extraer el ID del payload del token
+    try {
+      const payload = JSON.parse(atob(accessToken.split('.')[1]));
+      if (payload.sub) {
+        this.setAccountId(parseInt(payload.sub));
+      }
+    } catch (e) {
+      console.error('Error parsing token', e);
+    }
+    
+    
     this.isAuthenticated$.next(true);
   }
 

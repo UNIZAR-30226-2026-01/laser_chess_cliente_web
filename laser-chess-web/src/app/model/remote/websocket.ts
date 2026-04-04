@@ -13,7 +13,12 @@ export class Websocket {
 
   // Método para iniciar la conexión si no existe
   public initConnection(endpoint: string, params: any): void {
-    if (this.socket$) return; // Ya está conectado, no hacer nada
+    
+    if (this.socket$) { //Cerrar conexion vieja si la hay ? 
+      this.close();
+    }
+    
+    //if (this.socket$) return; // Ya está conectado, no hacer nada. pero nunca se cumple o si?
 
     const token = this.remote.getAccessToken();
     const searchParams = new URLSearchParams(params);
@@ -25,7 +30,7 @@ export class Websocket {
     this.socket$ = webSocket({
       url: url,
       deserializer: msg => JSON.parse(msg.data),
-      openObserver: { next: () => console.log('S conectado') },
+      openObserver: { next: () => console.log('WS conectado') },
       closeObserver: { next: () => console.log('WS cerrado') }
     });
 
@@ -44,8 +49,14 @@ export class Websocket {
   }
 
   public sendAction(action: any): void {
-    console.log('Enviando acción:', action);
-    this.socket$?.next(JSON.stringify(action));
+    let msg: string;
+    if (typeof action === 'string') {
+      msg = action;
+    } else {
+      msg = JSON.stringify(action);
+    }
+    console.log('Enviando acción:', msg);
+    this.socket$?.next(msg);
   }
 
   public close(): void {
