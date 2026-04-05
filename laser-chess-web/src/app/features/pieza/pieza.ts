@@ -37,6 +37,21 @@ export class Pieza implements OnInit, OnChanges{
   // Indica si los spots deben mostrarse
   showSpots = signal(false);
 
+  isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
+
+  puedeEntrar(nx: number, ny: number): boolean {
+    const restriccion = this.isCasillaRestringida()?.(nx, ny);
+
+    if (!restriccion) return true;
+
+    // Si es azul, solo piezas azules pueden entrar
+    if (restriccion === 'azul') return true; // <- aquí luego puedes filtrar por tipo/color
+
+    if (restriccion === 'rojo') return false;
+
+    return true;
+  }
+
   ngOnInit() {
     // Al iniciar, colocamos la pieza en su sitio
     this.position.set({ x: this.initialX(), y: this.initialY() });

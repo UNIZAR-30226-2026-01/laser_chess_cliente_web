@@ -9,6 +9,19 @@
 
   <main class="main-content">
     <div class="board">
+      @for (y of [].constructor(filas); let row = $index; track row) {
+        @for (x of [].constructor(columnas); let col = $index; track col) {
+
+        <div 
+          class="cell"
+          [class.azul]="isCasillaRestringida(col+1, row+1) === 'azul'"
+          [class.rojo]="isCasillaRestringida(col+1, row+1) === 'rojo'"
+          [style.gridColumn]="col+1"
+          [style.gridRow]="row+1">
+        </div>
+
+      }
+    }
       @for (p of listaPiezas(); track p.id) {
         @if (p.esMia) {
           <app-pieza 
@@ -19,6 +32,7 @@
             [cols]="columnas"
             [rows]="filas"
             [tipoPieza]="p.tipoPieza"
+            [isCasillaRestringida]="isCasillaRestringida.bind(this)"
             (selected)="seleccionarPieza(piezaRef)"
             (moveRequested)="gestionarMovimiento($event)">
           </app-pieza>
