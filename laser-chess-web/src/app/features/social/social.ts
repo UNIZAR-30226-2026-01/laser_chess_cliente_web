@@ -8,11 +8,14 @@ import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
 import { MessageGame } from '../../model/game/MessageGame'
 
+import { FormsModule } from '@angular/forms';
+
+
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 
 @Component({
   selector: 'app-social',
-  imports: [TopRow],
+  imports: [TopRow, FormsModule],
   templateUrl: './social.html',
   styleUrl: './social.css',
 })
@@ -46,6 +49,35 @@ export class Social  {
   public selectedUser: FriendSummary | null = null;
   public requestTabState = signal<'received' | 'sent'>('received'); //Para diferenciar entre enviadas y recibidas
   public sentRequestsInfo = signal(false);
+
+  //PARA LA CONFIGURACION DE LA PARTIDA
+  // Popup de configuración de las partidas
+  public showConfigPopup = signal(false);
+  public friendToChallenge: FriendSummary | null = null;
+  
+  // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
+  public timeModes = [
+    { id: 'blitz', label: 'Blitz', baseSeconds: 300, increments: [0, 2, 5] },
+    { id: 'rapid', label: 'Rapid', baseSeconds: 900, increments: [0, 5, 10] },
+    { id: 'classic', label: 'Classic', baseSeconds: 1800, increments: [0, 10, 15] },
+    { id: 'extended', label: 'Extended', baseSeconds: 3600, increments: [0, 15, 20] },
+    { id: 'custom', label: 'Personalizado', baseSeconds: null, increments: null }
+  ];
+  public boards = [
+    { id: 1, name: 'ACE' },
+    { id: 2, name: 'CURIOSITY' },
+    { id: 3, name: 'GRAIL' },
+    { id: 4, name: 'MERCURY' },
+    { id: 5, name: 'SOPHIE' }
+  ];
+  public selectedBoard = signal<number>(1); // ACE por defecto
+  public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
+  public selectedIncrement = signal<number>(0); // incremento en segundos
+  
+
+  // Solo para modo personalizado
+  public customMinutes = signal<number>(5);
+  public customIncrementSec = signal<number>(0);
 
   //WEBSOCKET
   public popUP_waiting = signal(false);// Para el nuevo pop-up del ESPERANDO
@@ -280,17 +312,60 @@ export class Social  {
   }
 
 
-  // Inciiar a una partida amistosa
-  challengeFriend(friendUsername: string): void {
-    if (!friendUsername) return;
+  // Abre el popup al hacer clic en Retar
+  openChallengeConfig(friend: FriendSummary): void {
+    this.friendToChallenge = friend;
+    this.selectedBoard.set(1);   
+    this.selectedMode.set(this.timeModes[0]);
+    this.selectedIncrement.set(0);
+    this.customMinutes.set(5);
+    this.customIncrementSec.set(0);
+    this.showConfigPopup.set(true);
+  }
 
-    const board = 1;
-    const startingTime = 300;
-    const timeIncrement = 10;
+  // Cierra el popup
+  closeConfigPopup(): void {
+    this.showConfigPopup.set(false);
+    this.friendToChallenge = null;
+  }
+
+  // Para cambair el modo de tiempo y ajustar el incremento de tempo
+  onModeChange(mode: any): void {
+    this.selectedMode.set(mode);
+    if (mode.id !== 'custom') {
+      // Restablecer a primer incremento disponible
+      this.selectedIncrement.set(mode.increments[0]);
+    }
+  }
+
+  // Parámetros finales según el modo seleccionado
+  getChallengeParams(): { startingTime: number, timeIncrement: number } {
+    const mode = this.selectedMode();
+    if (mode.id === 'custom') {
+      let minutes = this.customMinutes();
+      if (minutes > 180) minutes = 180;
+      if (minutes < 1) minutes = 1;
+      let inc = this.customIncrementSec();
+      if (inc > 60) inc = 60;
+      if (inc < 0) inc = 0;
+      return { startingTime: minutes * 60, timeIncrement: inc };
+    } else {
+      return { startingTime: mode.baseSeconds, timeIncrement: this.selectedIncrement() };
+    }
+  }
+
+
+
+  // Inciiar a una partida amistosa DESAFIAR
+  sendChallenge(): void {
+    if (!this.friendToChallenge) return;
+
+    const board = this.selectedBoard();
+    const { startingTime, timeIncrement } = this.getChallengeParams();
 
     const endpoint = 'challenge';
     const params = {
-      username: friendUsername,
+      username: this.friendToChallenge.username,
       board,
       starting_time: startingTime,
       time_increment: timeIncrement
@@ -314,7 +389,18 @@ export class Social  {
       }
     });
 
+    this.closeConfigPopup(); 
     this.popUP_waiting.set(true);
+  }
+
+  // Esto es para mostrar el pop-up
+  challengeFriend(friendUsername: string): void {
+    const friend = this.friends().find(f => f.username === friendUsername);
+    if (friend) {
+      this.openChallengeConfig(friend);   // Abre
+    } else {
+      console.error('Amigo no encontrado');
+    }
   }
 
 }

@@ -914,3 +914,76 @@
   background: #da190b;
   transform: scale(1.05);
 }
+
+
+
+
+
+/* Popup para configuración de reto */
+.popup-challenge {
+  background: white;
+  border: 0.15rem solid black;
+  width: min(90%, 30rem);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0.4rem 0.4rem 0 black;
+  animation: popupAppear 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.param-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.param-row label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.readonly-value {
+  background: #f0f0f0;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  border: 0.1rem solid #ccc;
+}
+
+.challenge-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.challenge-actions button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.challenge-actions .btn-cancel {
+  background: #9e9e9e;
+  color: white;
+}
+
+.challenge-actions .btn-cancel:hover {
+  background: #757575;
+}
+
+.challenge-actions .btn-challenge-popup {
+  background: #4caf50;
+  color: white;
+}
+
+.challenge-actions .btn-challenge-popup:hover {
+  background: #45a049;
+  transform: scale(1.02);
+}
