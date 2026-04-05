@@ -33,11 +33,7 @@ export class Home {
     this.loadFriends();     
   }
 
-  ngOnDestroy() {
-    if (this.wsSubscription) {
-      this.wsSubscription.unsubscribe();
-    }
-  }
+
 
   loadFriends(): void {
       this.notificationService.checkSolicitudes().subscribe({
