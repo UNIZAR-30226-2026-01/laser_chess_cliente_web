@@ -8,7 +8,6 @@ import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
 import { SendAction } from '../../model/game/SendAction'
 import { Remote } from '../../model/remote/remote';
-import { GameMessageType } from "../../model/game/GameMessageType";
 import { Subscription } from 'rxjs';
 
 
@@ -107,77 +106,93 @@ export class Game implements OnInit {
     this.listaPiezas.update(actuales => [...actuales, nuevaPieza]);
   }
 
+  
+  isCasillaRestringida(x: number, y: number): 'azul' | 'rojo' | null {
+  
+    // Casillas Hélice azul
+    if ( x == 1 || ( x == 9 &&  ( y == 1 ||  y == 8 ))) {
+      return 'azul';
+    }
 
-/*
-  @param board: representación del tablero inicial
-*/
-importarTablero(board: string) { 
-  this.listaPiezas.set([]); // Limpiamos antes de empezar
-  this.cont = 1;
+    // Casillas Hélice rojo
+    if ( x == 10 || ( x == 2 && ( y == 1  || y == 8 ))) {
+      return 'rojo';
+    }
 
-  // 1. Separar por filas (el \n del servidor)
-  const filasTablero = board.split('\n');
+    return null;
     
-  for (let j = 0; j < filasTablero.length; j++) {
-    // 2. Separar cada fila por comas
-    const piezas = filasTablero[j].split(',');
-      
-    for (let i = 0; i < piezas.length; i++) {
-      const codigoPieza = piezas[i].trim();
-        
-      if (codigoPieza !== '') {
-          // IMPORTANTE: 
-          // i + 1 es la columna (X)
-          // j + 1 es la fila (Y)
-        console.log("Añadiendo pieza " + codigoPieza + " en posición " + i + " " + j);
+  }
 
-        this.parsearPiezaCompacta(codigoPieza, i + 1, j + 1);
+  /*
+    @param board: representación del tablero inicial
+  */
+  importarTablero(board: string) { 
+    this.listaPiezas.set([]); // Limpiamos antes de empezar
+    this.cont = 1;
+
+    // 1. Separar por filas (el \n del servidor)
+    const filasTablero = board.split('\n');
+      
+    for (let j = 0; j < filasTablero.length; j++) {
+      // 2. Separar cada fila por comas
+      const piezas = filasTablero[j].split(',');
+        
+      for (let i = 0; i < piezas.length; i++) {
+        const codigoPieza = piezas[i].trim();
+          
+        if (codigoPieza !== '') {
+            // IMPORTANTE: 
+            // i + 1 es la columna (X)
+            // j + 1 es la fila (Y)
+          console.log("Añadiendo pieza " + codigoPieza + " en posición " + i + " " + j);
+
+          this.parsearPiezaCompacta(codigoPieza, i + 1, j + 1);
+        }
       }
     }
   }
-}
-  
-  // Hay que revisarlo
-toChess(x: number, y: number): string {
-  if (this.soyAzul()){
-      return `${COL_LETTERS_AZUL[x-1]}${8 - y + 1}`;
-  }else{
-      return `${COL_LETTERS_ROJO[x-1]}${y}`;
+    
+    // Hay que revisarlo
+  toChess(x: number, y: number): string {
+    if (this.soyAzul()){
+        return `${COL_LETTERS_AZUL[x-1]}${8 - y + 1}`;
+    }else{
+        return `${COL_LETTERS_ROJO[x-1]}${y}`;
+    }
+    
   }
-  
-}
 
-// Y la inversa para cuando recibas del backend -> hay que revisarlo
-fromChess(coord: string): {x: number, y: number} {
-  console.log("estoy traduciendo");
-  /*
-  let x : number;
-  let y : number;
-  if (this.soyAzul()){
-    x = COL_LETTERS_AZUL.indexOf(coord[0]) + 1;
-    y = 8 - parseInt(coord[1]) + 1;
-  }else{
-    x = COL_LETTERS_ROJO.indexOf(coord[0]) + 1;
-    y = parseInt(coord[1]);
+  // Y la inversa para cuando recibas del backend -> hay que revisarlo
+  fromChess(coord: string): {x: number, y: number} {
+    console.log("estoy traduciendo");
+    /*
+    let x : number;
+    let y : number;
+    if (this.soyAzul()){
+      x = COL_LETTERS_AZUL.indexOf(coord[0]) + 1;
+      y = 8 - parseInt(coord[1]) + 1;
+    }else{
+      x = COL_LETTERS_ROJO.indexOf(coord[0]) + 1;
+      y = parseInt(coord[1]);
+    }
+    console.log("he traducido a esto" + y + x);
+    return { x, y };
+    */
+
+    const colLetter = coord[0];
+    const rowDigit = parseInt(coord[1]);
+    let x: number, y: number;
+    if (this.soyAzul()) {
+      x = COL_LETTERS_AZUL.indexOf(colLetter) + 1;
+      y = 9 - rowDigit;   // porque toChess: y_ajedrez = 9 - y_interna
+    } else {
+      x = COL_LETTERS_ROJO.indexOf(colLetter) + 1;
+      y = rowDigit;       // para rojo, la fila de ajedrez es la misma que la interna
+    }
+    return { x, y };
+
+
   }
-  console.log("he traducido a esto" + y + x);
-  return { x, y };
-  */
-
-  const colLetter = coord[0];
-  const rowDigit = parseInt(coord[1]);
-  let x: number, y: number;
-  if (this.soyAzul()) {
-    x = COL_LETTERS_AZUL.indexOf(colLetter) + 1;
-    y = 9 - rowDigit;   // porque toChess: y_ajedrez = 9 - y_interna
-  } else {
-    x = COL_LETTERS_ROJO.indexOf(colLetter) + 1;
-    y = rowDigit;       // para rojo, la fila de ajedrez es la misma que la interna
-  }
-  return { x, y };
-
-
-}
 
 
 
@@ -245,7 +260,7 @@ fromChess(coord: string): {x: number, y: number} {
     if (!this.esMiTurno()) return;
     const request: SendAction = { Type: "Move", Content: content}; 
     // Enviar y bloquear (NO movemos la pieza aún)
-    this.wsService.sendAction(JSON.stringify(request));
+    this.wsService.sendAction(request);
     this.esMiTurno.set(false);        // Bloquear turno local
     this.waitingForConfirmation = true;
   }
@@ -321,6 +336,14 @@ fromChess(coord: string): {x: number, y: number} {
         // Podrías recuperar el turno (depende de la política del juego)
         this.esMiTurno.set(true);
       }
+    
+    }else if (msg.Type === "End"){
+      console.log("El juego ha terminado. Resultado:", msg.Content);
+      
+      // Disparo del láser
+      const coordsRaw = msg.Extra.substring(0).split(',');
+      const path = coordsRaw.map(c => this.fromChess(c));
+      this.dispararLaser(path);
     }
   }
 
