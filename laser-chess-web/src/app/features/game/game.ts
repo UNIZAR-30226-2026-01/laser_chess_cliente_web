@@ -293,43 +293,54 @@ export class Game implements OnInit {
       }
       
     }else if ( msg.Type === "Move"){
-      console.log("me dicen que me mueva");
-      const tipoAccion= msg.Content[0];
-      if (tipoAccion === 'T') {
-        // "Te8:e7" -> de e8 a e7
-        console.log("me toca mover " + msg.Content);
-        const partes = msg.Content.substring(1).split(':');
-        const desde = this.fromChess(partes[0]);
-        const hasta = this.fromChess(partes[1]);
-        console.log("desde " + desde + " hasta " + hasta);
-        this.moverPiezaEnTablero(desde, hasta);
+      const content = msg.Content.replace(';', '');
+      const regexMove = /^([LTR])([a-j]\d)?(?::([a-j]\d))?(x([a-j]\d))?%\{([\d.]+)\}$/;     
+      const match = content.match(regexMove);
 
-      } else if (tipoAccion === 'L' || tipoAccion === 'R') {
-        // "La1"
-        console.log("me toca girar");
-        const pos = this.fromChess(msg.Content.substring(1));
-        this.rotarPiezaEnTablero(pos, tipoAccion);
-      }
+      if (match) {
+        const tipo = match[1];             // 'T', 'L' o 'R' o undefined
+        const desde = match[2] ? this.fromChess(match[2]) : null;
+        const hasta = match[3] ? this.fromChess(match[3]) : null;
+        const captura = match[5] ? this.fromChess(match[5]) : null;
+        const tiempo = parseFloat(match[6]);
 
-      // Disparo del láser
-      const coordsRaw = msg.Extra.substring(0).split(',');
-      const path = coordsRaw.map(c => this.fromChess(c));
-      this.dispararLaser(path);
-      
-      // Limpiar selección
-      this.piezaActiva()?.showSpots.set(false);
-      this.piezaActiva.set(null);
+        console.log("Tipo:", tipo, "Desde:", desde, "Hasta:", hasta, "Captura:", captura, "Tiempo:", tiempo);
+        if (tipo === 'T' && desde && hasta) {
+          // "Te8:e7" -> de e8 a e7
+          console.log("me toca mover " + msg.Content);
+          
+          console.log("desde " + desde + " hasta " + hasta);
+          this.moverPiezaEnTablero(desde, hasta);
 
-      // Cambio de turno
-      if (this.waitingForConfirmation) {
-        // Esto es confirmación de mi propio movimiento
-        this.waitingForConfirmation = false;
-        // El turno ya está en false (lo pusimos al enviar), no se cambia
-        console.log("Movimiento propio confirmado, turno para el rival");
-      } else {
-        // Esto es movimiento del rival
-        this.esMiTurno.set(true);
-        console.log("Movimiento del rival recibido, ahora es mi turno");
+        } else if ((tipo === 'L' || tipo === 'R') && desde) {
+          // "La1"
+          console.log("me toca girar");
+          this.rotarPiezaEnTablero(desde, tipo);
+        }
+
+        // Disparo del láser
+        const coordsRaw = msg.Extra.substring(0).split(',');
+        const path = coordsRaw.map(c => this.fromChess(c));
+        this.dispararLaser(path);
+        
+        if (captura) {
+          this.eliminarPiezaEnTablero(captura);
+        }
+        // Limpiar selección
+        this.piezaActiva()?.showSpots.set(false);
+        this.piezaActiva.set(null);
+
+        // Cambio de turno
+        if (this.waitingForConfirmation) {
+          // Esto es confirmación de mi propio movimiento
+          this.waitingForConfirmation = false;
+          // El turno ya está en false (lo pusimos al enviar), no se cambia
+          console.log("Movimiento propio confirmado, turno para el rival");
+        } else {
+          // Esto es movimiento del rival
+          this.esMiTurno.set(true);
+          console.log("Movimiento del rival recibido, ahora es mi turno");
+        }
       }
 
     }else if (msg.Type === "Error") {
@@ -403,6 +414,13 @@ export class Game implements OnInit {
         return p;
       })
     );
+  }
+
+  eliminarPiezaEnTablero(pos: {x: number, y: number}) {
+    this.listaPiezas.update(piezas =>
+      piezas.filter(p => !(p.x === pos.x && p.y === pos.y))
+    );
+    console.log(`Pieza eliminada en ${pos.x}, ${pos.y}`);
   }
 
   dispararLaser(path: {x: number, y: number}[]) {
