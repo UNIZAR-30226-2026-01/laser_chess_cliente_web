@@ -272,6 +272,7 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
     this.accessToken = accessToken;
     localStorage.setItem(ACCESS_TOKEN, accessToken); //Hay que guardarlo para el interceptor
     
+    localStorage.setItem('has_session_hint', 'true');
     // Extraer el ID del payload del token
     try {
       const payload = JSON.parse(atob(accessToken.split('.')[1]));
@@ -306,38 +307,42 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
     }
   }
 
-  refreshToken() {
-    // Hacer refresh del access token usando el refresh token
-    //const accessToken = this.getAccessToken(); //no se usa pero lo comento por si acaso
-    
-    // Ahora sin body, solo con la cookie de httpOnly
-    return this.http.post<any>(`${API_URL}/refresh`, {}, { withCredentials: true }).pipe(
-      tap((response) => {
-        if (response.access_token) {
-          this.setTokens(response.access_token);
-        }
-      }),
-      catchError(() => {
-        this.logout(); //Antes habia dos 
-        throw new Error('Session expired');
-      })
-    );
-  }
+  // En tu clase Remote
+private limpiarPersistencia(): void {
+  localStorage.removeItem(ACCESS_TOKEN);
+  localStorage.removeItem(ACCOUNT_ID);
+  localStorage.removeItem('has_session_hint');
+  this.accessToken = "";
+  this.accountId = null;
+  this.isAuthenticated$.next(false);
+}
+
+// Y lo usas en el refreshToken
+refreshToken() {
+  return this.http.post<any>(`${API_URL}/refresh`, {}, { withCredentials: true }).pipe(
+    tap((response) => {
+      if (response.access_token) {
+        this.setTokens(response.access_token);
+      }
+    }),
+    catchError((err) => {
+      this.limpiarPersistencia(); // <--- Aquí es donde se borra el "hint" si la sesión expiró
+      this.router.navigate(['/start']);
+      throw err;
+    })
+  );
+}
 
 
   logout(): void {
-    console.log('User logged out');
-
-    // El usuario ya no está logeado
-    this.isAuthenticated$.next(false);
-
-    // Eliminamos tokens
     localStorage.removeItem(ACCESS_TOKEN);
     localStorage.removeItem(ACCOUNT_ID);
-
-    this.accountId = null;
-    this.router.navigate(['/start']);
+    localStorage.removeItem('has_session_hint'); // IMPORTANTE
     
+    this.accessToken = "";
+    this.accountId = null;
+    this.isAuthenticated$.next(false);
+    this.router.navigate(['/start']);
   }
   
   
@@ -349,6 +354,12 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
     }
 
     //No lo esta, nuevo access_token con el refresh_token
+    const haySesionPrevia = localStorage.getItem('has_session_hint') === 'true';
+
+    if (!haySesionPrevia) {
+      // El usuario definitivamente no está logeado.
+      return of(false);
+    }
     return this.refreshToken().pipe(
       map(() => true),
       catchError(() => of(false))

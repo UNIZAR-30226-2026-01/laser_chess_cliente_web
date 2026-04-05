@@ -16,6 +16,8 @@ import { signal } from '@angular/core';
 
 export class Login implements OnInit {
   loginForm!: FormGroup;
+  public formSubmitted = signal(false);
+
   private authService = inject(Remote);
   private router = inject(Router);
   public showError = signal(false);
@@ -28,11 +30,17 @@ export class Login implements OnInit {
         Validators.required,
         Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$|^\w+$/) // email o username
       ]),
-      password: new FormControl('', [Validators.required])
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(50)
+      ]),
     });
   }
 
   login() {
+    this.formSubmitted.set(true);
+    
     if (this.loginForm.invalid) {
       console.warn('Form not valid');
       return;

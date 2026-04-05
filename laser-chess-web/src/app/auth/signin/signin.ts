@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { Remote } from '../../model/remote/remote';
 import { RegisterRequest } from '../../model/auth/RegisterRequest';
 import { signal } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 export const passwordMatchValidator: ValidatorFn =
   (control: AbstractControl): ValidationErrors | null => {
@@ -30,8 +32,12 @@ export const passwordMatchValidator: ValidatorFn =
 
 export class Signin {
   RegisterForm!: FormGroup;
+  public formSubmitted = signal(false);
+
+
   private authService = inject(Remote);
   private router = inject(Router);
+
   public showError = signal(false);
   public errorMessage = signal('');  
 
@@ -39,11 +45,22 @@ export class Signin {
     this.RegisterForm = new FormGroup({
       mail: new FormControl('', [
         Validators.required,
-        Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$|^\w+$/) // email
+        Validators.email
       ]),
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required]),
-      password_rep: new FormControl('', [Validators.required]),
+      username: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(50)
+      ]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(50)
+      ]),
+      password_rep: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(50)
+      ]),
      }, { validators: passwordMatchValidator }); 
     
   }
@@ -51,6 +68,8 @@ export class Signin {
   
   
   register() {
+    this.formSubmitted.set(true);
+
     if (this.RegisterForm.invalid) {
       console.warn('Form not valid');
       return;
@@ -80,7 +99,7 @@ export class Signin {
       error: (err) => {
         console.error('HTTP error during registration', err);
         this.showError.set(true);
-        this.errorMessage.set('Error al registrar el usuario');
+        this.errorMessage.set('Ya existe un usuario registrado con ese correo o nombre de usuario');
       }
     });
   }
