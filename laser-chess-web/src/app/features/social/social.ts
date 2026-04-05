@@ -90,6 +90,10 @@ export class Social  {
       this.loadSentRequests(); 
   }
 
+  ngOnDestroy(): void {
+    this.wsSubscription?.unsubscribe(); 
+  }
+
 
   // Cancelar la espera y cerrar WebSocket
   cancelWaiting(): void {
@@ -322,6 +326,7 @@ export class Social  {
     this.customIncrementSec.set(0);
     this.showConfigPopup.set(true);
   }
+
 
   // Cierra el popup
   closeConfigPopup(): void {

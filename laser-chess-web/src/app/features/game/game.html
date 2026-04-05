@@ -1,4 +1,16 @@
 <div class="game-screen">
+  <!-- POP-UP FIN DE PARTIDA -->
+   @if(finPartida().mostrar){ 
+    <div class="popup-overlay">
+      <div class="popup-content" (click)="$event.stopPropagation()">
+        <p>{{finPartida().mensaje}}</p>
+        <button (click)="solicitarRevancha()">Revancha</button>
+        <button (click)="finPartidaHandler()">Cerrar</button>
+      </div>
+    </div>
+  }
+  
+
   <aside class="side-panel">
     <div class="player_card my-user">
       <div class="timer">13:00</div>

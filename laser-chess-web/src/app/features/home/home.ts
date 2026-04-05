@@ -32,6 +32,10 @@ export class Home {
     // Aquí podrías cargar las solicitudes iniciales si quieres
     this.loadFriends();     
   }
+  
+  ngOnDestroy(): void {
+    this.wsSubscription?.unsubscribe(); 
+  }
 
 
 
