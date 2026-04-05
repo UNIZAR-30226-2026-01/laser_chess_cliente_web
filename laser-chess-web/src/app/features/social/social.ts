@@ -49,6 +49,8 @@ export class Social  {
   public selectedUser: FriendSummary | null = null;
   public requestTabState = signal<'received' | 'sent'>('received'); //Para diferenciar entre enviadas y recibidas
   public sentRequestsInfo = signal(false);
+  
+  public selectedUserContext = signal<'friend' | 'received_request' | 'sent_request'>('friend'); //Para diferenciar q informacion mostrar
 
   //PARA LA CONFIGURACION DE LA PARTIDA
   // Popup de configuración de las partidas
@@ -121,9 +123,10 @@ export class Social  {
   }
 
   // abrir pop-up con información del usuario
-  openUserInfo(user: FriendSummary) {
+  openUserInfo(user: FriendSummary, context: 'friend' | 'received_request' | 'sent_request' = 'friend') {
     this.selectedUser = user;
     this.popUP_userInfo.set(true);
+    this.selectedUserContext.set(context);  //Para saber q pop-up mostrar
       if (user.userId) {
       const userIdNumber = Number(user.userId);
       this.friendService.getAllRatings(userIdNumber).subscribe({
@@ -149,6 +152,45 @@ export class Social  {
     this.popUP_userInfo.set(false);
     this.selectedUser = null;
   }
+
+
+
+  acceptFromPopup() {
+    if (this.selectedUser) {
+      this.acceptRequest(this.selectedUser.username);
+      this.closeUserInfo();
+    }
+  }
+
+  rejectFromPopup() {
+    if (this.selectedUser) {
+      this.rejectRequest(this.selectedUser.username);
+      this.closeUserInfo();
+    }
+  }
+
+  cancelSentFromPopup() {
+    if (this.selectedUser) {
+      this.cancelSentRequest(this.selectedUser.username);
+      this.closeUserInfo();
+    }
+  }
+
+  deleteFriendFromPopup() {
+    if (this.selectedUser) {
+      this.deleteFriend(this.selectedUser.username);
+      this.closeUserInfo();
+    }
+  }
+
+  challengeFromPopup() {
+    const user = this.selectedUser;  // Guardar ANTES MUY IMPORTANTE SIN esto no van las privadas
+    if (user) {
+      this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual 
+      this.openChallengeConfig(user);
+    }
+  }
+
 
   // Cambiar en el popup de solicitudes
   setRequestTab(tab: 'received' | 'sent') {

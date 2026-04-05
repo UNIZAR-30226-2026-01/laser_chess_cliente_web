@@ -131,7 +131,7 @@
             } @else {
               <ul class="requests-list">
                 @for (friendship of request(); track friendship.username) {
-                  <li class="request-item" (click)="openUserInfo(friendship)">
+                  <li class="request-item" (click)="openUserInfo(friendship, 'received_request')">
                     <div class="request-info">
                       <div class="avatar-placeholder">
                         <span class="avatar-icon">👤</span>
@@ -142,12 +142,7 @@
                       </div>
                     </div>
                     <div class="request-actions" (click)="$event.stopPropagation()">
-                      <button class="btn-accept" (click)="acceptRequest(friendship.username)">
-                        <span>✓</span> Aceptar
-                      </button>
-                      <button class="btn-reject" (click)="rejectRequest(friendship.username)">
-                        <span>✗</span> Rechazar
-                      </button>
+                      <!-- Los botones de aceptar y rechazar estaban aqui antes -->
                     </div>
                   </li>
                 }
@@ -168,7 +163,7 @@
             } @else {
               <ul class="requests-list">
                 @for (friendship of sentRequests(); track friendship.username) {
-                  <li class="request-item" (click)="openUserInfo(friendship)">
+                  <li class="request-item" (click)="openUserInfo(friendship, 'sent_request')">
                     <div class="request-info">
                       <div class="avatar-placeholder">
                         <span class="avatar-icon">👤</span>
@@ -183,9 +178,7 @@
                     </div>
                     
                     <div class="request-actions" (click)="$event.stopPropagation()">
-                      <button class="btn-cancel" (click)="cancelSentRequest(friendship.username)">
-                        <span>✗</span> Cancelar
-                      </button>
+                      <!-- El boton de cancelar estaba aqui antes -->
                     </div>
                   </li>
                 }
@@ -207,6 +200,7 @@
             </div>
             
             <div class="popup-content">
+                <!-- Ahora aqui se elige q tipo de pop-up enseñar basado en la zona en la q se clike-->
                 <div class="user-info-detail">
                     <div class="user-avatar-large">
                         @if (selectedUser.avatar) {
@@ -228,6 +222,21 @@
                             <span class="detail-label">Nivel:</span>
                             <span class="detail-value">{{ selectedUser.level || 'N/A' }}</span>
                         </div>
+                        
+                        <!-- Esto lo comento pero para q este como en el movil deberia estar aqui xd pero es HORIBLE asiq lo dejo abajo
+                        <div class="user-actions-popup">
+                          @if (selectedUserContext() === 'friend') {
+                            <button class="btn-challenge-popup" (click)="challengeFromPopup()">Retar</button>
+                            <button class="btn-delete-popup" (click)="deleteFriendFromPopup()">Eliminar</button>
+                          } @else if (selectedUserContext() === 'received_request') {
+                            <button class="btn-accept" (click)="acceptFromPopup()">Aceptar</button>
+                            <button class="btn-reject" (click)="rejectFromPopup()">Rechazar</button>
+                          } @else if (selectedUserContext() === 'sent_request') {
+                            <button class="btn-cancel" (click)="cancelSentFromPopup()">Cancelar solicitud</button>
+                          }
+                        </div>
+                        -->
+
 
                         <!-- filas de ELO -->
                         <div class="detail-row">
@@ -247,6 +256,18 @@
                           <span class="detail-value">{{ selectedUser.extendedElo ?? 'N/A' }}</span>
                         </div>
                     </div>
+                </div>
+
+                <div class="user-actions-popup">
+                  @if (selectedUserContext() === 'friend') {
+                    <button class="btn-challenge-popup" (click)="challengeFromPopup()">Retar</button>
+                    <button class="btn-delete-popup" (click)="deleteFriendFromPopup()">Eliminar</button>
+                  } @else if (selectedUserContext() === 'received_request') {
+                    <button class="btn-accept" (click)="acceptFromPopup()">Aceptar</button>
+                    <button class="btn-reject" (click)="rejectFromPopup()">Rechazar</button>
+                  } @else if (selectedUserContext() === 'sent_request') {
+                    <button class="btn-cancel" (click)="cancelSentFromPopup()">Cancelar solicitud</button>
+                  }
                 </div>
             </div>
         </div>
@@ -289,7 +310,7 @@
                 <p>No tienes amigos</p>
             } @else {
                 @for (friend of friends(); track friend.username) {
-                    <li class="user-item" (click)="openUserInfo(friend)">
+                    <li class="user-item" (click)="openUserInfo(friend, 'friend')">
                         <div class="user-info">
                             <div class="left">
                                 <span class="avatar">👤</span>
@@ -298,12 +319,7 @@
                             <div class="user-stats">
                                 <span class="friend-xp">Nivel {{ friend.level }}</span>
                                 <div class="friend-actions" (click)="$event.stopPropagation()">
-                                    <button class="btn-challenge" (click)="challengeFriend(friend.username)" title="Retar a partida">
-                                        Retar
-                                    </button>
-                                    <button class="btn-delete" (click)="deleteFriend(friend.username)" title="Eliminar amigo">
-                                        Eliminar
-                                    </button>
+                                  <!-- Los botones de aceptar y rechazar estaban aqui antes -->
                                 </div>
                             </div>
                         </div>
