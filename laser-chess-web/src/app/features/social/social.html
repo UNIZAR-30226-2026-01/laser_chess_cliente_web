@@ -41,13 +41,13 @@
           <div class="popup-tab" [class.active]="requestTabState() === 'received'" (click)="setRequestTab('received')">
             Recibidas
             @if(request.length > 0) {
-              <span class="tab-badge">{{ request.length }}</span>
+              <span class="tab-badge">{{ request().length }}</span>
             }
           </div>
           <div class="popup-tab" [class.active]="requestTabState() === 'sent'" (click)="setRequestTab('sent')">
             Enviadas
             @if(sentRequests.length > 0) {
-              <span class="tab-badge">{{ sentRequests.length }}</span>
+              <span class="tab-badge">{{ sentRequests().length }}</span>
             }
           </div>
         </div>
@@ -59,13 +59,13 @@
               <div class="loading-state">
                 <p>Cargando solicitudes...</p>
               </div>
-            } @else if (request.length === 0) {
+            } @else if (request().length === 0) {
               <div class="empty-state">
                 <p>No tienes solicitudes de amistad pendientes</p>
               </div>
             } @else {
               <ul class="requests-list">
-                @for (friendship of request; track friendship.username) {
+                @for (friendship of request(); track friendship.username) {
                   <li class="request-item" (click)="openUserInfo(friendship)">
                     <div class="request-info">
                       <div class="avatar-placeholder">
@@ -96,13 +96,13 @@
               <div class="loading-state">
                 <p>Cargando solicitudes enviadas...</p>
               </div>
-            } @else if (sentRequests.length === 0) {
+            } @else if (sentRequests().length === 0) {
               <div class="empty-state">
                 <p>No has enviado solicitudes de amistad pendientes</p>
               </div>
             } @else {
               <ul class="requests-list">
-                @for (friendship of sentRequests; track friendship.username) {
+                @for (friendship of sentRequests(); track friendship.username) {
                   <li class="request-item" (click)="openUserInfo(friendship)">
                     <div class="request-info">
                       <div class="avatar-placeholder">
@@ -211,8 +211,8 @@
             <span class="request-text">Solicitudes de amistad</span>
           </div>
           <div class="right">
-            @if (request.length > 0) {
-              <span class="notification-badge">{{ request.length }}</span>
+            @if (request().length > 0) {
+              <span class="notification-badge">{{ request().length }}</span>
             }
           </div>
         </div>
@@ -220,10 +220,10 @@
         <ul class="user-list">
             @if (!friendsInfo()) {
                 <p>No tienes amigos</p>
-            } @else if (friends === null) {
+            } @else if (friends().length === 0) {
                 <p>No tienes amigos</p>
             } @else {
-                @for (friend of friends; track friend.username) {
+                @for (friend of friends(); track friend.username) {
                     <li class="user-item" (click)="openUserInfo(friend)">
                         <div class="user-info">
                             <div class="left">

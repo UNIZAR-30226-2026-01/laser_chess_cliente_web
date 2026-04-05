@@ -33,9 +33,11 @@ export class Social  {
   public popUP_request = signal(false);
   public state = signal(true); // State == true -> Social, State == false -> In Progress
 
-  friends: FriendSummary[] = []; // Lista de amigos del usuario
-  request: FriendSummary[] = [];
-  sentRequests: FriendSummary[] = []; // Lista solicitudes enviadas pendientes
+  friends = signal<FriendSummary[]>([]); // Lista de amigos del usuario
+  request = signal<FriendSummary[]>([]); 
+  sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
+
+
   private friendService = inject(Remote);
   private router = inject(Router);
   public friendsInfo = signal(false);
@@ -131,7 +133,7 @@ export class Social  {
   loadFriends(): void {
     this.friendService.getFriends().subscribe({
       next: (data : FriendSummary[]) => {
-        this.friends = data;
+        this.friends.set(data || []);
         console.log('Amigos cargados:', this.friends);
         this.friendsInfo.set(true);
       },
@@ -147,7 +149,7 @@ export class Social  {
     this.friendService.getRequestFriends().subscribe({
       next: (data:FriendSummary[]) => {
         console.log('Solicitudes de amistad disponibles:', data);
-        this.request = data || [];
+        this.request.set(data || []);
         this.requestInfo.set(true);
       },
       error: (err:any) => {
@@ -163,7 +165,7 @@ export class Social  {
     this.friendService.getSentRequests().subscribe({
       next: (data: FriendSummary[]) => {
         console.log('Solicitudes de amistad enviadas:', data);
-        this.sentRequests = data || [];
+        this.sentRequests.set(data || []);
         this.sentRequestsInfo.set(true);
       },
       error: (err: any) => {
@@ -183,11 +185,11 @@ export class Social  {
       next: () => {
         console.log('Solicitud de amistad cancelada correctamente');
         // Elimnar la solicitud de la lista local de enviadas
-        this.sentRequests = this.sentRequests.filter(req => req.username !== requestUsername);
+        this.sentRequests.set(this.sentRequests().filter(req => req.username !== requestUsername));
         
         // Si no quedan solicitudes enviadas, actualizar la vista
-        if (this.sentRequests.length === 0 && this.requestTabState() === 'sent') {
-          // Opcional: mantener el popup abierto si hay solicitudes recibidas
+        if (this.sentRequests().length === 0 && this.requestTabState() === 'sent') {
+          // Opcional: mantener el popup abierto si hay solicitudes recibidas 
         }
       },
       error: (err: any) => {
@@ -239,12 +241,12 @@ export class Social  {
       next: () => {
         console.log('Solicitud de amistad aceptada');
         // Eliminar la solicitud de la lista local
-        this.request = this.request.filter(req => req.username !== requestUsername);
+        this.request.set(this.request().filter(req => req.username !== requestUsername));
         // Recargar la lista de amigos
         this.loadFriends();
         
         // Si no quedan solicitudes, cerrar el pop-up
-        if (this.request.length === 0) {
+        if (this.request().length === 0) {
           this.popUP_request.set(false);
         }
       },
@@ -264,10 +266,10 @@ export class Social  {
       next: () => {
         console.log('Solicitud de amistad rechazada correctamente');
         // Eliminar la solicitud de la lista local
-        this.request = this.request.filter(req => req.username !== requestUsername);
+        this.request.set(this.request().filter(req => req.username !== requestUsername));
         
         // Si no quedan solicitudes, cerrar el pop-up
-        if (this.request.length === 0) {
+        if (this.request().length === 0) {
           this.popUP_request.set(false);
         }
       },

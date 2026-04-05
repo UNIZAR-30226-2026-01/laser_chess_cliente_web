@@ -21,7 +21,7 @@ export class Home {
   coins = 1234;
   rankedPoints = 1234;
   popUPNotis = signal(false);
-  solicitudes: ChallengeResume[] = [];
+  solicitudes = signal<ChallengeResume[]>([]);
   private websocket = inject(Websocket);
   private wsSubscription: any;
   private router = inject(Router);
@@ -42,8 +42,7 @@ export class Home {
   loadFriends(): void {
       this.notificationService.checkSolicitudes().subscribe({
         next: (data : ChallengeResume[]) => {
-          this.solicitudes = data;
-          console.log('Solicitudes cargadas:', this.solicitudes);
+        this.solicitudes.set(data);          console.log('Solicitudes cargadas:', this.solicitudes);
         },
         error: (err : any) => {
           console.error('Error al cargar amigos:', err);
