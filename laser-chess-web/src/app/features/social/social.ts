@@ -280,7 +280,7 @@ export class Social  {
   }
 
 
-  // Inciiar a una partida amistosa
+  // Iniciar a una partida amistosa
   challengeFriend(friendUsername: string): void {
     if (!friendUsername) return;
 

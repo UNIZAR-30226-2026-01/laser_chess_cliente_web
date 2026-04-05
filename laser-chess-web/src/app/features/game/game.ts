@@ -8,6 +8,7 @@ import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
 import { SendAction } from '../../model/game/SendAction'
 import { Remote } from '../../model/remote/remote';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 
@@ -33,6 +34,8 @@ export class Game implements OnInit {
   private remoteService = inject(Remote);
   private wsSubscription?: Subscription;
   private waitingForConfirmation = false;
+  private router = inject(Router);
+
 
   esMiTurno = signal(true);
   piezaActiva = signal<Pieza | null>(null);
@@ -42,6 +45,7 @@ export class Game implements OnInit {
   soyAzul = signal(true);
   cont = 1; // Contado incremental para creación de piezas (id)
   id = this.remoteService.getAccountId();
+  finPartida = signal<{mostrar: boolean, mensaje: string}>({ mostrar: false, mensaje: '' });
   
 
   
@@ -340,12 +344,27 @@ export class Game implements OnInit {
     }else if (msg.Type === "End"){
       console.log("El juego ha terminado. Resultado:", msg.Content);
       
-      // Disparo del láser
-      const coordsRaw = msg.Extra.substring(0).split(',');
-      const path = coordsRaw.map(c => this.fromChess(c));
-      this.dispararLaser(path);
+      if ((!this.soyAzul() && msg.Content === "P1_WINS" )|| (this.soyAzul() && msg.Content === "P2_WINS")) {
+        console.log("¡Has ganado!");
+        this.finPartida.set({ mostrar: true, mensaje: '¡Has ganado!' });
+
+      }else{
+        console.log("Has perdido, mejor suerte la próxima vez.");
+        this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' });
+      }
     }
   }
+
+  finPartidaHandler(){
+    this.finPartida.set({mostrar:false, mensaje:''})
+    this.wsService.close();
+    this.router.navigate(['/home']);
+  }
+
+  solicitarRevancha(){
+    // Enviar solicitud de revancha al backend
+  }
+
 
   /*****************************************************************************/
   /*                     Tras confirmación del backend                         */
