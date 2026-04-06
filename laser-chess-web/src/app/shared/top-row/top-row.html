@@ -1,16 +1,74 @@
-<div class="profile-card">
+<div class="profile-card" (click)="openProfile()">
     <div class="profile-picture">
         <img [src]="pictureURL" />
     </div>
 
     <div class="profile-info">  
-        <div class="username">{{ username }}</div>
+        <div class="username">{{ username() }}</div>
         <!-- donde próximamente añadiré nivel & barra XP-->
         <div class="xp-placeholder"></div>
     </div>
 </div>
 <div class="coin-counter">
-    <span class="coin-amount">{{ coins }}</span>
+    <span class="coin-amount">{{ coins() }}</span>
     <img src="assets/icons/coin-icon.png" class="coin-icon" alt="">
 </div>
 
+<!-- Popup de mi perfil -->
+@if (showProfilePopup() && userProfile) {
+  <div class="overlay" (click)="closeProfile()">
+    <div class="popup-profile" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h2>Mi perfil</h2>
+        <button class="close-button" (click)="closeProfile()">✕</button>
+      </div>
+      <div class="popup-content">
+        <div class="user-info-detail">
+          <div class="user-avatar-large">
+            @if (userProfile.avatar) {
+              <img [src]="'assets/avatars/' + userProfile.avatar + '.png'" alt="Avatar">
+            } @else {
+              <div class="avatar-placeholder-large">
+                <span class="avatar-icon-large">👤</span>
+              </div>
+            }
+          </div>
+          <div class="user-details">
+            <div class="detail-row">
+              <span class="detail-label">Nombre:</span>
+              <span class="detail-value">{{ userProfile.username }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Nivel:</span>
+              <span class="detail-value">{{ userProfile.level || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Monedas:</span>
+              <span class="detail-value">{{ userProfile.coins || 0 }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Puntos Ranked:</span>
+              <span class="detail-value">{{ userProfile.rankedPoints || 0 }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">ELO Blitz:</span>
+              <span class="detail-value">{{ userProfile.blitzElo || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">ELO Rápido:</span>
+              <span class="detail-value">{{ userProfile.rapidElo || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">ELO Clásico:</span>
+              <span class="detail-value">{{ userProfile.classicElo || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">ELO Extendido:</span>
+              <span class="detail-value">{{ userProfile.extendedElo || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
