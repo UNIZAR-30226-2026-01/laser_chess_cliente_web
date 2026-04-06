@@ -1,13 +1,17 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { Remote } from '../../model/remote/remote';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
+import { IconService } from '../../model/user/icon'
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
+
 
 // interfaz para guardar los datos del perfil
 interface MyProfile {
   userId: number;
   username: string;
   level: number;
-  avatar?: string;
+  avatar?: 'red' | 'blue' | 'green' | 'yellow';
   coins: number;
   rankedPoints: number;
   blitzElo?: number;
@@ -20,7 +24,7 @@ interface MyProfile {
 
 @Component({
   selector: 'app-top-row',
-  imports: [],
+  imports: [MatIconModule, CommonModule],
   templateUrl: './top-row.html',
   styleUrl: './top-row.css',
 })
@@ -30,18 +34,11 @@ export class TopRow implements OnInit {
 
   // Señales para la barra 
   username = signal('Cargando...');
-  pictureURL = '/assets/picture.jpeg';
-  coins = signal(0);
+  pictureURL: string | null = null;  coins = signal(0);
   rankedPoints = signal(0);
+  private iconService = inject(IconService);
   
-  /*
-  username = 'User';
-  pictureURL = '/assets/picture.jpeg';   
-  timeModeLabel = 'Modo de tiempo';
-  boardPreviewUrl = '/assets/picture.jpeg';
-  coins = 1234;
-  rankedPoints = 1234;
-  */
+  
 
   // Popup de perfil
   showProfilePopup = signal(false);
@@ -69,12 +66,18 @@ export class TopRow implements OnInit {
           this.coins.set(acc.coins ?? 0);
           this.rankedPoints.set(acc.rankedPoints ?? 0);
           
-          // el objeto con los datos del perfil
+          const avatarMap: Record<number, 'red' | 'green' | 'blue' | 'yellow'> = {
+            1: 'red',
+            2: 'green',
+            3: 'blue',
+            4: 'yellow'
+          };
+
           const profile: MyProfile = {
             userId: accountId,
             username: acc.username || 'Usuario',
             level: acc.level ?? 1,
-            avatar: acc.avatar,
+            avatar: avatarMap[acc.avatar] || 'red', // <-- aquí mapeamos
             coins: acc.coins ?? 0,
             rankedPoints: acc.rankedPoints ?? 0,
             blitzElo: undefined,

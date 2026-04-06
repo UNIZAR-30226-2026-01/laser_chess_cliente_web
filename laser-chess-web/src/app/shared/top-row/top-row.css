@@ -37,10 +37,20 @@
     justify-content: center;
 }
 
-.profile-picture img {
+/* Para el avatar pequeño (arriba a la izquierda) */
+.profile-picture mat-icon {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+}
+
+.avatar-red { color: red; }
+.avatar-green { color: green; }
+.avatar-blue { color: blue; }
+.avatar-yellow { color: yellow; }
+
+.avatar-large {
+  width: 6rem;
+  height: 6rem;
 }
 
 .profile-info {

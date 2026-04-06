@@ -213,7 +213,7 @@ export class Remote {
   }
 
   getAllRatings(userId: number): Observable<AllRatingsDTO> {
-    return this.http.get<AllRatingsDTO>(`${API_URL}/rating/elos/${userId}`, {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}`, {
       //headers: { Authorization: `Bearer ${this.accessToken}` }
     }).pipe(
       catchError((err: Error) => {
@@ -307,7 +307,6 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
     }
   }
 
-  // En tu clase Remote
 private limpiarPersistencia(): void {
   localStorage.removeItem(ACCESS_TOKEN);
   localStorage.removeItem(ACCOUNT_ID);

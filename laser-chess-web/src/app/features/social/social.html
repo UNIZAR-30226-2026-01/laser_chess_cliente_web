@@ -12,6 +12,11 @@
                         <h2>AÑADIR</h2>
                         <h3>Escribe su nombre de usuario</h3>
                         <input #usernameInput type="text" class="form-control" placeholder="username">
+                        @if (errorAmigoNombreNoValido()) {
+                          <span class="error_message_form">
+                            Por favor, ingresa un nombre de usuario válido.
+                          </span>
+                        }
                         <button class="form-button" (click)="addFriend()">ENVIAR SOLICITUD</button>
                         <h3>O espera a ser aceptad@</h3>
                     </div>

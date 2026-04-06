@@ -1,9 +1,9 @@
 import { Component, signal, OnInit, inject} from '@angular/core';
-import { Pieza } from '../pieza/pieza';
+import { Pieza } from '../../shared/pieza/pieza';
 import { PiezaData } from '../../model/game/PiezaData';
-import { PiezaRival } from '../pieza-rival/pieza-rival';
+import { PiezaRival } from '../../shared/pieza-rival/pieza-rival';
 import { Websocket } from '../../model/remote/websocket'; // Ajusta la ruta
-import { Laser } from '../laser/laser';
+import { Laser } from '../../shared/laser/laser';
 import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
 import { SendAction } from '../../model/game/SendAction'

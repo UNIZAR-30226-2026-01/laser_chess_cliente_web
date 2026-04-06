@@ -56,6 +56,7 @@ export class Social  {
   // Popup de configuración de las partidas
   public showConfigPopup = signal(false);
   public friendToChallenge: FriendSummary | null = null;
+  public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
   
   // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
   public timeModes = [
@@ -87,9 +88,9 @@ export class Social  {
   private wsSubscription: any;//Para limpiar la sub del socket despues
 
   ngOnInit(): void {
-      this.loadFriends();
-      this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn
-      this.loadSentRequests(); 
+    this.loadFriends();
+    this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn
+    this.loadSentRequests(); 
   }
 
   ngOnDestroy(): void {
@@ -103,11 +104,6 @@ export class Social  {
     this.popUP_waiting.set(false);
   }
 
-  onArrowClick() {
-    // Llamada al backend para obetener solicitudes de amistad?
-    console.log('Arrow clicked');
-    // Redirigir a pantalla de solicitudes de amistad
-  }
 
   nuevoAmigo(){
     console.log('Abrir pop-up para introducir datos de nuevo amigo');
@@ -279,7 +275,13 @@ export class Social  {
   //Añadir amigo
   addFriend() {
     const username = this.usernameInput.nativeElement.value.trim();
-    if (!username) return; 
+    if (!username) { 
+      this.errorAmigoNombreNoValido.set(true);
+      return; 
+    } else { 
+
+      this.errorAmigoNombreNoValido.set(false);
+    }
 
     const request: FriendshipRequest = {
           receiver_username: username,
