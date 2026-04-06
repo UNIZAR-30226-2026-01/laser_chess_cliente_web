@@ -71,12 +71,14 @@ export class Login implements OnInit {
   
           } else {
             this.showError.set(true);
+            this.loginForm.reset();
             this.errorMessage.set('Login failed');
           }
         },
         error: (err) => {
           console.error('HTTP error during login', err);
           this.showError.set(true);
+          this.loginForm.reset();
           this.errorMessage.set('Usuario/mail o contraseña incorrectos');
         }
       });

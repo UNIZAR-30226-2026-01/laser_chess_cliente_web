@@ -4,7 +4,7 @@ import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas 
 // Injectable -> marca la clase como servicio inyectable
 // inject -> nueva forma de inyectar dependencias 
 
-import { catchError, Observable, tap, BehaviorSubject, of, map } from 'rxjs';
+import { catchError, Observable, tap, BehaviorSubject, of, map, throwError } from 'rxjs';
 import { Router } from '@angular/router'; // Para redirigir al usuario
 
 import { LoginRequest } from '../auth/LoginRequest';
@@ -97,14 +97,17 @@ export class Remote {
   /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
-    return this.http.post<LoginResponse>(`http:${API_URL}/login`, loginRequest, { observe: 'response', withCredentials: true }).pipe( //WithCredentials es para los interceptores
+    console.log('Login called', loginRequest);
+    return this.http.post<LoginResponse>(`http:${API_URL}/login`, loginRequest, { observe: 'response', withCredentials: true }).pipe(
       tap((response) => {
+        console.log('Login response', response);
         if (response.body?.access_token) {
           this.setTokens(response.body.access_token);
         }
       }),
-      catchError((err: Error) => {
-        throw new Error('Error during login');
+      catchError((err) => {
+        console.error('Login HTTP error', err);
+        return throwError(() => err); // así llega al subscribe.error
       })
     );
   }

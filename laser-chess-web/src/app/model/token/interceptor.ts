@@ -22,22 +22,23 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.remote.getAccessToken();
     let authReq = req;
-    
-    //añadir el header de autorización
+
+    // añadir el header de autorización si no es endpoint público
     if (token && !this.isPublicEndpoint(req.url)) {
       authReq = req.clone({
         headers: req.headers.set('Authorization', `Bearer ${token}`)
       });
     }
 
-    //la petición envia las cookies
+    // asegurarse de enviar cookies
     if (!authReq.withCredentials) {
       authReq = authReq.clone({ withCredentials: true });
     }
 
     return next.handle(authReq).pipe(
       catchError(error => {
-        if (error instanceof HttpErrorResponse && error.status === 401) {
+        // solo manejar 401 si NO es endpoint público
+        if (error instanceof HttpErrorResponse && error.status === 401 && !this.isPublicEndpoint(req.url)) {
           return this.handle401Error(authReq, next);
         }
         return throwError(() => error);
