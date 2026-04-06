@@ -6,6 +6,8 @@ import { LoginRequest } from '../../model/auth/LoginRequest';
 import { CommonModule } from '@angular/common';
 import { signal } from '@angular/core';
 
+
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -38,51 +40,45 @@ export class Login implements OnInit {
     });
   }
 
+
   login() {
-    this.formSubmitted.set(true);
+      this.formSubmitted.set(true);
+  
+      if (this.loginForm.invalid) {
+        console.warn('Form not valid');
+        return;
+      }
     
-    if (this.loginForm.invalid) {
-      console.warn('Form not valid');
-      return;
-    }
+      const request: LoginRequest = {
+        credential: this.loginForm.value.credential,
+        password: this.loginForm.value.password
+      };
+    
+      // Llamada al servicio Auth.login
+      this.authService.login(request).subscribe({
+        next: (httpResponse) => {
+          if (httpResponse && httpResponse.body) {
 
-    const request: LoginRequest = {
-      credential: this.loginForm.value.credential,
-      password: this.loginForm.value.password
-    };
-
-    // Llamada al servicio Auth.login
-    this.authService.login(request).subscribe({
-      next: (httpResponse) => {
-        if (httpResponse && httpResponse.body) {
-          const body: any = httpResponse.body;
-          if (body.access_token) { 
-            this.authService.setTokens(body.access_token);
+            this.authService.setTokens(httpResponse.body.access_token);
             const id = this.authService.getAccountIdFromToken();
-            if (id) {
-              this.authService.setAccountId(id);
-            }
-            console.log('User logged in successfully', body);
+            if (id) this.authService.setAccountId(id);
+            console.log('User logged in successfully', httpResponse.body);
 
-            // Redirigir a la página principal después del login exitoso
+            console.log('User logged in successfully');
+            this.router.navigate(['home']);
             this.showError.set(false);
             this.errorMessage.set('');
-            this.router.navigate(['home']);
-
+  
           } else {
-
-            // Si no se reciben tokens, mostrar error
             this.showError.set(true);
-            this.errorMessage.set('Login failed: no tokens returned');
+            this.errorMessage.set('Login failed');
           }
-            
-        } 
-      },
-      error: (err) => {
-        // En caso de error HTTP, mostrar mensaje de error
-        this.showError.set(true);
-        this.errorMessage.set('Usuario/mail o contraseña incorrectos');
-      }
-    });
-  }
+        },
+        error: (err) => {
+          console.error('HTTP error during login', err);
+          this.showError.set(true);
+          this.errorMessage.set('Usuario/mail o contraseña incorrectos');
+        }
+      });
+    }
 }

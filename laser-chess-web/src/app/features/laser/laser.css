@@ -1,21 +1,15 @@
-.laser-svg {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 5;
-    }
-.laser-path {
-    fill: none;
-    /* Todas las propiedades relacionadas con stroke se refieren al rayo */
-    stroke: #00f2ff; /* A tener en cuenta el jugador */
-    stroke-width: 0.8;
-    stroke-linecap: round; /* Redondeo de inicio y fin de láser */
-    stroke-linejoin: round; /* Redondeo de los rebotes del láser */
-    stroke-dasharray: 200; /* Definición de una linea solida de 200 unidades*/
-    stroke-dashoffset: 200; /* Empujamos el trozo solido desde la posición 200 */
-    animation: draw 0.8s ease-out forwards; /* Vinculamos la animación */
+.laser-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
-/* Visualemente el láser sale disparado de la posición 200 a 0*/
-@keyframes draw { to { stroke-dashoffset: 0; } } 
+.laser-segment {
+  position: absolute;
+  background: cyan;
+  transform-origin: 0 0;
+  transition: all 0.3s ease-out;
+}

@@ -161,35 +161,77 @@
   background-color: rgba(255, 0, 0, 0.2);
 }
 
-/* game.css o componente global */
+/* Overlay oscuro semi-transparente */
 .popup-overlay {
   position: fixed;
   top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* más oscuro que antes */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
+/* Contenedor principal del popup */
 .popup-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
   text-align: center;
-  min-width: 300px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  justify-content: space-between;
+  min-width: 320px;
+  max-width: 90%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  animation: popupFade 0.3s ease-out;
 }
 
-.popup-content button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
+/* Animación de entrada */
+@keyframes popupFade {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Mensaje principal */
+.popup-content p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #222;
+}
+
+/* Contenedor de botones */
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* espacio entre botones */
+}
+
+/* Botones */
+.popup-buttons button {
+  padding: 0.6rem 1.2rem;
   cursor: pointer;
   background: royalblue;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* Hover / efecto al pasar el mouse */
+.popup-buttons button:hover {
+  background: dodgerblue;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Botón de cerrar diferente si quieres */
+.popup-buttons button:last-child {
+  background: #ccc;
+  color: #333;
+}
+
+.popup-buttons button:last-child:hover {
+  background: #bbb;
 }
