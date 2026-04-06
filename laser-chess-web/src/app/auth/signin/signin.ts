@@ -94,6 +94,7 @@ export class Signin {
         } else {
           this.showError.set(true);
           this.errorMessage.set('Registro fallido');
+          
         }
       },
       error: (err) => {
