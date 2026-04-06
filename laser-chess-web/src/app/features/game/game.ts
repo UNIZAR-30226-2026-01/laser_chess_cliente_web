@@ -169,19 +169,7 @@ export class Game implements OnInit {
   // Y la inversa para cuando recibas del backend -> hay que revisarlo
   fromChess(coord: string): {x: number, y: number} {
     console.log("estoy traduciendo");
-    /*
-    let x : number;
-    let y : number;
-    if (this.soyAzul()){
-      x = COL_LETTERS_AZUL.indexOf(coord[0]) + 1;
-      y = 8 - parseInt(coord[1]) + 1;
-    }else{
-      x = COL_LETTERS_ROJO.indexOf(coord[0]) + 1;
-      y = parseInt(coord[1]);
-    }
-    console.log("he traducido a esto" + y + x);
-    return { x, y };
-    */
+   
 
     const colLetter = coord[0];
     const rowDigit = parseInt(coord[1]);
@@ -428,6 +416,11 @@ export class Game implements OnInit {
     this.laserPath.set(path);
     // Limpiar el láser después de 2 segundos 
     setTimeout(() => this.laserPath.set([]), 3000);
+  }
+
+  ocupadoYPieza(x: number, y: number): TipoPieza | null {
+    const pieza = this.listaPiezas().find(p => p.x === x && p.y === y);
+    return pieza ? pieza.tipoPieza : null;
   }
 
   

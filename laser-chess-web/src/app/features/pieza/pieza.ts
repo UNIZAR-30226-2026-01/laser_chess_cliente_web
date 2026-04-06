@@ -1,4 +1,4 @@
-import { Component, signal,  input, output, SimpleChanges, OnChanges, OnInit} from '@angular/core';
+import { Component, signal,  input, output, SimpleChanges, OnChanges, OnInit, Input} from '@angular/core';
 import { TipoPieza } from '../../model/game/TipoPieza'
 
 @Component({
@@ -38,17 +38,27 @@ export class Pieza implements OnInit, OnChanges{
   showSpots = signal(false);
 
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
+  @Input() ocupadoYPieza!: (x: number, y: number) => TipoPieza | null;
 
   puedeEntrar(nx: number, ny: number): boolean {
+    const tipo = this.ocupadoYPieza?.(nx, ny);
+
+    // No puede entrar sobre otro DEFLECTOR
+    if (this.tipoPieza() === TipoPieza.DEFLECTOR && tipo === TipoPieza.DEFLECTOR) {
+      return false;
+    }
+
     const restriccion = this.isCasillaRestringida()?.(nx, ny);
-
-    if (!restriccion) return true;
-
-    // Si es azul, solo piezas azules pueden entrar
-    if (restriccion === 'azul') return true; // <- aquí luego puedes filtrar por tipo/color
 
     if (restriccion === 'rojo') return false;
 
+    // Si es azul, solo piezas azules pueden entrar
+    if (restriccion === 'azul') {
+      // opcional: si quieres filtrar por tipo/color dentro de azul
+      return true;
+    }
+
+    // Si no hay restricción, y no hay DEFLECTOR en destino, entra
     return true;
   }
 

@@ -4,8 +4,10 @@
     <div class="popup-overlay">
       <div class="popup-content" (click)="$event.stopPropagation()">
         <p>{{finPartida().mensaje}}</p>
-        <button (click)="solicitarRevancha()">Revancha</button>
-        <button (click)="finPartidaHandler()">Cerrar</button>
+        <div class="popup-buttons">
+          <button (click)="solicitarRevancha()">Revancha</button>
+          <button (click)="finPartidaHandler()">Cerrar</button>
+      </div>
       </div>
     </div>
   }
@@ -45,6 +47,8 @@
             [rows]="filas"
             [tipoPieza]="p.tipoPieza"
             [isCasillaRestringida]="isCasillaRestringida.bind(this)"
+            [ocupadoYPieza]="ocupadoYPieza.bind(this)" 
+             
             (selected)="seleccionarPieza(piezaRef)"
             (moveRequested)="gestionarMovimiento($event)">
           </app-pieza>

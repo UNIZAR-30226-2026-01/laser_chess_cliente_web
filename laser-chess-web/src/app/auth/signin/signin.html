@@ -12,47 +12,87 @@
     <div class="mb-3">
       <label for="mail">Correo electrónico</label>
       <input type="text" id="mail" class="form-control" formControlName="mail" placeholder="name@example.com">
-      @if (RegisterForm.get('mail')!.invalid && RegisterForm.get('mail')!.touched)
-      {
-      <span class="error_message_form">
-        Correo electrónico es requerido y tener formato correcto
-      </span>
+      @if ((RegisterForm.get('mail')?.touched || formSubmitted()) && RegisterForm.get('mail')?.invalid) {
+        @if (RegisterForm.get('mail')?.hasError('required')) {
+          <span class="error_message_form">
+            El correo es obligatorio
+          </span>
+        }
+        @if (RegisterForm.get('mail')?.hasError('email')) {
+          <span class="error_message_form">
+            El formato del correo no es válido
+          </span>
+        }
       }
     </div>
 
     <div class="mb-3">
       <label for="username">Username</label>
       <input type="text" id="username" class="form-control" formControlName="username" placeholder="Tu nombre de usuario">
-      @if (RegisterForm.get('username')!.invalid && RegisterForm.get('username')!.touched)
-      {
-      <span class="error_message_form">
-        Username es requerido y no debe contener '@'
-      </span>
+      @if ((RegisterForm.get('username')?.touched || formSubmitted()) && RegisterForm.get('username')?.invalid) {
+        @if (RegisterForm.get('username')?.hasError('required')) {
+          <span class="error_message_form">
+            Username es obligatorio
+          </span>
+        }
+        @if (RegisterForm.get('username')?.hasError('maxlength')) {
+          <span class="error_message_form">
+            Máximo 50 caracteres
+          </span>
+        }
       }
     </div>
 
     <div class="mb-3">
       <label for="password">Contraseña</label>
       <input type="password" id="password" class="form-control" formControlName="password" placeholder="">
-      @if (RegisterForm.get('password')!.invalid && RegisterForm.get('password')!.touched)
-      {
-      <span class="error_message_form">
-        Contraseña es requerida
-      </span>
+      @if ((RegisterForm.get('password')?.touched || formSubmitted()) && RegisterForm.get('password')?.invalid) {
+        @if (RegisterForm.get('password')?.hasError('required')) {
+          <span class="error_message_form">
+            Contraseña es requerida
+          </span>
+        }
+        @if (RegisterForm.get('password')?.hasError('minlength')) {
+          <span class="error_message_form">
+            Mínimo 6 caracteres
+          </span>
+        }
+        @if (RegisterForm.get('password')?.hasError('maxlength')) {
+          <span class="error_message_form">
+            Máximo 50 caracteres
+          </span>
+        }
       }
     </div>
 
     <div class="mb-3">
       <label for="password_rep">Escriba su contraseña de nuevo</label>
       <input type="password" id="password_rep" class="form-control" formControlName="password_rep" placeholder="">
-      @if (RegisterForm.hasError('passwordMismatch')
-      && RegisterForm.get('password_rep')?.touched) {
-      <span class="error_message_form">
-        La constraseña debe coincidir
-      </span>
+      @if ((RegisterForm.get('password_rep')?.touched || formSubmitted()) && RegisterForm.get('password_rep')?.invalid) {
+        @if (RegisterForm.get('password_rep')?.hasError('required')) {
+          <span class="error_message_form">
+            Debes repetir la contraseña
+          </span>
+        }
+        @if (RegisterForm.get('password_rep')?.hasError('minlength')) {
+          <span class="error_message_form">
+            Mínimo 6 caracteres
+          </span>
+        }
+        @if (RegisterForm.get('password_rep')?.hasError('maxlength')) {
+          <span class="error_message_form">
+            Máximo 50 caracteres      
+          </span>
+        }
+      }
+
+      @if ((RegisterForm.hasError('passwordMismatch') && (RegisterForm.get('password_rep')?.touched || formSubmitted()))) {
+        <span class="error_message_form">
+          Las contraseñas no coinciden
+        </span>
       }
     </div>
 
-    <button type="submit" [disabled]="RegisterForm.invalid" class="form-button">Registrarse</button>
+    <button type="submit" class="form-button">Registrarse</button>
   </form>
 </div>
