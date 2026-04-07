@@ -27,3 +27,8 @@ jobs:
         run: |
           cd laser-chess-web
           npm run build
+      
+      - name: Run Tests
+        run: |
+          cd laser-chess-web
+          npm test
