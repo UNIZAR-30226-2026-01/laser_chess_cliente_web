@@ -47,7 +47,7 @@
             [rows]="filas"
             [tipoPieza]="p.tipoPieza"
             [isCasillaRestringida]="isCasillaRestringida.bind(this)"
-            [ocupadoYPieza]="ocupadoYPieza.bind(this)" 
+            [ocupado]="ocupado.bind(this)" 
              
             (selected)="seleccionarPieza(piezaRef)"
             (moveRequested)="gestionarMovimiento($event)">
@@ -77,9 +77,10 @@
 
     <div class="controls-panel">
       @if (piezaActiva()) {
-        <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
-        <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
-        
+        @if (piezaActiva()?.tipoPieza() != TipoPieza.REY ) {
+          <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
+          <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
+        }
       }
     </div>
     

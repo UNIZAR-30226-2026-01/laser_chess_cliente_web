@@ -1,5 +1,6 @@
 import { Component, signal,  input, output, SimpleChanges, OnChanges, OnInit, Input} from '@angular/core';
 import { TipoPieza } from '../../model/game/TipoPieza'
+import { PiezaData } from '../../model/game/PiezaData';
 
 @Component({
   selector: 'app-pieza',
@@ -38,28 +39,39 @@ export class Pieza implements OnInit, OnChanges{
   showSpots = signal(false);
 
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
-  @Input() ocupadoYPieza!: (x: number, y: number) => TipoPieza | null;
+  @Input() ocupado!: (x: number, y: number) => PiezaData | null;
 
   puedeEntrar(nx: number, ny: number): boolean {
-    const tipo = this.ocupadoYPieza?.(nx, ny);
-
-    // No puede entrar sobre otro DEFLECTOR
-    if (this.tipoPieza() === TipoPieza.DEFLECTOR && tipo === TipoPieza.DEFLECTOR) {
-      return false;
-    }
-
+    const pieza = this.ocupado?.(nx, ny);
+    const tipo = pieza?.tipoPieza;
     const restriccion = this.isCasillaRestringida()?.(nx, ny);
+    const casillaActual = this.isCasillaRestringida()?.(this.position().x, this.position().y);
 
-    if (restriccion === 'rojo') return false;
+    if (this.tipoPieza() === TipoPieza.SWITCH && restriccion !== 'rojo') {
+        if ( tipo === TipoPieza.SWITCH || tipo === TipoPieza.REY){
+          return false;
 
-    // Si es azul, solo piezas azules pueden entrar
-    if (restriccion === 'azul') {
-      // opcional: si quieres filtrar por tipo/color dentro de azul
-      return true;
+        }
+        console.log ("La pieza con la que quiero permutar es : " + pieza?.tipoPieza + " y es mia? " + pieza?.esMia);
+        if(casillaActual === 'azul' && !pieza?.esMia){
+          return false;
+        }
+
+        return true;
+
+    }else {
+
+      // Si es azul, solo piezas azules pueden entrar
+      if (restriccion === 'azul' || restriccion === null) {
+        if ( tipo === TipoPieza.SWITCH || tipo === TipoPieza.REY || tipo === TipoPieza.DEFLECTOR || tipo === TipoPieza.ESCUDO || tipo === TipoPieza.LASER){
+          return false;
+        }
+        return true;
+
+      }else{
+        return false;
+      }
     }
-
-    // Si no hay restricción, y no hay DEFLECTOR en destino, entra
-    return true;
   }
 
   ngOnInit() {
