@@ -9,7 +9,18 @@
 
 .laser-segment {
   position: absolute;
-  background: cyan;
-  transform-origin: 0 0;
-  transition: all 0.3s ease-out;
+  background-image: url('/assets/icons/coin-icon.png');
+  background-repeat: repeat-x;
+  background-size: 20px 100%;
+  transform-origin: 0 50%;
+  animation: laserMove 0.3s linear infinite;
+}
+
+@keyframes laserMove {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 20px;
+  }
 }
