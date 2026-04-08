@@ -35,6 +35,8 @@ export class Game implements OnInit {
   private wsSubscription?: Subscription;
   private waitingForConfirmation = false;
   private router = inject(Router);
+  TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
+
 
 
   esMiTurno = signal(true);
@@ -418,12 +420,9 @@ export class Game implements OnInit {
     setTimeout(() => this.laserPath.set([]), 3000);
   }
 
-  ocupadoYPieza(x: number, y: number): TipoPieza | null {
-    const pieza = this.listaPiezas().find(p => p.x === x && p.y === y);
-    return pieza ? pieza.tipoPieza : null;
-  }
-
-  
-
+  ocupado(x: number, y: number): PiezaData | null {
+  const pieza = this.listaPiezas().find(p => p.x === x && p.y === y);
+  return pieza ?? null;
+}
 }
 

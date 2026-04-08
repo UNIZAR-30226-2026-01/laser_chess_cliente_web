@@ -19,15 +19,9 @@ describe('Pieza', () => {
     fixture.componentRef.setInput('initialY', 0);
     fixture.componentRef.setInput('tipoPieza', TipoPieza.REY);
     fixture.componentRef.setInput('rotationInput', 0);
-
-    // opcionales, pero mejor dejarlos definidos
     fixture.componentRef.setInput('cols', 10);
     fixture.componentRef.setInput('rows', 8);
     fixture.componentRef.setInput('isCasillaRestringida', () => null);
-
-    // este es @Input() clásico, no input()
-    component.ocupadoYPieza = () => null;
-
     fixture.detectChanges();
   });
 
