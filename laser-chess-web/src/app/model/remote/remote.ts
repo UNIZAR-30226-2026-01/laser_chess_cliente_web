@@ -257,20 +257,6 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
 }
 
 
-  
-
-
-
-
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-  MOVIDAS DE TOKENS
-  - ACCESS TOKEN
-  - REFRESH TOKEN 
-
-  -> PENDIENTE DE IMPLEMENTAR EN BACKEND Y REVISAR EN FRONTEND
-*/
   setTokens(accessToken: string): void {
     this.accessToken = accessToken;
     localStorage.setItem(ACCESS_TOKEN, accessToken); //Hay que guardarlo para el interceptor
@@ -346,6 +332,7 @@ refreshToken() {
     this.isAuthenticated$.next(false);
     this.router.navigate(['/start']);
   }
+
   
   
   // Intenta restaurar la sesion con el refresh_token para no iniciar sesion todo el rato

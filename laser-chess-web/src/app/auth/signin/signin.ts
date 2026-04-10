@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Remote } from '../../model/remote/remote';
 import { RegisterRequest } from '../../model/auth/RegisterRequest';
 import { signal } from '@angular/core';
-import { ChangeDetectorRef } from '@angular/core';
+import { AuthRepository } from '../../repository/auth-repository';
+import { ResponseStatus } from '../../model/auth/ResponseStatus';
+
 
 
 export const passwordMatchValidator: ValidatorFn =
@@ -35,7 +36,7 @@ export class Signin {
   public formSubmitted = signal(false);
 
 
-  private authService = inject(Remote);
+  private authService = inject(AuthRepository);
   private router = inject(Router);
 
   public showError = signal(false);
@@ -76,31 +77,31 @@ export class Signin {
     }
   
     const request: RegisterRequest = {
+      password: this.RegisterForm.value.password,
       mail: this.RegisterForm.value.mail,
-      username: this.RegisterForm.value.username,
-      password: this.RegisterForm.value.password
+      username: this.RegisterForm.value.username
+      
     };
   
     // Llamada al servicio Auth.login
-    this.authService.register(request).subscribe({
-      next: (httpResponse) => {
-        if (httpResponse && httpResponse.body) {
-          console.log('User registered successfully');
+    this.authService.register(request).subscribe((status) => {
+      switch (status) {
+        case ResponseStatus.SUCCESS:
+          console.log('Registration successful');
           this.router.navigate(['login']);
-          this.showError.set(false);
-          this.errorMessage.set('');
-          this.authService.setAccountId(httpResponse.body.account_id);
+          break;
 
-        } else {
+        case ResponseStatus.FAILURE:
+          console.warn('Registration failed: Invalid credentials');
           this.showError.set(true);
-          this.errorMessage.set('Registro fallido');
-          
-        }
-      },
-      error: (err) => {
-        console.error('HTTP error during registration', err);
-        this.showError.set(true);
-        this.errorMessage.set('Ya existe un usuario registrado con ese correo o nombre de usuario');
+          this.errorMessage.set('Registration failed: Invalid credentials');
+          break;
+
+        case ResponseStatus.ERR_CONNECTION:
+          console.error('Registration failed: Connection error');
+          this.showError.set(true);
+          this.errorMessage.set('Registration failed: Connection error');
+          break;
       }
     });
   }

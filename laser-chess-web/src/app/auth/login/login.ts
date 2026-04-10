@@ -1,10 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Remote} from '../../model/remote/remote';
 import { LoginRequest } from '../../model/auth/LoginRequest';
 import { CommonModule } from '@angular/common';
 import { signal } from '@angular/core';
+import { AuthRepository } from '../../repository/auth-repository';
+import { ResponseStatus } from '../../model/auth/ResponseStatus';
+
 
 
 
@@ -20,7 +22,7 @@ export class Login implements OnInit {
   loginForm!: FormGroup;
   public formSubmitted = signal(false);
 
-  private authService = inject(Remote);
+  private authService = inject(AuthRepository);
   private router = inject(Router);
   public showError = signal(false);
   public errorMessage = signal('');
@@ -55,32 +57,26 @@ export class Login implements OnInit {
       };
     
       // Llamada al servicio Auth.login
-      this.authService.login(request).subscribe({
-        next: (httpResponse) => {
-          if (httpResponse && httpResponse.body) {
-
-            this.authService.setTokens(httpResponse.body.access_token);
-            const id = this.authService.getAccountIdFromToken();
-            if (id) this.authService.setAccountId(id);
-            console.log('User logged in successfully', httpResponse.body);
-
-            console.log('User logged in successfully');
-            this.router.navigate(['home']);
-            this.showError.set(false);
-            this.errorMessage.set('');
-  
-          } else {
-            this.showError.set(true);
-            this.loginForm.reset();
-            this.errorMessage.set('Login failed');
-          }
-        },
-        error: (err) => {
-          console.error('HTTP error during login', err);
+      this.authService.login(request).subscribe((status) => {
+      switch(status){  
+        case ResponseStatus.SUCCESS:
+          this.router.navigate(['home']);
+          this.showError.set(false);
+          this.errorMessage.set('');
+          break;
+        case ResponseStatus.FAILURE:
+          this.showError.set(true);
+          this.loginForm.reset();
+          this.errorMessage.set('Login failed');
+          break;
+        case ResponseStatus.ERR_CONNECTION:
           this.showError.set(true);
           this.loginForm.reset();
           this.errorMessage.set('Usuario/mail o contraseña incorrectos');
-        }
-      });
-    }
+          break;
+      }}
+    );
+  }
+
+           
 }

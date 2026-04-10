@@ -1,15 +1,18 @@
 import {UserRatings} from './UserRatings';
 
 export interface MyProfile {
-    id: String;
-    mail: String;
-    username: String;
-    avatar: number;
-    level: number;
-    xp: number;
-    money: number;
-    board_skin: number;
-    piece_skin: number;
-    win_animatio: number;
-    ratings: UserRatings;
+  userId: number;
+  username: string;
+  mail: String;
+  xp: number;
+  avatar?: 'red' | 'blue' | 'green' | 'yellow';
+  money: number;
+  board_skin: number;
+  piece_skin: number;
+  win_animation: number;
+  rankedPoints: number;
+  blitzElo?: number;
+  rapidElo?: number;
+  classicElo?: number;
+  extendedElo?: number;
 }
