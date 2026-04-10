@@ -3,7 +3,6 @@ import { signal } from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
 import { Router } from '@angular/router';
 import { FriendSummary } from '../../model/social/FriendSummary'
-import { Remote } from '../../model/remote/remote';
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
 import { MessageGame } from '../../model/game/MessageGame'
@@ -12,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 
 
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
+import { FriendRespository } from '../../repository/friend-respository';
 
 @Component({
   selector: 'app-social',
@@ -41,7 +41,7 @@ export class Social  {
   sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
 
 
-  private friendService = inject(Remote);
+  private friendService = inject(FriendRespository);
   private router = inject(Router);
   public friendsInfo = signal(false);
   public requestInfo = signal(false);
@@ -253,22 +253,22 @@ export class Social  {
   cancelSentRequest(requestUsername: string) {
     if (!requestUsername) return;
     console.log('Cancelando solicitud de amistad enviada a:', requestUsername);
-
-    // DeleteFriend porq tmb sirve y hayy q avanzar
     this.friendService.deleteFriend(requestUsername).subscribe({
-      next: () => {
-        console.log('Solicitud de amistad cancelada correctamente');
-        // Elimnar la solicitud de la lista local de enviadas
-        this.sentRequests.set(this.sentRequests().filter(req => req.username !== requestUsername));
-        
-        // Si no quedan solicitudes enviadas, actualizar la vista
-        if (this.sentRequests().length === 0 && this.requestTabState() === 'sent') {
-          // Opcional: mantener el popup abierto si hay solicitudes recibidas 
+        next: (result) => {
+          if (result) {
+            console.log('Solicitud de amistad cancelada correctamente');
+            // Elimnar la solicitud de la lista local de enviadas
+            this.sentRequests.set(this.sentRequests().filter(req => req.username !== requestUsername));
+            
+            // Si no quedan solicitudes enviadas, actualizar la vista
+            if (this.sentRequests().length === 0 && this.requestTabState() === 'sent') {
+              // Opcional: mantener el popup abierto si hay solicitudes recibidas 
+            }
+          }
+        },
+        error: (err: any) => {
+          console.error('Error al cancelar solicitud:', err);        
         }
-      },
-      error: (err: any) => {
-        console.error('Error al cancelar solicitud:', err);
-      }
     });
   }
 
@@ -288,10 +288,13 @@ export class Social  {
     };
 
     this.friendService.addFriend(request).subscribe({
-      next: () => {
-        console.log('Solicitud de amistad enviada');
-        this.popUP_newFriend.set(false);
-        this.usernameInput.nativeElement.value = '';
+      next: (result) => {
+        if (result) { 
+          console.log('Solicitud de amistad enviada');
+          this.popUP_newFriend.set(false);
+          this.usernameInput.nativeElement.value = '';
+        }
+        
       },
       error: (err:any) => {
         console.error(err);
@@ -301,11 +304,16 @@ export class Social  {
 
   // Eliminar amigo
   deleteFriend(friendUsername: string): void {
+    if (!friendUsername) return;
       this.friendService.deleteFriend(friendUsername).subscribe({
-        next: () => {
+        next: (result) => {
+          if (!result) {
+            console.warn('No se pudo eliminar al amigo:', friendUsername);
+          }else{
             console.log('Amigo eliminado:', friendUsername);
             // Recargar la lista de amigos
             this.loadFriends();
+          }
         },
         error: (err: any) => {
             console.error('Error al eliminar amigo:', err);
@@ -316,48 +324,48 @@ export class Social  {
   // Aceptar solicitud de amistad
   acceptRequest(requestUsername: string) {
     if (!requestUsername) return;
-
     this.friendService.acceptRequest(requestUsername).subscribe({
-      next: () => {
-        console.log('Solicitud de amistad aceptada');
-        // Eliminar la solicitud de la lista local
-        this.request.set(this.request().filter(req => req.username !== requestUsername));
-        // Recargar la lista de amigos
-        this.loadFriends();
-        
-        // Si no quedan solicitudes, cerrar el pop-up
-        if (this.request().length === 0) {
-          this.popUP_request.set(false);
+        next: (result) => {
+          if (!result) {
+            console.warn('Error al aceptar solicitud');
+          }else{
+            console.log('Solicitud de amistad aceptada:', requestUsername);
+            // Recargar la lista de amigos
+            this.loadFriends();
+          }
+        },
+        error: (err: any) => {
+            console.error('Error al eliminar amigo:', err);
         }
-      },
-      error: (err:any) => {
-        console.error('Error al aceptar solicitud:', err);
-      }
     });
   }
 
-  // Rechazar solicitud de amistad
   rejectRequest(requestUsername: string) {
     if (!requestUsername) return;
      console.log('Solicitud de amistad rechazada:', requestUsername);
 
     // DeleteFriend porq tmb sirve y hayy q avanzar
     this.friendService.deleteFriend(requestUsername).subscribe({
-      next: () => {
-        console.log('Solicitud de amistad rechazada correctamente');
-        // Eliminar la solicitud de la lista local
-        this.request.set(this.request().filter(req => req.username !== requestUsername));
-        
-        // Si no quedan solicitudes, cerrar el pop-up
-        if (this.request().length === 0) {
-          this.popUP_request.set(false);
+      next: (result) => {
+        if (result) {
+          console.log('Solicitud de amistad rechazada correctamente');
+          // Eliminar la solicitud de la lista local
+          this.request.set(this.request().filter(req => req.username !== requestUsername));
+          
+          // Si no quedan solicitudes, cerrar el pop-up
+          if (this.request().length === 0) {
+            this.popUP_request.set(false);
+          }
         }
+        
       },
       error: (err: any) => {
         console.error('Error al rechazar solicitud:', err);
       }
     });
   }
+
+
 
 
   // Abre el popup al hacer clic en Retar
