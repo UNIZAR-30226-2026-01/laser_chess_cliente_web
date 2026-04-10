@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TipoPieza } from '../../model/game/TipoPieza';
 
 import { PiezaRival } from './pieza-rival';
 
@@ -9,12 +10,17 @@ describe('PiezaRival', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PiezaRival]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PiezaRival);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+
+    fixture.componentRef.setInput('x', 0);
+    fixture.componentRef.setInput('y', 0);
+    fixture.componentRef.setInput('rotationInput', 0);
+    fixture.componentRef.setInput('tipoPieza', TipoPieza.REY);
+
+    fixture.detectChanges();
   });
 
   it('should create', () => {
