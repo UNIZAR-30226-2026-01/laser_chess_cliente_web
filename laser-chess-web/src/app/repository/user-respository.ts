@@ -3,6 +3,7 @@ import { Remote } from '../model/remote/remote';
 import { AllRatingsDTO } from '../model/rating/AllRatingsDTO';
 import { UpdateAccountRequest } from '../model/auth/UpdateAccountRequest';
 import { MyProfile } from '../model/user/MyProfile';
+import { Observable, switchMap, map, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,80 +14,61 @@ export class UserRespository {
 
 
 
-  getAccount() : MyProfile | null {
-    console.log("Get account");
-    const accountId = this.remoteService.getAccountId();
-    if (!accountId) {
-      if(this.userProfile){
-        this.userProfile.username = 'Invitado';
-      }
-      return null;
-    }
+  getAccount(): Observable<MyProfile> {
+  const accountId = this.remoteService.getAccountId();
 
-    this.remoteService.getAccount(accountId).subscribe({
-          next: (response) => {
-            const account = response.body;
-            if (account) {
-              
-              const acc = account as any;
-              if(this.userProfile){
-                this.userProfile.username = acc.username;
-                this.userProfile.money = acc.coins ?? 0;
-                this.userProfile.rankedPoints = acc.rankedPoints ?? 0;
-              }
-              
-              const avatarMap: Record<number, 'red' | 'green' | 'blue' | 'yellow'> = {
-                1: 'red',
-                2: 'green',
-                3: 'blue',
-                4: 'yellow'
-              };
-    
-              const profile: MyProfile = {
-                userId: accountId,
-                username: acc.username || 'Usuario',
-                mail: acc.mail || '',
-                xp: acc.level ?? 1,
-                avatar: avatarMap[acc.avatar] || 1, 
-                money: acc.coins ?? 0,
-                board_skin: acc.board_skin ?? 0,
-                piece_skin: acc.piece_skin ?? 0,
-                win_animation: acc.win_animation ?? 0,
-                rankedPoints: acc.rankedPoints ?? 0,
-                blitzElo: undefined,
-                rapidElo: undefined,
-                classicElo: undefined,
-                extendedElo: undefined,
-              };
-              this.userProfile = profile;
-    
-              // Cargar ELOs
-              this.remoteService.getAllRatings(accountId).subscribe({
-                next: (ratings: AllRatingsDTO) => {
-                  if (this.userProfile) {
-                    this.userProfile.blitzElo = ratings.blitz;
-                    this.userProfile.rapidElo = ratings.rapid;
-                    this.userProfile.classicElo = ratings.classic;
-                    this.userProfile.extendedElo = ratings.extended;
-                  }
-                },
-
-                error: (err) => {
-                  console.warn('No se pudieron cargar los ELOs', err)
-                  return null
-                }
-              });
-
-            }
-          },
-          error: (err) => {
-            console.error('Error cargando perfil', err);
-            return null;
-          }
-        });
-    return this.userProfile;
-
+  if (!accountId) {
+    return of({
+      userId: 0,
+      username: 'Invitado',
+      mail: '',
+      xp: 0,
+      avatar: 'red',
+      money: 0,
+      board_skin: 0,
+      piece_skin: 0,
+      win_animation: 0,
+      rankedPoints: 0,
+      blitzElo: undefined,
+      rapidElo: undefined,
+      classicElo: undefined,
+      extendedElo: undefined,
+    });
   }
+
+  return this.remoteService.getAccount(accountId).pipe(
+    switchMap(response => {
+      const acc = response.body as any;
+
+      const profile: MyProfile = {
+        userId: accountId,
+        username: acc.username || 'Usuario',
+        mail: acc.mail || '',
+        xp: acc.level ?? 1,
+        avatar: acc.avatar ?? 'red',
+        money: acc.coins ?? 0,
+        board_skin: acc.board_skin ?? 0,
+        piece_skin: acc.piece_skin ?? 0,
+        win_animation: acc.win_animation ?? 0,
+        rankedPoints: acc.rankedPoints ?? 0,
+        blitzElo: undefined,
+        rapidElo: undefined,
+        classicElo: undefined,
+        extendedElo: undefined,
+      };
+
+      return this.remoteService.getAllRatings(accountId).pipe(
+        map((ratings: AllRatingsDTO) => ({
+          ...profile,
+          blitzElo: ratings.blitz,
+          rapidElo: ratings.rapid,
+          classicElo: ratings.classic,
+          extendedElo: ratings.extended
+        }))
+      );
+    })
+  );
+}
 
   updateData(username: string , mail: String, board_skin: number, piece_skin: number, win_animation: number){
     console.log("Update data");

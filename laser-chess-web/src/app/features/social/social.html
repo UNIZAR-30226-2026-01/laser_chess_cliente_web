@@ -196,7 +196,7 @@
   }
 
   <!-- Pop-up de la info del user -->
-  @if(popUP_userInfo() && selectedUser) {
+  @if(popUP_userInfo() && selectedUser()) {
     <div id="overlay" class="overlay" (click)="closeUserInfo()">
         <div class="popup-userinfo" (click)="$event.stopPropagation()">
             <div class="popup-header">
@@ -208,8 +208,8 @@
                 <!-- Ahora aqui se elige q tipo de pop-up enseñar basado en la zona en la q se clike-->
                 <div class="user-info-detail">
                     <div class="user-avatar-large">
-                        @if (selectedUser.avatar) {
-                            <img [src]="'assets/avatars/' + selectedUser.avatar + '.png'" alt="Avatar">
+                        @if (selectedUser()?.avatar) {
+                            <img [src]="'assets/avatars/' + selectedUser()?.avatar + '.png'" alt="Avatar">
                         } @else {
                             <div class="avatar-placeholder-large">
                                 <span class="avatar-icon-large">👤</span>
@@ -220,12 +220,12 @@
                     <div class="user-details">
                         <div class="detail-row">
                             <span class="detail-label">Nombre de usuario:</span>
-                            <span class="detail-value">{{ selectedUser.username }}</span>
+                            <span class="detail-value">{{ selectedUser()?.username }}</span>
                         </div>
                         
                         <div class="detail-row">
                             <span class="detail-label">Nivel:</span>
-                            <span class="detail-value">{{ selectedUser.level || 'N/A' }}</span>
+                            <span class="detail-value">{{ selectedUser()?.level || 'N/A' }}</span>
                         </div>
                         
                         <!-- Esto lo comento pero para q este como en el movil deberia estar aqui xd pero es HORIBLE asiq lo dejo abajo
@@ -246,19 +246,19 @@
                         <!-- filas de ELO -->
                         <div class="detail-row">
                           <span class="detail-label">ELO Blitz:</span>
-                          <span class="detail-value">{{ selectedUser.blitzElo ?? 'N/A' }}</span>
+                          <span class="detail-value">{{ selectedUserEloBlitz() }}</span>
                         </div>
                         <div class="detail-row">
                           <span class="detail-label">ELO Rápido:</span>
-                          <span class="detail-value">{{ selectedUser.rapidElo ?? 'N/A' }}</span>
+                          <span class="detail-value">{{ selectedUserEloRapid() }}</span>
                         </div>
                         <div class="detail-row">
                           <span class="detail-label">ELO Clásico:</span>
-                          <span class="detail-value">{{ selectedUser.classicElo ?? 'N/A' }}</span>
+                          <span class="detail-value">{{ selectedUserEloClassic() }}</span>
                         </div>
                         <div class="detail-row">
                           <span class="detail-label">ELO Extendido:</span>
-                          <span class="detail-value">{{ selectedUser.extendedElo ?? 'N/A' }}</span>
+                          <span class="detail-value">{{ selectedUserEloExtended() }}</span>
                         </div>
                     </div>
                 </div>

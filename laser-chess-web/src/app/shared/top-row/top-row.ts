@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { UserRespository } from '../../repository/user-respository';
 import { MyProfile } from '../../model/user/MyProfile';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -24,8 +25,7 @@ export class TopRow implements OnInit {
   rankedPoints = signal(0);
   avatar?: 'red' | 'blue' | 'green' | 'yellow';
   private iconService = inject(IconService);
-  userProfile: MyProfile | null = null;
-  
+  userProfile$!: Observable<MyProfile>;  
   
   // Popup de perfil
   showProfilePopup = signal(false);
@@ -38,13 +38,7 @@ export class TopRow implements OnInit {
   loadMyData() {
     console.log("Get account");
 
-    this.userProfile = this.remote.getAccount();
-    if(this.userProfile){
-      this.username.set(this.userProfile.username);
-      this.coins.set(this.userProfile.money);
-      this.rankedPoints.set(this.userProfile.rankedPoints);
-      this.avatar = this.userProfile.avatar;
-    }
+    this.userProfile$ = this.remote.getAccount();
   }
 
   openProfile() {

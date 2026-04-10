@@ -3,6 +3,7 @@ import { signal } from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
 import { Router } from '@angular/router';
 import { FriendSummary } from '../../model/social/FriendSummary'
+import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended'
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
 import { MessageGame } from '../../model/game/MessageGame'
@@ -36,7 +37,7 @@ export class Social  {
   public popUP_request = signal(false);
   public state = signal(true); // State == true -> Social, State == false -> In Progress
 
-  friends = signal<FriendSummary[]>([]); // Lista de amigos del usuario
+  friends = signal<FriendSummaryExtended[]>([]); // Lista de amigos del usuario
   request = signal<FriendSummary[]>([]); 
   sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
 
@@ -46,7 +47,14 @@ export class Social  {
   public friendsInfo = signal(false);
   public requestInfo = signal(false);
   public popUP_userInfo = signal(false);
-  public selectedUser: FriendSummary | null = null;
+  public selectedUser = signal<FriendSummaryExtended | null> (null);
+
+  public selectedUserLevel = signal<number | undefined>(undefined);
+  public selectedUserEloBlitz = signal<number>(0);
+  public selectedUserEloRapid = signal<number>(0);
+  public selectedUserEloClassic = signal<number>(0);
+  public selectedUserEloExtended = signal<number>(0);
+
   public requestTabState = signal<'received' | 'sent'>('received'); //Para diferenciar entre enviadas y recibidas
   public sentRequestsInfo = signal(false);
   
@@ -119,20 +127,22 @@ export class Social  {
   }
 
   // abrir pop-up con información del usuario
-  openUserInfo(user: FriendSummary, context: 'friend' | 'received_request' | 'sent_request' = 'friend') {
-    this.selectedUser = user;
+  openUserInfo(user: FriendSummaryExtended, context: 'friend' | 'received_request' | 'sent_request' = 'friend') {
+    this.selectedUser.set(user);
     this.popUP_userInfo.set(true);
     this.selectedUserContext.set(context);  //Para saber q pop-up mostrar
-      if (user.userId) {
-      const userIdNumber = Number(user.userId);
-      this.friendService.getAllRatings(userIdNumber).subscribe({
-        next: (ratings: AllRatingsDTO) => {
-          if (this.selectedUser && this.selectedUser.username === user.username) {
-            this.selectedUser.blitzElo = ratings.blitz;
-            this.selectedUser.rapidElo = ratings.rapid;
-            this.selectedUser.classicElo = ratings.classic;
-            this.selectedUser.extendedElo = ratings.extended;
-          }
+      if (user.account_id) {
+        const userIdNumber = Number(user.account_id);
+        console.log('Obteniendo ELOs para usuario ID:', userIdNumber);
+        this.friendService.getAllRatings(userIdNumber).subscribe({
+          next: (ratings: AllRatingsDTO) => {
+            if (this.selectedUser()) {
+              console.log('ELOs obtenidos:', ratings);
+              this.selectedUserEloBlitz.set(ratings.blitz);
+              this.selectedUserEloRapid.set(ratings.rapid);
+              this.selectedUserEloClassic.set(ratings.classic);
+              this.selectedUserEloExtended.set(ratings.extended);
+            }
         },
         error: (err) => {
           console.error('Error al obtener ELOs:', err);
@@ -146,41 +156,41 @@ export class Social  {
   // Cerrar pop-up de información
   closeUserInfo() {
     this.popUP_userInfo.set(false);
-    this.selectedUser = null;
+    this.selectedUser.set(null);
   }
 
 
 
   acceptFromPopup() {
-    if (this.selectedUser) {
-      this.acceptRequest(this.selectedUser.username);
+    if (this.selectedUser()) {
+      this.acceptRequest(this.selectedUser()!.username);
       this.closeUserInfo();
     }
   }
 
   rejectFromPopup() {
-    if (this.selectedUser) {
-      this.rejectRequest(this.selectedUser.username);
+    if (this.selectedUser()) {
+      this.rejectRequest(this.selectedUser()!.username);
       this.closeUserInfo();
     }
   }
 
   cancelSentFromPopup() {
-    if (this.selectedUser) {
-      this.cancelSentRequest(this.selectedUser.username);
+    if (this.selectedUser()) {
+      this.cancelSentRequest(this.selectedUser()!.username);
       this.closeUserInfo();
     }
   }
 
   deleteFriendFromPopup() {
-    if (this.selectedUser) {
-      this.deleteFriend(this.selectedUser.username);
+    if (this.selectedUser()) {
+      this.deleteFriend(this.selectedUser()!.username);
       this.closeUserInfo();
     }
   }
 
   challengeFromPopup() {
-    const user = this.selectedUser;  // Guardar ANTES MUY IMPORTANTE SIN esto no van las privadas
+    const user = this.selectedUser();  // Guardar ANTES MUY IMPORTANTE SIN esto no van las privadas
     if (user) {
       this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual 
       this.openChallengeConfig(user);
@@ -332,6 +342,7 @@ export class Social  {
             console.log('Solicitud de amistad aceptada:', requestUsername);
             // Recargar la lista de amigos
             this.loadFriends();
+            this.loadRequests();
           }
         },
         error: (err: any) => {
@@ -351,7 +362,9 @@ export class Social  {
           console.log('Solicitud de amistad rechazada correctamente');
           // Eliminar la solicitud de la lista local
           this.request.set(this.request().filter(req => req.username !== requestUsername));
-          
+          this.loadRequests();
+          this.loadSentRequests(); 
+
           // Si no quedan solicitudes, cerrar el pop-up
           if (this.request().length === 0) {
             this.popUP_request.set(false);
@@ -369,7 +382,7 @@ export class Social  {
 
 
   // Abre el popup al hacer clic en Retar
-  openChallengeConfig(friend: FriendSummary): void {
+  openChallengeConfig(friend: FriendSummaryExtended): void {
     this.friendToChallenge = friend;
     this.selectedBoard.set(1);   
     this.selectedMode.set(this.timeModes[0]);

@@ -11,13 +11,13 @@
   }
 </div>
     <div class="profile-info">  
-        <div class="username">{{ username() }}</div>
+        <div class="username">{{ (userProfile$ | async)?.username }}</div>
         <!-- donde próximamente añadiré nivel & barra XP-->
         <div class="xp-placeholder"></div>
     </div>
 </div>
 <div class="coin-counter">
-    <span class="coin-amount">{{ coins() }}</span>
+    <span class="coin-amount">{{ (userProfile$ | async)?.money }}</span>
     <img src="assets/icons/coin-icon.png" class="coin-icon" alt="">
 </div>
 
@@ -47,35 +47,35 @@
           <div class="user-details">
             <div class="detail-row">
               <span class="detail-label">Nombre:</span>
-              <span class="detail-value">{{ userProfile?.username }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.username }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Nivel:</span>
-              <span class="detail-value">{{ userProfile?.xp }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.xp }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Monedas:</span>
-              <span class="detail-value">{{ userProfile?.money }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.money }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Puntos Ranked:</span>
-              <span class="detail-value">{{ userProfile?.rankedPoints || 0 }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.rankedPoints}}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">ELO Blitz:</span>
-              <span class="detail-value">{{ userProfile?.blitzElo || 'N/A' }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.blitzElo}}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">ELO Rápido:</span>
-              <span class="detail-value">{{ userProfile?.rapidElo || 'N/A' }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.rapidElo}}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">ELO Clásico:</span>
-              <span class="detail-value">{{ userProfile?.classicElo || 'N/A' }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.classicElo}}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">ELO Extendido:</span>
-              <span class="detail-value">{{ userProfile?.extendedElo || 'N/A' }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.extendedElo}}</span>
             </div>
           </div>
         </div>
