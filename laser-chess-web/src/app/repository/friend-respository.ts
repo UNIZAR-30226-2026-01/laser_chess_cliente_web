@@ -33,8 +33,8 @@ export class FriendRespository {
     return this.remoteService.addFriend(request).pipe(
       tap(() => {
         console.log('Solicitud de amistad enviada');
-        return of(true);
       }),
+      map(() => true),
       catchError((err: any) => {
         console.error(err);
         return of(false);
@@ -48,8 +48,8 @@ export class FriendRespository {
       tap(() => {
         console.log('Amigo eliminado:', friendUsername);
         // Recargar la lista de amigos
-        return of(true);
       }),
+      map(() => true),
       catchError((err: any) => {
         console.error('Error al eliminar amigo:', err);
         return of(false);
@@ -84,8 +84,8 @@ export class FriendRespository {
     return this.remoteService.acceptRequest(requestUsername).pipe(
       tap(() => {
         console.log('Solicitud de amistad aceptada');
-        return of(true);
       }),
+      map(() => true),
       catchError((err: any) => {
         console.error('Error al aceptar solicitud:', err);
         return of(false);

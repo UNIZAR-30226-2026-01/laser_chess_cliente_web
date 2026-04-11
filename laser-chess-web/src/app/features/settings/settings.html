@@ -1,58 +1,123 @@
 <app-top-row class="main-top-row">
   </app-top-row>
-
-        <div class="title_settings">
-            <img src="assets/icons/settings-icon.png" class="icon" alt="">
-            <h1>Ajustes</h1>
-        </div>
-
-        <div class="settings-content">
-            <div class="card_datos">
-                <div class="card_datos_header">
-                    <h2>Datos personales</h2>
-                </div>
-                <div class="card_datos_body">
-                    <div class="email-row">
-                        <span>E-mail:</span>
-                        <span class="email-box">example@ex.dom</span>
-                    </div>
-                    <p class="link" (click)="changePasswd()">Cambiar contraseña</p>
-                    <p class="link" (click)="logout()">Cerrar sesión</p>
-                    <p class="link" (click)="deleteAccount()">Eliminar cuenta</p>
+        @if(showError()) {
+            <div id="overlay" class="overlay" (click)="showError.set(false); this.changePasswdGroup.reset()">
+                <div class="popup-error" (click)="$event.stopPropagation()">
+                {{ errorMessage() }}
+                <button (click)="showError.set(false)">Cerrar</button>
                 </div>
             </div>
+        }
 
-            <div class="card_settings">
-                <div class="setting-row">
-                    <div class="form-check">
-                        <label class="form-check-label" for="checkDefault">
-                            Música
-                        </label>
-                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                    </div>
-                </div>
-                <div class="setting-row">
-                    <div class="form-check">
-                        <label class="form-check-label" for="checkDefault">
-                            Efectos de sonido
-                        </label>
-                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                        
-                    </div>
-                </div>
-                <div class="setting-row">
-                    <div class="form-check">
-                        <label class="form-check-label" for="checkDefault">
-                            Notificaciones
-                        </label>
-                        <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-                        
-                    </div>
+        @if(popUpPasswd()){
+            <div id="overlay" class="overlay" (click)="popUpPasswd.set(false)">
+                <div class="popup-paswd" (click)="$event.stopPropagation()">
+                   <div class="form-container">
+                        <form [formGroup]="changePasswdGroup" (ngSubmit)="changePasswd()" class="form">
+                            
+                            <div class="mb-3">
+                            <label for="password">Contraseña</label>
+                            <input type="password" id="password" class="form-control" formControlName="password" placeholder="">
+                            @if ((changePasswdGroup.get('password')?.touched || formSubmitted()) && changePasswdGroup.get('password')?.invalid) {
+                                @if (changePasswdGroup.get('password')?.hasError('required')) {
+                                <span class="error_message_form">
+                                    Contraseña es requerida
+                                </span>
+                                }
+                                @if (changePasswdGroup.get('password')?.hasError('minlength')) {
+                                <span class="error_message_form">
+                                    Mínimo 6 caracteres
+                                </span>
+                                }
+                                @if (changePasswdGroup.get('password')?.hasError('maxlength')) {
+                                <span class="error_message_form">
+                                    Máximo 50 caracteres
+                                </span>
+                                }
+                            }
+                            </div>
+
+                            <div class="mb-3">
+                            <label for="password_rep">Escriba su contraseña de nuevo</label>
+                            <input type="password" id="password_rep" class="form-control" formControlName="password_rep" placeholder="">
+                            @if ((changePasswdGroup.get('password_rep')?.touched || formSubmitted()) && changePasswdGroup.get('password_rep')?.invalid) {
+                                @if (changePasswdGroup.get('password_rep')?.hasError('required')) {
+                                <span class="error_message_form">
+                                    Debes repetir la contraseña
+                                </span>
+                                }
+                                @if (changePasswdGroup.get('password_rep')?.hasError('minlength')) {
+                                <span class="error_message_form">
+                                    Mínimo 6 caracteres
+                                </span>
+                                }
+                                @if (changePasswdGroup.get('password_rep')?.hasError('maxlength')) {
+                                <span class="error_message_form">
+                                    Máximo 50 caracteres      
+                                </span>
+                                }
+                            }
+
+                            @if ((changePasswdGroup.hasError('passwordMismatch') && (changePasswdGroup.get('password_rep')?.touched || formSubmitted()))) {
+                                <span class="error_message_form">
+                                Las contraseñas no coinciden
+                                </span>
+                            }
+                            </div>
+
+                            <button class="form-button" type="submit">Guardar contraseña</button>
+                        </form>
+                        </div>
                 </div>
             </div>
-        </div>
+  
+        }
+        <div class="main-settings-frame">
+  <div class="title_settings">
+    <img src="assets/icons/settings-icon.png" class="icon" alt="settings">
+    <h1>Ajustes</h1>
+  </div>
 
-        <div class="accessibility-section">
-            <p>Ajustes de accesibilidad</p>
-            <div class="access-icon">👤</div>
+  <div class="settings-content">
+    <div class="card_datos">
+      <div class="card_datos_header">
+        <h2>Datos personales</h2>
+      </div>
+      <div class="card_datos_body">
+        <div class="email-row">
+          <span>E-mail:</span>
+          <span class="email-box">example@ex.dom</span>
         </div>
+        <p class="link" (click)="this.popUpPasswd.set(true)">Cambiar contraseña</p>
+        <p class="link" (click)="deleteAccount()">Eliminar cuenta</p>
+        <p class="link" (click)="logout()">Cerrar sesión</p>
+      </div>
+    </div>
+
+    <div class="card_settings">
+      <div class="setting-row">
+        <span class="setting-label">Música</span>
+        <div class="checkbox-box">
+          <input type="checkbox" checked>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Efectos de sonido</span>
+        <div class="checkbox-box">
+          <input type="checkbox" checked>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Notificaciones</span>
+        <div class="checkbox-box">
+          <input type="checkbox" checked>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accessibility-section">
+    <p>Ajustes de accesibilidad</p>
+    <div class="access-icon">👤</div>
+  </div>
+</div>
