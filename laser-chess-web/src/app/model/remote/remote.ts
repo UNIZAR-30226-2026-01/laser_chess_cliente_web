@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http'; // Para hacer peticiones al Backend
 import { inject, Injectable } from '@angular/core'; 
 import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas HTTP
-// Injectable -> marca la clase como servicio inyectable
-// inject -> nueva forma de inyectar dependencias 
+
 
 import { catchError, Observable, tap, BehaviorSubject, of, map, throwError } from 'rxjs';
 import { Router } from '@angular/router'; // Para redirigir al usuario
@@ -17,9 +16,9 @@ import { AccountResponse } from '../auth/AccountResponse';
 import { FriendSummary } from '../social/FriendSummary';
 import { UpdateAccountRequest } from '../auth/UpdateAccountRequest'
 import { FriendshipRequest } from '../social/FriendshipRequest';
-import { ChallengeResume } from '../game/ChallengeResume'; // Ajusta la ruta
+import { ChallengeResume } from '../game/ChallengeResume'; 
 
-import { AllRatingsDTO } from '../rating/AllRatingsDTO'; //Para los elos en los perfiles
+import { AllRatingsDTO } from '../rating/AllRatingsDTO'; 
 
 
 
@@ -27,10 +26,12 @@ import { AllRatingsDTO } from '../rating/AllRatingsDTO'; //Para los elos en los 
   providedIn: 'root'
 })
 export class Remote {
-  public  isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken()); //Para poder usarlo en guard
+  public  isAuthenticated$ = new BehaviorSubject<boolean>(this.hasToken());
   private http: HttpClient = inject(HttpClient);
   private router: Router = inject(Router);
   private accessToken: string = "";
+  private accountId: number | null = null;
+
 
   constructor() {
     this.cargarTokenDelAlmacenamiento();
@@ -53,7 +54,6 @@ export class Remote {
     }
   } 
 
-  private accountId: number | null = null;
 
   getAccountIdFromToken(): number | null {
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -94,7 +94,6 @@ export class Remote {
   }
 
   
-  /*--------------- LOGIN ---------------*/ 
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
     console.log('Login called', loginRequest);
@@ -122,7 +121,6 @@ export class Remote {
   }
 
   // Solicitud a la API para obtener los detalles de la cuenta
-  // Conviene tener varias llamadas -> solo info de la caja (todas las pantallas)
   getAccount(id_account: number){
     return this.http.get<AccountResponse>(`http:${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
       catchError((err: Error) => {
@@ -149,7 +147,7 @@ export class Remote {
     );
   }
 
-  /*--------------- SOCIAL ---------------*/ 
+  // Solicitud a la API para obtener listado de amigos
   getFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship`, {
     //headers: { Authorization: `Bearer ${this.accessToken}`}
@@ -160,6 +158,7 @@ export class Remote {
     );
   }
 
+  // Solicitud a la API para obtener listado de solicitudes de amistad pendientes
   getRequestFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship/pending`, {
     //headers: {Authorization: `Bearer ${this.accessToken}`}
@@ -170,6 +169,7 @@ export class Remote {
     );
   }
 
+  // Solicitud a la API para obtener listado de solicitudes de amistad enviadas pendientes
   getSentRequests(): Observable<FriendSummary[]> {
     return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship/sent`, {
       //headers: { Authorization: `Bearer ${this.accessToken}`}
@@ -180,16 +180,18 @@ export class Remote {
     );
   }
 
+  // Solicitud a la API para enviar una solicitud de amistad
   addFriend(request:FriendshipRequest) : Observable<void> {
     return this.http.post<void>(`http:${API_URL}/api/friendship`, request , {
     //headers: {Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
-        throw new Error('Error during adding friend');
+        throw new Error('Error during adding friend' + err);
       })
     );
   }
 
+  // Solicitud a la API para eliminar un amigo/rechazar una solicitud de amistad
   deleteFriend(friendUsername: string): Observable<void> {
     return this.http.delete<void>(`${API_URL}/api/friendship/${friendUsername}`, {
         //headers: {   Authorization: `Bearer ${this.accessToken}`}
@@ -201,9 +203,8 @@ export class Remote {
     );
   }
 
-
+  // Solicitud a la API para aceptar una solicitud de amistad
   acceptRequest(friend: String) : Observable<void> {
-
     return this.http.put<void>(`${API_URL}/api/friendship/${friend}`, null, {
       //headers: {  Authorization: `Bearer ${this.accessToken}`}
 
@@ -215,6 +216,7 @@ export class Remote {
     );
   }
 
+  // Solicitud a la API para obtener los ratings de un usuario
   getAllRatings(userId: number): Observable<AllRatingsDTO> {
     return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}`, {
       //headers: { Authorization: `Bearer ${this.accessToken}` }
@@ -226,7 +228,7 @@ export class Remote {
     );
   }
 
-  //Como tal no esta aun pero aproximacion
+  // Solicitud a la API para desafiar a un amigo a una partida
   challengeFriend(friendUsername: string): Observable<any> {
     return this.http.post<any>(`${API_URL}/api/rt/challenge`, 
         { opponent_username: friendUsername, game_type: 'friendly' },
@@ -239,23 +241,35 @@ export class Remote {
             throw new Error('Error during challenging friend');
         })
     );
-}
+  }
 
-// partida.service.ts
+  // Solicitud a la API para comprobar si hay solicitudes de partida pendientes
+  checkSolicitudes(): Observable<ChallengeResume[]> {
+    return this.http.get<ChallengeResume[]>(`${API_URL}/api/rt/challenges`, 
+          {
+              //headers: {Authorization: `Bearer ${this.accessToken}`}
+          }
+      ).pipe(
+          catchError((err: Error) => {
+              console.error('Error getting challenge requests:', err);
+              throw new Error('Error');
+          })
+      );
+  }
 
-checkSolicitudes(): Observable<ChallengeResume[]> {
-  return this.http.get<ChallengeResume[]>(`${API_URL}/api/rt/challenges`, 
-        {
-            //headers: {Authorization: `Bearer ${this.accessToken}`}
-        }
-    ).pipe(
-        catchError((err: Error) => {
-            console.error('Error getting challenge requests:', err);
-            throw new Error('Error');
-        })
-    );
-}
 
+
+  /*
+   * Gestión de tokens y autenticación
+   * - setTokens: guarda el access token en la sesión y en el almacenamiento local, y actualiza el estado de autenticación.
+   * - hasToken: verifica si hay un token válido en la sesión.
+   * - getAccessToken: devuelve el token de acceso actual.
+   * - isTokenExpired: comprueba si el token ha expirado.
+   * - limpiarPersistencia: elimina los tokens y datos relacionados del almacenamiento local y actualiza el estado de autenticación.
+   * - refreshToken: intenta obtener un nuevo access token usando el refresh token, y maneja errores de autenticación.
+   * - logout: cierra la sesión eliminando los tokens y redirigiendo al usuario a la página de inicio.
+   * - autoLogin: intenta restaurar la sesión automáticamente al cargar la aplicación, verificando el token o usando el refresh token si es necesario.
+  */
 
   setTokens(accessToken: string): void {
     this.accessToken = accessToken;
@@ -272,10 +286,10 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
       console.error('Error parsing token', e);
     }
     
-    
     this.isAuthenticated$.next(true);
   }
 
+  
   private hasToken(): boolean {
     return this.accessToken != null && !this.isTokenExpired(this.accessToken);
   }
@@ -296,36 +310,36 @@ checkSolicitudes(): Observable<ChallengeResume[]> {
     }
   }
 
-private limpiarPersistencia(): void {
-  localStorage.removeItem(ACCESS_TOKEN);
-  localStorage.removeItem(ACCOUNT_ID);
-  localStorage.removeItem('has_session_hint');
-  this.accessToken = "";
-  this.accountId = null;
-  this.isAuthenticated$.next(false);
-}
+  private limpiarPersistencia(): void {
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(ACCOUNT_ID);
+    localStorage.removeItem('has_session_hint');
+    this.accessToken = "";
+    this.accountId = null;
+    this.isAuthenticated$.next(false);
+  }
 
-// Y lo usas en el refreshToken
-refreshToken() {
-  return this.http.post<any>(`${API_URL}/refresh`, {}, { withCredentials: true }).pipe(
-    tap((response) => {
-      if (response.access_token) {
-        this.setTokens(response.access_token);
-      }
-    }),
-    catchError((err) => {
-      this.limpiarPersistencia(); // <--- Aquí es donde se borra el "hint" si la sesión expiró
-      this.router.navigate(['/start']);
-      throw err;
-    })
-  );
-}
+  // Y lo usas en el refreshToken
+  refreshToken() {
+    return this.http.post<any>(`${API_URL}/refresh`, {}, { withCredentials: true }).pipe(
+      tap((response) => {
+        if (response.access_token) {
+          this.setTokens(response.access_token);
+        }
+      }),
+      catchError((err) => {
+        this.limpiarPersistencia(); // <--- Aquí es donde se borra el "hint" si la sesión expiró
+        this.router.navigate(['']);
+        throw err;
+      })
+    );
+  }
 
 
   logout(): void {
     localStorage.removeItem(ACCESS_TOKEN);
     localStorage.removeItem(ACCOUNT_ID);
-    localStorage.removeItem('has_session_hint'); // IMPORTANTE
+    localStorage.removeItem('has_session_hint'); 
     
     this.accessToken = "";
     this.accountId = null;

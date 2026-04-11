@@ -7,6 +7,16 @@ import { FriendSummary } from '../model/social/FriendSummary'
 import { AllRatingsDTO } from '../model/rating/AllRatingsDTO';
 
 
+/*
+ * FriendRepository : El FriendRepository agrupa toda la lógica asociada al dominio social de la aplicación.
+ * Dependencia: Remote
+ * Responsabilidades:
+ * - Obtener la lista de amigos del usuario.
+ * - Gestionar las solicitudes de amistad (enviar, aceptar, rechazar).
+ * - Eliminar amigos de la lista.
+ * - Cargar las solicitudes de amistad recibidas y enviadas.
+ * 
+*/
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +24,7 @@ import { AllRatingsDTO } from '../model/rating/AllRatingsDTO';
 export class FriendRespository {
   private remoteService = inject(Remote);
 
+  // Obtenición de listado de amigos del usuario
   getFriends(): Observable<FriendSummary[]> {
     return this.remoteService.getFriends().pipe(
       map((data: FriendSummary[]) => data || []),
@@ -24,11 +35,13 @@ export class FriendRespository {
     );
   }
 
+  // Obtenición de retings del usuario dado
   getAllRatings(userIdNumber: number) : Observable<AllRatingsDTO> {
     return this.remoteService.getAllRatings(userIdNumber).pipe();
 
   }
 
+  // Gestión de proceso de envio de solicitud de amistad
   addFriend(request: FriendshipRequest ) : Observable<boolean | void> {
     return this.remoteService.addFriend(request).pipe(
       tap(() => {
@@ -42,7 +55,7 @@ export class FriendRespository {
     );
   }
 
-
+  // Gestión de proceso de borrado de amigos (borrado de amigos o rechazar solicitud emitida/recibida)
   deleteFriend(friendUsername: string) : Observable<boolean | void> {
     return this.remoteService.deleteFriend(friendUsername).pipe(
       tap(() => {
@@ -58,7 +71,7 @@ export class FriendRespository {
   }
         
 
-  //Cargar solicitudes de amistad recibidas
+  // Cargar solicitudes de amistad recibidas
   getRequestFriends(): Observable<FriendSummary[]> {
     return this.remoteService.getRequestFriends().pipe(
       map((data: FriendSummary[]) => data || []),
@@ -69,7 +82,7 @@ export class FriendRespository {
     );
   }
 
-  //Load sentRequest
+  // Cargar solicitudes de amistad enviadas
   getSentRequests(): Observable<FriendSummary[]> {
     return this.remoteService.getSentRequests().pipe(
       map((data: FriendSummary[]) => data || []),
@@ -80,6 +93,7 @@ export class FriendRespository {
     );
   }
 
+  // Gestor de proceso de aceptación de solicitud de amistad
   acceptRequest(requestUsername: string) : Observable<boolean | void>{
     return this.remoteService.acceptRequest(requestUsername).pipe(
       tap(() => {

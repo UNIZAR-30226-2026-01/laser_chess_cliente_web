@@ -7,6 +7,16 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 
+/*
+ * AuthRepository : El AuthRepository agrupa toda la lógica asociada al dominio de autenticación de la aplicación.
+ * Dependencia: Remote
+ * Responsabilidades:
+ * - Manejar el proceso de inicio de sesión.
+ * - Manejar el proceso de registro.
+ * - Manejar el proceso de cierre de sesión.
+ * - Gestionar el almacenamiento de tokens y datos relacionados con la autenticación.
+*/
+
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +24,7 @@ import { map, catchError } from 'rxjs/operators';
 export class AuthRepository {
   private remoteService = inject(Remote);
 
+  // Gestión de proceso de login
   login(request: LoginRequest) : Observable<ResponseStatus>{
     return this.remoteService.login(request).pipe(
       map((httpResponse) => {
@@ -35,24 +46,25 @@ export class AuthRepository {
       );
   }
 
+  // Gestión de proceso de registro (creación de cuenta)
   register(request: RegisterRequest): Observable<ResponseStatus> {
-  return this.remoteService.register(request).pipe(
-    map((httpResponse) => {
-      if (httpResponse && httpResponse.body) {
-        this.remoteService.setAccountId(httpResponse.body.account_id);
-        return ResponseStatus.SUCCESS;
-      } else {
-        return ResponseStatus.FAILURE;
-      }
-    }),
-    catchError((err) => {
-      console.error(err);
-      return of(ResponseStatus.ERR_CONNECTION);
-    })
-  );
-}
+    return this.remoteService.register(request).pipe(
+      map((httpResponse) => {
+        if (httpResponse && httpResponse.body) {
+          this.remoteService.setAccountId(httpResponse.body.account_id);
+          return ResponseStatus.SUCCESS;
+        } else {
+          return ResponseStatus.FAILURE;
+        }
+      }),
+      catchError((err) => {
+        console.error(err);
+        return of(ResponseStatus.ERR_CONNECTION);
+      })
+    );
+  }
   
-
+  // Gestión de proceso de cerrar sesión (borrado de tokens y datos relacionados con la autenticación)
   logout() : void {
     this.remoteService.logout();
   }

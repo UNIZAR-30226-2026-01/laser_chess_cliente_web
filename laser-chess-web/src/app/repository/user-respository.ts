@@ -5,6 +5,17 @@ import { UpdateAccountRequest } from '../model/auth/UpdateAccountRequest';
 import { MyProfile } from '../model/user/MyProfile';
 import { Observable, switchMap, map, of} from 'rxjs';
 
+
+/*
+ * UserRepository : El UserRepository agrupa toda la lógica asociada al dominio de los usuarios de la aplicación.
+ * Dependencia: Remote
+ * Responsabilidades:
+ * - Obtener la información del perfil del usuario.
+ * - Actualizar la información del perfil del usuario.
+ * - Eliminar la cuenta del usuario.
+*/
+
+
 @Injectable({
   providedIn: 'root',
 })
@@ -12,64 +23,64 @@ export class UserRespository {
   private remoteService = inject(Remote);
   userProfile: MyProfile | null = null;
 
-
-
+  // Obtener datos del perfil de un usuario
   getAccount(): Observable<MyProfile> {
-  const accountId = this.remoteService.getAccountId();
+    const accountId = this.remoteService.getAccountId();
 
-  if (!accountId) {
-    return of({
-      userId: 0,
-      username: 'Invitado',
-      mail: '',
-      xp: 0,
-      avatar: 'red',
-      money: 0,
-      board_skin: 0,
-      piece_skin: 0,
-      win_animation: 0,
-      rankedPoints: 0,
-      blitzElo: undefined,
-      rapidElo: undefined,
-      classicElo: undefined,
-      extendedElo: undefined,
-    });
-  }
-
-  return this.remoteService.getAccount(accountId).pipe(
-    switchMap(response => {
-      const acc = response.body as any;
-
-      const profile: MyProfile = {
-        userId: accountId,
-        username: acc.username || 'Usuario',
-        mail: acc.mail || '',
-        xp: acc.level ?? 1,
-        avatar: acc.avatar ?? 'red',
-        money: acc.coins ?? 0,
-        board_skin: acc.board_skin ?? 0,
-        piece_skin: acc.piece_skin ?? 0,
-        win_animation: acc.win_animation ?? 0,
-        rankedPoints: acc.rankedPoints ?? 0,
+    if (!accountId) {
+      return of({
+        userId: 0,
+        username: 'Invitado',
+        mail: '',
+        xp: 0,
+        avatar: 'red',
+        money: 0,
+        board_skin: 0,
+        piece_skin: 0,
+        win_animation: 0,
+        rankedPoints: 0,
         blitzElo: undefined,
         rapidElo: undefined,
         classicElo: undefined,
         extendedElo: undefined,
-      };
+      });
+    }
 
-      return this.remoteService.getAllRatings(accountId).pipe(
-        map((ratings: AllRatingsDTO) => ({
-          ...profile,
-          blitzElo: ratings.blitz,
-          rapidElo: ratings.rapid,
-          classicElo: ratings.classic,
-          extendedElo: ratings.extended
-        }))
-      );
-    })
-  );
-}
+    return this.remoteService.getAccount(accountId).pipe(
+      switchMap(response => {
+        const acc = response.body as any;
 
+        const profile: MyProfile = {
+          userId: accountId,
+          username: acc.username || 'Usuario',
+          mail: acc.mail || '',
+          xp: acc.level ?? 1,
+          avatar: acc.avatar ?? 'red',
+          money: acc.coins ?? 0,
+          board_skin: acc.board_skin ?? 0,
+          piece_skin: acc.piece_skin ?? 0,
+          win_animation: acc.win_animation ?? 0,
+          rankedPoints: acc.rankedPoints ?? 0,
+          blitzElo: undefined,
+          rapidElo: undefined,
+          classicElo: undefined,
+          extendedElo: undefined,
+        };
+
+        return this.remoteService.getAllRatings(accountId).pipe(
+          map((ratings: AllRatingsDTO) => ({
+            ...profile,
+            blitzElo: ratings.blitz,
+            rapidElo: ratings.rapid,
+            classicElo: ratings.classic,
+            extendedElo: ratings.extended
+          }))
+        );
+      })
+    );
+  }
+
+  // Actualizar datos del perfil del usuario
   updateData(username: string , mail: String, board_skin: number, piece_skin: number, win_animation: number){
     console.log("Update data");
     const request: UpdateAccountRequest = {
@@ -100,6 +111,7 @@ export class UserRespository {
   
   } 
 
+  // Borrar la cuenta del usuarios
   deleteAccount(){
     console.log("Delete account");
     this.remoteService.deleteAccount().subscribe({

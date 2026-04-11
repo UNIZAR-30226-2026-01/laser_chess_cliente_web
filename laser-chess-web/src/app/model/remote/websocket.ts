@@ -4,22 +4,30 @@ import { ReplaySubject } from 'rxjs';
 import { Remote } from './remote'; // <--- Importa tu servicio
 import { API_URL } from '../../constants/app.const';
 
+
+/*
+ * Websocket : El Websocket agrupa toda la lógica asociada a la conexión WebSocket.
+ * Dependencia: Remote
+ * Responsabilidades:
+ * - Iniciar la conexión WebSocket.
+ * - Enviar acciones a través del WebSocket.
+ * - Cerrar la conexión WebSocket.
+*/
+
 @Injectable({ providedIn: 'root' })
 export class Websocket {
   private socket$?: WebSocketSubject<any>;
-  public gameMessages$ = new ReplaySubject<any>(1); // ya lo tenías
+  public gameMessages$ = new ReplaySubject<any>(1); 
 
   constructor(private remote: Remote) {}
 
   // Método para iniciar la conexión si no existe
   public initConnection(endpoint: string, params: any): void {
     
-    if (this.socket$) { //Cerrar conexion vieja si la hay ? 
+    if (this.socket$) {
       this.close();
     }
     
-    //if (this.socket$) return; // Ya está conectado, no hacer nada. pero nunca se cumple o si?
-
     const token = this.remote.getAccessToken();
     const searchParams = new URLSearchParams(params);
     if (token) searchParams.append('token', token);
@@ -34,7 +42,6 @@ export class Websocket {
       closeObserver: { next: () => console.log('WS cerrado') }
     });
 
-    // Suscripción única
     this.socket$.subscribe({
       next: msg => this.gameMessages$.next(msg),
       error: err => {
@@ -48,12 +55,14 @@ export class Websocket {
     });
   }
 
+  // Gestión de envio de mensajes a través del websocket 
   public sendAction(action: any): void {
     console.log('Enviando acción:', action);
     this.socket$?.next(action);
 
   }
 
+  // Gestión de cierre de la conexión websocket
   public close(): void {
     this.socket$?.complete();
     this.socket$ = undefined;
