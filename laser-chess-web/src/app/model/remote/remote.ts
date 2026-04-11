@@ -330,7 +330,7 @@ refreshToken() {
     this.accessToken = "";
     this.accountId = null;
     this.isAuthenticated$.next(false);
-    this.router.navigate(['/start']);
+    this.router.navigate(['']);
   }
 
   

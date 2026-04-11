@@ -77,10 +77,21 @@
 
     <div class="controls-panel">
       @if (piezaActiva()) {
-        @if (piezaActiva()?.tipoPieza() != TipoPieza.REY ) {
+        @if (piezaActiva()?.tipoPieza() != TipoPieza.REY ) { 
+          <!-- Gestión de roetación del láser (solo se permiten 2 posiciones)-->
+          @if (piezaActiva()?.tipoPieza() == TipoPieza.LASER){
+            @if (piezaActiva()?.rotationInput() == 180){
+              <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
+            }
+            @if (piezaActiva()?.rotationInput() == 90){
+              <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
+            }
+          }
+
           <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
           <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
         }
+      
       }
     </div>
     

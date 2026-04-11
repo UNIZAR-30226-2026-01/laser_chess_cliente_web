@@ -299,6 +299,7 @@ export class Social  {
 
     this.friendService.addFriend(request).subscribe({
       next: (result) => {
+
         if (result) { 
           console.log('Solicitud de amistad enviada');
           this.popUP_newFriend.set(false);
