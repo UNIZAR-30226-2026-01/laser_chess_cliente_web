@@ -4,7 +4,8 @@ import { of, throwError } from 'rxjs';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { Login } from '../../auth/login/login';
-import { Remote } from '../../model/remote/remote';
+import { AuthRepository } from '../../repository/auth-repository';
+import { ResponseStatus } from '../../model/auth/ResponseStatus';
 
 describe('Login', () => {
   let component: Login;
@@ -12,11 +13,8 @@ describe('Login', () => {
   let router: Router;
 
   //mock manual, objeto falso que reemplaza al servicio real (vv)
-  let remoteSpy: {
-    login: ReturnType<typeof vi.fn>;
-    setTokens: ReturnType<typeof vi.fn>;
-    getAccountIdFromToken: ReturnType<typeof vi.fn>;
-    setAccountId: ReturnType<typeof vi.fn>;
+  let authRepoSpy: {
+   login: ReturnType<typeof vi.fn>;
   };
 
 
@@ -24,18 +22,15 @@ describe('Login', () => {
   beforeEach(async () => {
 
     // los espías (funciones vacías que registran llamadas) (vv)
-    remoteSpy = {
-      login: vi.fn(),
-      setTokens: vi.fn(),
-      getAccountIdFromToken: vi.fn(),
-      setAccountId: vi.fn()
+    authRepoSpy = {
+     login: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [Login],
       providers: [
         provideRouter([]),
-        { provide: Remote, useValue: remoteSpy } //meter el mock
+        { provide: AuthRepository, useValue: authRepoSpy }//meter el mock
       ]
     }).compileComponents();
 
@@ -104,6 +99,17 @@ describe('Login', () => {
     expect(component.loginForm.invalid).toBe(true);
   });
 
+  it('debería marcar inválido si password tiene más de 50 caracteres', () => {
+    const longPassword = 'a'.repeat(51);
+    component.loginForm.setValue({
+      credential: 'usuario',
+      password: longPassword
+    });
+
+    expect(component.loginForm.invalid).toBe(true);
+    expect(component.loginForm.get('password')?.hasError('maxlength')).toBe(true);
+  });
+
   it('debería marcar válido con username y password correctos', () => {
     component.loginForm.setValue({
       credential: 'usuario',
@@ -127,103 +133,44 @@ describe('Login', () => {
   // ------------------------------------------------------------------
   // Test del login
   // ------------------------------------------------------------------
-  it('debería poner formSubmitted a true al hacer login', () => {
-    component.loginForm.setValue({
-      credential: '',
-      password: ''
-    });
-
-    component.login();
-
-    expect(component.formSubmitted()).toBe(true);
-  });
-
-  it('no debería llamar a Remote si el formulario es inválido', () => {
-    component.loginForm.setValue({
-      credential: '',
-      password: ''
-    });
-
-    component.login();
-
-    expect(remoteSpy.login).not.toHaveBeenCalled();
-  });
-
-  it('debería llamar a Remote con el request si el formulario es válido', () => {
-    remoteSpy.login.mockReturnValue(
-      of({
-        body: {
-          access_token: 'fake-token'
-        }
-      } as any)
-    );
-    remoteSpy.getAccountIdFromToken.mockReturnValue(7);
+  it('debería llamar a AuthRepository con el request si el formulario es válido', () => {
+    authRepoSpy.login.mockReturnValue(of(ResponseStatus.SUCCESS));
 
     component.loginForm.setValue({
       credential: 'usuario',
       password: '123456'
     });
     component.login();
-    expect(remoteSpy.login).toHaveBeenCalledWith({
+
+    expect(authRepoSpy.login).toHaveBeenCalledWith({
       credential: 'usuario',
       password: '123456'
     });
   });
 
-  it('debería guardar token, guardar accountId y navegar a home si el login va bien', () => {
-    remoteSpy.login.mockReturnValue(
-      of({
-        body: {
-          access_token: 'fake-token'
-        }
-      } as any)
-    );
-    remoteSpy.getAccountIdFromToken.mockReturnValue(7);
+  it('debería navegar a home y limpiar errores si el login es SUCCESS', () => {
+    authRepoSpy.login.mockReturnValue(of(ResponseStatus.SUCCESS));
 
     component.loginForm.setValue({
       credential: 'usuario',
       password: '123456'
     });
     component.login();
-    expect(remoteSpy.setTokens).toHaveBeenCalledWith('fake-token');
-    expect(remoteSpy.getAccountIdFromToken).toHaveBeenCalled();
-    expect(remoteSpy.setAccountId).toHaveBeenCalledWith(7);
+
     expect(router.navigate).toHaveBeenCalledWith(['home']);
     expect(component.showError()).toBe(false);
     expect(component.errorMessage()).toBe('');
   });
 
-  it('no debería llamar a setAccountId si getAccountIdFromToken devuelve null', () => {
-    remoteSpy.login.mockReturnValue(
-      of({
-        body: {
-          access_token: 'fake-token'
-        }
-      } as any)
-    );
-    remoteSpy.getAccountIdFromToken.mockReturnValue(null);
+  it('debería mostrar error "Login failed" y resetear formulario si el status es FAILURE', () => {
+    authRepoSpy.login.mockReturnValue(of(ResponseStatus.FAILURE));
 
     component.loginForm.setValue({
       credential: 'usuario',
       password: '123456'
     });
     component.login();
-    expect(remoteSpy.setTokens).toHaveBeenCalledWith('fake-token');
-    expect(remoteSpy.getAccountIdFromToken).toHaveBeenCalled();
-    expect(remoteSpy.setAccountId).not.toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['home']);
-  });
 
-  it('debería mostrar error y resetear formulario si la respuesta viene sin body', () => {
-    remoteSpy.login.mockReturnValue(
-      of({ body: null } as any)
-    );
-
-    component.loginForm.setValue({
-      credential: 'usuario',
-      password: '123456'
-    });
-    component.login();
     expect(component.showError()).toBe(true);
     expect(component.errorMessage()).toBe('Login failed');
     expect(component.loginForm.get('credential')?.value).toBeNull();
@@ -231,20 +178,20 @@ describe('Login', () => {
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('debería mostrar error y resetear formulario si Remote falla', () => {
-    remoteSpy.login.mockReturnValue(
-      throwError(() => new Error('401'))
-    );
+  it('debería mostrar error "Usuario/mail o contraseña incorrectos" y resetear formulario si el status es ERR_CONNECTION', () => {
+    authRepoSpy.login.mockReturnValue(of(ResponseStatus.ERR_CONNECTION));
 
     component.loginForm.setValue({
       credential: 'usuario',
       password: '123456'
     });
     component.login();
+
     expect(component.showError()).toBe(true);
     expect(component.errorMessage()).toBe('Usuario/mail o contraseña incorrectos');
     expect(component.loginForm.get('credential')?.value).toBeNull();
     expect(component.loginForm.get('password')?.value).toBeNull();
     expect(router.navigate).not.toHaveBeenCalled();
   });
+
 });
