@@ -77,9 +77,9 @@ export class Signin {
     }
   
     const request: RegisterRequest = {
+      username: this.RegisterForm.value.username,
       password: this.RegisterForm.value.password,
-      mail: this.RegisterForm.value.mail,
-      username: this.RegisterForm.value.username
+      mail: this.RegisterForm.value.mail
       
     };
   

@@ -20,4 +20,9 @@ export class IconService {
       this.sanitizer.bypassSecurityTrustResourceUrl('assets/icons/avatar.svg')
     );
   }
+
+  getAvatarColor(avatarId: number): 'red' | 'blue' | 'green' | 'yellow' {
+    const colors = ['red', 'blue', 'green', 'yellow'] as const;
+    return colors[avatarId % colors.length];
+  }
 }

@@ -38,7 +38,10 @@ export class TopRow implements OnInit {
   loadMyData() {
     console.log("Get account");
 
-    this.userProfile$ = this.remote.getAccount();
+      this.userProfile$ = this.remote.getAccount();
+      this.userProfile$.subscribe(profile => {
+        this.avatar = profile.avatar;
+    });
   }
 
   openProfile() {

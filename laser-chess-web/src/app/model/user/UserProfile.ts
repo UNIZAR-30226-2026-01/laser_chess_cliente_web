@@ -3,7 +3,7 @@ import { UserRatings } from './UserRatings'
 export interface UserProfile {
     id: String;
     username: String;
-    avatar: number;
+    avatar: String;
     level     :number;
 	xp        :number;
     board_skin: number;
