@@ -267,6 +267,7 @@ export class Game implements OnInit {
     console.log("Tipo:", msg.Type);
     console.log("Contenido:", msg.Content);
 
+
     if (msg.Type === "InitialState"){
       console.log("Procesando el estado inicial");
       this.importarTablero(msg.Content);
@@ -284,15 +285,28 @@ export class Game implements OnInit {
       
     }else if ( msg.Type === "Move"){
       const content = msg.Content.replace(';', '');
-      const regexMove = /^([LTR])([a-j]\d)?(?::([a-j]\d))?(x([a-j]\d))?%\{([\d.]+)\}$/;     
-      const match = content.match(regexMove);
 
-      if (match) {
-        const tipo = match[1];             // 'T', 'L' o 'R' o undefined
-        const desde = match[2] ? this.fromChess(match[2]) : null;
-        const hasta = match[3] ? this.fromChess(match[3]) : null;
-        const captura = match[5] ? this.fromChess(match[5]) : null;
-        const tiempo = parseFloat(match[6]);
+      const [movePart, rest] = content.split('%');
+      const [laserRaw, timeRaw] = rest.split('%{');
+
+      const tiempo = parseFloat(timeRaw);
+      console.log("Justo antes de verificar patrón");
+      const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;      
+      const match = movePart.match(moveRegex);
+
+      if (!match) return;
+      console.log("Después de verificar patrón");
+
+      const tipo = match[1] || 'T';
+      const desde = this.fromChess(match[2]);
+      const hasta = match[3] ? this.fromChess(match[3]) : null;
+      const captura = match[4] ? this.fromChess(match[4]) : null;
+
+      // 3. láser
+      const path = laserRaw
+        .split(',')
+        .filter(c => c.length > 0)
+        .map(c => this.fromChess(c));
 
         console.log("Tipo:", tipo, "Desde:", desde, "Hasta:", hasta, "Captura:", captura, "Tiempo:", tiempo);
         if (tipo === 'T' && desde && hasta) {
@@ -309,8 +323,6 @@ export class Game implements OnInit {
         }
 
         // Disparo del láser
-        const coordsRaw = msg.Extra.substring(0).split(',');
-        const path = coordsRaw.map(c => this.fromChess(c));
         this.dispararLaser(path);
         
         if (captura) {
@@ -331,7 +343,7 @@ export class Game implements OnInit {
           this.esMiTurno.set(true);
           console.log("Movimiento del rival recibido, ahora es mi turno");
         }
-      }
+      
 
     }else if (msg.Type === "Error") {
       console.error("Error del servidor:", msg.Content);
@@ -353,13 +365,21 @@ export class Game implements OnInit {
         console.log("Has perdido, mejor suerte la próxima vez.");
         this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' });
       }
+
+    }else if (msg.Type === "EOC"){
+      console.log('Fin de comunicación con el servidor');
+      // opcional: cerrar limpio aquí
+
+      this.esMiTurno.set(false);
+      this.wsService.close();
+      this.wsSubscription?.unsubscribe();
+      this.wsSubscription = undefined;
+      
     }
   }
 
   finPartidaHandler(){
     this.finPartida.set({mostrar:false, mensaje:''})
-    this.wsService.close();
-    this.wsSubscription?.unsubscribe();
     this.router.navigate(['/home']);
   }
 

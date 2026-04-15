@@ -86,10 +86,10 @@
             @if (piezaActiva()?.rotationInput() == 90){
               <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
             }
+          }@else{
+            <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
+            <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
           }
-
-          <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
-          <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
         }
       
       }
