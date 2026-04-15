@@ -15,9 +15,9 @@
 
   <aside class="side-panel">
     <div class="player_card my-user">
-      <div class="timer">13:00</div>
+      <div class="timer">{{ formatTime(miTiempo()) }}</div>
       <div class="avatar">👤</div>
-      <span>Mi usuario</span>
+      <span>{{ miNombre() }}</span>
     </div>
   </aside>
 
@@ -71,8 +71,8 @@
   <aside class="side-panel">
     <div class="player_card">
       <div class="avatar">👤</div>
-      <span>Usuario 1</span>
-      <div class="timer">13:00</div>
+      <span>{{ nombreRival() }}</span>
+      <div class="timer">{{ formatTime(tiempoRival()) }}</div>
     </div>
 
     <div class="controls-panel">

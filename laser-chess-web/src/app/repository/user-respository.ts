@@ -67,6 +67,8 @@ export class UserRespository {
           extendedElo: undefined,
         };
 
+        this.userProfile = profile;
+
         return this.remoteService.getAllRatings(accountId).pipe(
           map((ratings: AllRatingsDTO) => ({
             ...profile,
@@ -78,6 +80,11 @@ export class UserRespository {
         );
       })
     );
+    
+  }
+
+  getUsername() : string | undefined {
+    return this.userProfile?.username;
   }
 
   // Actualizar datos del perfil del usuario

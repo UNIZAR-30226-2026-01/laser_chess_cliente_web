@@ -6,13 +6,12 @@ import { FriendSummary } from '../../model/social/FriendSummary'
 import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended'
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
-import { MessageGame } from '../../model/game/MessageGame'
-
 import { FormsModule } from '@angular/forms';
 
 
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { FriendRespository } from '../../repository/friend-respository';
+import { GameState } from '../../model/remote/game-state'
 
 @Component({
   selector: 'app-social',
@@ -65,6 +64,9 @@ export class Social  {
   public showConfigPopup = signal(false);
   public friendToChallenge: FriendSummary | null = null;
   public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
+
+  private gameState = inject(GameState);
+
   
   // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
   public timeModes = [
@@ -441,6 +443,10 @@ export class Social  {
       starting_time: startingTime,
       time_increment: timeIncrement
     };
+    this.gameState.startingTime.set(startingTime * 1000);
+    this.gameState.increment.set(timeIncrement);
+    this.gameState.rivalName.set(this.friendToChallenge.username);
+    console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
 
     this.websocket.initConnection(endpoint, params);
     

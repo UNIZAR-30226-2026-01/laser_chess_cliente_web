@@ -10,6 +10,8 @@ import { SendAction } from '../../model/game/SendAction'
 import { Remote } from '../../model/remote/remote';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { GameState } from '../../model/remote/game-state'
+
 
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
@@ -37,6 +39,9 @@ export class Game implements OnInit {
   private router = inject(Router);
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
 
+  private gameState = inject(GameState);
+  
+
 
 
   esMiTurno = signal(true);
@@ -48,6 +53,13 @@ export class Game implements OnInit {
   cont = 1; // Contado incremental para creación de piezas (id)
   id = this.remoteService.getAccountId();
   finPartida = signal<{mostrar: boolean, mensaje: string}>({ mostrar: false, mensaje: '' });
+
+  miTiempo = signal<number>(300);      // ejemplo: 5 min
+  tiempoRival = signal<number>(300);
+  miNombre = signal<string>('Yo');
+  nombreRival = signal<string>('Rival');
+
+  private timerInterval: any = null;
   
 
   
@@ -57,25 +69,71 @@ export class Game implements OnInit {
 
   ngOnInit(): void {
     console.log('Suscribiéndome a WS en Game...');
-    
+    const tiempo = this.gameState.startingTime();
+    const rival = this.gameState.rivalName();
+    const myName = this.gameState.myName();
+
+    this.miTiempo.set(tiempo);
+    this.tiempoRival.set(tiempo);
+
+    this.nombreRival.set(rival);
+    this.miNombre.set(myName);
+    console.log("tiempo ini: " + this.miTiempo() );
+    console.log("me llamo " + this.miNombre() + " o " + myName );
+
+
     // Suscribimos al ReplaySubject que recibe los mensajes
     this.wsSubscription = this.wsService.gameMessages$.subscribe({
       next: (msg: MessageGame) => this.procesarAccion(msg),
       error: (err: any) => console.error('WS ERROR:', err),
       complete: () => console.log('WS COMPLETADO'),
     });
+
+
   }
 
   ngOnDestroy(): void {
     console.log('Destruyendo Game, limpiando suscripción');
-
+    this.stopTimer();
     this.wsSubscription?.unsubscribe();
     this.wsSubscription = undefined;
 
     this.wsService.close();
   }
 
-  
+  /*
+   * Cositas de timers
+   */
+  startTimer() {
+    this.stopTimer(); // evitar duplicados
+
+    this.timerInterval = setInterval(() => {
+      if (this.esMiTurno()) {
+        this.miTiempo.update(t => Math.max(t - 1000, 0));
+      } else {
+        this.tiempoRival.update(t => Math.max(t - 1000, 0));
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  formatTime(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000);
+
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const minStr = minutes.toString().padStart(2, '0');
+    const secStr = seconds.toString().padStart(2, '0');
+
+    return `${minStr}:${secStr}`;
+  }
 
   /*
    Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
@@ -291,14 +349,16 @@ export class Game implements OnInit {
         console.log("Soy el jugador rojo");
         this.esMiTurno.set(true); // El jugador rojo empieza primero
       }
+      this.startTimer();
       
     }else if ( msg.Type === "Move"){
-      const content = msg.Content.replace(';', '');
+      const clean = msg.Content.replace(';', '').replace('{', '').replace('}', '');
 
-      const [movePart, rest] = content.split('%');
-      const [laserRaw, timeRaw] = rest.split('%{');
+      const [movePart, laserRaw, timeRaw] = clean.split('%');
+      
 
-      const tiempo = parseFloat(timeRaw);
+      const tiempo = Number(timeRaw);
+      console.log(timeRaw);
       console.log("Justo antes de verificar patrón");
       const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;      
       const match = movePart.match(moveRegex);
@@ -345,11 +405,13 @@ export class Game implements OnInit {
         if (this.waitingForConfirmation) {
           // Esto es confirmación de mi propio movimiento
           this.waitingForConfirmation = false;
+          this.miTiempo.set(tiempo);
           // El turno ya está en false (lo pusimos al enviar), no se cambia
           console.log("Movimiento propio confirmado, turno para el rival");
         } else {
           // Esto es movimiento del rival
           this.esMiTurno.set(true);
+          this.tiempoRival.set(tiempo);
           console.log("Movimiento del rival recibido, ahora es mi turno");
         }
       
@@ -374,6 +436,7 @@ export class Game implements OnInit {
         console.log("Has perdido, mejor suerte la próxima vez.");
         this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' });
       }
+      this.stopTimer();
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
@@ -381,6 +444,7 @@ export class Game implements OnInit {
       this.wsService.close();
       this.wsSubscription?.unsubscribe();
       this.wsSubscription = undefined;
+      this.stopTimer();
       
     }
   }
