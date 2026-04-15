@@ -443,22 +443,7 @@ export class Social  {
     };
 
     this.websocket.initConnection(endpoint, params);
-
-    if (this.wsSubscription) this.wsSubscription.unsubscribe();
-    this.wsSubscription = this.websocket.gameMessages$.subscribe({
-      next: (msg:  MessageGame) => {
-        console.log('Mensaje recibido en Social:', msg);
-        this.popUP_waiting.set(false);
-        console.log("Entra a partida desde social");
-
-        this.router.navigate(['/game']);
-      },
-      error: (err) => {
-        console.error('Error en WS Social:', err);
-        this.popUP_waiting.set(false);
-        this.websocket.close();
-      }
-    });
+    
 
     this.closeConfigPopup(); 
     this.popUP_waiting.set(true);

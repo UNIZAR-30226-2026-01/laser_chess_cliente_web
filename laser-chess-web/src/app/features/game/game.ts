@@ -66,6 +66,15 @@ export class Game implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    console.log('Destruyendo Game, limpiando suscripción');
+
+    this.wsSubscription?.unsubscribe();
+    this.wsSubscription = undefined;
+
+    this.wsService.close();
+  }
+
   
 
   /*
@@ -368,8 +377,6 @@ export class Game implements OnInit {
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
-      // opcional: cerrar limpio aquí
-
       this.esMiTurno.set(false);
       this.wsService.close();
       this.wsSubscription?.unsubscribe();

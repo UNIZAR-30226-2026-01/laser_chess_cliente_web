@@ -58,22 +58,7 @@ export class Home {
     };
 
     this.websocket.initConnection(endpoint, params);
+    this.popUPNotis.set(false);
 
-    if (this.wsSubscription) this.wsSubscription.unsubscribe();
-    this.wsSubscription = this.websocket.gameMessages$.subscribe({
-      next: (msg:  MessageGame) => {
-        console.log('Mensaje recibido en Social (accept):', msg);
-        this.popUPNotis.set(false);
-        console.log("Entra a partida desde home (acepto reto)");
-        
-
-        this.router.navigate(['/game']);
-      },
-      error: (err) => {
-        console.error('Error en WS Social (accept):', err);
-        this.popUPNotis.set(false);
-        this.websocket.close();
-      }
-    });
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject, Subject} from 'rxjs';
 import { Remote } from './remote'; // <--- Importa tu servicio
 import { API_URL } from '../../constants/app.const';
 
@@ -16,18 +16,26 @@ import { API_URL } from '../../constants/app.const';
 
 @Injectable({ providedIn: 'root' })
 export class Websocket {
+
   private socket$?: WebSocketSubject<any>;
-  public gameMessages$ = new ReplaySubject<any>(1); 
+
+  private mode: 'lobby' | 'game' = 'lobby';
+
+  public gameMessages$ = new ReplaySubject<any>(1);
+  public lobbyEvents$ = new Subject<any>();
+  public navigation$ = new Subject<string>();
 
   constructor(private remote: Remote) {}
 
-  // Método para iniciar la conexión si no existe
   public initConnection(endpoint: string, params: any): void {
-    
+
     if (this.socket$) {
       this.close();
     }
-    
+
+    this.mode = 'lobby';
+    this.gameMessages$ = new ReplaySubject<any>(1);
+
     const token = this.remote.getAccessToken();
     const searchParams = new URLSearchParams(params);
     if (token) searchParams.append('token', token);
@@ -43,8 +51,9 @@ export class Websocket {
     });
 
     this.socket$.subscribe({
-      next: msg => this.gameMessages$.next(msg),
+      next: msg => this.handleMessage(msg),   
       error: err => {
+        if (err?.code === 1006) return; // cierre normal en muchos backends
         console.error('Error WS:', err);
         this.socket$ = undefined;
       },
@@ -55,18 +64,36 @@ export class Websocket {
     });
   }
 
-  // Gestión de envio de mensajes a través del websocket 
+  private handleMessage(msg: any) {
+
+    if (this.mode === 'lobby') {
+
+      if (msg.Type === 'InitialState') {
+        console.log('Pasando a GAME');
+
+        this.mode = 'game';
+        this.gameMessages$.next(msg);
+        this.navigation$.next('/game');
+
+        return;
+      }
+
+      this.lobbyEvents$.next(msg);
+      return;
+    }
+
+    if (this.mode === 'game') {
+      this.gameMessages$.next(msg);
+    }
+  }
+
   public sendAction(action: any): void {
     console.log('Enviando acción:', action);
     this.socket$?.next(action);
-
   }
 
-  // Gestión de cierre de la conexión websocket
   public close(): void {
     this.socket$?.complete();
     this.socket$ = undefined;
   }
 }
-
-
