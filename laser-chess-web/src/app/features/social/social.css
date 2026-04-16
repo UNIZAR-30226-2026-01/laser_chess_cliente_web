@@ -13,8 +13,8 @@
   align-items: center;
   padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
   flex-wrap: nowrap;
-  gap: 1rem;  
-  justify-content: space-between;  
+  gap: 1rem;
+  justify-content: space-between;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -25,10 +25,10 @@
 
 /* FOLDER BODY */
 .folder-body {
-  border: 0.2rem solid black; 
+  border: 0.2rem solid var(--S3);
   padding: clamp(1rem, 2vw, 2rem);
-  margin-top: -0.2rem; 
-  background: white;
+  margin-top: -0.2rem;
+  background: var(--S1);
   position: relative;
   box-sizing: border-box;
 }
@@ -39,28 +39,29 @@
 }
 
 .tab {
-  padding: 0.6rem 1.2rem; 
-  border: 0.2rem solid black;
+  padding: 0.6rem 1.2rem;
+  border: 0.2rem solid var(--S3);
   border-bottom: none;
-  background: #dcdcdc;
+  background: var(--S1);
   font-size: clamp(1rem, 1.5vw, 1.2rem);
   position: relative;
   cursor: pointer;
 }
 
 .tab:not(.active):hover {
-  background-color: hsl(0, 0%, 60%);
+  background-color: var(--S3);
+  transition: 0.2s;
 }
 
 .tab.active {
-  background: white;
+  background: var(--S1);
   z-index: 2;
 }
 
 .user-list, .game-list {
   list-style: none;
   padding: 0;
-  border: 0.2rem solid black;
+  border: 0.2rem solid var(--S3);
   width: 100%;
   box-sizing: border-box;
 }
@@ -70,7 +71,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.2rem;
-  border-bottom: 0.2rem solid black;
+  border-bottom: 0.2rem solid var(--S2);
   box-sizing: border-box;
   width: 100%;
   flex-wrap: wrap;
@@ -111,7 +112,7 @@
 
 .friend-xp {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--LCGreen);
     font-weight: normal;
 }
 
@@ -135,8 +136,8 @@
 }
 
 .btn-challenge {
-    background: #4caf50;
-    color: white;
+    background: var(--LCPurple);
+    color: var(--LCWhite);
 }
 
 .btn-challenge:hover {
@@ -170,7 +171,7 @@
   gap: 0.8rem;
   padding: 0.8rem 1.2rem;
   border: 0.2rem solid black;
-  background-color: #ffffff; 
+  background-color: #ffffff;
   flex-wrap: wrap;
   cursor: pointer;
   margin-bottom: 1rem;
@@ -178,7 +179,7 @@
 }
 
 .friend-request-button:hover {
-  background-color: #bbbbbb;  
+  background-color: #bbbbbb;
 }
 
 .friend-request-button .left {
@@ -256,7 +257,7 @@
   background: white;
   border: 0.15rem solid black;
   padding: 1.5rem;
-  width: min(90%, 60rem); 
+  width: min(90%, 60rem);
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0.4rem 0.4rem 0 black;
@@ -270,13 +271,12 @@
 
 /* POPUP SOLICITUDES, MIRAR ESTO ES LO NUEVO */
 .popup-solicitudes {
-  background: white;
-  border: 0.15rem solid black;
+  background: var(--S1);
+  border: 0.15rem solid var(--S3);
   width: min(90%, 45rem);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0.4rem 0.4rem 0 black;
   animation: popupAppear 0.2s ease;
   position: relative;
   box-sizing: border-box;
@@ -288,8 +288,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 1.5rem;
-  border-bottom: 0.15rem solid black;
-  background: #f5f5f5;
+  border-bottom: 0.15rem solid var(--S3);
+  background: var(--S1);
 }
 
 .popup-header h2 {
@@ -336,14 +336,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border: 0.1rem solid #e0e0e0;
+  border: 0.1rem solid var(--S1);
   border-radius: 0.5rem;
   transition: all 0.3s ease;
-  background: #fafafa;
+  background: var(--S3);
 }
 
 .request-item:hover {
-  background: white;
+  background: var(--S3);
   box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
 }
 
@@ -366,7 +366,6 @@
 
 .avatar-icon {
   font-size: 1.5rem;
-  color: white;
 }
 
 .request-details {
@@ -383,7 +382,7 @@
 
 .request-xp {
   font-size: 0.85rem;
-  color: #666;
+  color: var(--LCWhite);
 }
 
 .request-actions {
@@ -405,22 +404,26 @@
 }
 
 .btn-accept {
-  background: #4caf50;
-  color: white;
+  background: var(--LCGreen);
+  color: var(--LCWhite);
 }
 
 .btn-accept:hover {
-  background: #45a049;
+  background: var(--LCWhite);
+  color: var(--LCGreen);
+  transition: 0.2s;
   transform: scale(1.05);
 }
 
 .btn-reject {
-  background: #f44336;
-  color: white;
+  background: var(--LCRed);
+  color: var(--LCWhite);
 }
 
 .btn-reject:hover {
-  background: #da190b;
+  background: var(--LCWhite);
+  color: var(--LCRed);
+  transition: 0.2s;
   transform: scale(1.05);
 }
 
@@ -432,7 +435,7 @@
 .loading-state, .empty-state {
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: var(--LCWhite);
   font-size: 1rem;
 }
 
@@ -446,13 +449,13 @@
 .row-popup {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: clamp(0.5rem, 2vw, 3rem); 
+  gap: clamp(0.5rem, 2vw, 3rem);
   justify-content: left;
 }
 
 .col-popup {
-  flex: 1 1 min(250px, 100%); 
-  min-width: 0;               
+  flex: 1 1 min(250px, 100%);
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -464,9 +467,9 @@
 /* FORM CONTROL - Input */
 .form-control{
   padding: clamp(0.5rem, 1vh, 0.7rem) clamp(0.7rem, 1vw, 0.9rem);
-  border: 0.15rem solid black;
+  border: 0.15rem solid var(--S3);
   border-radius: 0.4rem;
-  background: #f5f5f5;
+  background: var(--S1);
   font-size: clamp(0.85rem, 1vw, 0.9rem);
   word-break: break-all;
   flex: 1 1 min(200px, 100%);
@@ -484,9 +487,9 @@
 
 .link {
   padding: clamp(0.5rem, 1vh, 0.7rem) clamp(0.7rem, 1vw, 0.9rem);
-  border: 0.15rem solid black;
+  border: 0.15rem solid var(--S3);
   border-radius: 0.4rem;
-  background: #f5f5f5;
+  background: var(--S1);
   font-size: clamp(0.85rem, 1vw, 0.9rem);
   word-break: break-all;
   flex: 1 1 min(200px, 100%);
@@ -495,9 +498,8 @@
 
 .copy-button, .form-button {
   padding: clamp(0.4rem, 1vh, 0.6rem) clamp(0.8rem, 2vw, 1.1rem);
-  box-shadow: rgb(0 0 0 / 30%) 0 0 8px;
   border: 0;
-  background: white;
+  background: var(--S1);
   border-radius: 0.4rem;
   font-weight: bold;
   border: 0;
@@ -512,14 +514,14 @@
 .copy-button:hover, .form-button:hover{
   letter-spacing: 3px;
   background-color: hsl(261deg 80% 48%);
-  color: hsl(0, 0%, 100%);
+  color: var(--S3);
   box-shadow: rgb(93 24 220) 0px 7px 29px 0px;
 }
 
 .copy-button:active, .form-button:active {
   letter-spacing: 3px;
   background-color: hsl(261deg 80% 48%);
-  color: hsl(0, 0%, 100%);
+  color: var(--S3);
   box-shadow: rgb(93 24 220) 0px 0px 0px 0px;
   transform: scale(0.97);
   transition: 100ms;
@@ -532,9 +534,9 @@
   bottom: -2rem;
   width: 4rem;
   height: 4rem;
-  border: 0.2rem solid black;
+  border: 0.2rem solid var(--S3);
   border-radius: 50%;
-  background: white;
+  background: var(--S1);
   font-size: 2.2rem;
   display: flex;
   align-items: center;
@@ -545,7 +547,7 @@
 }
 
 .fab-plus:hover{
-  background-color: hsl(0, 0%, 60%);
+  background-color: var(--S3);
 }
 
 @media (max-width: 480px) {
@@ -564,14 +566,15 @@
 
 .btn-play{
   padding: clamp(0.4rem, 1vh, 0.6rem) clamp(0.8rem, 2vw, 1.1rem);
-  box-shadow: rgb(0 0 0 / 30%) 0 0 8px;
   border: 0;
-  background: white;
+  background: var(--LCPurple);
+  color: var(--LCWhite);
   cursor: pointer;
   transition: all 0.5s ease;
   flex: 0 0 auto;
   font-size: clamp(0.85rem, 1vw, 0.9rem);
   box-sizing: border-box;
+  border-radius: var(--BorderSmall);
 }
 
 .btn-play:hover{
@@ -618,13 +621,12 @@
 
 /* POPUP INFORMACIÓN DE USUARIO */
 .popup-userinfo {
-  background: white;
-  border: 0.15rem solid black;
+  background: var(--S1);
+  border: 0.15rem solid var(--S3);
   width: min(90%, 35rem);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0.4rem 0.4rem 0 black;
   animation: popupAppear 0.2s ease;
   position: relative;
   box-sizing: border-box;
@@ -635,7 +637,7 @@
   display: flex;
   gap: 2rem;
   padding: 1rem;
-  border-bottom: 0.1rem solid #e0e0e0;
+  border-bottom: 0.1rem solid var(--S2);
   margin-bottom: 1rem;
 }
 
@@ -678,18 +680,18 @@
   justify-content: space-between;
   align-items: baseline;
   padding: 0.3rem 0;
-  border-bottom: 0.05rem solid #f0f0f0;
+  border-bottom: 0.05rem solid var(--S2);
 }
 
 .detail-label {
   font-weight: bold;
-  color: #666;
+  color: var(--LCWhite);
   font-size: 0.9rem;
 }
 
 .detail-value {
   font-size: 1rem;
-  color: #333;
+  color: var(--LCWhite);
   font-weight: 500;
 }
 
@@ -714,12 +716,14 @@
 }
 
 .btn-challenge-popup {
-  background: #4caf50;
-  color: white;
+  background: var(--LCGreen);
+  color: var(--LCWhite);
 }
 
 .btn-challenge-popup:hover {
-  background: #45a049;
+  background-color: var(--LCWhite);
+  color: var(--LCGreen);
+  transition: 0.2s;
   transform: scale(1.05);
 }
 
@@ -759,18 +763,18 @@
     align-items: center;
     text-align: center;
   }
-  
+
   .detail-row {
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
   }
-  
+
   .user-actions-popup {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .btn-challenge-popup, .btn-delete-popup {
     width: 100%;
     justify-content: center;

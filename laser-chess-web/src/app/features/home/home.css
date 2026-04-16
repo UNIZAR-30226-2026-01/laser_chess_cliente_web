@@ -24,8 +24,8 @@
   align-items: center;
   padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
   flex-wrap: nowrap;
-  gap: 1rem;  
-  justify-content: space-between;  
+  gap: 1rem;
+  justify-content: space-between;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -39,16 +39,18 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #000;
-    background: #fff;
+    border: 2px solid var(--S3);
+    background: var(--S1);
     cursor: pointer;
     padding: 0;
     line-height: 0;
     flex-shrink: 0;
+    border-radius: var(--BorderSmall);
 }
 
 .icon-btn:hover {
-    background: #f2f2f2;
+    background: var(--S3);
+    transition: 0.2s;
 }
 
 .icon {
@@ -79,9 +81,13 @@
     display: inline-flex;
     align-items: center;
     gap: clamp(4px, 1vw, 6px);
-    border: 0;
     background: transparent;
     cursor: pointer;
+    padding-right: 20px;
+    background-color: var(--S1);
+    border: 2px solid var(--S3);
+    color: var(--LCWHite);
+    border-radius: var(--BorderFull);
 }
 
 .time-icon {
@@ -123,24 +129,26 @@
 .rank-card {
     flex: 1 1 min(200px, 100%);
     max-width: 600px;
-    border: 2px solid #000;
-    background: #fff;
+    background: var(--S1);
     padding: clamp(12px, 2vw, 18px) clamp(16px, 2.5vw, 24px);
     display: flex;
     align-items: center;
     gap: clamp(8px, 1.5vw, 14px);
     box-sizing: border-box;
+    border-radius: var(--BorderNormal);
 }
 
 .rank-badge {
-    border: 2px solid #000;
+    border: 2px solid var(--LCBlue);
+    color: var(--LCBlue);
     padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px);
     font-weight: 700;
-    background: #fff;
+    background: var(--S1);
     flex-shrink: 0;
 }
 
 .rank-progress {
+    color: var(--LCBlue);
     display: flex;
     align-items: center;
     gap: clamp(6px, 1vw, 12px);
@@ -150,11 +158,24 @@
 
 .rank-points {
     display: flex;
+    display: flex;
     align-items: center;
     gap: clamp(4px, 1vw, 6px);
     font-weight: 700;
     font-size: clamp(16px, 1.5vw, 20px);
     white-space: nowrap;
+}
+
+.mode-btn {
+    width: clamp(50px, 6vw, 70px);
+    height: clamp(50px, 6vw, 70px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--S3);
+    background: var(--S1);
+    cursor: pointer;
+    border-radius: var(--BorderSmall);
 }
 
 .elo-icon {
@@ -167,8 +188,8 @@
 .play-btn {
     height: clamp(50px, 8vw, 80px);
     padding: 0 clamp(16px, 4vw, 32px);
-    border: 2px solid #000;
-    background: #fff;
+    background: var(--LCPurple);
+    color: var(--LCWHite);
     cursor: pointer;
     font-weight: 900;
     font-size: clamp(20px, 2.5vw, 32px);
@@ -177,9 +198,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border-top-left-radius: var(--BorderNormal);
+    border-bottom-left-radius: var(--BorderNormal);
+    margin: 3px;
 }
 
-.play-btn:hover { background: #f2f2f2; }
+.play-btn:hover {
+  background: var(--LCWHite);
+  color: var(--LCPurple);
+  transition: 0.2s;
+}
 
 /* ---------------- MEDIA QUERIES ---------------- */
 @media (max-width: 1366px) { /* laptops 14” */
@@ -227,13 +255,11 @@
 
 /* POPUP NOTIFICACIONES */
 .popup-solicitudes {
-  background: white;
-  border: 0.15rem solid black;
+  background: var(--S1);
   width: min(90%, 45rem);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0.4rem 0.4rem 0 black;
   animation: popupAppear 0.2s ease;
   position: relative;
   box-sizing: border-box;
@@ -242,8 +268,8 @@
 
 /* puntico rojo */
 .notification-badge {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--LCRed);
+  color: var(--LCWHite);
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -252,6 +278,5 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: bold;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   animation: badgePulse 0.3s ease;
 }

@@ -17,19 +17,20 @@
 .profile-card {
     flex: 1 1 min(200px, 100%);
     max-width: 450px;
-    border: 2px solid #000;
-    background: #fff;
+    border: 2px solid var(--S3);
+    background: var(--S1);
     display: flex;
     align-items: center;
     gap: clamp(12px, 2vw, 18px);
     padding: clamp(8px, 1.5vh, 16px) clamp(12px, 2vw, 24px);
     box-sizing: border-box;
+    border-radius: 30px;
 }
 
 .profile-picture {
     width: clamp(50px, 6vw, 60px);
     height: clamp(50px, 6vw, 60px);
-    border: 2px solid #000;
+    border: 4px solid var(--S3);
     border-radius: 50%;
     overflow: hidden;
     display: flex;
@@ -43,10 +44,10 @@
     height: 100%;
 }
 
-.avatar-red { color: red; }
-.avatar-green { color: green; }
-.avatar-blue { color: blue; }
-.avatar-yellow { color: yellow; }
+.avatar-red { color: var(--LCRed); }
+.avatar-green { color: var(--LCGreen); }
+.avatar-blue { color: var(--LCBlue); }
+.avatar-yellow { color: var(--LCYellow); }
 
 .avatar-large {
   width: 6rem;
@@ -70,12 +71,10 @@
 }
 
 .xp-placeholder {
+    background-color: var(--LCGreen);
     width: 100%;
-    max-width: 250px;
     height: 14px;
-    border: 1.5px solid #000;
     border-radius: 4px;
-    opacity: 0.25;
 }
 
 /* ---------------- BOTONES ICONOS ---------------- */
@@ -85,8 +84,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #000;
-    background: #fff;
+    border: 2px solid var(--S3);
+    background: var(--S1);
     cursor: pointer;
     padding: 0;
     line-height: 0;
@@ -117,7 +116,9 @@
     font-size: clamp(18px, 2vw, 24px);
     margin-left: auto;
     flex-shrink: 0;
-    border: 0.15rem solid black;
+    background-color: var(--S1);
+    border: 0.15rem solid var(--S3);
+    border-radius: var(--BorderSmall);
 }
 
 .coin-amount { line-height: 1; }
@@ -148,15 +149,15 @@
 }
 
 .popup-profile {
-  background: white;
-  border: 0.15rem solid black;
+  background: var(--S1);
+  border: 0.15rem solid var(--S3);
   width: min(90%, 35rem);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0.4rem 0.4rem 0 black;
   animation: popupAppear 0.2s ease;
   overflow: hidden;
+  border-radius: var(--BorderSmall);
 }
 
 .popup-header {
@@ -164,8 +165,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 0.15rem solid black;
-  background: #f5f5f5;
+  background: var(--S1);
 }
 
 .popup-header h2 {
@@ -174,6 +174,7 @@
 }
 
 .close-button {
+  color: var(--LCWhite);
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -183,7 +184,7 @@
 }
 
 .close-button:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--LCBG);
 }
 
 .popup-content {
@@ -229,18 +230,18 @@
   justify-content: space-between;
   align-items: baseline;
   padding: 0.3rem 0;
-  border-bottom: 0.05rem solid #f0f0f0;
+  border-bottom: 0.05rem solid var(--S2);
 }
 
 .detail-label {
   font-weight: bold;
-  color: #666;
+  color: var(--LCWhite);
   font-size: 0.9rem;
 }
 
 .detail-value {
   font-size: 1rem;
-  color: #333;
+  color: var(--LCWhite);
   font-weight: 500;
 }
 
@@ -267,5 +268,5 @@
     align-items: center;
     gap: 0.3rem;
   }
-  
+
 }

@@ -1,8 +1,8 @@
 <section class="home">
-    
+
     <div class="top-row">
         <app-top-row class="main-top-row"></app-top-row>
-        
+
         <button class="icon-btn" type="button" routerLink="/history" routerLinkActive="active" aria-label="Historial">
             <img class="icon icon-history" src="assets/icons/history-icon.png" alt="" />
         </button>
@@ -26,7 +26,7 @@
                         <strong>{{ reto.challenger_username }}</strong>
                         <span>Tablero: {{ reto.board }}</span>
                     </div>
-                    
+
                     <div class="tiempo">
                         ⏱️ {{ reto.starting_time }} min + {{ reto.time_increment }}s
                     </div>
@@ -67,12 +67,14 @@
                 </div>
             </div>
         </div>
-        <button class="icon-btn" type="button" aria-label="Elegir modo">
-            <img class="icon icon-mode" src="assets/icons/ranked-icon.png" alt="" />
-        </button>
+        <div style="flex: row">
         <a class="play-btn" routerLink="/game" aria-label="Jugar partida">
             JUGAR
         </a>
+        <button class="mode-btn" type="button" aria-label="Elegir modo">
+            <img class="icon icon-mode" src="assets/icons/ranked-icon.png" alt="" />
+        </button>
+        </div>
     </div>
-    
+
 </section>
