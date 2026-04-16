@@ -3,6 +3,8 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ReplaySubject, Subject} from 'rxjs';
 import { Remote } from './remote'; // <--- Importa tu servicio
 import { API_URL } from '../../constants/app.const';
+import {  Router } from '@angular/router';
+
 
 
 /*
@@ -25,7 +27,7 @@ export class Websocket {
   public lobbyEvents$ = new Subject<any>();
   public navigation$ = new Subject<string>();
 
-  constructor(private remote: Remote) {}
+  constructor(private remote: Remote, private router: Router) {}
 
   public initConnection(endpoint: string, params: any): void {
 
@@ -96,4 +98,45 @@ export class Websocket {
     this.socket$?.complete();
     this.socket$ = undefined;
   }
+
+  // websocket.service.ts
+checkAndReconnect() {
+  const token = this.remote.getAccessToken();
+  // Usamos la URL que confirmaste
+  const url = `ws://localhost:8080/api/rt/reconnect?token=${token}`; 
+
+  this.socket$ = webSocket({
+    url: url,
+    // RxJS no tiene 'onopen' como propiedad, se usa el openObserver
+    openObserver: {
+      next: () => {
+        console.log('¡Conexión establecida! Hay partida activa.');
+        // Aquí es donde disparas la navegación
+        this.router.navigate(['/game']);
+      }
+    },
+    closeObserver: {
+      next: (e) => {
+        console.log('WS cerrado', e);
+      }
+    }
+  });
+
+    this.socket$.subscribe({
+      next: msg => this.handleMessage(msg),   
+      error: err => {
+        if (err?.code === 1006) return; // cierre normal en muchos backends
+        console.error('Error WS:', err);
+        this.socket$ = undefined;
+      },
+      complete: () => {
+        console.log('WS COMPLETADO');
+        this.socket$ = undefined;
+      }
+    });
+
+  
+
+  
+}
 }

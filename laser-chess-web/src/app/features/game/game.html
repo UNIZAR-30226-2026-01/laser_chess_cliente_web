@@ -1,4 +1,42 @@
 <div class="game-screen">
+  @if (mostrarAvisoSalida()) {
+  <div class="popup-overlay">
+    <div class="popup-content warning">
+      <div class="modal-icon">🚫</div>
+      <h2>Acción Bloqueada</h2>
+      <p>No puedes abandonar la partida mientras está en curso.</p>
+      <p>Si necesitas salir, solicita <strong>pausar la partida</strong> o termina el juego.</p>
+      
+      <div class="popup-buttons">
+        <button class="btn-entendido" (click)="mostrarAvisoSalida.set(false)">
+          Entendido, volver al juego
+        </button>
+      </div>
+    </div>
+  </div>
+}
+  <div class="toast-container">
+    
+    @if (estadoDesconexion().mostrar) {
+      <app-notification-game 
+        tipo="desconexion"
+        [mensaje]="'El rival se ha ido de la partida...'"
+        (alCerrar)="cerrarToast()">
+      </app-notification-game>
+    }
+
+    @if (estadoPausa().mostrar) {
+      <app-notification-game
+        tipo="pausa"
+        [mensaje]="nombreRival() + ' quiere pausar el juego'"
+        (alAceptar)="logicAceptarPausa()"
+        (alRechazar)="logicRechazarPausa()"
+        (alCerrar)="cerrarToastPausa()">
+      </app-notification-game>
+    }
+    
+  </div>
+
   <!-- POP-UP FIN DE PARTIDA -->
    @if(finPartida().mostrar){ 
     <div class="popup-overlay">
@@ -95,6 +133,6 @@
       }
     </div>
     
-    <button class="debug-btn" (click)="esMiTurno.set(true)">Check Turno</button>
+    <button class="debug-btn" (click)="solicitarPausa()">||</button>
   </aside>
 </div>

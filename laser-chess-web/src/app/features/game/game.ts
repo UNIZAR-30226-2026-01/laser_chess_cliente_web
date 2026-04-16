@@ -11,6 +11,7 @@ import { Remote } from '../../model/remote/remote';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GameState } from '../../model/remote/game-state'
+import { NotificationGame } from '../../shared/notification-game/notification-game'
 
 
 
@@ -21,7 +22,7 @@ const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [Pieza, PiezaRival, Laser],
+  imports: [Pieza, PiezaRival, Laser, NotificationGame],
   templateUrl: './game.html',
   styleUrl: './game.css',
 })
@@ -65,6 +66,13 @@ export class Game implements OnInit {
   
   // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
   listaPiezas = signal<PiezaData[]> ([]);
+
+  // Estados para controlar las notificaciones
+  estadoDesconexion = signal<{ mostrar: boolean }>({ mostrar: false });
+  estadoPausa = signal<{ mostrar: boolean }>({ mostrar: false });
+
+  mostrarAvisoSalida = signal(false);
+  aceptoInitial = signal(true);
   
 
   ngOnInit(): void {
@@ -97,7 +105,7 @@ export class Game implements OnInit {
     this.stopTimer();
     this.wsSubscription?.unsubscribe();
     this.wsSubscription = undefined;
-
+    this.aceptoInitial.set(true);
     this.wsService.close();
   }
 
@@ -320,10 +328,15 @@ export class Game implements OnInit {
   sendMovement(content:string){
     if (!this.esMiTurno()) return;
     const request: SendAction = { Type: "Move", Content: content}; 
-    // Enviar y bloquear (NO movemos la pieza aún)
+    // Enviar y bloqueaconst timer = timerMatch ? +timerMatch[1] : null;r (NO movemos la pieza aún)
     this.wsService.sendAction(request);
     this.esMiTurno.set(false);        // Bloquear turno local
     this.waitingForConfirmation = true;
+  }
+
+  solicitarPausa(){
+    const request: SendAction = { Type: "Pause", Content: ""}; 
+    this.wsService.sendAction(request);
   }
 
   /*****************************************************************************/
@@ -334,8 +347,10 @@ export class Game implements OnInit {
     console.log("Tipo:", msg.Type);
     console.log("Contenido:", msg.Content);
 
+    if (msg.Type === "MatchStart"){
+      console.log("Tu oponenete es " + msg.Content);
 
-    if (msg.Type === "InitialState"){
+    } else if (msg.Type === "InitialState" && this.aceptoInitial()){
       console.log("Procesando el estado inicial");
       this.importarTablero(msg.Content);
       if (Number(msg.Extra) !== this.id) {         //Ns q es el extra pero siempre es true esto (al final no siempre es true)
@@ -350,8 +365,10 @@ export class Game implements OnInit {
         this.esMiTurno.set(true); // El jugador rojo empieza primero
       }
       this.startTimer();
+      this.aceptoInitial.set(false);
+
       
-    }else if ( msg.Type === "Move"){
+    } else if ( msg.Type === "Move"){
       const clean = msg.Content.replace(';', '').replace('{', '').replace('}', '');
 
       const [movePart, laserRaw, timeRaw] = clean.split('%');
@@ -446,16 +463,150 @@ export class Game implements OnInit {
       this.wsSubscription = undefined;
       this.stopTimer();
       
+    }else if (msg.Type === "Disconnection"){
+      // El oponenete se ha desconectado
+      // this.stopTimer();
+      this.estadoDesconexion.set({ mostrar: true });
+
+      // Pop up de espera a que se reconecte el oponenete con opción de salir (abandonar reto)
+
+    }else if (msg.Type === "Reconnection"){
+      // El oponenete se ha reconectado
+      // this.startTimer()
+      this.estadoDesconexion.set({ mostrar: false });
+
+      // Se oculta el pop-up de espera a reconexión
+    }else if (msg.Type === "PauseRequest"){
+      // El oponenete  pide pausar la partida
+      // this.stopTimer();
+      this.estadoPausa.set({ mostrar: true });
+      
+      // Pop up que pregunta si queremos pausar también (aceptar request)
+      
+
+    }else if (msg.Type === "Pause"){
+      
+      // La partida se ha pausado 
+      // Cierre del websocket + retorno a home ??
+      this.stopTimer();
+
+    }else if (msg.Type === "State"){
+
+      console.log("Reaplicando log sobre estado existente");
+
+      const log = msg.Content;
+
+      const events = this.parseGameLog(log);
+
+      for (const ev of events) {
+        this.applyAction(ev.action);
+      }
+
+      // limpieza visual por seguridad
+      this.laserPath.set([]);
+      this.piezaActiva.set(null);
     }
+    
   }
 
-  finPartidaHandler(){
-    this.finPartida.set({mostrar:false, mensaje:''})
-    this.router.navigate(['/home']);
+  /*****************************************************************************/
+  /*                     Popups de reconexión y pausa                          */
+  /*****************************************************************************/
+  // Handlers para el Toast de Desconexión
+  cerrarToast() {
+    this.estadoDesconexion.set({ mostrar: false });
   }
 
-  solicitarRevancha(){
-    // Enviar solicitud de revancha al backend
+  // Handlers para el Toast de Pausa
+  logicAceptarPausa() {
+    console.log("Aceptando pausa...");
+    const request: SendAction = { Type: "Pause", Content: "" }; 
+    this.wsService.sendAction(request);
+    this.estadoPausa.set({ mostrar: false });
+  }
+
+  logicRechazarPausa() {
+    console.log("Rechazando pausa...");
+    // const request: SendAction = { Type: "Pause", Content: "REJECT" }; 
+    // this.wsService.sendAction(request);
+    this.estadoPausa.set({ mostrar: false });
+    // this.startTimer(); 
+  }
+
+  cerrarToastPausa() {
+    this.estadoPausa.set({ mostrar: false });
+  }
+
+    finPartidaHandler(){
+      this.finPartida.set({mostrar:true, mensaje:''})
+      this.router.navigate(['/home']);
+    }
+
+    solicitarRevancha(){
+      // Enviar solicitud de revancha al backend
+    }
+
+  /*****************************************************************************/
+  /*               Gestión y parseo de log tras reconexión                     */
+  /*****************************************************************************/
+
+  parseGameLog(log: string) {
+    console.log("Estoy procesando el log");
+    return log
+      .split(';')
+      .filter(e => e.trim().length > 0)
+      .map(ev => this.parseEvent(ev));
+  }
+
+  parseEvent(ev: string) {
+    console.log("Muevo cositas");
+    const [actionPart, , timerPart] = ev.split('%');
+
+    const timerMatch = timerPart?.match(/\{(\d+)\}/);
+    const timer = Number(timerMatch?.[1]);
+    
+    if (this.esMiTurno()){
+      this.esMiTurno.set(false);
+      this.miTiempo.set(timer);
+      
+    }else{
+      this.esMiTurno.set(true);
+      this.tiempoRival.set(timer);
+    }
+    return {
+      action: actionPart.trim(),
+      timer
+    };
+  }
+
+  
+
+  applyAction(action: string) {
+
+    const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;
+    const match = action.match(moveRegex);
+
+    if (!match) return;
+
+    const tipo = match[1];
+    const desde = this.fromChess(match[2]);
+    const hasta = match[3] ? this.fromChess(match[3]) : null;
+    const captura = match[4] ? this.fromChess(match[4]) : null;
+
+    // MOVE
+    if (tipo === 'T' && desde && hasta) {
+      this.moverPiezaEnTablero(desde, hasta);
+    }
+
+    // ROTATE
+    if (tipo === 'R' || tipo === 'L') {
+      this.rotarPiezaEnTablero(desde, tipo as 'R' | 'L');
+    }
+
+    // CAPTURA
+    if (captura) {
+      this.eliminarPiezaEnTablero(captura);
+    }
   }
 
 

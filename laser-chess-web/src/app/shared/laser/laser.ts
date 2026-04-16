@@ -1,5 +1,25 @@
 import { Component, Input, signal, OnChanges, SimpleChanges } from '@angular/core';
 
+
+function getDir(a: any, b: any) {
+  return {
+    dx: b.x - a.x,
+    dy: b.y - a.y
+  };
+}
+
+function makeSegment(x1: number, y1: number, x2: number, y2: number) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+
+  return {
+    left: x1,
+    top: y1,
+    width: Math.sqrt(dx * dx + dy * dy),
+    angle: Math.atan2(dy, dx) * (180 / Math.PI)
+  };
+}
+
 @Component({
   selector: 'app-laser',
   templateUrl: './laser.html',
@@ -18,6 +38,8 @@ export class Laser implements OnChanges {
     }
   }
 
+  
+
   updateSegments() {
     const segs: any[] = [];
     if (!this.path || this.path.length < 2) {
@@ -32,19 +54,13 @@ export class Laser implements OnChanges {
       const p1 = this.path[i];
       const p2 = this.path[i + 1];
 
-      // Centrar el láser en la celda
       const x1 = (p1.x - 0.5) * cellWidth;
       const y1 = (p1.y - 0.5) * cellHeight;
 
       const x2 = (p2.x - 0.5) * cellWidth;
       const y2 = (p2.y - 0.5) * cellHeight;
 
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const length = Math.sqrt(dx * dx + dy * dy);
-      const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-
-      segs.push({ left: x1, top: y1, width: length, angle });
+      segs.push(makeSegment(x1, y1, x2, y2));
     }
 
     this.segments.set(segs);

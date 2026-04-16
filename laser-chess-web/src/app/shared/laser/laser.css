@@ -11,8 +11,10 @@
   position: absolute;
   background-image: url('/assets/icons/coin-icon.png');
   background-repeat: repeat-x;
-  background-size: 20px 100%;
+  background-size: 20px 20px;
   transform-origin: 0 50%;
+  height: 12px;
+  border-radius: 999px;
   animation: laserMove 0.3s linear infinite;
 }
 

@@ -5,7 +5,7 @@ export interface MyProfile {
   username: string;
   mail: String;
   xp: number;
-  avatar?: 'red' | 'blue' | 'green' | 'yellow';
+  avatar: number;
   money: number;
   board_skin: number;
   piece_skin: number;

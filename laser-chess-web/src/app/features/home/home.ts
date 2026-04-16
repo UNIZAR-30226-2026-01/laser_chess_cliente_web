@@ -32,6 +32,7 @@ export class Home {
 
   ngOnInit() {
     // Aquí podrías cargar las solicitudes iniciales si quieres
+    this.websocket.checkAndReconnect();
     this.loadFriends();     
   }
   
