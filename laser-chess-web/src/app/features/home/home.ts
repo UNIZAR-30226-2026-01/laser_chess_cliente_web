@@ -2,10 +2,10 @@ import { Component, signal, inject} from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
-import { MessageGame } from '../../model/game/MessageGame';
 import { Websocket } from '../../model/remote/websocket';
-import { Router } from '@angular/router';
 import { Remote } from '../../model/remote/remote';
+import { GameState } from '../../model/remote/game-state'
+
 
 @Component({
   selector: 'app-home',
@@ -24,12 +24,15 @@ export class Home {
   solicitudes = signal<ChallengeResume[]>([]);
   private websocket = inject(Websocket);
   private wsSubscription: any;
-  private router = inject(Router);
   private notificationService = inject(Remote);
+
+  private gameState = inject(GameState);
+
   
 
   ngOnInit() {
     // Aquí podrías cargar las solicitudes iniciales si quieres
+    this.websocket.checkAndReconnect();
     this.loadFriends();     
   }
   
@@ -42,7 +45,8 @@ export class Home {
   loadFriends(): void {
       this.notificationService.checkSolicitudes().subscribe({
         next: (data : ChallengeResume[]) => {
-        this.solicitudes.set(data);          console.log('Solicitudes cargadas:', this.solicitudes);
+        this.solicitudes.set(data);          
+        console.log('Solicitudes cargadas:', this.solicitudes);
         },
         error: (err : any) => {
           console.error('Error al cargar amigos:', err);
@@ -51,29 +55,17 @@ export class Home {
     }
   
 
-  accept(challenger_username: string) {
+  accept(reto: ChallengeResume) {
     const endpoint = 'challenge/accept';
     const params = {
-      username: challenger_username,
+      username: reto.challenger_username,
     };
+    this.gameState.startingTime.set(reto.starting_time);
+    this.gameState.increment.set(reto.time_increment);
+    this.gameState.rivalName.set(reto.challenger_username);
 
     this.websocket.initConnection(endpoint, params);
+    this.popUPNotis.set(false);
 
-    if (this.wsSubscription) this.wsSubscription.unsubscribe();
-    this.wsSubscription = this.websocket.gameMessages$.subscribe({
-      next: (msg:  MessageGame) => {
-        console.log('Mensaje recibido en Social (accept):', msg);
-        this.popUPNotis.set(false);
-        console.log("Entra a partida desde home (acepto reto)");
-        
-
-        this.router.navigate(['/game']);
-      },
-      error: (err) => {
-        console.error('Error en WS Social (accept):', err);
-        this.popUPNotis.set(false);
-        this.websocket.close();
-      }
-    });
   }
 }

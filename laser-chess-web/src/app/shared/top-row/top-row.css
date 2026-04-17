@@ -43,10 +43,10 @@
     height: 100%;
 }
 
-.avatar-red { color: red; }
-.avatar-green { color: green; }
-.avatar-blue { color: blue; }
-.avatar-yellow { color: yellow; }
+.avatar-red { color: red !important; }
+.avatar-green { color: green !important; }
+.avatar-blue { color: blue !important; }
+.avatar-yellow { color: yellow !important; }
 
 .avatar-large {
   width: 6rem;

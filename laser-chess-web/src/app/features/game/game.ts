@@ -10,6 +10,9 @@ import { SendAction } from '../../model/game/SendAction'
 import { Remote } from '../../model/remote/remote';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { GameState } from '../../model/remote/game-state'
+import { NotificationGame } from '../../shared/notification-game/notification-game'
+
 
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
@@ -19,7 +22,7 @@ const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [Pieza, PiezaRival, Laser],
+  imports: [Pieza, PiezaRival, Laser, NotificationGame],
   templateUrl: './game.html',
   styleUrl: './game.css',
 })
@@ -37,6 +40,9 @@ export class Game implements OnInit {
   private router = inject(Router);
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
 
+  private gameState = inject(GameState);
+  
+
 
 
   esMiTurno = signal(true);
@@ -48,25 +54,94 @@ export class Game implements OnInit {
   cont = 1; // Contado incremental para creación de piezas (id)
   id = this.remoteService.getAccountId();
   finPartida = signal<{mostrar: boolean, mensaje: string}>({ mostrar: false, mensaje: '' });
+
+  miTiempo = signal<number>(300);      // ejemplo: 5 min
+  tiempoRival = signal<number>(300);
+  miNombre = signal<string>('Yo');
+  nombreRival = signal<string>('Rival');
+
+  private timerInterval: any = null;
   
 
   
   // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
   listaPiezas = signal<PiezaData[]> ([]);
+
+  // Estados para controlar las notificaciones
+  estadoDesconexion = signal<{ mostrar: boolean }>({ mostrar: false });
+  estadoPausa = signal<{ mostrar: boolean }>({ mostrar: false });
+
+  mostrarAvisoSalida = signal(false);
+  aceptoInitial = signal(true);
   
 
   ngOnInit(): void {
     console.log('Suscribiéndome a WS en Game...');
-    
+    const tiempo = this.gameState.startingTime();
+    const rival = this.gameState.rivalName();
+    const myName = this.gameState.myName();
+
+    this.miTiempo.set(tiempo);
+    this.tiempoRival.set(tiempo);
+
+    this.nombreRival.set(rival);
+    this.miNombre.set(myName);
+    console.log("tiempo ini: " + this.miTiempo() );
+    console.log("me llamo " + this.miNombre() + " o " + myName );
+
+
     // Suscribimos al ReplaySubject que recibe los mensajes
     this.wsSubscription = this.wsService.gameMessages$.subscribe({
       next: (msg: MessageGame) => this.procesarAccion(msg),
       error: (err: any) => console.error('WS ERROR:', err),
       complete: () => console.log('WS COMPLETADO'),
     });
+
+
   }
 
-  
+  ngOnDestroy(): void {
+    console.log('Destruyendo Game, limpiando suscripción');
+    this.stopTimer();
+    this.wsSubscription?.unsubscribe();
+    this.wsSubscription = undefined;
+    this.aceptoInitial.set(true);
+    this.wsService.close();
+  }
+
+  /*
+   * Cositas de timers
+   */
+  startTimer() {
+    this.stopTimer(); // evitar duplicados
+
+    this.timerInterval = setInterval(() => {
+      if (this.esMiTurno()) {
+        this.miTiempo.update(t => Math.max(t - 1000, 0));
+      } else {
+        this.tiempoRival.update(t => Math.max(t - 1000, 0));
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  formatTime(ms: number): string {
+    const totalSeconds = Math.floor(ms / 1000);
+
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const minStr = minutes.toString().padStart(2, '0');
+    const secStr = seconds.toString().padStart(2, '0');
+
+    return `${minStr}:${secStr}`;
+  }
 
   /*
    Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
@@ -253,10 +328,15 @@ export class Game implements OnInit {
   sendMovement(content:string){
     if (!this.esMiTurno()) return;
     const request: SendAction = { Type: "Move", Content: content}; 
-    // Enviar y bloquear (NO movemos la pieza aún)
+    // Enviar y bloqueaconst timer = timerMatch ? +timerMatch[1] : null;r (NO movemos la pieza aún)
     this.wsService.sendAction(request);
     this.esMiTurno.set(false);        // Bloquear turno local
     this.waitingForConfirmation = true;
+  }
+
+  solicitarPausa(){
+    const request: SendAction = { Type: "Pause", Content: ""}; 
+    this.wsService.sendAction(request);
   }
 
   /*****************************************************************************/
@@ -267,8 +347,10 @@ export class Game implements OnInit {
     console.log("Tipo:", msg.Type);
     console.log("Contenido:", msg.Content);
 
+    if (msg.Type === "MatchStart"){
+      console.log("Tu oponenete es " + msg.Content);
 
-    if (msg.Type === "InitialState"){
+    } else if (msg.Type === "InitialState" && this.aceptoInitial()){
       console.log("Procesando el estado inicial");
       this.importarTablero(msg.Content);
       if (Number(msg.Extra) !== this.id) {         //Ns q es el extra pero siempre es true esto (al final no siempre es true)
@@ -282,14 +364,18 @@ export class Game implements OnInit {
         console.log("Soy el jugador rojo");
         this.esMiTurno.set(true); // El jugador rojo empieza primero
       }
+      this.startTimer();
+      this.aceptoInitial.set(false);
+
       
-    }else if ( msg.Type === "Move"){
-      const content = msg.Content.replace(';', '');
+    } else if ( msg.Type === "Move"){
+      const clean = msg.Content.replace(';', '').replace('{', '').replace('}', '');
 
-      const [movePart, rest] = content.split('%');
-      const [laserRaw, timeRaw] = rest.split('%{');
+      const [movePart, laserRaw, timeRaw] = clean.split('%');
+      
 
-      const tiempo = parseFloat(timeRaw);
+      const tiempo = Number(timeRaw);
+      console.log(timeRaw);
       console.log("Justo antes de verificar patrón");
       const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;      
       const match = movePart.match(moveRegex);
@@ -336,11 +422,13 @@ export class Game implements OnInit {
         if (this.waitingForConfirmation) {
           // Esto es confirmación de mi propio movimiento
           this.waitingForConfirmation = false;
+          this.miTiempo.set(tiempo);
           // El turno ya está en false (lo pusimos al enviar), no se cambia
           console.log("Movimiento propio confirmado, turno para el rival");
         } else {
           // Esto es movimiento del rival
           this.esMiTurno.set(true);
+          this.tiempoRival.set(tiempo);
           console.log("Movimiento del rival recibido, ahora es mi turno");
         }
       
@@ -365,26 +453,160 @@ export class Game implements OnInit {
         console.log("Has perdido, mejor suerte la próxima vez.");
         this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' });
       }
+      this.stopTimer();
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
-      // opcional: cerrar limpio aquí
-
       this.esMiTurno.set(false);
       this.wsService.close();
       this.wsSubscription?.unsubscribe();
       this.wsSubscription = undefined;
+      this.stopTimer();
       
+    }else if (msg.Type === "Disconnection"){
+      // El oponenete se ha desconectado
+      // this.stopTimer();
+      this.estadoDesconexion.set({ mostrar: true });
+
+      // Pop up de espera a que se reconecte el oponenete con opción de salir (abandonar reto)
+
+    }else if (msg.Type === "Reconnection"){
+      // El oponenete se ha reconectado
+      // this.startTimer()
+      this.estadoDesconexion.set({ mostrar: false });
+
+      // Se oculta el pop-up de espera a reconexión
+    }else if (msg.Type === "PauseRequest"){
+      // El oponenete  pide pausar la partida
+      // this.stopTimer();
+      this.estadoPausa.set({ mostrar: true });
+      
+      // Pop up que pregunta si queremos pausar también (aceptar request)
+      
+
+    }else if (msg.Type === "Pause"){
+      
+      // La partida se ha pausado 
+      // Cierre del websocket + retorno a home ??
+      this.stopTimer();
+
+    }else if (msg.Type === "State"){
+
+      console.log("Reaplicando log sobre estado existente");
+
+      const log = msg.Content;
+
+      const events = this.parseGameLog(log);
+
+      for (const ev of events) {
+        this.applyAction(ev.action);
+      }
+
+      // limpieza visual por seguridad
+      this.laserPath.set([]);
+      this.piezaActiva.set(null);
     }
+    
   }
 
-  finPartidaHandler(){
-    this.finPartida.set({mostrar:false, mensaje:''})
-    this.router.navigate(['/home']);
+  /*****************************************************************************/
+  /*                     Popups de reconexión y pausa                          */
+  /*****************************************************************************/
+  // Handlers para el Toast de Desconexión
+  cerrarToast() {
+    this.estadoDesconexion.set({ mostrar: false });
   }
 
-  solicitarRevancha(){
-    // Enviar solicitud de revancha al backend
+  // Handlers para el Toast de Pausa
+  logicAceptarPausa() {
+    console.log("Aceptando pausa...");
+    const request: SendAction = { Type: "Pause", Content: "" }; 
+    this.wsService.sendAction(request);
+    this.estadoPausa.set({ mostrar: false });
+  }
+
+  logicRechazarPausa() {
+    console.log("Rechazando pausa...");
+    // const request: SendAction = { Type: "Pause", Content: "REJECT" }; 
+    // this.wsService.sendAction(request);
+    this.estadoPausa.set({ mostrar: false });
+    // this.startTimer(); 
+  }
+
+  cerrarToastPausa() {
+    this.estadoPausa.set({ mostrar: false });
+  }
+
+    finPartidaHandler(){
+      this.finPartida.set({mostrar:true, mensaje:''})
+      this.router.navigate(['/home']);
+    }
+
+    solicitarRevancha(){
+      // Enviar solicitud de revancha al backend
+    }
+
+  /*****************************************************************************/
+  /*               Gestión y parseo de log tras reconexión                     */
+  /*****************************************************************************/
+
+  parseGameLog(log: string) {
+    console.log("Estoy procesando el log");
+    return log
+      .split(';')
+      .filter(e => e.trim().length > 0)
+      .map(ev => this.parseEvent(ev));
+  }
+
+  parseEvent(ev: string) {
+    console.log("Muevo cositas");
+    const [actionPart, , timerPart] = ev.split('%');
+
+    const timerMatch = timerPart?.match(/\{(\d+)\}/);
+    const timer = Number(timerMatch?.[1]);
+    
+    if (this.esMiTurno()){
+      this.esMiTurno.set(false);
+      this.miTiempo.set(timer);
+      
+    }else{
+      this.esMiTurno.set(true);
+      this.tiempoRival.set(timer);
+    }
+    return {
+      action: actionPart.trim(),
+      timer
+    };
+  }
+
+  
+
+  applyAction(action: string) {
+
+    const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;
+    const match = action.match(moveRegex);
+
+    if (!match) return;
+
+    const tipo = match[1];
+    const desde = this.fromChess(match[2]);
+    const hasta = match[3] ? this.fromChess(match[3]) : null;
+    const captura = match[4] ? this.fromChess(match[4]) : null;
+
+    // MOVE
+    if (tipo === 'T' && desde && hasta) {
+      this.moverPiezaEnTablero(desde, hasta);
+    }
+
+    // ROTATE
+    if (tipo === 'R' || tipo === 'L') {
+      this.rotarPiezaEnTablero(desde, tipo as 'R' | 'L');
+    }
+
+    // CAPTURA
+    if (captura) {
+      this.eliminarPiezaEnTablero(captura);
+    }
   }
 
 

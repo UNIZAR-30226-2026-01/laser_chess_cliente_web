@@ -348,6 +348,16 @@ export class Remote {
       );
   }
 
+  // Solicitud a la API que revisa si hay partida activa
+  checkActiveGame(): Observable<{ inGame: boolean, gameId?: string }> {
+    return this.http.get<{ inGame: boolean, gameId?: string }>(`${API_URL}/rt/reconnect`,).pipe(
+          catchError((err: Error) => {
+              console.error('Error getting active games :', err);
+              throw new Error('Error');
+          })
+      );;
+  }
+
 
 
   /*
