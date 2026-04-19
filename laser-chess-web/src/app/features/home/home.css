@@ -64,7 +64,7 @@
     padding-right: 20px;
     background-color: var(--S1);
     border: 2px solid var(--S3);
-    color: var(--LCWHite);
+    color: var(--LCWhite);
     border-radius: var(--BorderFull);
 }
 
@@ -167,7 +167,7 @@
     height: clamp(50px, 8vw, 80px);
     padding: 0 clamp(16px, 4vw, 32px);
     background: var(--LCPurple);
-    color: var(--LCWHite);
+    color: var(--LCWhite);
     cursor: pointer;
     font-weight: 900;
     font-size: clamp(20px, 2.5vw, 32px);
@@ -182,7 +182,7 @@
 }
 
 .play-btn:hover {
-  background: var(--LCWHite);
+  background: var(--LCWhite);
   color: var(--LCPurple);
   transition: 0.2s;
 }
@@ -247,7 +247,7 @@
 /* puntico rojo */
 .notification-badge {
   background-color: var(--LCRed);
-  color: var(--LCWHite);
+  color: var(--LCWhite);
   border-radius: 50%;
   width: 24px;
   height: 24px;

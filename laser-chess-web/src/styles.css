@@ -17,7 +17,7 @@
   --LCPurple: #7A55C6;
 
   /* Neutros */
-  --LCWHite: #e1f5fe;
+  --LCWhite: #e1f5fe;
   --LCGray: #918C9E;
 
 /* TAMAÑOS FUENTES ============================== */
@@ -36,6 +36,6 @@
 body {
     margin: 0;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    color: var(--LCWHite);
+    color: var(--LCWhite);
     background-color: var(--LCBG);
 }
