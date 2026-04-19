@@ -10,6 +10,7 @@
 .item {
   background-color: var(--S1);
   margin-bottom: 3px;
+  color: var(--LCWhite);
 
   flex: 1;
   display: flex;
@@ -19,6 +20,12 @@
   transition: background 0.2s;
 
   max-height: 8vh;
+}
+
+.item mat-icon {
+  font-size: var(--LCBig);
+  width: var(--LCBig);
+  height: var(--LCBig);
 }
 
 .item:hover {

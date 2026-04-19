@@ -1,6 +1,9 @@
 <div class="container">
   <div class="lc-title">
-    laserchess
+    <mat-icon fontSet="material-symbols-outlined">chess_king</mat-icon>
+    <span style="margin-left: 10px;">
+      Laserchess
+    </span>
   </div>
   <div class="empty-space"></div>
   <div class="profile-card" (click)="openProfile()">
@@ -21,7 +24,7 @@
   </div>
   <div class="coin-counter">
     <span class="coin-amount">{{ (userProfile$ | async)?.money }}</span>
-    <img src="assets/icons/coin-icon.png" class="coin-icon" alt="">
+    <mat-icon fontSet="material-symbols-outlined">paid</mat-icon>
   </div>
 </div>
 
