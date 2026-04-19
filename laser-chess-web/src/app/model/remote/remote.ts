@@ -216,6 +216,15 @@ export class Remote {
     );
   }
 
+
+
+
+  //---------------------------------------------------------------------------------------------
+  //
+  // ENDPOINTS PARA LOS RANKIGS
+  //
+  //----------------------------------------------------------------------------------------------
+
   // Solicitud a la API para obtener los ratings de un usuario
   getAllRatings(userId: number): Observable<AllRatingsDTO> {
     return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}`, {
@@ -227,6 +236,88 @@ export class Remote {
       })
     );
   }
+
+
+  // Solicitud para pillar el Blitz
+  getEloBlitz(userId: number): Observable<AllRatingsDTO> {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}/blitz`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting elo Blitz:', err);
+        throw new Error('Error during getting Blitz');
+      })
+    );
+  }
+  
+  // Solicitud para pillar el Rapid
+  getEloRapid(userId: number): Observable<AllRatingsDTO> {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}/rapid`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting elo Rapid:', err);
+        throw new Error('Error during getting Rapid');
+      })
+    );
+  }
+
+  // Solicitud para pillar el Clasic
+  getEloClasic(userId: number): Observable<AllRatingsDTO> {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}/classic`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting elo Classic:', err);
+        throw new Error('Error during getting Classic');
+      })
+    );
+  }
+
+  // Solicitud para pillar el Extended
+  getEloExtended(userId: number): Observable<AllRatingsDTO> {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}/extended`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting elo Extended:', err);
+        throw new Error('Error during getting Extended');
+      })
+    );
+  }
+
+  // Te dice la posición en el ranking global de un elo de un user
+  getMyPositicion(userId: number, eloType: string): Observable<AllRatingsDTO> {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/ranking/${eloType}/${userId}`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting mi elo', err);
+        throw new Error('Error getting mi elo');
+      })
+    );
+  }
+
+  // Devuelve el top 100 de jugadores con más elo en una categoría
+  getBest100(eloType: string): Observable<AllRatingsDTO> {
+    return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/top/${eloType}`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting los 100', err);
+        throw new Error('Error getting los 100');
+      })
+    );
+  }
+
+
+
+
+  //---------------------------------------------------------------------------------------------
+  //
+  // ENDPOINTS PARA LAS PARTIDAS
+  //
+  //----------------------------------------------------------------------------------------------
 
   // Solicitud a la API para desafiar a un amigo a una partida
   challengeFriend(friendUsername: string): Observable<any> {
@@ -255,6 +346,16 @@ export class Remote {
               throw new Error('Error');
           })
       );
+  }
+
+  // Solicitud a la API que revisa si hay partida activa
+  checkActiveGame(): Observable<{ inGame: boolean, gameId?: string }> {
+    return this.http.get<{ inGame: boolean, gameId?: string }>(`${API_URL}/rt/reconnect`,).pipe(
+          catchError((err: Error) => {
+              console.error('Error getting active games :', err);
+              throw new Error('Error');
+          })
+      );;
   }
 
 
@@ -328,7 +429,7 @@ export class Remote {
         }
       }),
       catchError((err) => {
-        this.limpiarPersistencia(); // <--- Aquí es donde se borra el "hint" si la sesión expiró
+        this.limpiarPersistencia();
         this.router.navigate(['']);
         throw err;
       })

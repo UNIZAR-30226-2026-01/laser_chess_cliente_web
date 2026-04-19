@@ -54,6 +54,7 @@
   background-size: 10% 12.5%; /* 100/10 y 100/8 */
   
   position: relative;
+  overflow: hidden;
 }
 
 /* Tarjetas de Jugador */
@@ -234,4 +235,30 @@
 
 .popup-buttons button:last-child:hover {
   background: #bbb;
+}
+
+/* POP-UP de no puedes salie cojones */
+.popup-content.warning {
+  border-top: 5px solid #ffcc00; /* Un color de advertencia */
+  text-align: center;
+}
+
+.modal-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.btn-entendido {
+  background-color: #007aff;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-entendido:hover {
+  background-color: #0056b3;
 }

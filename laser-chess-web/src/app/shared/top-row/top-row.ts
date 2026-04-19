@@ -40,7 +40,7 @@ export class TopRow implements OnInit {
 
       this.userProfile$ = this.remote.getAccount();
       this.userProfile$.subscribe(profile => {
-        this.avatar = profile.avatar;
+        this.avatar = this.iconService.getAvatarColor(profile.avatar);
     });
   }
 

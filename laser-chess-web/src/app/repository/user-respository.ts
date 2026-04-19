@@ -33,7 +33,7 @@ export class UserRespository {
         username: 'Invitado',
         mail: '',
         xp: 0,
-        avatar: 'red',
+        avatar: 0,
         money: 0,
         board_skin: 0,
         piece_skin: 0,
@@ -54,7 +54,7 @@ export class UserRespository {
           userId: accountId,
           username: acc.username || 'Usuario',
           mail: acc.mail || '',
-          xp: acc.level ?? 'red',
+          xp: acc.level ?? 0,
           avatar: acc.avatar ?? 0,
           money: acc.coins ?? 0,
           board_skin: acc.board_skin ?? 0,
@@ -67,6 +67,8 @@ export class UserRespository {
           extendedElo: undefined,
         };
 
+        this.userProfile = profile;
+
         return this.remoteService.getAllRatings(accountId).pipe(
           map((ratings: AllRatingsDTO) => ({
             ...profile,
@@ -78,6 +80,11 @@ export class UserRespository {
         );
       })
     );
+    
+  }
+
+  getUsername() : string | undefined {
+    return this.userProfile?.username;
   }
 
   // Actualizar datos del perfil del usuario

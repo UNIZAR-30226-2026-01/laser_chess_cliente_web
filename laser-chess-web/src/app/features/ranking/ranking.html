@@ -1,1 +1,142 @@
-<p>ranking works!</p>
+<div class="page">
+
+  <app-top-row class="main-top-row">
+  </app-top-row>
+
+  <div class="folder-container">
+    <div class="folder-body">
+      
+      <!-- Botones para seleccionar elo -->
+      <div class="elo-buttons-container">
+        @for (type of eloTypes; track type.id) {
+          <button class="elo-tab" 
+                  [class.active]="selectedEloType() === type.id"
+                  (click)="onSelectEloType(type.id)"
+                  [disabled]="loading()">
+            {{ type.label }}
+          </button>
+        }
+      </div>
+
+      <!-- Estado de carga -->
+      @if (loading()) {
+        <div class="loading-state">
+          <p>Cargando ranking...</p>
+        </div>
+      }
+
+      <!-- Mensaje de error -->
+      @if (error()) {
+        <div class="empty-state error-message">
+          <p>{{ error() }}</p>
+        </div>
+      }
+
+      <!-- Tabla del top 100 -->
+      @if (!loading() && !error()) {
+        <div class="ranking-table-wrapper">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>Posición</th>
+                <th>Jugador</th>
+                <th>ELO</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (player of topPlayers(); track player.userId; let i = $index) {
+                <tr (click)="openUserInfo(player)">
+                  <td class="rank">{{ i + 1 }}</td>
+                  <td class="username">{{ player.username }}</td>
+                  <td class="elo">{{ player.elo }}</td>
+                </tr>
+              }
+              @if (topPlayers().length === 0) {
+                <tr>
+                  <td colspan="3" class="empty-table">No hay jugadores en el ranking</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- Posicion del user -->
+      @if (userInfo() && !loading() && !error()) {
+        <div class="user-rank-card">
+          <div class="user-rank-info">
+            <span class="rank-label">Tu posición en {{ selectedEloType() | uppercase }}:</span>
+            <span class="rank-value">#{{ userInfo()!.position }}</span>
+            <span class="elo-label">ELO:</span>
+            <span class="elo-value">{{ userInfo()!.elo }}</span>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+
+
+
+  <!-- Pop-up de info -->
+    @if (popUP_userInfo() && selectedUser()) {
+    <div id="overlay" class="overlay" (click)="closeUserInfo()">
+        <div class="popup-userinfo" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+            <h2>Información de usuario</h2>
+            <button class="close-button" (click)="closeUserInfo()">✕</button>
+        </div>
+        <div class="popup-content">
+            <div class="user-info-detail">
+            <div class="user-avatar-large">
+                <div class="avatar-placeholder-large">
+                <span class="avatar-icon-large">👤</span>
+                </div>
+            </div>
+            <div class="user-details">
+                <div class="detail-row">
+                <span class="detail-label">Nombre de usuario:</span>
+                <span class="detail-value">{{ selectedUser()?.username }}</span>
+                </div>
+                <!-- Mostramos los 4 ELOs -->
+                <div class="detail-row">
+                <span class="detail-label">ELO Blitz:</span>
+                <span class="detail-value">{{ selectedUserEloBlitz() }}</span>
+                </div>
+                <div class="detail-row">
+                <span class="detail-label">ELO Rápido:</span>
+                <span class="detail-value">{{ selectedUserEloRapid() }}</span>
+                </div>
+                <div class="detail-row">
+                <span class="detail-label">ELO Clásico:</span>
+                <span class="detail-value">{{ selectedUserEloClassic() }}</span>
+                </div>
+                <div class="detail-row">
+                <span class="detail-label">ELO Extendido:</span>
+                <span class="detail-value">{{ selectedUserEloExtended() }}</span>
+                </div>
+            </div>
+            </div>
+            
+            
+            <div class="user-actions-popup">
+            @if (selectedUserContext() === 'friend') {
+                <button class="btn-delete-popup" (click)="deleteFriend()">Eliminar amigo</button>
+            } @else if (selectedUserContext() === 'sent_request') {
+                <button class="btn-cancel" (click)="cancelFriendRequest()">Cancelar solicitud</button>
+            } @else if (selectedUserContext() === 'self') {
+                <span class="detail-value" style="font-weight: bold;">Este eres tu tonto, q quieres ver</span>
+            } @else {
+                <button class="btn-challenge-popup" (click)="sendFriendRequest()">Enviar solicitud</button>
+            }
+            </div>
+
+
+        </div>
+        </div>
+    </div>
+    }
+
+
+
+</div>

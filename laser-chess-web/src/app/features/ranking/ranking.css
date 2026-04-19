@@ -1,0 +1,409 @@
+.page {
+  width: 100%;
+  min-height: 100vh;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.main-top-row {
+  display: flex;
+  align-items: center;
+  padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
+  flex-wrap: nowrap;
+  gap: 1rem;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 3vh;
+}
+
+.folder-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto 2rem auto;
+}
+
+.folder-body {
+  border: 0.2rem solid black;
+  padding: clamp(1rem, 2vw, 2rem);
+  margin-top: 0;
+  background: white;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Contenedor de los botones de ELO (similar a tabs) */
+.elo-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.elo-tab {
+  background: #dcdcdc;
+  border: 0.2rem solid black;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.elo-tab.active {
+  background: white;
+  border-bottom: none;
+  position: relative;
+  z-index: 2;
+}
+
+.elo-tab:hover:not(:disabled) {
+  background: #bbbbbb;
+}
+
+.elo-tab:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estado de carga */
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 2rem;
+  background: #f5f5f5;
+  border: 0.2rem solid black;
+  margin: 1rem 0;
+  font-weight: bold;
+}
+
+.error-message {
+  background: #ffe6e6;
+  border-color: #cc0000;
+  color: #cc0000;
+}
+
+/* Tabla del ranking */
+.ranking-table-wrapper {
+  overflow-x: auto;
+  border: 0.2rem solid black;
+  background: white;
+  margin-bottom: 2rem;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.ranking-table th,
+.ranking-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 0.1rem solid #ccc;
+}
+
+.ranking-table th {
+  background-color: #e0e0e0;
+  font-weight: bold;
+  border-bottom: 0.2rem solid black;
+}
+
+.ranking-table tr:hover {
+  background-color: #f0f0f0;
+}
+
+.rank {
+  font-weight: bold;
+  width: 80px;
+}
+
+.username {
+  font-weight: normal;
+}
+
+.elo {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.empty-table {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+/* Tarjeta de posición del usuario */
+.user-rank-card {
+  border: 0.2rem solid black;
+  background: #f5f5f5;
+  padding: 1rem 1.5rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.user-rank-info {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.user-rank-info .rank-label,
+.user-rank-info .elo-label {
+  font-weight: normal;
+  color: #333;
+}
+
+.user-rank-info .rank-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.user-rank-info .elo-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .folder-container {
+    width: 95%;
+  }
+  .elo-tab {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+  }
+  .ranking-table th,
+  .ranking-table td {
+    padding: 0.6rem;
+  }
+  .user-rank-info {
+    gap: 0.8rem;
+    font-size: 0.9rem;
+  }
+  .rank-value, .elo-value {
+    font-size: 1.3rem;
+  }
+}
+
+
+/* Para el pop-up*/
+.overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  z-index: 1000;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.popup-userinfo {
+  background: white;
+  border: 0.15rem solid black;
+  width: min(90%, 35rem);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0.4rem 0.4rem 0 black;
+  animation: popupAppear 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 0.15rem solid black;
+  background: #f5f5f5;
+}
+
+.popup-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.3rem;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(1.1);
+}
+
+.popup-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  max-height: calc(90vh - 70px);
+}
+
+.user-info-detail {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  border-bottom: 0.1rem solid #e0e0e0;
+  margin-bottom: 1rem;
+}
+
+.user-avatar-large {
+  flex-shrink: 0;
+}
+
+.avatar-placeholder-large {
+  width: 6rem;
+  height: 6rem;
+  background: linear-gradient(135deg, hsl(261deg 80% 48%), hsl(261deg 80% 38%));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-icon-large {
+  font-size: 3rem;
+  color: white;
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.3rem 0;
+  border-bottom: 0.05rem solid #f0f0f0;
+}
+
+.detail-label {
+  font-weight: bold;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.user-actions-popup {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.btn-challenge-popup, .btn-delete-popup, .btn-cancel {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-challenge-popup {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-challenge-popup:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+.btn-delete-popup {
+  background: #f44336;
+  color: white;
+}
+
+.btn-delete-popup:hover {
+  background: #da190b;
+  transform: scale(1.05);
+}
+
+.btn-cancel {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #f57c00;
+  transform: scale(1.05);
+}
+
+.btn-challenge-popup:active, .btn-delete-popup:active, .btn-cancel:active {
+  transform: scale(0.98);
+}
+
+@keyframes popupAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .user-info-detail {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .user-actions-popup {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-challenge-popup, .btn-delete-popup, .btn-cancel {
+    width: 100%;
+    justify-content: center;
+  }
+}
