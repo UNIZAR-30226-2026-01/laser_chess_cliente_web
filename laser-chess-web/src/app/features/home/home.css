@@ -2,35 +2,13 @@
 /* --------- HOME - PANTALLA PRINCIPAL ----- */
 /* ----------------------------------------- */
 .home {
-    padding: clamp(12px, 2vw, 24px);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
 }
 
-/* ---------------- TOP ROW ---------------- */
-.top-row {
-    display: flex;
-    align-items: center;
-    gap: clamp(12px, 2vw, 40px);
-    flex-wrap: wrap; /* elementos se mueven si no caben */
-    justify-content: space-between;
-}
 
-/* TOP ROW - Mejorar comportamiento responsive */
-.main-top-row {
-  display: flex;
-  align-items: center;
-  padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
-  flex-wrap: nowrap;
-  gap: 1rem;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 3vh;
-}
 
 /* ---------------- BOTONES ICONOS ---------------- */
 .icon-btn {

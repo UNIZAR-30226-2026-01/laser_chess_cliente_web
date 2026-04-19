@@ -4,7 +4,6 @@
     align-items: center;
     justify-content: space-between; /* Distribuye los extremos */
     gap: 1rem;
-    padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -13,18 +12,38 @@
 
 }
 
+.container {
+  width: 100%;
+  display: flex;
+
+  min-height: 8vh;
+}
+
+.lc-title {
+  width: 20%;
+  background-color: var(--S1);
+  margin-right: 5px;
+  margin-left: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-space {
+  width: 20%;
+  background-color: var(--S1);
+  margin-right: 5px;
+}
+
+
 /* PROFILE CARD */
 .profile-card {
-    flex: 1 1 min(200px, 100%);
-    max-width: 450px;
-    border: 2px solid var(--S3);
-    background: var(--S1);
-    display: flex;
-    align-items: center;
-    gap: clamp(12px, 2vw, 18px);
-    padding: clamp(8px, 1.5vh, 16px) clamp(12px, 2vw, 24px);
-    box-sizing: border-box;
-    border-radius: 30px;
+  width: 40%;
+  background-color: var(--S1);
+  margin-right: 5px;
+
+  display: flex;
 }
 
 .profile-picture {
@@ -44,7 +63,6 @@
     height: 100%;
 }
 
-<<<<<<< HEAD
 .avatar-red { color: var(--LCRed); }
 .avatar-green { color: var(--LCGreen); }
 .avatar-blue { color: var(--LCBlue); }
@@ -109,17 +127,13 @@
 
 /* ---------------- CONTADOR DE MONEDAS ---------------- */
 .coin-counter {
+  width: 20%;
+  background-color: var(--S1);
     display: inline-flex;
     align-items: center;
-    gap: clamp(4px, 1vw, 6px);
-    padding: clamp(4px, 1vh, 8px) clamp(8px, 1.5vw, 12px);
     font-weight: 700;
     font-size: clamp(18px, 2vw, 24px);
     margin-left: auto;
-    flex-shrink: 0;
-    background-color: var(--S1);
-    border: 0.15rem solid var(--S3);
-    border-radius: var(--BorderSmall);
 }
 
 .coin-amount { line-height: 1; }
