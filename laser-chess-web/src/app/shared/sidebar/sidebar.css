@@ -1,6 +1,5 @@
 .sidebar {
   height: 100%;
-  background-color: var(--S1);
   display: flex;
   flex-direction: column;
   width: 10vh;
@@ -9,6 +8,9 @@
 
 /* ITEMS */
 .item {
+  background-color: var(--S1);
+  margin-bottom: 3px;
+
   flex: 1;
   display: flex;
   align-items: center;
@@ -28,6 +30,13 @@
   border-left: 4px solid var(--LCGreen);
 }
 
+.empty-space {
+  background-color: var(--S1);
+  margin-bottom: 3px;
+  flex: 1;
+}
+
+
 /* ICONOS RESPONSIVE */
 .icon {
   width: 60%;
@@ -39,8 +48,4 @@
 
 .item.active .icon {
   transform: scale(1.1);
-}
-
-.bottom-item {
-  margin-top: auto;
 }
