@@ -34,7 +34,11 @@
 
 .item.active {
   background: var(--S3);
-  border-left: 4px solid var(--LCGreen);
+  border-left: 4px solid var(--active-color, var(--LCGreen));
+}
+
+.item.active mat-icon {
+  color: var(--active-color, var(--LCGreen)); 
 }
 
 .empty-space {
