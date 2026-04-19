@@ -1,8 +1,10 @@
 import { Component, signal } from '@angular/core';
+import { TopRow } from '../../shared/top-row/top-row';
 import { ShopSection } from '../../model/shop/ShopSection';
 
 @Component({
   selector: 'app-shop',
+  imports: [TopRow],
   templateUrl: './shop.html',
   styleUrl: './shop.css'
 })

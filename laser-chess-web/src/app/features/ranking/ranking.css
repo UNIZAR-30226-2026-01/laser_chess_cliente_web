@@ -7,18 +7,6 @@
   overflow-x: hidden;
 }
 
-.main-top-row {
-  display: flex;
-  align-items: center;
-  padding: clamp(0.5rem, 2vh, 1rem) clamp(1rem, 3vw, 2rem);
-  flex-wrap: nowrap;
-  gap: 1rem;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 3vh;
-}
 
 .folder-container {
   width: 90%;
