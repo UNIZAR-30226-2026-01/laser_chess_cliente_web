@@ -1,8 +1,9 @@
-import { Component, Signal, EventEmitter, Input, Output} from '@angular/core';
+import { Component, Signal, EventEmitter, Input, Output, inject} from '@angular/core';
 import { Pieza } from '../../shared/pieza/pieza';
 import { PiezaRival } from '../../shared/pieza-rival/pieza-rival';
 import { Laser } from '../../shared/laser/laser'
 import { PiezaData } from '../../model/game/PiezaData';
+import { GameState } from '../../model/remote/game-state';
 
 
 @Component({
@@ -13,6 +14,9 @@ import { PiezaData } from '../../model/game/PiezaData';
 })
 
 export class Board {
+  state = inject(GameState);
+  listaPiezas = this.state.listaPiezas;
+
   @Input() piezas!: Signal<PiezaData[]>;
   @Input() laserPath!: Signal<{x:number,y:number}[]>;
 

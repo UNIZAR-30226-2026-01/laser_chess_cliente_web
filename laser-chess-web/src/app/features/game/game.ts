@@ -15,6 +15,7 @@ import { NotificationGame } from '../../shared/notification-game/notification-ga
 import { Board } from '../../shared/board/board';
 import { TimerService } from '../../model/remote/timer-service';
 import { GameLogicService } from '../../model/remote/game-logic-service';
+import { N } from '@angular/cdk/keycodes';
 
 
 
@@ -38,44 +39,40 @@ export class Game implements OnInit {
   // Inyectamos el servicio de Websocket
   private wsService = inject(Websocket);
   private remoteService = inject(Remote);
-  private timerService = inject(TimerService);
-  private gameService = inject(GameLogicService);
+  timerService = inject(TimerService);
+  gameService = inject(GameLogicService);
   private wsSubscription?: Subscription;
   private waitingForConfirmation = false;
   private router = inject(Router);
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
 
-  private gameState = inject(GameState);
-  
+  gameState = inject(GameState);
+  listaPiezas = this.gameState.listaPiezas;
+  laserPath = this.gameState.laserPath;
+  piezaActiva = this.gameState.piezaActiva;
+  esMiTurno = this.gameState.esMiTurno;
+  soyAzul = this.gameState.soyAzul;
 
-
-
-  esMiTurno = signal(true);
-  piezaActiva = signal<Pieza | null>(null);
-  laserPath = signal<{x: number, y: number}[]>([]);
-  columnas = 10;
-  filas = 8;
-  soyAzul = signal(true);
-  cont = 1; // Contado incremental para creación de piezas (id)
-  id = this.remoteService.getAccountId();
-  finPartida = signal<{mostrar: boolean, mensaje: string}>({ mostrar: false, mensaje: '' });
+  estadoDesconexion = this.gameState.estadoDesconexion;
+  estadoPausa = this.gameState.estadoPausa;
+  finPartida = this.gameState.finPartida;
 
   miTiempo = this.timerService.miTiempo;
   tiempoRival = this.timerService.tiempoRival;
 
-  miNombre = signal<string>('Yo');
-  nombreRival = signal<string>('Rival');
-
-  //private timerInterval: any = null;
+  nombreRival = this.gameState.nombreRival;
+  miNombre = this.gameState.miNombre;
   
 
-  
-  // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
-  listaPiezas = signal<PiezaData[]> ([]);
 
-  // Estados para controlar las notificaciones
-  estadoDesconexion = signal<{ mostrar: boolean }>({ mostrar: false });
-  estadoPausa = signal<{ mostrar: boolean }>({ mostrar: false });
+
+  
+  columnas = 10;
+  filas = 8;
+
+  cont = 1; // Contado incremental para creación de piezas (id)
+  id = this.remoteService.getAccountId();
+    
 
   mostrarAvisoSalida = signal(false);
   aceptoInitial = signal(true);
@@ -84,8 +81,8 @@ export class Game implements OnInit {
   ngOnInit(): void {
     console.log('Suscribiéndome a WS en Game...');
     const tiempo = this.gameState.startingTime();
-    const rival = this.gameState.rivalName();
-    const myName = this.gameState.myName();
+    const rival = this.gameState.nombreRival();
+    const myName = this.gameState.miNombre();
 
     this.miTiempo.set(tiempo);
     this.tiempoRival.set(tiempo);
@@ -116,7 +113,6 @@ export class Game implements OnInit {
   }
 
  
-  
 
 
   /*****************************************************************************/

@@ -445,7 +445,7 @@ export class Social  {
     };
     this.gameState.startingTime.set(startingTime * 1000);
     this.gameState.increment.set(timeIncrement);
-    this.gameState.rivalName.set(this.friendToChallenge.username);
+    this.gameState.nombreRival.set(this.friendToChallenge.username);
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
 
     this.websocket.initConnection(endpoint, params);

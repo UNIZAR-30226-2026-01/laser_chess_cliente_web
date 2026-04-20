@@ -13,8 +13,8 @@ export class GameState {
 
   startingTime = signal<number>(0);
   increment = signal<number>(0);
-  rivalName = signal<string>(this.remote.getUsername() ?? '');
-  myName = signal<string>('');
+  nombreRival = signal<string>(this.remote.getUsername() ?? '');
+  miNombre = signal<string>('');
 
   
 

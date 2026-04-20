@@ -31,43 +31,34 @@ export class GameLogicService {
   private wsSubscription?: Subscription;
   private waitingForConfirmation = false;
   private router = inject(Router);
-  TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
+  TipoPieza = TipoPieza; 
 
   private state = inject(GameState);
   
-  
-
-
-
-  esMiTurno = signal(true);
-  piezaActiva = signal<Pieza | null>(null);
-  laserPath = signal<{x: number, y: number}[]>([]);
   columnas = 10;
   filas = 8;
-  soyAzul = signal(true);
   id = this.remoteService.getAccountId();
-  finPartida = signal<{mostrar: boolean, mensaje: string}>({ mostrar: false, mensaje: '' });
+
+  mostrarAvisoSalida = signal(false);
+  aceptoInitial = signal(true);
+
+
+  listaPiezas = this.state.listaPiezas;
+  laserPath = this.state.laserPath;
+  piezaActiva = this.state.piezaActiva;
+  esMiTurno = this.state.esMiTurno;
+  soyAzul = this.state.soyAzul;
+
+  estadoDesconexion = this.state.estadoDesconexion;
+  estadoPausa = this.state.estadoPausa;
+  finPartida = this.state.finPartida;
 
   miTiempo = this.timerService.miTiempo;
   tiempoRival = this.timerService.tiempoRival;
 
-  miNombre = signal<string>('Yo');
-  nombreRival = signal<string>('Rival');
+  nombreRival = this.state.nombreRival;
+  miNombre = this.state.miNombre;
 
-  //private timerInterval: any = null;
-  
-
-  
-  // Habría que tener un listaPiezas para cada tipo de inicio y se asigna dependiendo de lo que revivamos del backend
-  listaPiezas = signal<PiezaData[]> ([]);
-
-  // Estados para controlar las notificaciones
-  estadoDesconexion = signal<{ mostrar: boolean }>({ mostrar: false });
-  estadoPausa = signal<{ mostrar: boolean }>({ mostrar: false });
-
-  mostrarAvisoSalida = signal(false);
-  aceptoInitial = signal(true);
-  
 
   /*
      Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
@@ -220,14 +211,12 @@ export class GameLogicService {
       this.importarTablero(msg.Content);
       if (Number(msg.Extra) !== this.id) {         //Ns q es el extra pero siempre es true esto (al final no siempre es true)
         this.soyAzul.set(true);
-        this.esMiTurno.set(true);   // El azul empieza
         console.log("Soy el jugador azul");
-        this.esMiTurno.set(false); // El jugador azul empieza segundo
+        this.state.esMiTurno.set(false); // El jugador azul empieza segundo
       } else {
         this.soyAzul.set(false);
-        this.esMiTurno.set(false);   // El rojo espera
         console.log("Soy el jugador rojo");
-        this.esMiTurno.set(true); // El jugador rojo empieza primero
+        this.state.esMiTurno.set(true); // El jugador rojo empieza primero
       }
       this.timerService.startTimer();
       this.aceptoInitial.set(false);
@@ -287,13 +276,13 @@ export class GameLogicService {
         if (this.waitingForConfirmation) {
           // Esto es confirmación de mi propio movimiento
           this.waitingForConfirmation = false;
-          this.miTiempo.set(tiempo);
+          this.timerService.miTiempo.set(tiempo);
           // El turno ya está en false (lo pusimos al enviar), no se cambia
           console.log("Movimiento propio confirmado, turno para el rival");
         } else {
           // Esto es movimiento del rival
-          this.esMiTurno.set(true);
-          this.tiempoRival.set(tiempo);
+          this.state.esMiTurno.set(true);
+          this.timerService.tiempoRival.set(tiempo);
           console.log("Movimiento del rival recibido, ahora es mi turno");
         }
       
@@ -304,7 +293,7 @@ export class GameLogicService {
       if (this.waitingForConfirmation) {
         this.waitingForConfirmation = false;
         // Podrías recuperar el turno (depende de la política del juego)
-        this.esMiTurno.set(true);
+        this.state.esMiTurno.set(true);
       }
     
     }else if (msg.Type === "End"){
@@ -322,7 +311,7 @@ export class GameLogicService {
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
-      this.esMiTurno.set(false);
+      this.state.esMiTurno.set(false);
       this.wsService.close();
       this.wsSubscription?.unsubscribe();
       this.wsSubscription = undefined;

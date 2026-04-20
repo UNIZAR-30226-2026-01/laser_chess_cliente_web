@@ -1,15 +1,18 @@
-import { Injectable, signal, Input, Output} from '@angular/core';
+import { Injectable, signal, Input, Output, inject} from '@angular/core';
+import { GameState } from './game-state';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TimerService {
+  gameState = inject(GameState);
+  
 
   // Los enviamos a game para que los muestre en pantalla
-  @Output() miTiempo = signal<number>(300);       
-  @Output() tiempoRival = signal<number>(300);
+  miTiempo = signal<number>(300);       
+  tiempoRival = signal<number>(300);
 
-  @Input() esMiTurno = signal(true);
+  esMiTurno = this.gameState.esMiTurno;
 
   private timerInterval: any = null;
   
