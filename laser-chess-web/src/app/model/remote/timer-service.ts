@@ -9,8 +9,8 @@ export class TimerService {
   
 
   // Los enviamos a game para que los muestre en pantalla
-  miTiempo = signal<number>(300);       
-  tiempoRival = signal<number>(300);
+  miTiempo = signal<number>(this.gameState.startingTime());       
+  tiempoRival = signal<number>(this.gameState.startingTime());
 
   esMiTurno = this.gameState.esMiTurno;
 
