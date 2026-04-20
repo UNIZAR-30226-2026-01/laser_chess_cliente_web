@@ -51,9 +51,9 @@
   margin-right: 5px;
 
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: space-between;
-  padding: 0 10px; 
+  padding: 0 10px;
 }
 
 .profile-picture {
@@ -84,27 +84,63 @@
 }
 
 .profile-info {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(6px, 1vw, 10px);
-    min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.xp-container {
+    background-color: var(--LCBG);
+    width: 100%;
+    height: 14px;
+    border-radius: var(--BorderFull);
+    overflow: hidden;
+}
+
+.xp-bar {
+    background-color: var(--LCGreen);
+    height: 100%;
 }
 
 .username {
-    font-size: clamp(16px, 1.5vw, 20px);
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 200px;
+  font-size: var(--LCSmall);
+  color: var(--LCWhite);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
 }
 
-.xp-placeholder {
-    background-color: var(--LCGreen);
-    width: 50vh;
-    height: 14px;
-    border-radius: 4px;
+.level-and-xp {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
 }
+
+.level-text {
+  font-size: var(--LCSmall);
+  color: var(--LCWhite);
+}
+
+.xp-detail-text {
+  font-size: var(--LCSmall);
+  color: var(--LCWhite);
+}
+
+.xp-letters {
+  color: var(--LCGreen);
+}
+
 
 /* ---------------- BOTONES ICONOS ---------------- */
 .icon-btn {
@@ -163,6 +199,8 @@
 /* Overlay y popup de perfil */
 .profile-card {
     cursor: pointer;
+    padding: 0 20px;
+    gap: 25px;
 }
 
 .overlay {

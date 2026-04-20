@@ -1,6 +1,10 @@
 export interface ProfileCardData{
     username: String;
     avatar: number;
-    xp: number;
     level: number;
+}
+
+export interface XpInfo {
+    xp: number;
+    required_xp: number;
 }

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { UserRespository } from '../../repository/user-respository';
 import { MyProfile } from '../../model/user/MyProfile';
 import { Observable } from 'rxjs';
-
+import { XpInfo } from '../../repository/user-respository';
 
 @Component({
   selector: 'app-top-row',
@@ -15,32 +15,51 @@ import { Observable } from 'rxjs';
   styleUrl: './top-row.css',
 })
 export class TopRow implements OnInit {
-  
+
   private remote = inject(UserRespository);
 
-  // Señales para la barra 
+  // Señales para la barra
   username = signal('Cargando...');
-  pictureURL: string | null = null;  
+  pictureURL: string | null = null;
   coins = signal(0);
   rankedPoints = signal(0);
+  xpPercentage = signal(0);
+  xpInfoDetail = signal({ current: 0, required: 100 });
   avatar?: 'red' | 'blue' | 'green' | 'yellow';
   private iconService = inject(IconService);
-  userProfile$!: Observable<MyProfile>;  
-  
+  userProfile$!: Observable<MyProfile>;
+
   // Popup de perfil
   showProfilePopup = signal(false);
 
 
   ngOnInit() {
     this.loadMyData();
+    this.loadXpData();
   }
 
   loadMyData() {
     console.log("Get account");
 
-      this.userProfile$ = this.remote.getAccount();
+      this.userProfile$ = this.remote.getOwnAccount();
       this.userProfile$.subscribe(profile => {
         this.avatar = this.iconService.getAvatarColor(profile.avatar);
+    });
+  }
+
+  loadXpData() {
+    this.remote.getXpInfo().subscribe({
+      next: (data: XpInfo) => {
+        if (data.required_xp > 0) {
+          const percentage = (data.xp / data.required_xp) * 100;
+          this.xpPercentage.set(percentage);
+          this.xpInfoDetail.set({
+            current: data.xp,
+            required: data.required_xp
+          });
+        }
+      },
+      error: (err) => console.error('Error cargando XP', err)
     });
   }
 
@@ -52,6 +71,4 @@ export class TopRow implements OnInit {
   closeProfile() {
     this.showProfilePopup.set(false);
   }
-
-
 }

@@ -5,6 +5,7 @@ export interface MyProfile {
   username: string;
   mail: String;
   xp: number;
+  level: number;
   avatar: number;
   money: number;
   board_skin: number;
