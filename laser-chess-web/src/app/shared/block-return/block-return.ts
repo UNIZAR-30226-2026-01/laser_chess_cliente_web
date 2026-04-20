@@ -3,7 +3,7 @@ import { Game } from '../../features/game/game'; // Ajusta la ruta a tu componen
 
 export const BlockReturn: CanDeactivateFn<Game> = (component: Game) => {
   // 1. Si la partida terminó, vía libre
-  if (component.finPartida().mostrar) {
+  if (component.permitSalida()) {
     return true;
   }
 

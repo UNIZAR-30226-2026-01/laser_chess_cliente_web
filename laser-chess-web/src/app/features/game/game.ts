@@ -15,11 +15,6 @@ import { NotificationGame } from '../../shared/notification-game/notification-ga
 import { Board } from '../../shared/board/board';
 import { TimerService } from '../../model/remote/timer-service';
 import { GameLogicService } from '../../model/remote/game-logic-service';
-import { N } from '@angular/cdk/keycodes';
-
-
-const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
-const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 
 
 @Component({
@@ -41,8 +36,7 @@ export class Game implements OnInit {
   timerService = inject(TimerService);
   gameService = inject(GameLogicService);
   private wsSubscription?: Subscription;
-  private waitingForConfirmation = false;
-  private router = inject(Router);
+  
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
 
   gameState = inject(GameState);
@@ -61,6 +55,8 @@ export class Game implements OnInit {
 
   nombreRival = this.gameState.nombreRival;
   miNombre = this.gameState.miNombre;
+
+  permitSalida = this.gameService.permitSalida;
   
 
 
@@ -79,22 +75,24 @@ export class Game implements OnInit {
 
   ngOnInit(): void {
     console.log('Suscribiéndome a WS en Game...');
-    const tiempo = this.gameState.startingTime();
-    const rival = this.gameState.nombreRival();
-    const myName = this.gameState.miNombre();
-
-    this.miTiempo.set(tiempo);
-    this.tiempoRival.set(tiempo);
-
-    this.nombreRival.set(rival);
-    this.miNombre.set(myName);
-    console.log("tiempo ini: " + this.miTiempo() );
-    console.log("me llamo " + this.miNombre() + " o " + myName );
+  
 
 
     // Suscribimos al ReplaySubject que recibe los mensajes
     this.wsSubscription = this.wsService.gameMessages$.subscribe({
-      next: (msg: MessageGame) => this.gameService.procesarAccion(msg),
+      next: (msg: MessageGame) => { 
+        this.gameService.procesarAccion(msg);
+        if (msg.Type === 'EOC') {
+          console.log('EOC recibido en Game → cerrando todo');
+
+          this.timerService.stopTimer();
+
+          this.wsSubscription?.unsubscribe();
+          this.wsSubscription = undefined;
+
+          this.wsService.close();
+        }
+      },
       error: (err: any) => console.error('WS ERROR:', err),
       complete: () => console.log('WS COMPLETADO'),
     });
@@ -104,6 +102,7 @@ export class Game implements OnInit {
 
   ngOnDestroy(): void {
     console.log('Destruyendo Game, limpiando suscripción');
+    this.timerService.stopTimer();
     this.timerService.stopTimer();
     this.wsSubscription?.unsubscribe();
     this.wsSubscription = undefined;

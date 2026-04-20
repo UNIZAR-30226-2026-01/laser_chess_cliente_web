@@ -59,6 +59,8 @@ export class GameLogicService {
   nombreRival = this.state.nombreRival;
   miNombre = this.state.miNombre;
 
+  permitSalida = signal(false);
+
 
   /*
      Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
@@ -312,10 +314,11 @@ export class GameLogicService {
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
       this.state.esMiTurno.set(false);
-      this.wsService.close();
       this.wsSubscription?.unsubscribe();
       this.wsSubscription = undefined;
       this.timerService.stopTimer();
+
+      
       
     }else if (msg.Type === "Disconnection"){
       // El oponenete se ha desconectado
@@ -392,7 +395,20 @@ export class GameLogicService {
   }
 
     finPartidaHandler(){
-      this.finPartida.set({mostrar:true, mensaje:''})
+      this.state.listaPiezas.set([]);
+      this.state.laserPath.set([]);
+      this.state.piezaActiva.set(null);
+
+      this.state.esMiTurno.set(false);
+      this.state.soyAzul.set(true);
+
+      this.aceptoInitial.set(true);
+      
+      
+      this.state.finPartida.set({ mostrar: false, mensaje: '' });
+
+      this.waitingForConfirmation = false;
+      this.permitSalida.set(true);
       this.router.navigate(['/home']);
     }
 
