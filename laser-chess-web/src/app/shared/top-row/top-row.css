@@ -7,7 +7,6 @@
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    margin-bottom: 3vh;
     flex-wrap: nowrap; /* Fuerza una sola línea */
 
 }
@@ -305,10 +304,6 @@
 
   .empty-space {
     display: none;
-  }
-
-  .profile-card {
-    width: 90%;;
   }
 
 }
