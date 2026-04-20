@@ -85,9 +85,6 @@ button:hover {
   text-align: center;
 }
 
-
-
-
 .overlay {
   position: fixed;
   inset: 0;
@@ -110,4 +107,14 @@ button:hover {
   display: flex;
   align-items: center; 
   gap: 4px;           
+}
+
+.wellcome-back {
+  text-align: center;
+}
+
+.wellcome-back h3 {
+  font-weight: 400; 
+  color: var(--LCGray);
+  margin-top: 5px; 
 }

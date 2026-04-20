@@ -39,13 +39,3 @@ body {
     color: var(--LCWhite);
     background-color: var(--LCBG);
 }
-
-.wellcome-back {
-  text-align: center;
-}
-
-.wellcome-back h3 {
-  font-weight: 400; 
-  color: var(--LCGray);
-  margin-top: 5px; 
-}

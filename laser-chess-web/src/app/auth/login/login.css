@@ -11,7 +11,7 @@
 /* Tarjeta adaptable */
 .form-container {
   background: var(--S1);
-  padding: clamp(2rem, 5vw, 3rem);
+  padding: clamp(2rem, 5vw, 4rem);
   border-radius: 0.5rem;
 
   width: 100%;
@@ -85,9 +85,6 @@ button:hover {
   text-align: center;
 }
 
-
-
-
 .overlay {
   position: fixed;
   inset: 0;
@@ -110,4 +107,14 @@ button:hover {
   display: flex;
   align-items: center; 
   gap: 4px;           
+}
+
+.wellcome-back {
+  text-align: center;
+}
+
+.wellcome-back h3 {
+  font-weight: 400; 
+  color: var(--LCGray);
+  margin-top: 5px; 
 }
