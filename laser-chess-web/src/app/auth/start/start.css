@@ -1,11 +1,22 @@
-
+/* Centrado total en pantalla */
 :host {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 1rem;
-  position: relative;
+  padding: 2rem;
+  background: var(--LCBackground);
+}
+
+/* Tarjeta adaptable */
+.form-container {
+  background: var(--S1);
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 0.5rem;
+
+  width: 100%;
+  max-width: 40rem;   /* se adapta según tamaño base */
+ 
 }
 
 .icon {
@@ -15,16 +26,6 @@
   height: auto;
 }
 
-/* Tarjeta adaptable */
-.form-container {
-  background: white;
-  padding: clamp(2rem, 5vw, 4rem);
-  border-radius: 1.5rem;
-  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
-
-  width: 100%;
-  max-width: 32rem;   /* se adapta según tamaño base */
-}
 
 h1 {
   text-align: center;
@@ -49,13 +50,13 @@ button {
   border: none;
   font-size: clamp(1rem, 1.5vw, 1.1rem);
   font-weight: 600;
-  background: linear-gradient(135deg, #6c8cff, #4a6fff);
-  color: white;
+  background: var(--LCBlue);
+  color: var(--LCWhite);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 button:hover {
-  transform: translateY(-0.2rem);
-  box-shadow: 0 1rem 2rem rgba(74, 111, 255, 0.3);
+  color: var(--LCBlue);
+  background-color: var(--LCWhite);
 }

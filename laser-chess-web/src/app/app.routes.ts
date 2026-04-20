@@ -17,6 +17,7 @@ import { Pieza } from './shared/pieza/pieza';
 
 import { AuthGuard } from './model/token/guard';
 import { BlockReturn } from './shared/block-return/block-return'
+import { HistoryHall } from './features/history-hall/history-hall';
 
 
 // Define las rutas de la aplicación, cada ruta asocia una URL con un componente específico
@@ -45,7 +46,7 @@ export const routes: Routes = [
       { path: 'customize', component: Customize },
       { path: 'social', component: Social },
       { path: 'ranking', component: Ranking },
-      { path: 'pieza', component: Pieza },
+      { path: 'history-hall', component: HistoryHall },
     ]
   },
   { path: 'game', component: Game ,canDeactivate: [BlockReturn],

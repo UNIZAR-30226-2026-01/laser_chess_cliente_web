@@ -8,14 +8,14 @@ import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
 import { Remote } from '../../model/remote/remote';
 import { NotificationService } from '../../model/notifications/notification';
-
+import { RouterLink } from '@angular/router';
 
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })

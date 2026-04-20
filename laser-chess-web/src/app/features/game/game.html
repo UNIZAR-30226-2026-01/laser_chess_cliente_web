@@ -1,27 +1,30 @@
 <div class="game-screen">
+
   @if (mostrarAvisoSalida()) {
-  <div class="popup-overlay">
-    <div class="popup-content warning">
-      <div class="modal-icon">🚫</div>
-      <h2>Acción Bloqueada</h2>
-      <p>No puedes abandonar la partida mientras está en curso.</p>
-      <p>Si necesitas salir, solicita <strong>pausar la partida</strong> o termina el juego.</p>
-      
-      <div class="popup-buttons">
-        <button class="btn-entendido" (click)="mostrarAvisoSalida.set(false)">
-          Entendido, volver al juego
-        </button>
+    <div class="popup-overlay">
+      <div class="popup-content warning">
+        <div class="modal-icon">🚫</div>
+        <h2>Acción Bloqueada</h2>
+        <p>No puedes abandonar la partida mientras está en curso.</p>
+        <p>Si necesitas salir, solicita <strong>pausar la partida</strong> o termina el juego.</p>
+
+        <div class="popup-buttons">
+          <button class="btn-entendido" (click)="mostrarAvisoSalida.set(false)">
+            Entendido, volver al juego
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-}
+  }
+
+  <!-- TOASTS -->
   <div class="toast-container">
     
     @if (estadoDesconexion().mostrar) {
       <app-notification-game 
         tipo="desconexion"
         [mensaje]="'El rival se ha ido de la partida...'"
-        (alCerrar)="cerrarToast()">
+        (alCerrar)="gameService.cerrarToast()">
       </app-notification-game>
     }
 
@@ -29,110 +32,83 @@
       <app-notification-game
         tipo="pausa"
         [mensaje]="nombreRival() + ' quiere pausar el juego'"
-        (alAceptar)="logicAceptarPausa()"
-        (alRechazar)="logicRechazarPausa()"
-        (alCerrar)="cerrarToastPausa()">
+        (alAceptar)="gameService.logicAceptarPausa()"
+        (alRechazar)="gameService.logicRechazarPausa()"
+        (alCerrar)="gameService.cerrarToastPausa()">
       </app-notification-game>
     }
     
   </div>
 
-  <!-- POP-UP FIN DE PARTIDA -->
-   @if(finPartida().mostrar){ 
+  <!-- FIN PARTIDA -->
+  @if(finPartida().mostrar){ 
     <div class="popup-overlay">
       <div class="popup-content" (click)="$event.stopPropagation()">
         <p>{{finPartida().mensaje}}</p>
         <div class="popup-buttons">
-          <button (click)="solicitarRevancha()">Revancha</button>
-          <button (click)="finPartidaHandler()">Cerrar</button>
-      </div>
+          <button (click)="gameService.solicitarRevancha()">Revancha</button>
+          <button (click)="gameService.finPartidaHandler()">Cerrar</button>
+        </div>
       </div>
     </div>
   }
-  
 
+  <!-- PANEL IZQUIERDO -->
   <aside class="side-panel">
     <div class="player_card my-user">
-      <div class="timer">{{ formatTime(miTiempo()) }}</div>
+      <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
       <div class="avatar">👤</div>
       <span>{{ miNombre() }}</span>
-    </div>
-  </aside>
-
-  <main class="main-content">
-    <div class="board">
-      @for (y of [].constructor(filas); let row = $index; track row) {
-        @for (x of [].constructor(columnas); let col = $index; track col) {
-
-        <div 
-          class="cell"
-          [class.azul]="isCasillaRestringida(col+1, row+1) === 'azul'"
-          [class.rojo]="isCasillaRestringida(col+1, row+1) === 'rojo'"
-          [style.gridColumn]="col+1"
-          [style.gridRow]="row+1">
-        </div>
-
-      }
-    }
-      @for (p of listaPiezas(); track p.id) {
-        @if (p.esMia) {
-          <app-pieza 
-            #piezaRef
-            [initialX]="p.x" 
-            [initialY]="p.y" 
-            [rotationInput]="p.rotation"
-            [cols]="columnas"
-            [rows]="filas"
-            [tipoPieza]="p.tipoPieza"
-            [isCasillaRestringida]="isCasillaRestringida.bind(this)"
-            [ocupado]="ocupado.bind(this)" 
-             
-            (selected)="seleccionarPieza(piezaRef)"
-            (moveRequested)="gestionarMovimiento($event)">
-          </app-pieza>
-        } @else {
-          <app-pieza-rival 
-            [x]="p.x" 
-            [y]="p.y"
-            [tipoPieza]="p.tipoPieza"
-            [rotationInput]="p.rotation"
-            >
-          </app-pieza-rival>
-        }
-      }
-      @if (laserPath().length > 0) {
-        <app-laser [path]="laserPath()"></app-laser>
-      }
-</div>
-  </main>
-
-  <aside class="side-panel">
-    <div class="player_card">
-      <div class="avatar">👤</div>
-      <span>{{ nombreRival() }}</span>
-      <div class="timer">{{ formatTime(tiempoRival()) }}</div>
     </div>
 
     <div class="controls-panel">
       @if (piezaActiva()) {
+
         @if (piezaActiva()?.tipoPieza() != TipoPieza.REY ) { 
-          <!-- Gestión de roetación del láser (solo se permiten 2 posiciones)-->
+
           @if (piezaActiva()?.tipoPieza() == TipoPieza.LASER){
+
             @if (piezaActiva()?.rotationInput() == 180){
               <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
             }
+
             @if (piezaActiva()?.rotationInput() == 90){
               <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
             }
-          }@else{
+
+          } @else {
             <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
             <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
           }
+
         }
-      
       }
     </div>
-    
-    <button class="debug-btn" (click)="solicitarPausa()">||</button>
   </aside>
+
+  <!-- TABLERO -->
+  <main class="main-content">
+    <app-board
+      [piezas]="listaPiezas"
+      [laserPath]="laserPath"
+      [columnas]="columnas"
+      [filas]="filas"
+      [isCasillaRestringida]="gameService.isCasillaRestringida.bind(this)"
+      [ocupado]="gameService.ocupado.bind(this)"
+      (piezaSeleccionada)="seleccionarPieza($event)"
+      (movimientoSolicitado)="gestionarMovimiento($event)"
+    ></app-board>
+  </main>
+
+  <!-- PANEL DERECHO -->
+  <aside class="side-panel">
+    <div class="player_card">
+      <div class="avatar">👤</div>
+      <span>{{ nombreRival() }}</span>
+      <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
+    </div>
+
+    <button class="debug-btn" (click)="gameService.solicitarPausa()">||</button>
+  </aside>
+
 </div>

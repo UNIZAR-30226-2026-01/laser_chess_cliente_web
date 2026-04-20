@@ -9,22 +9,40 @@
 <div class="form-container">
   <form [formGroup]="loginForm" (ngSubmit)="login()" class="form">
     <div class="mb-3">
-      <label for="mail">Correo electrónico/ username</label>
+
+    <div class="wellcome-back">
+      <h1> ¡Hola de nuevo! </h1>
+      <h3> Te estabamos esperando</h3>
+    </div>
+
+     <hr style="color: var(--S3);">
+     <br>
+
+      <!--Campo del correo electronico-->
+      <div class="field-info">
+        <label for="mail">Correo electrónico o nombre de usuario</label><label style="color: var(--LCRed);">*</label>
+      </div>
+
       <input type="text" id="credential" class="form-control" formControlName="credential" placeholder="name@example.com / username">
       @if (loginForm.get('credential')!.invalid && (loginForm.get('credential')!.touched || formSubmitted()))
       {
       <span class="error_message_form">
-        Correo electrónico es requerido y tener formato correcto
+        Introduzca un correo o usuario existentes
       </span>
       }
     </div>
+    <br>
     <div class="mb-3">
-      <label for="password">Contraseña</label>
-      <input type="password" id="password" class="form-control" formControlName="password" placeholder="">
+      <!--Campo de contraseña-->
+      <div class="field-info">
+        <label for="mail">Contraseña</label><label style="color: var(--LCRed);">*</label>
+      </div>
+      
+      <input type="password" id="password" class="form-control" formControlName="password" placeholder="******">
       @if ((loginForm.get('password')?.touched || formSubmitted()) && loginForm.get('password')?.invalid) {
         @if (loginForm.get('password')?.hasError('required')) {
           <span class="error_message_form">
-            Contraseña es requerida
+            Este campo es obligatorio
           </span>
         }
         @if (loginForm.get('password')?.hasError('minlength')) {
@@ -39,8 +57,14 @@
         }
       }
     </div>
+    <br>
+    <hr style="color: var(--S3);">
 
     <button class="form-button" type="submit">Iniciar Sesión</button>
+
+    <br><br>
+    <span>¿No tienes una cuenta?, prueba a <a routerLink="/signin" style="color: var(--LCBlue);" >crear una cuenta</a> </span>
+
   </form>
 </div>
 
