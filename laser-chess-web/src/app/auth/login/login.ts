@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { signal } from '@angular/core';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
+import { Remote } from '../../model/remote/remote';
+import { NotificationService } from '../../model/notifications/notification';
 
 
 
@@ -24,6 +26,8 @@ export class Login implements OnInit {
 
   private authService = inject(AuthRepository);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
+  private remote = inject(Remote);
   public showError = signal(false);
   public errorMessage = signal('');
 
@@ -60,6 +64,10 @@ export class Login implements OnInit {
       this.authService.login(request).subscribe((status) => {
       switch(status){  
         case ResponseStatus.SUCCESS:
+          const userId = this.remote.getAccountId();
+          if (userId) {
+            this.notificationService.setupAfterLogin(userId);
+          }
           this.router.navigate(['home']);
           this.showError.set(false);
           this.errorMessage.set('');

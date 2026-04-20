@@ -107,6 +107,12 @@ export class Social  {
     this.wsSubscription?.unsubscribe(); 
   }
 
+  //Metodo para recargar todo TODO el rato :D
+  refreshSocialState(): void {
+    this.loadFriends();
+    this.loadRequests();
+    this.loadSentRequests();
+  }
 
   // Cancelar la espera y cerrar WebSocket
   cancelWaiting(): void {
@@ -271,7 +277,7 @@ export class Social  {
             console.log('Solicitud de amistad cancelada correctamente');
             // Elimnar la solicitud de la lista local de enviadas
             this.sentRequests.set(this.sentRequests().filter(req => req.username !== requestUsername));
-            
+            this.refreshSocialState();
             // Si no quedan solicitudes enviadas, actualizar la vista
             if (this.sentRequests().length === 0 && this.requestTabState() === 'sent') {
               // Opcional: mantener el popup abierto si hay solicitudes recibidas 
@@ -306,6 +312,7 @@ export class Social  {
           console.log('Solicitud de amistad enviada');
           this.popUP_newFriend.set(false);
           this.usernameInput.nativeElement.value = '';
+          this.refreshSocialState();
         }
         
       },
@@ -325,7 +332,7 @@ export class Social  {
           }else{
             console.log('Amigo eliminado:', friendUsername);
             // Recargar la lista de amigos
-            this.loadFriends();
+            this.refreshSocialState();
           }
         },
         error: (err: any) => {
@@ -344,8 +351,7 @@ export class Social  {
           }else{
             console.log('Solicitud de amistad aceptada:', requestUsername);
             // Recargar la lista de amigos
-            this.loadFriends();
-            this.loadRequests();
+            this.refreshSocialState();
           }
         },
         error: (err: any) => {
@@ -365,8 +371,7 @@ export class Social  {
           console.log('Solicitud de amistad rechazada correctamente');
           // Eliminar la solicitud de la lista local
           this.request.set(this.request().filter(req => req.username !== requestUsername));
-          this.loadRequests();
-          this.loadSentRequests(); 
+          this.refreshSocialState();
 
           // Si no quedan solicitudes, cerrar el pop-up
           if (this.request().length === 0) {

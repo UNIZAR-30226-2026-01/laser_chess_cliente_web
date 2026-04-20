@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { IconService } from './model/user/icon';
 import { Websocket } from './model/remote/websocket';
+import { NotificationService } from './model/notifications/notification';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ export class App {
   constructor(
     private iconService: IconService,
     private ws: Websocket,
-    private router: Router
+    private router: Router,
+    private notifications: NotificationService 
   ) {
     this.ws.navigation$.subscribe(route => {
       console.log('Navegación global a:', route);
