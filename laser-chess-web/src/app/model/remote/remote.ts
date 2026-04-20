@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'; // Para hacer peticiones al Backend
-import { inject, Injectable } from '@angular/core'; 
+import { inject, Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http'; // Para manejar respuestas HTTP
 
 
@@ -16,9 +16,10 @@ import { AccountResponse } from '../auth/AccountResponse';
 import { FriendSummary } from '../social/FriendSummary';
 import { UpdateAccountRequest } from '../auth/UpdateAccountRequest'
 import { FriendshipRequest } from '../social/FriendshipRequest';
-import { ChallengeResume } from '../game/ChallengeResume'; 
+import { ChallengeResume } from '../game/ChallengeResume';
+import { XpInfo } from '../user/ProfileCardData';
 
-import { AllRatingsDTO } from '../rating/AllRatingsDTO'; 
+import { AllRatingsDTO } from '../rating/AllRatingsDTO';
 
 
 
@@ -52,7 +53,7 @@ export class Remote {
     if (stored) {
       this.accountId = Number(stored);
     }
-  } 
+  }
 
 
   getAccountIdFromToken(): number | null {
@@ -71,19 +72,17 @@ export class Remote {
   setAccountId(id: number) {
     this.accountId = id;
     localStorage.setItem(ACCOUNT_ID, id.toString());
-  } 
+  }
 
   getAccountId(): number | null {
     if (this.accountId !== null) return this.accountId;
 
-    // 👇 NUEVO: sacarlo del token
     const idFromToken = this.getAccountIdFromToken();
     if (idFromToken !== null) {
       this.accountId = idFromToken;
       return idFromToken;
     }
 
-    // fallback (por si acaso)
     const stored = localStorage.getItem(ACCOUNT_ID);
     if (stored) {
       this.accountId = Number(stored);
@@ -93,7 +92,7 @@ export class Remote {
     return null;
   }
 
-  
+
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
     console.log('Login called', loginRequest);
@@ -120,7 +119,7 @@ export class Remote {
     );
   }
 
-  // Solicitud a la API para obtener los detalles de la cuenta
+  // Solicitud a la API para obtener los detalles de una cuenta
   getAccount(id_account: number){
     return this.http.get<AccountResponse>(`http:${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
       catchError((err: Error) => {
@@ -128,6 +127,14 @@ export class Remote {
       })
     );
   }
+
+  getOwnAccount() {
+      return this.http.get<AccountResponse>(`http:${API_URL}/api/account/`).pipe(
+        catchError((err: Error) => {
+          throw new Error('Error during getting own account info');
+        })
+      );
+    }
 
   // Solicitud a la API para actualizar los dellates de la cuenta
   updateAccount(updateRequest: UpdateAccountRequest){
@@ -145,6 +152,11 @@ export class Remote {
         throw new Error('Error during deleteing account');
       })
     );
+  }
+
+  // Solicitud a la API para obtener la info de la barra de xp
+  getXpInfo(): Observable<XpInfo> {
+    return this.http.get<XpInfo>(`http:${API_URL}/api/account/xp`, { observe: 'body' });
   }
 
   // Solicitud a la API para obtener listado de amigos
@@ -249,7 +261,7 @@ export class Remote {
       })
     );
   }
-  
+
   // Solicitud para pillar el Rapid
   getEloRapid(userId: number): Observable<AllRatingsDTO> {
     return this.http.get<AllRatingsDTO>(`${API_URL}/api/rating/${userId}/rapid`, {
@@ -321,7 +333,7 @@ export class Remote {
 
   // Solicitud a la API para desafiar a un amigo a una partida
   challengeFriend(friendUsername: string): Observable<any> {
-    return this.http.post<any>(`${API_URL}/api/rt/challenge`, 
+    return this.http.post<any>(`${API_URL}/api/rt/challenge`,
         { opponent_username: friendUsername, game_type: 'friendly' },
         {
             //headers: {    Authorization: `Bearer ${this.accessToken}`}
@@ -336,7 +348,7 @@ export class Remote {
 
   // Solicitud a la API para comprobar si hay solicitudes de partida pendientes
   checkSolicitudes(): Observable<ChallengeResume[]> {
-    return this.http.get<ChallengeResume[]>(`${API_URL}/api/rt/challenges`, 
+    return this.http.get<ChallengeResume[]>(`${API_URL}/api/rt/challenges`,
           {
               //headers: {Authorization: `Bearer ${this.accessToken}`}
           }
@@ -375,7 +387,7 @@ export class Remote {
   setTokens(accessToken: string): void {
     this.accessToken = accessToken;
     localStorage.setItem(ACCESS_TOKEN, accessToken); //Hay que guardarlo para el interceptor
-    
+
     localStorage.setItem('has_session_hint', 'true');
     // Extraer el ID del payload del token
     try {
@@ -386,11 +398,11 @@ export class Remote {
     } catch (e) {
       console.error('Error parsing token', e);
     }
-    
+
     this.isAuthenticated$.next(true);
   }
 
-  
+
   private hasToken(): boolean {
     return this.accessToken != null && !this.isTokenExpired(this.accessToken);
   }
@@ -440,16 +452,16 @@ export class Remote {
   logout(): void {
     localStorage.removeItem(ACCESS_TOKEN);
     localStorage.removeItem(ACCOUNT_ID);
-    localStorage.removeItem('has_session_hint'); 
-    
+    localStorage.removeItem('has_session_hint');
+
     this.accessToken = "";
     this.accountId = null;
     this.isAuthenticated$.next(false);
     this.router.navigate(['']);
   }
 
-  
-  
+
+
   // Intenta restaurar la sesion con el refresh_token para no iniciar sesion todo el rato
   autoLogin(): Observable<boolean> {
     // Mirar si esta autenticado

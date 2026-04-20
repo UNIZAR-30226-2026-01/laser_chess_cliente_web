@@ -1,33 +1,43 @@
 <div class="container">
   <div class="lc-title">
     <mat-icon fontSet="material-symbols-outlined">chess_king</mat-icon>
-    <span style="margin-left: 10px;">
-      Laserchess
-    </span>
+    <span style="margin-left: 10px;">Laserchess</span>
   </div>
+
   <div class="empty-space"></div>
+
   <div class="profile-card" (click)="openProfile()">
     <div class="profile-info">
-      <div class="username">{{ (userProfile$ | async)?.username }}</div>
-      <!-- donde próximamente añadiré nivel & barra XP-->
-      <div class="xp-placeholder"></div>
+      <div class="info-header">
+        <div class="level-and-xp">
+          <span class="level-text">Lvl. {{ (userProfile$ | async)?.level }}</span>
+          <span class="xp-detail-text"> · {{ xpInfoDetail().current }} / {{ xpInfoDetail().required }}</span>
+          <span class="xp-letters">XP</span>
+        </div>
+        <span class="username">{{ (userProfile$ | async)?.username }}</span>
+      </div>
+
+      <div class="xp-container">
+        <div class="xp-bar" [style.width.%]="xpPercentage()"></div>
+      </div>
     </div>
     <div class="profile-picture">
       @if (avatar) {
-      <mat-icon svgIcon="avatar" [style.color]="avatar" class="avatar-large"></mat-icon>
+        <mat-icon svgIcon="avatar" [style.color]="avatar" class="avatar-large"></mat-icon>
       } @else {
-      <div class="avatar-placeholder-large">
-        <span class="avatar-icon-large">👤</span>
-      </div>
+        <div class="avatar-placeholder-large">
+          <span class="avatar-icon-large">👤</span>
+        </div>
       }
     </div>
+
   </div>
+
   <div class="coin-counter">
     <span class="coin-amount">{{ (userProfile$ | async)?.money }}</span>
-    <mat-icon fontSet="material-symbols-outlined">paid</mat-icon>
+    <mat-icon fontSet="material-symbols-outlined" class="coin-icon">paid</mat-icon>
   </div>
 </div>
-
 
 
 <!-- Popup de mi perfil -->
@@ -60,7 +70,7 @@
             </div>
             <div class="detail-row">
               <span class="detail-label">Nivel:</span>
-              <span class="detail-value">{{ (userProfile$ | async)?.xp }}</span>
+              <span class="detail-value">{{ (userProfile$ | async)?.level }}</span>
             </div>
             <div class="detail-row">
               <span class="detail-label">Monedas:</span>
