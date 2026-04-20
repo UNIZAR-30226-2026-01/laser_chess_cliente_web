@@ -5,6 +5,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 import { Start } from './start';
 import { Remote } from '../../model/remote/remote';
+import { NotificationService } from '../../model/notifications/notification';
 
 describe('Start', () => {
   let component: Start;
@@ -15,20 +16,27 @@ describe('Start', () => {
     getAccessToken: ReturnType<typeof vi.fn>;
     isTokenExpired: ReturnType<typeof vi.fn>;
     autoLogin: ReturnType<typeof vi.fn>;
+    getAccountId: ReturnType<typeof vi.fn>;
+  };
+  
+  let notificationMock = {
+    setupAfterLogin: vi.fn()   
   };
 
   beforeEach(async () => {
     remoteSpy = {
       getAccessToken: vi.fn(),
       isTokenExpired: vi.fn(),
-      autoLogin: vi.fn()
+      autoLogin: vi.fn(),
+      getAccountId: vi.fn().mockReturnValue('123')
     };
 
     await TestBed.configureTestingModule({
       imports: [Start],
       providers: [
         provideRouter([]),
-        { provide: Remote, useValue: remoteSpy }
+        { provide: Remote, useValue: remoteSpy },
+        { provide: NotificationService, useValue: notificationMock }
       ]
     }).compileComponents();
 

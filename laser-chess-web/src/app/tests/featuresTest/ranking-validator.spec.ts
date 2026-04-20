@@ -11,6 +11,7 @@ import { Remote } from '../../model/remote/remote';
 import { FriendSummary } from '../../model/social/FriendSummary';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { UserRespository } from '../../repository/user-respository';
+import { IconService } from '../../model/user/icon';
 
 describe('Ranking', () => {
   let component: Ranking;
@@ -31,7 +32,11 @@ describe('Ranking', () => {
     getAccount: ReturnType<typeof vi.fn>;
   };
   let userRepoSpy: {
-    getAccount: ReturnType<typeof vi.fn>;
+    getOwnAccount: ReturnType<typeof vi.fn>;
+    getXpInfo: ReturnType<typeof vi.fn>;
+  };
+  let iconServiceSpy: {
+    getAvatarColor: ReturnType<typeof vi.fn>;
   };
 
   // Datos de ejemplo 
@@ -76,7 +81,24 @@ describe('Ranking', () => {
     };
 
     userRepoSpy = {
-      getAccount: vi.fn().mockReturnValue(of({ id: 5, username: 'currentUser', level: 1, avatar: 0 })),
+      getOwnAccount: vi.fn().mockReturnValue(
+        of({
+          account_id: '5',
+          username: 'currentUser',
+          level: 1,
+          avatar: 0
+        })
+      ),
+      getXpInfo: vi.fn().mockReturnValue(
+        of({
+          xp: 50,
+          required_xp: 100
+        })
+      ),
+    };
+
+    iconServiceSpy = {
+      getAvatarColor: vi.fn().mockReturnValue('blue'),
     };
 
     await TestBed.configureTestingModule({
@@ -87,6 +109,7 @@ describe('Ranking', () => {
         { provide: FriendRespository, useValue: friendRepoSpy },
         { provide: Remote, useValue: remoteSpy },
         { provide: UserRespository, useValue: userRepoSpy },
+        { provide: IconService, useValue: iconServiceSpy },
       ],
     }).compileComponents();
 

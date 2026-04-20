@@ -7,6 +7,11 @@ import { Login } from '../../auth/login/login';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
 
+
+import { NotificationService } from '../../model/notifications/notification';
+import { Remote } from '../../model/remote/remote';
+
+
 describe('Login', () => {
   let component: Login;
   let fixture: ComponentFixture<Login>;
@@ -26,11 +31,16 @@ describe('Login', () => {
      login: vi.fn(),
     };
 
+    const notificationSpy = { setupAfterLogin: vi.fn() };
+    const remoteSpy = { getAccountId: vi.fn().mockReturnValue('123') };
+
     await TestBed.configureTestingModule({
       imports: [Login],
       providers: [
         provideRouter([]),
-        { provide: AuthRepository, useValue: authRepoSpy }//meter el mock
+        { provide: AuthRepository, useValue: authRepoSpy },//meter el mock
+        { provide: NotificationService, useValue: notificationSpy },
+        { provide: Remote, useValue: remoteSpy }
       ]
     }).compileComponents();
 
