@@ -9,4 +9,5 @@ export interface AccountResponse {
   piece_skin: number;
   win_animation: number;
   avatar: number;
+  rankedPoints: number;
 }

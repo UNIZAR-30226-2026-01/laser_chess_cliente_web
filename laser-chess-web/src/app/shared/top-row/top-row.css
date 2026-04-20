@@ -110,7 +110,6 @@
 .xp-bar {
     background-color: var(--LCGreen);
     height: 100%;
-    transition: width 0.5s ease-in-out;
 }
 
 .username {
