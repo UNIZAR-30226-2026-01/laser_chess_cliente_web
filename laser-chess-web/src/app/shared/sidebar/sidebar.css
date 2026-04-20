@@ -1,34 +1,50 @@
 .sidebar {
-  width: 14rem;
-  min-width: 12rem;
-  height: 100vh;
-  background-color: #CDCDCD;
-  border-right: 0.2rem solid #9b9b9b;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  width: 10vh;
 }
 
 
 /* ITEMS */
 .item {
+  background-color: var(--S1);
+  margin-bottom: 3px;
+  color: var(--LCWhite);
+
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  border-bottom: 0.1rem solid #9b9b9b;
-  color: black;
   transition: background 0.2s;
-  padding: 1vh 1vw;
+
+  max-height: 8vh;
+}
+
+.item mat-icon {
+  font-size: var(--LCBig);
+  width: var(--LCBig);
+  height: var(--LCBig);
 }
 
 .item:hover {
-  background: #ABC7C6;
+  background: var(--S2);
 }
 
 .item.active {
-  background: #9EE2DA;
-  box-shadow: inset 0.4rem 0 0 #306CB3;
+  background: var(--S3);
+  border-left: 4px solid var(--active-color, var(--LCGreen));
+}
+
+.item.active mat-icon {
+  color: var(--active-color, var(--LCGreen)); 
+}
+
+.empty-space {
+  background-color: var(--S1);
+  margin-bottom: 3px;
+  flex: 1;
 }
 
 
@@ -42,5 +58,5 @@
 }
 
 .item.active .icon {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }

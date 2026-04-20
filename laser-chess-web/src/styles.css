@@ -1,6 +1,41 @@
+/* Declaraciones de constantes de diseño */
+:root{
+/* COLORES ============================== */
+  /* fondo */
+  --LCBG: #0D0814;
+
+  /* Colores base */
+  --S1: #1A122B;
+  --S2: #23183D;
+  --S3: #3B2865;
+
+  /* Acentos */
+  --LCBlue: #2979FF;
+  --LCRed: #ff1764;
+  --LCGreen: #00E676;
+  --LCYellow: #FFCF00;
+  --LCPurple: #7A55C6;
+
+  /* Neutros */
+  --LCWhite: #e1f5fe;
+  --LCGray: #918C9E;
+
+/* TAMAÑOS FUENTES ============================== */
+  --LCSmall: 12px;
+  --LCMedium: 22px;
+  --LCBig: 36px;
+
+/* RADIO BORDES ================================== */
+  --BorderSmall: 10px;
+  --BorderNormal: 20px;
+  --BorderFull: 40px;
+}
+
 * { box-sizing: border-box; }
 
 body {
     margin: 0;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--LCWhite);
+    background-color: var(--LCBG);
 }

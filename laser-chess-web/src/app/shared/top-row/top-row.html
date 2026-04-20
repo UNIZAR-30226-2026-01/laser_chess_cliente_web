@@ -1,25 +1,34 @@
-<div class="profile-card" (click)="openProfile()">
-   <div class="profile-picture">
-  @if (avatar) {
-    <mat-icon svgIcon="avatar"
-          [style.color]="avatar"
-          class="avatar-large"></mat-icon>
-  } @else {
-    <div class="avatar-placeholder-large">
-      <span class="avatar-icon-large">👤</span>
+<div class="container">
+  <div class="lc-title">
+    <mat-icon fontSet="material-symbols-outlined">chess_king</mat-icon>
+    <span style="margin-left: 10px;">
+      Laserchess
+    </span>
+  </div>
+  <div class="empty-space"></div>
+  <div class="profile-card" (click)="openProfile()">
+    <div class="profile-info">
+      <div class="username">{{ (userProfile$ | async)?.username }}</div>
+      <!-- donde próximamente añadiré nivel & barra XP-->
+      <div class="xp-placeholder"></div>
     </div>
-  }
-</div>
-    <div class="profile-info">  
-        <div class="username">{{ (userProfile$ | async)?.username }}</div>
-        <!-- donde próximamente añadiré nivel & barra XP-->
-        <div class="xp-placeholder"></div>
+    <div class="profile-picture">
+      @if (avatar) {
+      <mat-icon svgIcon="avatar" [style.color]="avatar" class="avatar-large"></mat-icon>
+      } @else {
+      <div class="avatar-placeholder-large">
+        <span class="avatar-icon-large">👤</span>
+      </div>
+      }
     </div>
-</div>
-<div class="coin-counter">
+  </div>
+  <div class="coin-counter">
     <span class="coin-amount">{{ (userProfile$ | async)?.money }}</span>
-    <img src="assets/icons/coin-icon.png" class="coin-icon" alt="">
+    <mat-icon fontSet="material-symbols-outlined">paid</mat-icon>
+  </div>
 </div>
+
+
 
 <!-- Popup de mi perfil -->
 @if (showProfilePopup()) {

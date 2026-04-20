@@ -1,23 +1,14 @@
 .app-layout {
   display: flex;
   width: 100%;
-  
 }
 
 .sidebar {
-  flex: 0 0 20%;      /* ocupa hasta el 20% de la pantalla */
-  max-width: 16rem;   
-  min-width: 12rem;   
   height: 100vh;
   position: sticky;
-  top: 0;
 }
 
 .app-main {
   flex: 1;
   min-width: 0;
-  padding: 2rem;
-  width: 100%; /* Asegurar que ocupe el espacio disponible */
-  box-sizing: border-box; /* Incluir padding en el ancho total */
-  
 }

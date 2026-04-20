@@ -18,7 +18,6 @@ import { GameLogicService } from '../../model/remote/game-logic-service';
 import { N } from '@angular/cdk/keycodes';
 
 
-
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 

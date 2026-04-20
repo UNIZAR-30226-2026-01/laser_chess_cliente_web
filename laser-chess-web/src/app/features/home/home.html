@@ -1,21 +1,7 @@
 <section class="home">
-    
-    <div class="top-row">
-        <app-top-row class="main-top-row"></app-top-row>
-        
-        <button class="icon-btn" type="button" routerLink="/history-hall" routerLinkActive="active" aria-label="Historial">
-            <img class="icon icon-history" src="assets/icons/history-icon.png" alt="" />
-        </button>
 
-        <button class="icon-btn" type="button" routerLink="/settings" routerLinkActive="active" aria-label="Ajustes">
-            <img class="icon icon-settings" src="assets/icons/settings-icon.png" alt="" />
-        </button>
 
-        <button class="icon-btn" type="button" aria-label="Notificaciones" (click)="popUPNotis.set(true)">
-            <span class="notification-badge">{{ solicitudes().length }}</span>
-        </button>
-
-    </div>
+    <app-top-row></app-top-row>
 
     @if(popUPNotis()){
         <div id="overlay" class="overlay" (click)="popUPNotis.set(false)">
@@ -26,7 +12,7 @@
                         <strong>{{ reto.challenger_username }}</strong>
                         <span>Tablero: {{ reto.board }}</span>
                     </div>
-                    
+
                     <div class="tiempo">
                         ⏱️ {{ reto.starting_time }} min + {{ reto.time_increment }}s
                     </div>
@@ -44,35 +30,43 @@
     }
 
     <div class="main-section">
-        <button class="time-selector" type="button" aria-label="Cambiar modo de tiempo">
-            <img class="time-icon" src="assets/icons/timer-icon.png" alt="" />
-            <span class="time-label">{{ timeModeLabel }}</span>
-        </button>
-
-        <button class="board-selector" type="button" aria-label="Cambiar tablero">
-            <img class="board-preview" [src]="boardPreviewUrl" alt="Tablero seleccionado" />
-        </button>
-    </div>
-
-    <div class="bottom-row">
-        <div class="rank-card">
-            <div class="rank-badge">Rango</div>
-            <div class="rank-progress">
-                <div class="rank-bar">
-                    <div class="rank-fill"></div> <!-- habrá que implementarla y darle estilo -->
+        <div class="tablero-placeholder">
+            <img src="assets/tablero-placeholder.png">
+        </div>
+        <div class="game-selection">
+            <button class="icon-btn" type="button" aria-label="Notificaciones" (click)="popUPNotis.set(true)">
+                <span class="notification-badge">{{ solicitudes().length }}</span>
+            </button>
+            <button class="time-selector" type="button" aria-label="Cambiar modo de tiempo">
+                <img class="time-icon" src="assets/icons/timer-icon.png" alt="" />
+                <span class="time-label">{{ timeModeLabel }}</span>
+            </button>
+        
+        
+            <div class="bottom-row">
+                <div class="rank-card">
+                    <div class="rank-badge">Rango</div>
+                    <div class="rank-progress">
+                        <div class="rank-bar">
+                            <div class="rank-fill"></div> <!-- habrá que implementarla y darle estilo -->
+                        </div>
+                        <div class="rank-points">
+                            {{ rankedPoints }}
+                            <img src="assets/icons/elo-icon.png" class="elo-icon" alt="">
+                        </div>
+                    </div>
                 </div>
-                <div class="rank-points">
-                    {{ rankedPoints }}
-                    <img src="assets/icons/elo-icon.png" class="elo-icon" alt="">
+                <div style="flex: row">
+                    <a class="play-btn" routerLink="/game" aria-label="Jugar partida">
+                        JUGAR
+                    </a>
+                    <button class="mode-btn" type="button" aria-label="Elegir modo">
+                        <img class="icon icon-mode" src="assets/icons/ranked-icon.png" alt="" />
+                    </button>
                 </div>
             </div>
         </div>
-        <button class="icon-btn" type="button" aria-label="Elegir modo">
-            <img class="icon icon-mode" src="assets/icons/ranked-icon.png" alt="" />
-        </button>
-        <a class="play-btn" routerLink="/game" aria-label="Jugar partida">
-            JUGAR
-        </a>
     </div>
-    
+
+
 </section>
