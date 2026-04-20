@@ -16,7 +16,13 @@ export class Board {
   @Input() piezas!: Signal<PiezaData[]>;
   @Input() laserPath!: Signal<{x:number,y:number}[]>;
 
-  @Output() piezaClick = new EventEmitter<Pieza>();
-  @Output() casillaClick = new EventEmitter<{x:number,y:number}>();
+  @Input() columnas!: number;
+  @Input() filas!: number;
+
+  @Output() piezaSeleccionada = new EventEmitter<Pieza>();
+  @Output() movimientoSolicitado = new EventEmitter<{x:number,y:number}>();
+
+  @Input() isCasillaRestringida!: (x: number, y: number) => 'azul' | 'rojo' | null;
+  @Input() ocupado!: (x: number, y: number) => PiezaData | null;
 
 }

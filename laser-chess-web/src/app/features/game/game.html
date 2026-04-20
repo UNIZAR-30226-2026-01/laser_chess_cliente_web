@@ -57,61 +57,6 @@
       <div class="avatar">👤</div>
       <span>{{ miNombre() }}</span>
     </div>
-  </aside>
-
-  <main class="main-content">
-    <div class="board">
-      @for (y of [].constructor(filas); let row = $index; track row) {
-        @for (x of [].constructor(columnas); let col = $index; track col) {
-
-        <div 
-          class="cell"
-          [class.azul]="isCasillaRestringida(col+1, row+1) === 'azul'"
-          [class.rojo]="isCasillaRestringida(col+1, row+1) === 'rojo'"
-          [style.gridColumn]="col+1"
-          [style.gridRow]="row+1">
-        </div>
-
-      }
-    }
-      @for (p of listaPiezas(); track p.id) {
-        @if (p.esMia) {
-          <app-pieza 
-            #piezaRef
-            [initialX]="p.x" 
-            [initialY]="p.y" 
-            [rotationInput]="p.rotation"
-            [cols]="columnas"
-            [rows]="filas"
-            [tipoPieza]="p.tipoPieza"
-            [isCasillaRestringida]="isCasillaRestringida.bind(this)"
-            [ocupado]="ocupado.bind(this)" 
-             
-            (selected)="seleccionarPieza(piezaRef)"
-            (moveRequested)="gestionarMovimiento($event)">
-          </app-pieza>
-        } @else {
-          <app-pieza-rival 
-            [x]="p.x" 
-            [y]="p.y"
-            [tipoPieza]="p.tipoPieza"
-            [rotationInput]="p.rotation"
-            >
-          </app-pieza-rival>
-        }
-      }
-      @if (laserPath().length > 0) {
-        <app-laser [path]="laserPath()"></app-laser>
-      }
-</div>
-  </main>
-
-  <aside class="side-panel">
-    <div class="player_card">
-      <div class="avatar">👤</div>
-      <span>{{ nombreRival() }}</span>
-      <div class="timer">{{ formatTime(tiempoRival()) }}</div>
-    </div>
 
     <div class="controls-panel">
       @if (piezaActiva()) {
@@ -132,6 +77,30 @@
       
       }
     </div>
+    
+  </aside>
+
+  <main class="main-content">
+    <app-board
+      [piezas]="listaPiezas"
+      [laserPath]="laserPath"
+      [columnas]="columnas"
+      [filas]="filas"
+      [isCasillaRestringida]="isCasillaRestringida.bind(this)"
+      [ocupado]="ocupado.bind(this)"
+      (piezaSeleccionada)="seleccionarPieza($event)"
+      (movimientoSolicitado)="gestionarMovimiento($event)"
+    ></app-board>
+  </main>
+
+  <aside class="side-panel">
+    <div class="player_card">
+      <div class="avatar">👤</div>
+      <span>{{ nombreRival() }}</span>
+      <div class="timer">{{ formatTime(tiempoRival()) }}</div>
+    </div>
+
+    
     
     <button class="debug-btn" (click)="solicitarPausa()">||</button>
   </aside>
