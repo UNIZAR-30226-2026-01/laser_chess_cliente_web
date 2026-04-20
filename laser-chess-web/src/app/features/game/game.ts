@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GameState } from '../../model/remote/game-state'
 import { NotificationGame } from '../../shared/notification-game/notification-game'
+import { Board } from '../../shared/board/board'
 
 
 
@@ -22,7 +23,7 @@ const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
 @Component({
   selector: 'app-game',
   standalone: true,
-  imports: [Pieza, PiezaRival, Laser, NotificationGame],
+  imports: [Pieza, PiezaRival, Laser, NotificationGame, Board],
   templateUrl: './game.html',
   styleUrl: './game.css',
 })
