@@ -93,7 +93,7 @@ export class Ranking implements OnInit {
 
 
   // Top 100 con mi posición
-  private loadRanking(): void {
+  loadRanking(): void {
     this.loading.set(true);
     this.error.set(null);
     this.topPlayers.set([]);
