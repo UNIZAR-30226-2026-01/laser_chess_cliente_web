@@ -5,7 +5,7 @@ import { RegisterRequest } from '../../model/auth/RegisterRequest';
 import { signal } from '@angular/core';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
-
+import { RouterLink } from '@angular/router';
 
 
 export const passwordMatchValidator: ValidatorFn =
@@ -25,7 +25,7 @@ export const passwordMatchValidator: ValidatorFn =
 
 @Component({
   selector: 'app-signin',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
