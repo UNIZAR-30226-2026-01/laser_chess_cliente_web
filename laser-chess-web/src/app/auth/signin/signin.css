@@ -4,14 +4,14 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 1rem;
   background: var(--LCBackground);
 }
 
 /* Tarjeta adaptable */
 .form-container {
   background: var(--S1);
-  padding: clamp(2rem, 5vw, 3rem);
+  padding: clamp(2rem, 5vh, 3rem);
   border-radius: 0.5rem;
 
   width: 100%;
@@ -23,7 +23,7 @@
 h2 {
   text-align: center;
   margin-bottom: 2rem;
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-size: clamp(1rem, 3vh, 2rem);
 }
 
 /* Labels */
@@ -31,18 +31,18 @@ label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  font-size: clamp(0.8rem, 1vh, 1rem);
 }
 
 /* Inputs */
 input.form-control {
   width: 100%;
-  padding: clamp(0.8rem, 1.5vw, 1.2rem);
+  padding: clamp(0.5rem, 1vw, 1rem);
   border-radius: 1rem;
   border: 0.16rem solid var(--S3);
   background-color: var(--S2);
   color: var(--LCWhite);
-  font-size: clamp(0.9rem, 1.2vw, 1rem);
+  font-size: clamp(0.9rem, 1.2vh, 1rem);
   transition: all 0.3s ease;
 }
 
@@ -62,10 +62,10 @@ input.form-control:focus {
 button {
   width: 100%;
   margin-top: 2rem;
-  padding: clamp(0.9rem, 1.5vw, 1.2rem);
+  padding: clamp(0.8rem, 0.9vw, 1rem);
   border-radius: 1rem;
   border: none;
-  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  font-size: clamp(0.8rem, 0.9vw, 1rem);
   font-weight: 600;
   background: var(--LCBlue);
   color: var(--LCWhite);
