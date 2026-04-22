@@ -114,7 +114,7 @@ export class Remote {
   register(registerRequest: RegisterRequest): Observable<HttpResponse<AccountResponse> | null> {
     return this.http.post<AccountResponse>(`http:${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
-        throw new Error('Error during registration');
+        throw err;
       })
     );
   }
