@@ -13,6 +13,9 @@ import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
 
+import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
+import { GameState } from '../../model/remote/game-state'
+
 describe('Ranking', () => {
   let component: Ranking;
   let fixture: ComponentFixture<Ranking>;
@@ -101,6 +104,17 @@ describe('Ranking', () => {
       getAvatarColor: vi.fn().mockReturnValue('blue'),
     };
 
+    const websocketMock = {
+      initConnection: vi.fn(),
+      close: vi.fn(),
+    };
+
+    const gameStateMock = {
+      startingTime: { set: vi.fn() },
+      increment: { set: vi.fn() },
+      nombreRival: { set: vi.fn() },
+    };
+
     await TestBed.configureTestingModule({
       imports: [Ranking],
       providers: [
@@ -110,6 +124,8 @@ describe('Ranking', () => {
         { provide: Remote, useValue: remoteSpy },
         { provide: UserRespository, useValue: userRepoSpy },
         { provide: IconService, useValue: iconServiceSpy },
+        { provide: Websocket, useValue: websocketMock }, 
+        { provide: GameState, useValue: gameStateMock },
       ],
     }).compileComponents();
 

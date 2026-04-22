@@ -8,6 +8,9 @@ import { Remote } from '../../model/remote/remote';
 import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
 
+import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
+import { GameState } from '../../model/remote/game-state'
+
 describe('Ranking', () => {
   let component: Ranking;
   let fixture: ComponentFixture<Ranking>;
@@ -33,7 +36,13 @@ describe('Ranking', () => {
     };
 
     const remoteMock = {
-      getAccountId: () => '1'
+      getAccountId: () => '1',
+      getUsername: () => 'testuser' 
+    };
+
+    const websocketMock = {
+      initConnection: () => {},
+      close: () => {}
     };
 
     const userRepoMock = {
@@ -48,6 +57,12 @@ describe('Ranking', () => {
       })
     };
 
+    const gameStateMock = {
+      startingTime: { set: () => {} },
+      increment: { set: () => {} },
+      nombreRival: { set: () => {} }
+    };
+
     const iconServiceMock = {
       getAvatarColor: () => 'blue'
     };
@@ -59,7 +74,9 @@ describe('Ranking', () => {
         { provide: FriendRespository, useValue: friendRepoMock },
         { provide: Remote, useValue: remoteMock },
         { provide: UserRespository, useValue: userRepoMock },
-        { provide: IconService, useValue: iconServiceMock }
+        { provide: IconService, useValue: iconServiceMock },
+        { provide: Websocket, useValue: websocketMock },
+        { provide: GameState, useValue: gameStateMock } 
       ]
     })
     .compileComponents();
