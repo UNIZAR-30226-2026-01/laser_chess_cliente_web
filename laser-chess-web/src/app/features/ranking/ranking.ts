@@ -407,4 +407,9 @@ export class Ranking implements OnInit {
     }
   }
 
+  cancelWaiting(): void {
+    this.websocket.close();
+    this.popUP_waiting.set(false);
+  }
+
 }
