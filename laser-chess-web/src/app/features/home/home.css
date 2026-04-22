@@ -17,7 +17,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--S3);
+    border: 2px solid var(--S2);
     background: var(--S1);
     cursor: pointer;
     padding: 0;
@@ -27,7 +27,7 @@
 }
 
 .icon-btn:hover {
-    background: var(--S3);
+    background: var(--S2);
     transition: 0.2s;
 }
 
@@ -36,6 +36,15 @@
     height: 100%;
     object-fit: contain;
     display: block;
+}
+
+.icon-notif {
+  border-radius: var(--BorderFull);
+  position: relative;
+}
+
+.icon-notif mat-icon {
+  color: var(--LCWhite);
 }
 
 .icon-history { transform: translateX(-4px) translateY(-2px); }
@@ -48,7 +57,7 @@
     display: flex;
     flex: 1;
 
-    align-items: stretch; 
+    align-items: stretch;
     width: 100%;
 }
 
@@ -57,14 +66,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     gap: clamp(12px, 2vh, 20px);
-    margin: 24px 0;
+    margin-left: 0px;
+    margin-right: 5vw;
 }
 
 
 .tablero-placeholder {
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -75,30 +83,53 @@
     width: 80%;
 }
 
-/* TIME SELECTOR */
-.time-selector {
-    display: inline-flex;
-    align-items: center;
-    gap: clamp(4px, 1vw, 6px);
-    background: transparent;
-    cursor: pointer;
-    padding-right: 20px;
-    background-color: var(--S1);
-    border: 2px solid var(--S3);
-    color: var(--LCWhite);
+/* selectores */
+.setting-selector {
+    width: 100%;
+    background: var(--S1);
+    border: 2px solid var(--S2);
     border-radius: var(--BorderFull);
+    padding: 12px 20px;
+
+    margin: 0;
+
+    color: var(--LCWhite);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: 0.2s;
+    box-sizing: border-box;
 }
 
-.time-icon {
+.setting-selector:hover {
+    background: var(--S2);
+}
+
+.setting-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.setting-content mat-icon {
+  color: var(--icon-color);
+  font-size: var(--LCMedium);
+  width: var(--LCMedium);
+  height: var(--LCMedium);
+}
+.setting-label {
+    font-weight: 600;
+    font-size: var(--LCSmall);
+}
+
+.setting-icon {
     width: clamp(36px, 5vw, 50px);
     height: clamp(36px, 5vw, 50px);
     object-fit: contain;
 }
 
-.time-label {
-    font-size: clamp(16px, 1.5vw, 20px);
-    font-weight: 800;
-    letter-spacing: 0.5px;
+.setting-label {
+    font-size: var(--LCSmall);
 }
 
 /* BOARD SELECTOR */
@@ -115,13 +146,14 @@
 
 /* ---------------- BOTTOM ROW ---------------- */
 .bottom-row {
-    margin-top: auto;
+    width: 100%;
     display: flex;
-    align-items: center;
-    gap: clamp(12px, 3vw, 40px);
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 8px;
+
     justify-content: center;
-    margin-bottom: clamp(30px, 4vh, 50px);
+
+    margin-top: 10vh;
 }
 
 /* RANK CARD */
@@ -184,28 +216,71 @@
 }
 
 /* ---------------- PLAY BUTTON ---------------- */
+.play-group {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+
+    height: clamp(65px, 10vw, 95px);
+}
+
 .play-btn {
-    height: clamp(50px, 8vw, 80px);
-    padding: 0 clamp(16px, 4vw, 32px);
+    flex: 1;
     background: var(--LCPurple);
     color: var(--LCWhite);
     cursor: pointer;
     font-weight: 900;
     font-size: clamp(20px, 2.5vw, 32px);
-    letter-spacing: 1px;
+    letter-spacing: 3px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-top-left-radius: var(--BorderNormal);
-    border-bottom-left-radius: var(--BorderNormal);
-    margin: 3px;
+    transition: 0.2s;
+
+    margin-right: 5px;
+
+    border: none;
+
+    border-radius: var(--BorderNormal) 0 0 var(--BorderNormal);
+    box-sizing: border-box;
 }
 
 .play-btn:hover {
   background: var(--LCWhite);
   color: var(--LCPurple);
   transition: 0.2s;
+}
+
+.trophy-btn {
+    width: 25%;
+    background: var(--S1);
+    color: var(--LCWhite);
+
+    border: 2px solid var(--S2);
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+
+    border-radius: 0 var(--BorderNormal) var(--BorderNormal) 0;
+    box-sizing: border-box;
+}
+
+.trophy-btn:hover{
+    background-color: var(--S2);
+}
+
+.trophy-btn mat-icon {
+  font-size: 70px;
+  width: 70px;
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ---------------- MEDIA QUERIES ---------------- */
@@ -267,6 +342,11 @@
 
 /* puntico rojo */
 .notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  z-index: 5;
+
   background-color: var(--LCRed);
   color: var(--LCWhite);
   border-radius: 50%;
@@ -278,4 +358,84 @@
   font-size: 0.75rem;
   font-weight: bold;
   animation: badgePulse 0.3s ease;
+}
+
+.notif-elo-container {
+  display:flex;
+  align-items: center;
+  margin-top: 5vh;
+}
+
+/*  barra de elo  */
+.elo-badge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(14px, 1.5vw, 20px);
+  margin-left: 0.5em;
+}
+
+.elo-circle-wrapper {
+  position: relative;
+  width: 7em;
+  height: 7em;
+  border-radius: 50%;
+  background: var(--S3);
+  border: 0.4em solid var(--S1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.elo-text-wrapper {
+  background: var(--S1);
+  padding: 1.2em 3em 1.2em 1.5em;
+  border-radius: 2em 0 0 2em;
+  margin-right: -2em;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.elo-rank-name {
+  font-size: 1.1em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  z-index: 1;
+}
+
+.progress-ring-track {
+  fill: transparent;
+  stroke: var(--S1);
+  stroke-dasharray: 289.02;
+}
+
+.progress-ring-value {
+  fill: transparent;
+  stroke: var(--LCBlue);
+  stroke-dasharray: 289.02;
+  stroke-linecap: butt;
+  transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+.elo-icon-inner {
+  color: var(--LCBlue);
+  z-index: 2;
+  font-size: 2.5em;
+  width: 1em;
+  height: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
