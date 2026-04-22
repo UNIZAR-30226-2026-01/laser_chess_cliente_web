@@ -10,10 +10,8 @@ import { Ranking } from './features/ranking/ranking';
 import { Signin } from './auth/signin/signin';
 import { Login } from './auth/login/login';
 import { Layout } from './shared/layout/layout';
-import { Start } from './auth/start/start';
 import { Settings } from './features/settings/settings';
 import { History } from './features/history/history';
-import { Pieza } from './shared/pieza/pieza';
 
 import { AuthGuard } from './model/token/guard';
 import { BlockReturn } from './shared/block-return/block-return'
@@ -25,12 +23,11 @@ import { HistoryHall } from './features/history-hall/history-hall';
 export const routes: Routes = [
 
   // Pantalla inicial
-  { path: '', component: Start },
-  //{ path: 'home', component: Home },
+  { path: '', component: Login },
 
   // Rutas públicas
   { path: 'signin', component: Signin },
-  { path: 'login', component: Login },
+  
 
   // Rutas privadas (con sidebar)
   {

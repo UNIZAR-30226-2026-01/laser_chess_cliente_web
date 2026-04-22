@@ -32,6 +32,32 @@ export class Login implements OnInit {
   public errorMessage = signal('');
 
   ngOnInit() {
+    // access_token valido, vamos directo al home
+    const token = this.remote.getAccessToken();
+    if (token && !this.remote.isTokenExpired(token)) {
+      const userId = this.remote.getAccountId(); 
+      if (userId) {
+        this.notificationService.setupAfterLogin(userId);
+      }
+      this.router.navigate(['/home']);
+    } else {
+      // Si no, intentamos recuperar la sesión con el refresh_token
+      this.remote.autoLogin().subscribe({
+        next: (authenticated) => {
+          if (authenticated) {
+            const userId = this.remote.getAccountId();
+            if (userId) {
+              this.notificationService.setupAfterLogin(userId);
+            }
+            this.router.navigate(['/home']);
+          }
+        },
+        error: () => {
+          // Si falla, pantalla de inicio
+        }
+      });
+    }
+
     // Configuación del formulario de login con validaciones
     this.loginForm = new FormGroup({
       credential: new FormControl('', [
@@ -44,6 +70,7 @@ export class Login implements OnInit {
         Validators.maxLength(50)
       ]),
     });
+
   }
 
 

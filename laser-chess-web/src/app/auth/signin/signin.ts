@@ -88,7 +88,7 @@ export class Signin {
       switch (status) {
         case ResponseStatus.SUCCESS:
           console.log('Registration successful');
-          this.router.navigate(['login']);
+          this.router.navigate(['']);
           break;
 
         case ResponseStatus.INVALID_CREDENTIALS:

@@ -245,7 +245,7 @@ describe('Signin', () => {
     });
     component.register();
 
-    expect(router.navigate).toHaveBeenCalledWith(['login']);
+    expect(router.navigate).toHaveBeenCalledWith(['']);
     expect(component.showError()).toBe(false);
     expect(component.errorMessage()).toBe('');
   });
