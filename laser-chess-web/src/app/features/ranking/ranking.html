@@ -120,6 +120,7 @@
             
             <div class="user-actions-popup">
             @if (selectedUserContext() === 'friend') {
+                <button class="btn-challenge-popup" (click)="challengeFromPopup()">Retar</button>
                 <button class="btn-delete-popup" (click)="deleteFriend()">Eliminar amigo</button>
             } @else if (selectedUserContext() === 'sent_request') {
                 <button class="btn-cancel" (click)="cancelFriendRequest()">Cancelar solicitud</button>
