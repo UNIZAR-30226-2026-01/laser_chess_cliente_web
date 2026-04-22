@@ -91,10 +91,16 @@ export class Signin {
           this.router.navigate(['login']);
           break;
 
-        case ResponseStatus.FAILURE:
+        case ResponseStatus.INVALID_CREDENTIALS:
           console.warn('Registration failed: Invalid credentials');
           this.showError.set(true);
           this.errorMessage.set('Registration failed: Invalid credentials');
+          break;
+        
+          case ResponseStatus.USER_ALREADY_EXISTS:
+          console.warn('Registration failed: User already exists');
+          this.showError.set(true);
+          this.errorMessage.set('Registration failed: User already exists');
           break;
 
         case ResponseStatus.ERR_CONNECTION:

@@ -72,15 +72,20 @@ export class Login implements OnInit {
           this.showError.set(false);
           this.errorMessage.set('');
           break;
-        case ResponseStatus.FAILURE:
+        case ResponseStatus.INVALID_CREDENTIALS:
           this.showError.set(true);
           this.loginForm.reset();
-          this.errorMessage.set('Login failed');
+          this.errorMessage.set('Login failed: Invalid credentials');
+          break;
+        case ResponseStatus.INVALID_DATA:
+          this.showError.set(true);
+          this.loginForm.reset();
+          this.errorMessage.set('Login failed: Invalid data');
           break;
         case ResponseStatus.ERR_CONNECTION:
           this.showError.set(true);
           this.loginForm.reset();
-          this.errorMessage.set('Usuario/mail o contraseña incorrectos');
+          this.errorMessage.set('Login failed: Connection error');
           break;
       }}
     );
