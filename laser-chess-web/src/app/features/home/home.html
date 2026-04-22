@@ -34,39 +34,65 @@
             <img src="assets/tablero-placeholder.png">
         </div>
         <div class="game-selection">
-            <button class="icon-btn" type="button" aria-label="Notificaciones" (click)="popUPNotis.set(true)">
+
+        <div class="notif-elo-container">
+          <button class="icon-btn icon-notif" type="button" aria-label="Notificaciones" (click)="popUPNotis.set(true)">
+              @if (solicitudes().length > 0) {
                 <span class="notification-badge">{{ solicitudes().length }}</span>
-            </button>
-            <button class="time-selector" type="button" aria-label="Cambiar modo de tiempo">
-                <img class="time-icon" src="assets/icons/timer-icon.png" alt="" />
-                <span class="time-label">{{ timeModeLabel }}</span>
-            </button>
-        
-        
-            <div class="bottom-row">
-                <div class="rank-card">
-                    <div class="rank-badge">Rango</div>
-                    <div class="rank-progress">
-                        <div class="rank-bar">
-                            <div class="rank-fill"></div> <!-- habrá que implementarla y darle estilo -->
-                        </div>
-                        <div class="rank-points">
-                            {{ rankedPoints }}
-                            <img src="assets/icons/elo-icon.png" class="elo-icon" alt="">
-                        </div>
-                    </div>
-                </div>
-                <div style="flex: row">
-                    <a class="play-btn" routerLink="/game" aria-label="Jugar partida">
-                        JUGAR
-                    </a>
-                    <button class="mode-btn" type="button" aria-label="Elegir modo">
-                        <img class="icon icon-mode" src="assets/icons/ranked-icon.png" alt="" />
-                    </button>
-                </div>
+              }
+              <mat-icon fontSet="material-symbols-outlined">all_inbox</mat-icon>
+          </button>
+
+          <!-- Lo del elo -->
+          <div class="elo-badge-container">
+            <div class="elo-text-wrapper">
+              <span class="elo-rank-name">{{ eloRankName }}</span>
             </div>
+
+            <div class="elo-circle-wrapper">
+              <svg class="progress-ring" viewBox="0 0 120 120">
+                <circle class="progress-ring-track" cx="60" cy="60" r="46" stroke-width="12"/>
+                <circle class="progress-ring-value" cx="60" cy="60" r="46" stroke-width="12"
+                        [attr.stroke-dashoffset]="eloDashOffset"/>
+              </svg>
+              <mat-icon class="elo-icon-inner" fontSet="material-symbols-outlined">
+                masked_transitions_add
+              </mat-icon>
+            </div>
+          </div>
         </div>
+
+
+        <div class="bottom-row">
+            <button class="setting-selector" type="button" aria-label="Cambiar modo de tiempo">
+                <div class="setting-content">
+                    <mat-icon style="--icon-color: var(--LCBlue)" fontSet="material-symbols-outlined">timer</mat-icon>
+                    <span class="setting-label">{{ timeModeLabel }}</span>
+                </div>
+                <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
+            </button>
+
+            <button class="setting-selector" type="button" aria-label="Cambiar tablero">
+                <div class="setting-content">
+                    <mat-icon style="--icon-color: var(--LCRed)" fontSet="material-symbols-outlined">grid_view</mat-icon>
+                    <span class="setting-label">Tablero</span>
+                </div>
+                <mat-icon fontSet="material-symbols-outlined">crossword</mat-icon>
+            </button>
+        </div>
+
+        <div class="play-group">
+            <a class="play-btn" routerLink="/game">
+                PLAY
+            </a>
+            <button class="trophy-btn" type="button" aria-label="Trofeo">
+                <mat-icon fontSet="material-symbols-outlined">emoji_events</mat-icon>
+            </button>
+        </div>
+
     </div>
+    </div>
+
 
 
 </section>

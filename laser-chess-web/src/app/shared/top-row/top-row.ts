@@ -64,7 +64,6 @@ export class TopRow implements OnInit {
   }
 
   openProfile() {
-    this.loadMyData(); // Recargar por si acaso
     this.showProfilePopup.set(true);
   }
 

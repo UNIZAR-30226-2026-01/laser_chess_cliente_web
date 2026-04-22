@@ -5,21 +5,23 @@ import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { Websocket } from '../../model/remote/websocket';
 import { Remote } from '../../model/remote/remote';
 import { GameState } from '../../model/remote/game-state'
+import { MatIcon } from '@angular/material/icon';
 
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, TopRow],
+  imports: [RouterLink, TopRow, MatIcon],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
-  username = 'User';
-  pictureURL = '/assets/picture.jpeg';
   timeModeLabel = 'Modo de tiempo';
   boardPreviewUrl = '/assets/picture.jpeg';
-  coins = 1234;
-  rankedPoints = 1234;
+
+  eloDashOffset: number = 276.46;
+  eloRankName: string = 'PROTON · II';
+  rankedPoints: number = 1234;
+
   popUPNotis = signal(false);
   solicitudes = signal<ChallengeResume[]>([]);
   private websocket = inject(Websocket);
@@ -28,24 +30,30 @@ export class Home {
 
   private gameState = inject(GameState);
 
-  
+
 
   ngOnInit() {
     // Aquí podrías cargar las solicitudes iniciales si quieres
     this.websocket.checkAndReconnect();
-    this.loadFriends();     
+    this.loadFriends();
+    this.getEloProgress();
   }
-  
+
   ngOnDestroy(): void {
-    this.wsSubscription?.unsubscribe(); 
+    this.wsSubscription?.unsubscribe();
   }
 
-
+  getEloProgress() {
+    // Por ahora se pone un placeholder, pero habrá que calcularlo
+    const porcentaje = 65;
+    const circunferencia = 289.02;
+    this.eloDashOffset = circunferencia - (porcentaje / 100) * circunferencia;
+  }
 
   loadFriends(): void {
       this.notificationService.checkSolicitudes().subscribe({
         next: (data : ChallengeResume[]) => {
-        this.solicitudes.set(data);          
+        this.solicitudes.set(data);
         console.log('Solicitudes cargadas:', this.solicitudes);
         },
         error: (err : any) => {
@@ -53,7 +61,7 @@ export class Home {
         }
       });
     }
-  
+
 
   accept(reto: ChallengeResume) {
     const endpoint = 'challenge/accept';
