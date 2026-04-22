@@ -32,7 +32,12 @@ describe('Login', () => {
     };
 
     const notificationSpy = { setupAfterLogin: vi.fn() };
-    const remoteSpy = { getAccountId: vi.fn().mockReturnValue('123') };
+    const remoteSpy = {
+      getAccessToken: vi.fn().mockReturnValue(null),
+      isTokenExpired: vi.fn().mockReturnValue(true),
+      getAccountId: vi.fn().mockReturnValue(null),
+      autoLogin: vi.fn().mockReturnValue(of(false))
+    };
 
     await TestBed.configureTestingModule({
       imports: [Login],

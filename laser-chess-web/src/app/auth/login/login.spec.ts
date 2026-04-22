@@ -4,15 +4,22 @@ import { AuthRepository } from '../../repository/auth-repository';
 import { NotificationService } from '../../model/notifications/notification';
 import { Remote } from '../../model/remote/remote';
 import { provideRouter } from '@angular/router'; 
+import { of } from 'rxjs';
+import { ResponseStatus } from '../../model/auth/ResponseStatus';
 
 describe('Login', () => {
   let component: Login;
   let fixture: ComponentFixture<Login>;
 
   beforeEach(async () => {
-    const authRepoMock = {} as AuthRepository;
-    const notificationMock = {} as NotificationService;
-    const remoteMock = {} as Remote;
+    const authRepoMock = { login: () => of(ResponseStatus.SUCCESS) };
+    const notificationMock = {setupAfterLogin: () => {} };
+    const remoteMock = {
+      getAccessToken: () => null,              
+      isTokenExpired: () => true,             
+      getAccountId: () => null,                
+      autoLogin: () => of(false)
+    };
 
     await TestBed.configureTestingModule({
       imports: [Login],
@@ -26,6 +33,7 @@ describe('Login', () => {
 
     fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 
