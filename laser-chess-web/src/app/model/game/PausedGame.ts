@@ -1,4 +1,5 @@
 export interface PausedGame {
+	id: number
 	p1_id: number
 	p2_id: number
 	p1_elo: number

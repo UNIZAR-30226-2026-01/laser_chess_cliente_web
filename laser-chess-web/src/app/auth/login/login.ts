@@ -9,6 +9,7 @@ import { ResponseStatus } from '../../model/auth/ResponseStatus';
 import { Remote } from '../../model/remote/remote';
 import { NotificationService } from '../../model/notifications/notification';
 import { RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 
 
@@ -30,6 +31,8 @@ export class Login implements OnInit {
   private remote = inject(Remote);
   public showError = signal(false);
   public errorMessage = signal('');
+  private route = inject(ActivatedRoute);
+  returnUrl: string = '/home';  
 
   ngOnInit() {
     // access_token valido, vamos directo al home
@@ -39,7 +42,8 @@ export class Login implements OnInit {
       if (userId) {
         this.notificationService.setupAfterLogin(userId);
       }
-      this.router.navigate(['/home']);
+      this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+      this.router.navigateByUrl(this.returnUrl);
     } else {
       // Si no, intentamos recuperar la sesión con el refresh_token
       this.remote.autoLogin().subscribe({
@@ -49,7 +53,8 @@ export class Login implements OnInit {
             if (userId) {
               this.notificationService.setupAfterLogin(userId);
             }
-            this.router.navigate(['/home']);
+            this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+            this.router.navigateByUrl(this.returnUrl);
           }
         },
         error: () => {
@@ -95,7 +100,8 @@ export class Login implements OnInit {
           if (userId) {
             this.notificationService.setupAfterLogin(userId);
           }
-          this.router.navigate(['home']);
+          this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+          this.router.navigateByUrl(this.returnUrl);
           this.showError.set(false);
           this.errorMessage.set('');
           break;

@@ -20,6 +20,7 @@ import { ChallengeResume } from '../game/ChallengeResume';
 import { XpInfo } from '../user/ProfileCardData';
 
 import { AllRatingsDTO } from '../rating/AllRatingsDTO';
+import { PausedGame } from '../game/PausedGame';
 
 
 
@@ -368,6 +369,17 @@ export class Remote {
               throw new Error('Error');
           })
       );;
+  }
+
+  getPausedGame():  Observable<PausedGame[]> {
+    return this.http.get<PausedGame[]>(`${API_URL}/api/match/history/${this.accountId}/paused`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting paused games :', err);
+        throw new Error('Error');
+      })
+    );
   }
 
 

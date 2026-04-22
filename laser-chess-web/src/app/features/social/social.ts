@@ -12,6 +12,9 @@ import { FormsModule } from '@angular/forms';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { FriendRespository } from '../../repository/friend-respository';
 import { GameState } from '../../model/remote/game-state'
+import { PausedGame } from '../../model/game/PausedGame';
+import { GameRepository } from '../../repository/game-repository';
+import { UserRespository } from '../../repository/user-respository';
 
 @Component({
   selector: 'app-social',
@@ -39,11 +42,15 @@ export class Social  {
   friends = signal<FriendSummaryExtended[]>([]); // Lista de amigos del usuario
   request = signal<FriendSummary[]>([]); 
   sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
-
+  partidas= signal<PausedGame[]>([]); // Lista de partidas pausadas
 
   private friendService = inject(FriendRespository);
+  private userService = inject(UserRespository);
+  private gameState = inject(GameState);
+  gameRepo = inject(GameRepository);
   private router = inject(Router);
   public friendsInfo = signal(false);
+  public gameInfo = signal(false);
   public requestInfo = signal(false);
   public popUP_userInfo = signal(false);
   public selectedUser = signal<FriendSummaryExtended | null> (null);
@@ -65,7 +72,9 @@ export class Social  {
   public friendToChallenge: FriendSummary | null = null;
   public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
 
-  private gameState = inject(GameState);
+  id = this.userService.getId(); // Para guardar el ID de la partida a retomar si venimos de una partida pausada
+
+  
 
   
   // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
@@ -216,9 +225,9 @@ export class Social  {
   }
   
   //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
-  resumeGame(gameId?: string) {
+  resumeGame(gameId: number) {
     console.log('Retomando partida...');
-    this.router.navigate(['/game']); 
+    this.sendChallenge(gameId); // Iniciar la partida con el ID específico
   }
 
   //Cargar lista de amigos
@@ -435,19 +444,22 @@ export class Social  {
 
 
   // Inciiar a una partida amistosa DESAFIAR
-  sendChallenge(): void {
+  sendChallenge( id: number | null): void {
     if (!this.friendToChallenge) return;
 
     const board = this.selectedBoard();
     const { startingTime, timeIncrement } = this.getChallengeParams();
 
     const endpoint = 'challenge';
+    
     const params = {
-      username: this.friendToChallenge.username,
-      board,
-      starting_time: startingTime,
-      time_increment: timeIncrement
-    };
+        username: this.friendToChallenge.username,
+        board,
+        starting_time: startingTime,
+        time_increment: timeIncrement,
+        match_id: id
+      };
+    
     this.gameState.startingTime.set(startingTime * 1000);
     this.gameState.increment.set(timeIncrement);
     this.gameState.nombreRival.set(this.friendToChallenge.username);
@@ -464,10 +476,24 @@ export class Social  {
   challengeFriend(friendUsername: string): void {
     const friend = this.friends().find(f => f.username === friendUsername);
     if (friend) {
-      this.openChallengeConfig(friend);   // Abre
+      this.openChallengeConfig(friend);   
     } else {
       console.error('Amigo no encontrado');
     }
   }
+
+  cargarPartidas(){
+      this.gameRepo.getPausedGame().subscribe({
+        next: (data: PausedGame[]) => {
+          console.log('Partidas cargadas:', data);
+          this.partidas.set(data);
+          this.gameInfo.set(true);
+        },
+        error: (error:any) => {
+          console.error('Error al cargar partidas:', error);
+        }
+    });
+    
+    }
 
 }

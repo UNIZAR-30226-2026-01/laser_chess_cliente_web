@@ -39,6 +39,7 @@ export const routes: Routes = [
       { path: 'settings', component: Settings },
       { path: 'history', component: History },
       { path: 'profile', component: Profile },
+      { path: 'profile/:id', component: Profile },
       { path: 'shop', component: Shop },
       { path: 'customize', component: Customize },
       { path: 'social', component: Social },
