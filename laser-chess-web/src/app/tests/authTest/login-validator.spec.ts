@@ -172,8 +172,8 @@ describe('Login', () => {
     expect(component.errorMessage()).toBe('');
   });
 
-  it('debería mostrar error "Login failed" y resetear formulario si el status es FAILURE', () => {
-    authRepoSpy.login.mockReturnValue(of(ResponseStatus.FAILURE));
+  it('debería mostrar error "Login failed" y resetear formulario si el status es INVALID_CREDENTIALS', () => {
+    authRepoSpy.login.mockReturnValue(of(ResponseStatus.INVALID_CREDENTIALS));
 
     component.loginForm.setValue({
       credential: 'usuario',
