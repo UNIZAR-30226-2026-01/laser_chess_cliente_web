@@ -1,52 +1,21 @@
-<app-top-row></app-top-row>
-
 <div class="shop-container">
-
-  @for (section of sections(); track section.title; let i = $index) {
-    
+  @for (section of sections$ | async; track section.title) {
     <div class="shop-section">
-
-      <h2 class="section-title">{{ section.title }}</h2>
-
-      <div class="carousel-wrapper">
-
-        <button class="arrow left"
-                (click)="scrollLeft(scrollContainer)">
-          ◀
-        </button>
-
-        <div class="items-container" #scrollContainer>
-          
-          @for (item of section.items; track item.id) {
-            <div class="shop-card" [class.owned]="item.owned">
-
-              <img [src]="item.icon" />
-
-              <div class="name">{{ item.name }}</div>
-
-              <div class="price">
-                {{ item.price }} 🪙
-              </div>
-            @if(!item.owned){
-              <button class="buy-btn">
-                Comprar
-              </button>
-            }@else{
-              <div class="owned-label">
-                Poseído
-              </div>
+      <h2>{{ section.title }}</h2>
+      <div class="items-grid">
+        @for (item of section.items; track item.id) {
+          <div class="shop-card" [class.owned]="item.owned">
+            <div class="icon">{{ item.icon }}</div>
+            <div class="name">{{ item.name }}</div>
+            <div class="price"> {{ item.price }}</div>
+            <div class="requirement"> Nivel {{ item.levelRequisite }}</div>
+            @if (!item.owned) {
+              <button (click)="buyItem(item)" [disabled]="!canBuy(item)">Comprar</button>
+            } @else {
+              <span class="owned-badge">✔️ Propio</span>
             }
-            </div>
-          }
-
-        </div>
-
-        <!-- RIGHT ARROW -->
-        <button class="arrow right"
-                (click)="scrollRight(scrollContainer)">
-          ▶
-        </button>
-
+          </div>
+        }
       </div>
     </div>
   }

@@ -22,6 +22,7 @@ import { XpInfo } from '../user/ProfileCardData';
 import { AllRatingsDTO } from '../rating/AllRatingsDTO';
 import { GameResume } from '../game/GameResume';
 
+import { ShopItemDTO } from '../shop/ShopItemDTO';
 
 
 @Injectable({
@@ -324,6 +325,54 @@ export class Remote {
   }
 
 
+  //---------------------------------------------------------------------------------------------
+  //
+  // ENDPOINTS PARA LA SHOP 
+  //
+  //---------------------------------------------------------------------------------------------
+
+  // Obtener todos los ítems disponibles en la tienda
+  listShopItems(): Observable<ShopItemDTO[]> {
+    return this.http.get<ShopItemDTO[]>(`${API_URL}/api/item/all`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err) => {
+        console.error('Error al obtener la tienda', err);
+        return throwError(() => new Error('No se pudo cargar la tienda'));
+      })
+    );
+  }
+
+  // Obtener los ítems que ya tiene el usuario
+  getUserItems(): Observable<ShopItemDTO[]> {
+    return this.http.get<ShopItemDTO[]>(`${API_URL}/api/item/inventory`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err) => {
+        console.error('Error al obtener tus ítems', err);
+        return throwError(() => new Error('No se pudieron cargar tus ítems'));
+      })
+    );
+  }
+
+  // Comprar un ítem 
+  purchaseItem(itemId: number): Observable<void> {
+    const body = { item_id: itemId };
+    return this.http.post<void>(`${API_URL}/api/item`, body, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` },
+      observe: 'body'
+    }).pipe(
+      catchError((err) => {
+        console.error('Error al comprar ítem', err);
+        let message = 'Error al comprar';
+        if (err.status === 400) message = 'Solicitud incorrecta';
+        if (err.status === 402) message = 'No tienes suficiente dinero';
+        if (err.status === 403) message = 'No alcanzas el nivel requerido';
+        if (err.status === 404) message = 'Ítem no encontrado';
+        return throwError(() => new Error(message));
+      })
+    );
+  }
 
 
   //---------------------------------------------------------------------------------------------
