@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { FriendRespository } from '../../repository/friend-respository';
 import { GameState } from '../../model/remote/game-state'
-import { PausedGame } from '../../model/game/PausedGame';
+import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
 
@@ -42,7 +42,7 @@ export class Social  {
   friends = signal<FriendSummaryExtended[]>([]); // Lista de amigos del usuario
   request = signal<FriendSummary[]>([]); 
   sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
-  partidas= signal<PausedGame[]>([]); // Lista de partidas pausadas
+  partidas= signal<GameResume[]>([]); // Lista de partidas pausadas
 
   private friendService = inject(FriendRespository);
   private userService = inject(UserRespository);
@@ -353,14 +353,22 @@ export class Social  {
   // Aceptar solicitud de amistad
   acceptRequest(requestUsername: string) {
     if (!requestUsername) return;
+
+    //Actualizacion Optimista (Hace lo mismo que el codigo de dentro del else pero aqui funciona y ahi no)
+    const currentRequests = this.request();
+    const updatedRequests = currentRequests.filter(req => req.username !== requestUsername);
+    this.request.set(updatedRequests);
+
     this.friendService.acceptRequest(requestUsername).subscribe({
         next: (result) => {
           if (!result) {
             console.warn('Error al aceptar solicitud');
           }else{
             console.log('Solicitud de amistad aceptada:', requestUsername);
+            this.request.set(this.request().filter(req => req.username !== requestUsername)); //Actualizacion Optimista (Arquitectura Software :3)
             // Recargar la lista de amigos
             this.refreshSocialState();
+            this.popUP_request.set(false);
           }
         },
         error: (err: any) => {
@@ -371,15 +379,15 @@ export class Social  {
 
   rejectRequest(requestUsername: string) {
     if (!requestUsername) return;
-     console.log('Solicitud de amistad rechazada:', requestUsername);
+    console.log('Solicitud de amistad rechazada:', requestUsername);
 
     // DeleteFriend porq tmb sirve y hayy q avanzar
     this.friendService.deleteFriend(requestUsername).subscribe({
       next: (result) => {
         if (result) {
           console.log('Solicitud de amistad rechazada correctamente');
-          // Eliminar la solicitud de la lista local
-          this.request.set(this.request().filter(req => req.username !== requestUsername));
+          // Eliminar la solicitud de la lista local 
+          this.request.set(this.request().filter(req => req.username !== requestUsername)); //Actualizacion Optimista (Arquitectura Software :3)
           this.refreshSocialState();
 
           // Si no quedan solicitudes, cerrar el pop-up
@@ -484,7 +492,7 @@ export class Social  {
 
   cargarPartidas(){
       this.gameRepo.getPausedGame().subscribe({
-        next: (data: PausedGame[]) => {
+        next: (data: GameResume[]) => {
           console.log('Partidas cargadas:', data);
           this.partidas.set(data);
           this.gameInfo.set(true);

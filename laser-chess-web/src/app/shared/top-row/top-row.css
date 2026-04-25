@@ -123,8 +123,10 @@
 
 .level-and-xp {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .level-text {

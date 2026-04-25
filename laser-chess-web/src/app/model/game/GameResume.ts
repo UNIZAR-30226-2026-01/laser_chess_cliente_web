@@ -1,4 +1,4 @@
-export interface PausedGame {
+export interface GameResume {
 	id: number
 	p1_id: number
 	p2_id: number

@@ -16,7 +16,8 @@
           </button>
         }
       </div>
-
+      
+      <div class="ranking-content">
       <!-- Estado de carga -->
       @if (loading()) {
         <div class="loading-state">
@@ -44,12 +45,29 @@
             </thead>
             <tbody>
               @for (player of topPlayers(); track player.userId; let i = $index) {
-                <tr (click)="openUserInfo(player)">
-                  <td class="rank">{{ i + 1 }}</td>
+                <tr (click)="openUserInfo(player)"
+                    [class.sticky-user-row]="userInfo()?.position === (i + 1) && userInfo()!.position > 10">
+                  <td class="rank">
+                    <div class="medal" 
+                        [class.gold]="i === 0" 
+                        [class.silver]="i === 1" 
+                        [class.bronze]="i === 2">
+                      {{ i + 1 }}
+                    </div>
+                  </td>
                   <td class="username">{{ player.username }}</td>
                   <td class="elo">{{ player.elo }}</td>
                 </tr>
               }
+
+              @if (userInfo() && userInfo()!.position > topPlayers().length) {
+                <tr class="sticky-user-row">
+                  <td class="rank">{{ userInfo()!.position }}</td>
+                  <td class="username">Tú</td>
+                  <td class="elo">{{ userInfo()!.elo }}</td>
+                </tr>
+              }
+
               @if (topPlayers().length === 0) {
                 <tr>
                   <td colspan="3" class="empty-table">No hay jugadores en el ranking</td>
@@ -59,23 +77,88 @@
           </table>
         </div>
       }
-
-      <!-- Posicion del user -->
-      @if (userInfo() && !loading() && !error()) {
-        <div class="user-rank-card">
-          <div class="user-rank-info">
-            <span class="rank-label">Tu posición en {{ selectedEloType() | uppercase }}:</span>
-            <span class="rank-value">#{{ userInfo()!.position }}</span>
-            <span class="elo-label">ELO:</span>
-            <span class="elo-value">{{ userInfo()!.elo }}</span>
-          </div>
-        </div>
-      }
-
     </div>
   </div>
 
+  <!-- Popup para configurar el reto -->
+  @if(showConfigPopup()) {
+    <div class="overlay" (click)="closeConfigPopup()">
+      <div class="popup-challenge" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h2>Configurar reto contra {{ friendToChallenge?.username }}</h2>
+          <button class="close-button" (click)="closeConfigPopup()">✕</button>
+        </div>
+        <div class="popup-content">
+          
+          <!-- Selección de tablero -->
+          <div class="param-row">
+            <label>Tablero:</label>
+            <select [(ngModel)]="selectedBoard" class="form-control">
+              @for (board of boards; track board.id) {
+                <option [value]="board.id">{{ board.name }}</option>
+              }
+            </select>
+          </div>
+          
+          <!-- Selección de modo de tiempo -->
+          <div class="param-row">
+            <label>Modo de tiempo:</label>
+            <select [ngModel]="selectedMode()" (ngModelChange)="onModeChange($event)" class="form-control">
+              @for (mode of timeModes; track mode.id) {
+                <option [ngValue]="mode">{{ mode.label }}</option>
+              }
+            </select>
+          </div>
 
+          @if (selectedMode().id !== 'custom') {
+            <div class="param-row">
+              <label>Tiempo base:</label>
+              <span class="readonly-value">{{ selectedMode().baseSeconds / 60 }} minutos</span>
+            </div>
+            <div class="param-row">
+              <label>Incremento por jugada:</label>
+              <select [(ngModel)]="selectedIncrement" class="form-control">
+                @for (inc of selectedMode().increments; track inc) {
+                  <option [value]="inc">+{{ inc }} segundos</option>
+                }
+              </select>
+            </div>
+          } @else {
+            <div class="param-row">
+              <label>Duración (minutos, máx 180):</label>
+              <input type="number" [(ngModel)]="customMinutes" min="1" max="180" class="form-control">
+            </div>
+            <div class="param-row">
+              <label>Incremento por jugada (segundos, máx 60):</label>
+              <input type="number" [(ngModel)]="customIncrementSec" min="0" max="60" class="form-control">
+            </div>
+          }
+
+          <div class="challenge-actions">
+            <button class="btn-cancel" (click)="closeConfigPopup()">Cancelar</button>
+            <button class="btn-challenge-popup" (click)="sendChallenge()">Desafiar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Popup de espera -->
+  @if(popUP_waiting()) {
+    <div id="overlay" class="overlay" (click)="cancelWaiting()">
+      <div class="popup-waiting" (click)="$event.stopPropagation()">
+        <div class="popup-header">
+          <h2>Esperando respuesta</h2>
+          <button class="close-button" (click)="cancelWaiting()">✕</button>
+        </div>
+        <div class="popup-content waiting-content">
+          <p>Enviando reto... Esperando que el oponente acepte.</p>
+          <div class="spinner"></div>
+          <button class="btn-cancel-waiting" (click)="cancelWaiting()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Pop-up de info -->
     @if (popUP_userInfo() && selectedUser()) {
@@ -120,6 +203,7 @@
             
             <div class="user-actions-popup">
             @if (selectedUserContext() === 'friend') {
+                <button class="btn-challenge-popup" (click)="challengeFromPopup()">Retar</button>
                 <button class="btn-delete-popup" (click)="deleteFriend()">Eliminar amigo</button>
             } @else if (selectedUserContext() === 'sent_request') {
                 <button class="btn-cancel" (click)="cancelFriendRequest()">Cancelar solicitud</button>

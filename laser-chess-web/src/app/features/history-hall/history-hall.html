@@ -1,0 +1,30 @@
+<app-top-row></app-top-row>
+<ul class="game-list">
+          @if (!partidas()){
+            <p>No hay historial de partidas</p>
+          } @else if (partidas.length === 0) {
+            <p>No hay historial de partidas</p>
+          } @else {
+            <!-- Aquí se listan las partidas pausadas -->
+            @for(game of partidas(); track game) {
+              <li class="game-item">
+                  <div class="player">
+                    <span class="name">Yo</span>
+                    <span class="time">10:50</span>
+                  </div>
+                  <div class="vs">VS</div>
+                  <div class="player">
+                    <span class="name">Usuario1</span>
+                    <span class="time">10:30</span>
+                  </div>
+                  <div class="details">
+                    <span>Modo_tiempo</span>
+                    <span>Tablero</span>
+                  </div>
+                  <button class="btn-play" (click)="visualidaPartida(game)">RETOMAR</button>
+              </li>
+            }
+          
+          
+        }
+        </ul>

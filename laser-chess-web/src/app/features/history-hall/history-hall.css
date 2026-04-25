@@ -1,0 +1,33 @@
+.user-list, .game-list {
+  list-style: none;
+  padding: 0;
+  border: 0.2rem solid var(--S3);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.user-item, .game-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-bottom: 0.2rem solid var(--S2);
+  box-sizing: border-box;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.user-item:last-child, .game-item:last-child {
+  border-bottom: none;
+}
+
+/* Para los botones de iniciar amistosa y borrar */
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
+}

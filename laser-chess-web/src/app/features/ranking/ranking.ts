@@ -15,6 +15,10 @@ import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { Remote } from '../../model/remote/remote';
 
 
+import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
+import { GameState } from '../../model/remote/game-state'
+
+
 @Component({
   selector: 'app-ranking',
   imports: [CommonModule, FormsModule, TopRow],
@@ -58,6 +62,45 @@ export class Ranking implements OnInit {
   public friends = signal<FriendSummary[]>([]);
   public sentRequests = signal<FriendSummary[]>([]);
 
+
+
+  //PARA LA CONFIGURACION DE LA PARTIDA
+    // Popup de configuración de las partidas
+    public showConfigPopup = signal(false);
+    public friendToChallenge: FriendSummary | null = null;
+    public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
+  
+    private gameState = inject(GameState);
+  
+    
+    // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
+    public timeModes = [
+      { id: 'blitz', label: 'Blitz', baseSeconds: 300, increments: [0, 2, 5] },
+      { id: 'rapid', label: 'Rapid', baseSeconds: 900, increments: [0, 5, 10] },
+      { id: 'classic', label: 'Classic', baseSeconds: 1800, increments: [0, 10, 15] },
+      { id: 'extended', label: 'Extended', baseSeconds: 3600, increments: [0, 15, 20] },
+      { id: 'custom', label: 'Personalizado', baseSeconds: null, increments: null }
+    ];
+    public boards = [
+      { id: 1, name: 'ACE' },
+      { id: 2, name: 'CURIOSITY' },
+      { id: 3, name: 'GRAIL' },
+      { id: 4, name: 'MERCURY' },
+      { id: 5, name: 'SOPHIE' }
+    ];
+    public selectedBoard = signal<number>(1); // ACE por defecto
+    public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
+    public selectedIncrement = signal<number>(0); // incremento en segundos
+    
+  
+    // Solo para modo personalizado
+    public customMinutes = signal<number>(5);
+    public customIncrementSec = signal<number>(0);
+  
+    //WEBSOCKET
+    public popUP_waiting = signal(false);// Para el nuevo pop-up del ESPERANDO
+    private websocket = inject(Websocket);// Para meter el websocket en social
+    private wsSubscription: any;//Para limpiar la sub del socket despues
 
 
   ngOnInit(): void {
@@ -270,6 +313,103 @@ export class Ranking implements OnInit {
       },
       error: (err) => console.error('Error al eliminar amigo:', err)
     });
+  }
+
+
+
+  //Se me olvidó que a un amigo se le puede  retar a una partida privada
+  challengeFromPopup() {
+    const user = this.selectedUser();  // Guardar ANTES MUY IMPORTANTE SIN esto no van las privadas
+    if (user) {
+      this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual 
+      this.openChallengeConfig(user);
+    }
+  }
+
+  // Abre el popup al hacer clic en Retar
+  openChallengeConfig(friend: FriendSummaryExtended): void {
+    this.friendToChallenge = friend;
+    this.selectedBoard.set(1);   
+    this.selectedMode.set(this.timeModes[0]);
+    this.selectedIncrement.set(0);
+    this.customMinutes.set(5);
+    this.customIncrementSec.set(0);
+    this.showConfigPopup.set(true);
+  }
+
+
+  // Cierra el popup
+  closeConfigPopup(): void {
+    this.showConfigPopup.set(false);
+    this.friendToChallenge = null;
+  }
+
+  // Para cambair el modo de tiempo y ajustar el incremento de tempo
+  onModeChange(mode: any): void {
+    this.selectedMode.set(mode);
+    if (mode.id !== 'custom') {
+      // Restablecer a primer incremento disponible
+      this.selectedIncrement.set(mode.increments[0]);
+    }
+  }
+
+  // Parámetros finales según el modo seleccionado
+  getChallengeParams(): { startingTime: number, timeIncrement: number } {
+    const mode = this.selectedMode();
+    if (mode.id === 'custom') {
+      let minutes = this.customMinutes();
+      if (minutes > 180) minutes = 180;
+      if (minutes < 1) minutes = 1;
+      let inc = this.customIncrementSec();
+      if (inc > 60) inc = 60;
+      if (inc < 0) inc = 0;
+      return { startingTime: minutes * 60, timeIncrement: inc };
+    } else {
+      return { startingTime: mode.baseSeconds, timeIncrement: this.selectedIncrement() };
+    }
+  }
+
+
+
+  // Inciiar a una partida amistosa DESAFIAR
+  sendChallenge(): void {
+    if (!this.friendToChallenge) return;
+
+    const board = this.selectedBoard();
+    const { startingTime, timeIncrement } = this.getChallengeParams();
+
+    const endpoint = 'challenge';
+    const params = {
+      username: this.friendToChallenge.username,
+      board,
+      starting_time: startingTime,
+      time_increment: timeIncrement
+    };
+    this.gameState.startingTime.set(startingTime * 1000);
+    this.gameState.increment.set(timeIncrement);
+    this.gameState.nombreRival.set(this.friendToChallenge.username);
+    console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
+
+    this.websocket.initConnection(endpoint, params);
+    
+
+    this.closeConfigPopup(); 
+    this.popUP_waiting.set(true);
+  }
+
+  // Esto es para mostrar el pop-up
+  challengeFriend(friendUsername: string): void {
+    const friend = this.friends().find(f => f.username === friendUsername);
+    if (friend) {
+      this.openChallengeConfig(friend);   // Abre
+    } else {
+      console.error('Amigo no encontrado');
+    }
+  }
+
+  cancelWaiting(): void {
+    this.websocket.close();
+    this.popUP_waiting.set(false);
   }
 
 }
