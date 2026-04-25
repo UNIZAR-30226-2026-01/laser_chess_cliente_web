@@ -68,4 +68,6 @@ export class Home {
     this.popUPNotis.set(false);
 
   }
+
+  solicitarPartida(){}
 }
