@@ -46,7 +46,7 @@
             <tbody>
               @for (player of topPlayers(); track player.userId; let i = $index) {
                 <tr (click)="openUserInfo(player)"
-                    [class.sticky-user-row]="userInfo()?.position === (i + 1) && userInfo()!.position > 10">
+                    [class.sticky-user-row]="userInfo()?.position === (i + 1)">
                   <td class="rank">
                     <div class="medal" 
                         [class.gold]="i === 0" 

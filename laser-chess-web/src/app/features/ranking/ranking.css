@@ -4,7 +4,34 @@ width: 100%;
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden; 
+  overflow: hidden;
+  position: relative; 
+}
+
+.page::before{
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+
+  background-image: url(../../../../../laser-chess-web/public/assets/vector-art/Backgrounds/BG-Soretro.svg);
+  background-size: 960px;
+  background-repeat: repeat;
+  animation: moveBackground 30s linear infinite;
+
+  filter: blur(4px);
+}
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 960px 540px; 
+  }
 }
 
 
@@ -15,7 +42,8 @@ width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0; 
+  min-height: 0;
+  padding: clamp(1rem, 2vw, 2rem);
 }
 
 .ranking-content {
@@ -27,8 +55,8 @@ width: 100%;
 }
 
 .folder-body {
-padding: clamp(1rem, 2vw, 2rem);
-  margin-top: 0;
+  padding: 5px;
+  margin-top: 1rem;
   background: var(--LCBG);
   position: relative;
   box-sizing: border-box;
@@ -101,7 +129,7 @@ padding: clamp(1rem, 2vw, 2rem);
   background-color: var(--S1);
   border-collapse: separate;
   border-spacing: 0 0px;
-  font-size: 0.95rem;
+  font-size: var(--LCSmall);
 }
 
 .ranking-table th {
@@ -158,23 +186,28 @@ padding: clamp(1rem, 2vw, 2rem);
 .medal {
   font-weight: bold;
   width: fit-content;
-  padding: 0rem;
-  padding-left: 0.4rem;
-  padding-right: 0.4rem;
-  border-radius: 0.4rem;
+  font-size: var(--LCSmall);
+  padding: 0rem 0.4rem ;
+  border-radius: var(--BorderSmall);
 }
 
 .medal.gold {
-    border: 2px solid var(--LCYellow);
+  font-weight: bolder;
+  color: var(--LCYellow);
+  border: 3px solid var(--LCYellow);
 
 }
 
 .medal.silver {
-    border: 2px solid var(--LCGray);
+    font-weight: bolder;
+    color: rgb(219, 212, 205);
+    border: 3px solid rgb(219, 212, 205);
 }
 
 .medal.bronze {
-     border: 2px solid rgb(185, 109, 38);
+  font-weight: bolder;
+  color: rgb(233, 141, 55);
+  border: 3px solid rgb(233, 141, 55);
 }
 
 .username {
@@ -201,10 +234,23 @@ padding: clamp(1rem, 2vw, 2rem);
     width: 95%;
   }
   .elo-tab {
-    padding: 0.4rem 1rem;
+    padding: 0.1rem 0.5rem;
     font-size: 0.85rem;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: "...";
+    table-layout: fixed;
   }
-  .ranking-table th,
+  .elo-tab.active {
+    min-width: fit-content;
+    white-space: nowrap;
+    overflow: visible;
+
+  }
+  .ranking-table th{
+    padding: 0.2rem;
+  }
   .ranking-table td {
     padding: 0.6rem;
   }
