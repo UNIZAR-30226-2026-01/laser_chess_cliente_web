@@ -1,7 +1,7 @@
 import { Injectable, signal, inject} from '@angular/core';
-import { UserRespository } from '../../repository/user-respository';
-import { Pieza } from '../../shared/pieza/pieza';
-import { PiezaData } from '../game/PiezaData';
+import { UserRespository } from '../repository/user-respository';
+import { Pieza } from '../shared/pieza/pieza';
+import { PiezaData } from '../model/game/PiezaData';
 
 
 @Injectable({

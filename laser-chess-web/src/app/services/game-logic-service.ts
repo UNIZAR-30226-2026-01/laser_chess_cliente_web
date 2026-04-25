@@ -1,21 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Component, signal, OnInit, inject, Input} from '@angular/core';
-import { Pieza } from '../../shared/pieza/pieza';
-import { PiezaData } from '../../model/game/PiezaData';
-import { PiezaRival } from '../../shared/pieza-rival/pieza-rival';
-import { Websocket } from '../../model/remote/websocket'; // Ajusta la ruta
-import { Laser } from '../../shared/laser/laser';
-import { TipoPieza } from '../../model/game/TipoPieza'
-import { MessageGame } from '../../model/game/MessageGame'
-import { SendAction } from '../../model/game/SendAction'
-import { Remote } from '../../model/remote/remote';
+import {  signal, inject} from '@angular/core';
+import { PiezaData } from '../model/game/PiezaData';
+import { Websocket } from '../model/remote/websocket'; // Ajusta la ruta
+import { TipoPieza } from '../model/game/TipoPieza'
+import { MessageGame } from '../model/game/MessageGame'
+import { SendAction } from '../model/game/SendAction'
+import { Remote } from '../model/remote/remote';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { GameState } from '../../model/remote/game-state'
-import { NotificationGame } from '../../shared/notification-game/notification-game'
-import { Board } from '../../shared/board/board';
-import { TimerService } from '../../model/remote/timer-service';
-import { GameUtils } from '../../utils/game-utils';
+import { GameState } from '../utils/game-state'
+import { TimerService } from './timer-service';
+import { GameUtils } from '../utils/game-utils';
 
 
 

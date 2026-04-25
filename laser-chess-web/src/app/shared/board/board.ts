@@ -3,7 +3,7 @@ import { Pieza } from '../../shared/pieza/pieza';
 import { PiezaRival } from '../../shared/pieza-rival/pieza-rival';
 import { Laser } from '../../shared/laser/laser'
 import { PiezaData } from '../../model/game/PiezaData';
-import { GameState } from '../../model/remote/game-state';
+import { GameState } from '../../utils/game-state';
 
 
 @Component({

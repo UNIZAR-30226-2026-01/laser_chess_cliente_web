@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { signal, inject} from '@angular/core';
-import { PiezaData } from '../../model/game/PiezaData';
-import { TipoPieza } from '../../model/game/TipoPieza'
-import { Remote } from '../../model/remote/remote';
-import { GameResume } from '../game/GameResume';
+import { PiezaData } from '../model/game/PiezaData';
+import { TipoPieza } from '../model/game/TipoPieza'
+import { Remote } from '../model/remote/remote';
+import { GameResume } from '../model/game/GameResume';
 import { GameLogicService } from './game-logic-service';
-import { GameUtils } from '../../utils/game-utils';
+import { GameUtils } from '../utils/game-utils';
 
 
 
@@ -120,9 +120,14 @@ export class HistoryService {
     this.movimientos = this.historySelectedGame()?.movement_history.split(';');
     if(this.historySelectedGame()?.p1_id == this.id){
       this.soyAzul.set(false);
+      this.esMiTurno.set(true);
     }else{
       this.soyAzul.set(true);
+      this.esMiTurno.set(false);
     }
+    this.miTiempo.set(this.historySelectedGame()?.time_base || 0);
+    this.tiempoRival.set(this.historySelectedGame()?.time_base || 0);
+
   }
 
   
@@ -208,8 +213,14 @@ export class HistoryService {
 
 
     // Comprobar de quien es el primer movimiento
-    this.miTiempo.set(Number(tiempo));
-    this.tiempoRival.set(Number(tiempo));
+    if(this.esMiTurno()){
+      this.miTiempo.set(Number(tiempo));
+    }else{
+      this.tiempoRival.set(Number(tiempo));
+    }
+    this.esMiTurno.set(!this.esMiTurno());
+
+    
   }
   
 

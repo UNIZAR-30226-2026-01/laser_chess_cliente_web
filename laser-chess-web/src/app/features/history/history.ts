@@ -1,9 +1,9 @@
 import { Component , signal, inject} from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
-import { TimerService } from '../../model/remote/timer-service';
+import { TimerService } from '../../services/timer-service';
 import { Board } from '../../shared/board/board';
-import { GameLogicService } from '../../model/remote/game-logic-service';
-import { HistoryService } from '../../model/remote/history-service';
+import { GameLogicService } from '../../services/game-logic-service';
+import { HistoryService } from '../../services/history-service';
 import { GameUtils } from '../../utils/game-utils';
 
 @Component({

@@ -3,7 +3,7 @@ import { Observable , map, of} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { GameResume } from '../model/game/GameResume';
 import { Remote } from '../model/remote/remote';
-import { HistoryService } from '../model/remote/history-service';
+import { HistoryService } from '../services/history-service';
 @Injectable({
   providedIn: 'root',
 })

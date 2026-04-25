@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { FriendRespository } from '../../repository/friend-respository';
-import { GameState } from '../../model/remote/game-state'
+import { GameState } from '../../utils/game-state'
 import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
@@ -479,7 +479,7 @@ export class Social  {
       };
     }
     
-    this.gameState.startingTime.set(startingTime);
+    this.gameState.startingTime.set(startingTime * 1000);
     this.gameState.increment.set(timeIncrement);
     this.gameState.nombreRival.set(this.friendToChallenge.username);
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );

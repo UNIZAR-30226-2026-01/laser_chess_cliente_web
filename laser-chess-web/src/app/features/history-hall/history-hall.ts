@@ -2,7 +2,7 @@ import { Component, inject , signal} from '@angular/core';
 import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { TopRow } from "../../shared/top-row/top-row";
-import { HistoryService } from '../../model/remote/history-service';
+import { HistoryService } from '../../services/history-service';
 import { Router } from '@angular/router';
 
 

@@ -5,11 +5,11 @@ import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
 import { Remote } from '../../model/remote/remote';
 import { Subscription } from 'rxjs';
-import { GameState } from '../../model/remote/game-state'
+import { GameState } from '../../utils/game-state'
 import { NotificationGame } from '../../shared/notification-game/notification-game'
 import { Board } from '../../shared/board/board';
-import { TimerService } from '../../model/remote/timer-service';
-import { GameLogicService } from '../../model/remote/game-logic-service';
+import { TimerService } from '../../services/timer-service';
+import { GameLogicService } from '../../services/game-logic-service';
 import { GameUtils } from '../../utils/game-utils';
 
 
