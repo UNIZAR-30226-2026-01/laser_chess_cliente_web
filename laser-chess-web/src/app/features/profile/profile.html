@@ -2,6 +2,5 @@
   <app-top-row></app-top-row>
 
   <h2>Perfil de {{ (userProfile$ | async)?.username }}</h2>
-  <p>Email: {{ (userProfile$ | async)?.mail }}</p>
 
-  <button>Solicitar amistad</button>
+  <button (click)="addFriend()">Solicitar amistad</button>

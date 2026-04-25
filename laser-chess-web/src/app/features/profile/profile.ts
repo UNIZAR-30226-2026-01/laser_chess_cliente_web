@@ -53,12 +53,15 @@ export class Profile implements OnInit {
     
   }
 
-  addFriend(username: string) {
-    const request: FriendshipRequest = {
-              receiver_username: username,
+  addFriend() {
+      this.userProfile$.subscribe(profile => {
+        const request: FriendshipRequest = {
+              receiver_username: profile.username,
         };
-    this.friendrService.addFriend(request).subscribe(() => {
-      console.log('Solicitud enviada');
+        this.friendrService.addFriend(request).subscribe(() => {
+          console.log('Solicitud enviada');
+        });
     });
+    
   }
 }
