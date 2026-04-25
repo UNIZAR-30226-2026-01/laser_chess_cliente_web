@@ -7,6 +7,11 @@ import { Login } from '../../auth/login/login';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
 
+
+import { NotificationService } from '../../model/notifications/notification';
+import { Remote } from '../../model/remote/remote';
+
+
 describe('Login', () => {
   let component: Login;
   let fixture: ComponentFixture<Login>;
@@ -26,11 +31,21 @@ describe('Login', () => {
      login: vi.fn(),
     };
 
+    const notificationSpy = { setupAfterLogin: vi.fn() };
+    const remoteSpy = {
+      getAccessToken: vi.fn().mockReturnValue(null),
+      isTokenExpired: vi.fn().mockReturnValue(true),
+      getAccountId: vi.fn().mockReturnValue(null),
+      autoLogin: vi.fn().mockReturnValue(of(false))
+    };
+
     await TestBed.configureTestingModule({
       imports: [Login],
       providers: [
         provideRouter([]),
-        { provide: AuthRepository, useValue: authRepoSpy }//meter el mock
+        { provide: AuthRepository, useValue: authRepoSpy },//meter el mock
+        { provide: NotificationService, useValue: notificationSpy },
+        { provide: Remote, useValue: remoteSpy }
       ]
     }).compileComponents();
 
@@ -162,8 +177,8 @@ describe('Login', () => {
     expect(component.errorMessage()).toBe('');
   });
 
-  it('debería mostrar error "Login failed" y resetear formulario si el status es FAILURE', () => {
-    authRepoSpy.login.mockReturnValue(of(ResponseStatus.FAILURE));
+  it('debería mostrar error "Login failed: Invalid credentials" y resetear formulario si el status es INVALID_CREDENTIALS', () => {
+    authRepoSpy.login.mockReturnValue(of(ResponseStatus.INVALID_CREDENTIALS));
 
     component.loginForm.setValue({
       credential: 'usuario',
@@ -172,13 +187,13 @@ describe('Login', () => {
     component.login();
 
     expect(component.showError()).toBe(true);
-    expect(component.errorMessage()).toBe('Login failed');
+    expect(component.errorMessage()).toBe('Login failed: Invalid credentials');
     expect(component.loginForm.get('credential')?.value).toBeNull();
     expect(component.loginForm.get('password')?.value).toBeNull();
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('debería mostrar error "Usuario/mail o contraseña incorrectos" y resetear formulario si el status es ERR_CONNECTION', () => {
+  it('debería mostrar error "Login failed: Connection error" y resetear formulario si el status es ERR_CONNECTION', () => {
     authRepoSpy.login.mockReturnValue(of(ResponseStatus.ERR_CONNECTION));
 
     component.loginForm.setValue({
@@ -188,7 +203,7 @@ describe('Login', () => {
     component.login();
 
     expect(component.showError()).toBe(true);
-    expect(component.errorMessage()).toBe('Usuario/mail o contraseña incorrectos');
+    expect(component.errorMessage()).toBe('Login failed: Connection error');
     expect(component.loginForm.get('credential')?.value).toBeNull();
     expect(component.loginForm.get('password')?.value).toBeNull();
     expect(router.navigate).not.toHaveBeenCalled();

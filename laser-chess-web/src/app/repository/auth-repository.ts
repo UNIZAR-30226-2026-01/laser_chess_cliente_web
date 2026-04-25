@@ -36,12 +36,25 @@ export class AuthRepository {
             return ResponseStatus.SUCCESS;
   
           } else {
-            return ResponseStatus.FAILURE;
+            return ResponseStatus.INVALID_DATA;
           }
+        
         }),
         catchError((err) => {
           console.error(err);
-          return of(ResponseStatus.ERR_CONNECTION);
+          if(err.status === 401){
+            // El usuario ya existe
+            console.log("Credenciales incorrectas");
+            return of(ResponseStatus.INVALID_CREDENTIALS);
+            
+          }else if(err.status === 400){
+            // Datos inválidos
+            console.log("Los datos son inválidos");
+            return of(ResponseStatus.INVALID_DATA);
+          }else{
+            console.log("Tas borrachito");
+            return of(ResponseStatus.ERR_CONNECTION);
+          }
         })
       );
   }
@@ -50,16 +63,32 @@ export class AuthRepository {
   register(request: RegisterRequest): Observable<ResponseStatus> {
     return this.remoteService.register(request).pipe(
       map((httpResponse) => {
+        if(httpResponse === null){ return ResponseStatus.ERR_CONNECTION;}
+        
         if (httpResponse && httpResponse.body) {
           this.remoteService.setAccountId(httpResponse.body.account_id);
           return ResponseStatus.SUCCESS;
-        } else {
-          return ResponseStatus.FAILURE;
         }
+        return ResponseStatus.INVALID_DATA;
+
+        
+
       }),
       catchError((err) => {
         console.error(err);
-        return of(ResponseStatus.ERR_CONNECTION);
+        if(err.status === 409){
+          // El usuario ya existe
+          console.log("El usuario ya existe");
+          return of(ResponseStatus.USER_ALREADY_EXISTS);
+          
+        }else if(err.status === 400){
+          // Datos inválidos
+          console.log("Los datos son inválidos");
+          return of(ResponseStatus.INVALID_DATA);
+        }else{
+          console.log("Tas borrachito");
+          return of(ResponseStatus.ERR_CONNECTION);
+        }
       })
     );
   }

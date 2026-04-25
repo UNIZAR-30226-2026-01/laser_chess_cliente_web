@@ -5,7 +5,7 @@ import { RegisterRequest } from '../../model/auth/RegisterRequest';
 import { signal } from '@angular/core';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
-
+import { RouterLink } from '@angular/router';
 
 
 export const passwordMatchValidator: ValidatorFn =
@@ -25,7 +25,7 @@ export const passwordMatchValidator: ValidatorFn =
 
 @Component({
   selector: 'app-signin',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
@@ -88,13 +88,19 @@ export class Signin {
       switch (status) {
         case ResponseStatus.SUCCESS:
           console.log('Registration successful');
-          this.router.navigate(['login']);
+          this.router.navigate(['']);
           break;
 
-        case ResponseStatus.FAILURE:
+        case ResponseStatus.INVALID_CREDENTIALS:
           console.warn('Registration failed: Invalid credentials');
           this.showError.set(true);
           this.errorMessage.set('Registration failed: Invalid credentials');
+          break;
+        
+          case ResponseStatus.USER_ALREADY_EXISTS:
+          console.warn('Registration failed: User already exists');
+          this.showError.set(true);
+          this.errorMessage.set('Registration failed: User already exists');
           break;
 
         case ResponseStatus.ERR_CONNECTION:

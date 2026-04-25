@@ -245,13 +245,13 @@ describe('Signin', () => {
     });
     component.register();
 
-    expect(router.navigate).toHaveBeenCalledWith(['login']);
+    expect(router.navigate).toHaveBeenCalledWith(['']);
     expect(component.showError()).toBe(false);
     expect(component.errorMessage()).toBe('');
   });
 
-  it('debería mostrar error "Registration failed: Invalid credentials" si el status es FAILURE', () => {
-    authRepoSpy.register.mockReturnValue(of(ResponseStatus.FAILURE));
+  it('debería mostrar error "Registration failed: Invalid credentials" si el status es INVALID_CREDENTIALS', () => {
+    authRepoSpy.register.mockReturnValue(of(ResponseStatus.INVALID_CREDENTIALS));
 
     component.RegisterForm.setValue({
       mail: 'sans@gmail.com',
@@ -260,7 +260,6 @@ describe('Signin', () => {
       password_rep: '123456',
     });
     component.register();
-
     expect(component.showError()).toBe(true);
     expect(component.errorMessage()).toBe('Registration failed: Invalid credentials');
     expect(router.navigate).not.toHaveBeenCalled();

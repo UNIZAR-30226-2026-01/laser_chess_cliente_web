@@ -9,6 +9,9 @@ import { Websocket } from '../../model/remote/websocket';
 import { FriendSummary } from '../../model/social/FriendSummary';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 
+import { UserRespository } from '../../repository/user-respository';
+import { IconService } from '../../model/user/icon';
+
 describe('Social', () => {
   let component: Social;
   let fixture: ComponentFixture<Social>;
@@ -27,6 +30,15 @@ describe('Social', () => {
     close: ReturnType<typeof vi.fn>;
     gameMessages$: any;
   };
+  let userRepoSpy: {
+    getOwnAccount: ReturnType<typeof vi.fn>;
+    getXpInfo: ReturnType<typeof vi.fn>;
+    getUsername: ReturnType<typeof vi.fn>;
+  };
+
+  let iconServiceSpy: {
+    getAvatarColor: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     // Mock del friendRepository
@@ -39,6 +51,28 @@ describe('Social', () => {
       acceptRequest: vi.fn().mockReturnValue(of(true)),
       getAllRatings: vi.fn().mockReturnValue(of({ blitz: 1200, rapid: 1300, classic: 1400, extended: 1500 } as AllRatingsDTO)),
     };
+
+    userRepoSpy = {
+      getOwnAccount: vi.fn().mockReturnValue(
+        of({
+          account_id: '1',
+          username: 'testUser',
+          level: 1,
+          avatar: 0
+        })
+      ),
+      getXpInfo: vi.fn().mockReturnValue(
+        of({
+          xp: 50,
+          required_xp: 100
+        })
+      ),
+      getUsername: vi.fn().mockReturnValue('testUser'),
+    };
+
+iconServiceSpy = {
+  getAvatarColor: vi.fn().mockReturnValue('blue'),
+};
 
     // Mock del websocket para lo de desafiar
     websocketSpy = {
@@ -53,6 +87,8 @@ describe('Social', () => {
         provideRouter([]),
         { provide: FriendRespository, useValue: friendRepoSpy },
         { provide: Websocket, useValue: websocketSpy },
+        { provide: UserRespository, useValue: userRepoSpy },
+        { provide: IconService, useValue: iconServiceSpy },
       ],
     }).compileComponents();
 

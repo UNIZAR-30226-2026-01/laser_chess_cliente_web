@@ -6,14 +6,16 @@ import { CommonModule } from '@angular/common';
 import { signal } from '@angular/core';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
-
+import { Remote } from '../../model/remote/remote';
+import { NotificationService } from '../../model/notifications/notification';
+import { RouterLink } from '@angular/router';
 
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -24,10 +26,38 @@ export class Login implements OnInit {
 
   private authService = inject(AuthRepository);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
+  private remote = inject(Remote);
   public showError = signal(false);
   public errorMessage = signal('');
 
   ngOnInit() {
+    // access_token valido, vamos directo al home
+    const token = this.remote.getAccessToken();
+    if (token && !this.remote.isTokenExpired(token)) {
+      const userId = this.remote.getAccountId(); 
+      if (userId) {
+        this.notificationService.setupAfterLogin(userId);
+      }
+      this.router.navigate(['/home']);
+    } else {
+      // Si no, intentamos recuperar la sesión con el refresh_token
+      this.remote.autoLogin().subscribe({
+        next: (authenticated) => {
+          if (authenticated) {
+            const userId = this.remote.getAccountId();
+            if (userId) {
+              this.notificationService.setupAfterLogin(userId);
+            }
+            this.router.navigate(['/home']);
+          }
+        },
+        error: () => {
+          // Si falla, pantalla de inicio
+        }
+      });
+    }
+
     // Configuación del formulario de login con validaciones
     this.loginForm = new FormGroup({
       credential: new FormControl('', [
@@ -40,6 +70,7 @@ export class Login implements OnInit {
         Validators.maxLength(50)
       ]),
     });
+
   }
 
 
@@ -60,19 +91,28 @@ export class Login implements OnInit {
       this.authService.login(request).subscribe((status) => {
       switch(status){  
         case ResponseStatus.SUCCESS:
+          const userId = this.remote.getAccountId();
+          if (userId) {
+            this.notificationService.setupAfterLogin(userId);
+          }
           this.router.navigate(['home']);
           this.showError.set(false);
           this.errorMessage.set('');
           break;
-        case ResponseStatus.FAILURE:
+        case ResponseStatus.INVALID_CREDENTIALS:
           this.showError.set(true);
           this.loginForm.reset();
-          this.errorMessage.set('Login failed');
+          this.errorMessage.set('Login failed: Invalid credentials');
+          break;
+        case ResponseStatus.INVALID_DATA:
+          this.showError.set(true);
+          this.loginForm.reset();
+          this.errorMessage.set('Login failed: Invalid data');
           break;
         case ResponseStatus.ERR_CONNECTION:
           this.showError.set(true);
           this.loginForm.reset();
-          this.errorMessage.set('Usuario/mail o contraseña incorrectos');
+          this.errorMessage.set('Login failed: Connection error');
           break;
       }}
     );

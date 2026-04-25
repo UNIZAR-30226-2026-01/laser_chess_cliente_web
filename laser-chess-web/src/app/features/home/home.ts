@@ -70,7 +70,7 @@ export class Home {
     };
     this.gameState.startingTime.set(reto.starting_time);
     this.gameState.increment.set(reto.time_increment);
-    this.gameState.rivalName.set(reto.challenger_username);
+    this.gameState.nombreRival.set(reto.challenger_username);
 
     this.websocket.initConnection(endpoint, params);
     this.popUPNotis.set(false);
