@@ -479,7 +479,7 @@ export class Social  {
       };
     }
     
-    this.gameState.startingTime.set(startingTime * 1000);
+    this.gameState.startingTime.set(startingTime);
     this.gameState.increment.set(timeIncrement);
     this.gameState.nombreRival.set(this.friendToChallenge.username);
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
