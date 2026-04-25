@@ -1,16 +1,16 @@
-import { Inject, Injectable, signal} from '@angular/core';
+import { inject, Injectable, signal} from '@angular/core';
 import { Observable , map, of} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { GameResume } from '../model/game/GameResume';
 import { Remote } from '../model/remote/remote';
-
+import { HistoryService } from '../model/remote/history-service';
 @Injectable({
   providedIn: 'root',
 })
 export class GameRepository {
   pausedGames: GameResume[] = [];
-  historySelectedGame = signal<GameResume> (null as unknown as GameResume);
-  remote = Inject(Remote);
+  remote = inject(Remote);
+  historyService = inject(HistoryService);
 
   getPausedGame() : Observable<GameResume[]> {
     return this.remote.getPausedGames().pipe(
@@ -32,8 +32,6 @@ export class GameRepository {
       );
   }
 
-  reproducirHistorial() {
-    const partida = this.historySelectedGame();
-  }
+  
   
 }

@@ -1,7 +1,9 @@
-import { Component, Inject , signal} from '@angular/core';
+import { Component, inject , signal} from '@angular/core';
 import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { TopRow } from "../../shared/top-row/top-row";
+import { HistoryService } from '../../model/remote/history-service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -11,8 +13,11 @@ import { TopRow } from "../../shared/top-row/top-row";
   styleUrl: './history-hall.css',
 })
 export class HistoryHall {
-  gameRepo = Inject(GameRepository);
+  gameRepo = inject(GameRepository);
+  historyService = inject(HistoryService);
+  router = inject(Router)
   partidas = signal<GameResume[]> ([]);
+  infoCargada = signal(false);
 
   ngOnInit() {
     this.cargarPartidas();
@@ -20,10 +25,11 @@ export class HistoryHall {
 
   // Método para cargar las partidas desde el repositorio
   cargarPartidas(){
-    this.gameRepo.getPausedGame().subscribe({
+    this.gameRepo.getFinishedGame().subscribe({
       next: (data: GameResume[]) => {
         console.log('Partidas cargadas:', data);
         this.partidas.set(data);
+        this.infoCargada.set(true);
       },
       error: (error:any) => {
         console.error('Error al cargar partidas:', error);
@@ -33,8 +39,7 @@ export class HistoryHall {
   }
 
   visualidaPartida(partida: GameResume) {
-    this.gameRepo.historySelectedGame.set(partida);
-    this.gameRepo.reproducirHistorial();
-  
+    this.historyService.historySelectedGame.set(partida);
+    this.router.navigate(['/history']);
   }
 }

@@ -15,6 +15,7 @@ import { GameState } from '../../model/remote/game-state'
 import { NotificationGame } from '../../shared/notification-game/notification-game'
 import { Board } from '../../shared/board/board';
 import { TimerService } from '../../model/remote/timer-service';
+import { GameUtils } from '../../utils/game-utils';
 
 
 
@@ -31,6 +32,8 @@ export class GameLogicService {
   private wsSubscription?: Subscription;
   private waitingForConfirmation = false;
   private router = inject(Router);
+  private gameUtils = inject(GameUtils);
+  
   TipoPieza = TipoPieza; 
 
   private state = inject(GameState);
@@ -62,126 +65,8 @@ export class GameLogicService {
   permitSalida = signal(false);
 
 
-  /*
-     Actualiza el tablero de juego añadiendo la pieza (parseo de pieza)
-      @param codigo: string -> contenido de la pieza
-      @param x: number -> coordenada x de la pieza
-      @param y: number -> coordenada y de la pieza
-     */
-    parsearPiezaCompacta(codigo: string, x: number, y: number) {
-      if (codigo === '') return; // Si la celda está vacía pasamos a la siguiente
-      const [tipoLetra, colorLetra, direccionLetra] = codigo.split('');
-      // codigo[0] , codigo[1], codigo[2]
   
-      // 1. Mapeo de Tipo
-      const tipos: Record<string, TipoPieza> = {
-        'L': TipoPieza.LASER,
-        'K': TipoPieza.REY,
-        'D': TipoPieza.DEFLECTOR,
-        'S': TipoPieza.SWITCH,
-        'E': TipoPieza.ESCUDO
-      };
-  
-      // 2. Mapeo de rotación -> revisar fichero de notación
-      const rotaciones: Record<string, number> = {
-        'U': 0,    // Up
-        'R': 90,   // Right
-        'D': 180,  // Down
-        'L': 270   // Left
-      };
-  
-      const nuevaPieza: PiezaData = {
-        id: this.state.cont(),
-        x: x,
-        y: y,
-        tipoPieza: tipos[tipoLetra],
-        rotation: rotaciones[direccionLetra],
-  
-        // Comparamos el color del código con nuestro color actual
-        esMia: colorLetra === 'A',
-      };
-  
-      this.state.cont.set(this.state.cont() + 1); // Incrementamos el valor de los id de pieza
-      // Añadir al signal
-      this.listaPiezas.update(actuales => [...actuales, nuevaPieza]);
-    }
-  
-    
-    isCasillaRestringida(x: number, y: number): 'azul' | 'rojo' | null {
-    
-      // Casillas Hélice azul
-      if ( x == 1 || ( x == 9 &&  ( y == 1 ||  y == 8 ))) {
-        return 'azul';
-      }
-  
-      // Casillas Hélice rojo
-      if ( x == 10 || ( x == 2 && ( y == 1  || y == 8 ))) {
-        return 'rojo';
-      }
-  
-      return null;
-      
-    }
-  
-    /*
-      @param board: representación del tablero inicial
-    */
-    importarTablero(board: string) { 
-      this.listaPiezas.set([]); // Limpiamos antes de empezar
-      this.state.cont.set(1);
-
-      // 1. Separar por filas (el \n del servidor)
-      const filasTablero = board.split('\n');
-        
-      for (let j = 0; j < filasTablero.length; j++) {
-        // 2. Separar cada fila por comas
-        const piezas = filasTablero[j].split(',');
-          
-        for (let i = 0; i < piezas.length; i++) {
-          const codigoPieza = piezas[i].trim();
-            
-          if (codigoPieza !== '') {
-              // IMPORTANTE: 
-              // i + 1 es la columna (X)
-              // j + 1 es la fila (Y)
-            console.log("Añadiendo pieza " + codigoPieza + " en posición " + i + " " + j);
-  
-            this.parsearPiezaCompacta(codigoPieza, i + 1, j + 1);
-          }
-        }
-      }
-    }
-      
-      // Hay que revisarlo
-    toChess(x: number, y: number): string {
-      if (this.soyAzul()){
-          return `${COL_LETTERS_AZUL[x-1]}${8 - y + 1}`;
-      }else{
-          return `${COL_LETTERS_ROJO[x-1]}${y}`;
-      }
-      
-    }
-  
-    // Y la inversa para cuando recibas del backend -> hay que revisarlo
-    fromChess(coord: string): {x: number, y: number} {
-      console.log("estoy traduciendo");
-     
-  
-      const colLetter = coord[0];
-      const rowDigit = parseInt(coord[1]);
-      let x: number, y: number;
-      if (this.soyAzul()) {
-        x = COL_LETTERS_AZUL.indexOf(colLetter) + 1;
-        y = 9 - rowDigit;   // porque toChess: y_ajedrez = 9 - y_interna
-      } else {
-        x = COL_LETTERS_ROJO.indexOf(colLetter) + 1;
-        y = rowDigit;       // para rojo, la fila de ajedrez es la misma que la interna
-      }
-      return { x, y };
-  
-  
-    }
-  
+   
   
   sendMovement(content:string){
     if (!this.esMiTurno()) return;
@@ -210,7 +95,10 @@ export class GameLogicService {
 
     } else if (msg.Type === "InitialState" && this.aceptoInitial()){
       console.log("Procesando el estado inicial");
-      this.importarTablero(msg.Content);
+      const piezas = this.gameUtils.importarTablero(msg.Content);
+      this.listaPiezas.set(piezas);
+      this.state.cont.set(piezas.length);
+      
       if (Number(msg.Extra) !== this.id) {         //Ns q es el extra pero siempre es true esto (al final no siempre es true)
         this.soyAzul.set(true);
         console.log("Soy el jugador azul");
@@ -231,7 +119,6 @@ export class GameLogicService {
       
 
       const tiempo = Number(timeRaw);
-      console.log(timeRaw);
       console.log("Justo antes de verificar patrón");
       const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;      
       const match = movePart.match(moveRegex);
@@ -240,15 +127,15 @@ export class GameLogicService {
       console.log("Después de verificar patrón");
 
       const tipo = match[1] || 'T';
-      const desde = this.fromChess(match[2]);
-      const hasta = match[3] ? this.fromChess(match[3]) : null;
-      const captura = match[4] ? this.fromChess(match[4]) : null;
+      const desde = this.gameUtils.fromChess(match[2], this.soyAzul());
+      const hasta = match[3] ? this.gameUtils.fromChess(match[3], this.soyAzul()) : null;
+      const captura = match[4] ? this.gameUtils.fromChess(match[4], this.soyAzul()) : null;
 
       // 3. láser
       const path = laserRaw
         .split(',')
         .filter(c => c.length > 0)
-        .map(c => this.fromChess(c));
+        .map(c => this.gameUtils.fromChess(c, this.soyAzul()));
 
         console.log("Tipo:", tipo, "Desde:", desde, "Hasta:", hasta, "Captura:", captura, "Tiempo:", tiempo);
         if (tipo === 'T' && desde && hasta) {
@@ -459,9 +346,9 @@ export class GameLogicService {
     if (!match) return;
 
     const tipo = match[1];
-    const desde = this.fromChess(match[2]);
-    const hasta = match[3] ? this.fromChess(match[3]) : null;
-    const captura = match[4] ? this.fromChess(match[4]) : null;
+    const desde = this.gameUtils.fromChess(match[2], this.soyAzul());
+    const hasta = match[3] ? this.gameUtils.fromChess(match[3], this.soyAzul()): null;
+    const captura = match[4] ? this.gameUtils.fromChess(match[4], this.soyAzul()) : null;
 
     // MOVE
     if (tipo === 'T' && desde && hasta) {

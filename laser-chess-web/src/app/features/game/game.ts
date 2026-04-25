@@ -1,20 +1,16 @@
 import { Component, signal, OnInit, inject, Input} from '@angular/core';
 import { Pieza } from '../../shared/pieza/pieza';
-import { PiezaData } from '../../model/game/PiezaData';
-import { PiezaRival } from '../../shared/pieza-rival/pieza-rival';
 import { Websocket } from '../../model/remote/websocket'; // Ajusta la ruta
-import { Laser } from '../../shared/laser/laser';
 import { TipoPieza } from '../../model/game/TipoPieza'
 import { MessageGame } from '../../model/game/MessageGame'
-import { SendAction } from '../../model/game/SendAction'
 import { Remote } from '../../model/remote/remote';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GameState } from '../../model/remote/game-state'
 import { NotificationGame } from '../../shared/notification-game/notification-game'
 import { Board } from '../../shared/board/board';
 import { TimerService } from '../../model/remote/timer-service';
 import { GameLogicService } from '../../model/remote/game-logic-service';
+import { GameUtils } from '../../utils/game-utils';
 
 
 @Component({
@@ -35,6 +31,7 @@ export class Game implements OnInit {
   private remoteService = inject(Remote);
   timerService = inject(TimerService);
   gameService = inject(GameLogicService);
+  gameUtils = inject(GameUtils);
   private wsSubscription?: Subscription;
   
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
@@ -147,8 +144,8 @@ export class Game implements OnInit {
     const origenPos = pieza.position();
     
     // 1. Traducimos a formato backend (invirtiendo la Y)
-    const origenAjedrez = this.gameService.toChess(origenPos.x, origenPos.y);
-    const destinoAjedrez = this.gameService.toChess(destino.x, destino.y);
+    const origenAjedrez = this.gameUtils.toChess(origenPos.x, origenPos.y, this.soyAzul());
+    const destinoAjedrez = this.gameUtils.toChess(destino.x, destino.y, this.soyAzul());
 
     // 2. Formamos el mensaje: "Te8:e7"
     const mensaje = `T${origenAjedrez}:${destinoAjedrez}`; //He quitado la T? la he vuelto a poner?
@@ -164,7 +161,7 @@ export class Game implements OnInit {
       const direction = angle === 90 ? 'R' : 'L';
 
       // Formato: La1 o Rf8
-      const pos = this.gameService.toChess(pieza.position().x, pieza.position().y);
+      const pos = this.gameUtils.toChess(pieza.position().x, pieza.position().y, this.soyAzul());
       const mensaje = `${direction}${pos}`;
       console.log("Pidiendo permiso para rotar" + mensaje);
 

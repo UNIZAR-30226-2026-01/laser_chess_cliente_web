@@ -9,7 +9,7 @@ export interface GameResume {
 	termination: string
 	match_type: string
 	board: string
-	movemente_history: string
+	movement_history: string
 	time_base: number
 	time_increment: number
 }

@@ -1,0 +1,312 @@
+import { Injectable } from '@angular/core';
+import { signal, inject} from '@angular/core';
+import { PiezaData } from '../../model/game/PiezaData';
+import { TipoPieza } from '../../model/game/TipoPieza'
+import { Remote } from '../../model/remote/remote';
+import { GameResume } from '../game/GameResume';
+import { GameLogicService } from './game-logic-service';
+import { GameUtils } from '../../utils/game-utils';
+
+
+
+
+@Injectable({
+  providedIn: 'root',
+})
+
+export class HistoryService {
+  private remoteService = inject(Remote);
+
+  TipoPieza = TipoPieza; 
+
+  private gameService = inject(GameLogicService);
+  private gameUtils = inject(GameUtils);
+  columnas = 10;
+  filas = 8;
+  id = this.remoteService.getAccountId();
+
+  
+    nombreRival = signal<string>('Anónimo');
+    miNombre = signal<string>('Paulix');
+  
+    miTiempo = signal<number>(0);
+    tiempoRival = signal<number>(0);
+  
+    listaPiezas = signal<PiezaData[]>([]);
+    esMiTurno = signal(true);
+    soyAzul = signal(true);
+    cont = signal(1); // Contador incremental para creación de piezas (id)
+  
+    laserPath = signal<{x:number,y:number}[]>([]);
+
+    indiceMovimiento = 0;
+    movimientos : string[] = [];
+    capturas: PiezaData[] = [];
+  
+   
+
+  historySelectedGame = signal<GameResume> (null as unknown as GameResume);
+	ACE = `LAD,,,,EAD,KA,EAD,DAL,,
+        ,,DAU,,,,,,,
+        ,,,DRR,,,,,,
+        DAD,,DRU,,SAD,SAL,,DAL,,DRR
+        DAL,,DRR,,SRR,SRU,,DAD,,DRU
+        ,,,,,,DAL,,,
+        ,,,,,,,DRD,,
+        ,,DRR,ERU,KR,ERU,,,,LRU`
+
+	CURIOSITY = `LAD,,,,EAD,KA,EAD,SAL,,
+              ,,,,,,,,,
+              ,,,DRR,,,DAD,,,
+              DAD,DRU,,,DRL,SAL,,,DAL,DRR
+              DAL,DRR,,,SRR,DAR,,,DAD,DRU
+              ,,,DRU,,,DAL,,,
+              ,,,,,,,,,
+              ,,SRR,ERU,KR,ERU,,,,LRU`
+
+	GRAIL = `LAD,,,,DAU,EAD,DAL,,,
+          ,,,,,KA,,,,
+          DAD,,,,DAU,EAD,SAL,,,
+          DAL,,SAD,,DRR,,DRL,,,
+          ,,,DAR,,DAL,,SRD,,DRR
+          ,,,SRL,ERU,DRD,,,,DRU
+          ,,,,KR,,,,,
+          ,,,DRR,ERU,DRD,,,,LRU`
+
+	SOPHIE = `LAD,,,,KA,DRR,DAL,,,
+            ,,,EAU,,EAL,,,,DRU
+            DAD,,,,DAU,DAL,,SRL,,DRR
+            ,,,,,,,SAD,,
+            ,,SRD,,,,,,,
+            DAL,,SAL,,DRR,DRD,,,,DRU
+            DAD,,,,ERR,,ERD,,,
+            ,,,DRR,DAL,KR,,,,LRU`
+
+  MERCURY = `LAR,,,,DAU,KA,DAL,,,SRL
+            ,,,,,EAU,DAL,,,
+            DAL,,,SAL,,EAU,,,,
+            DAD,,,,DRR,,,,DRU,
+            ,DAD,,,,DAL,,,,DRU
+            ,,,,ERD,,SRL,,,DRR
+            ,,,DRR,ERD,,,,,
+            SAL,,,DRR,KR,DRD,,,,LRL`
+
+
+
+  inicializarTablero(){
+    console.log(this.historySelectedGame()?.board);
+    switch (this.historySelectedGame()?.board){
+      case 'ACE':
+        this.listaPiezas.set(this.gameUtils.importarTablero(this.ACE));
+        break;
+      case 'CURIOSITY':
+        this.listaPiezas.set(this.gameUtils.importarTablero(this.CURIOSITY));
+        break;
+      case 'SOPHIE':
+        this.listaPiezas.set(this.gameUtils.importarTablero(this.SOPHIE));
+        break;
+      case 'MERCURY':
+        this.listaPiezas.set(this.gameUtils.importarTablero(this.MERCURY));
+        break;
+      case 'GRAIL': 
+        this.listaPiezas.set(this.gameUtils.importarTablero(this.GRAIL));
+        break;
+    }
+    
+    this.cont.set(this.listaPiezas.length);
+    // Dividir el log por acciones y aplicar a un array + añadir un iterador para saber por donde estamos
+    this.indiceMovimiento = 0;
+    console.log(this.historySelectedGame()?.movement_history);
+    this.movimientos = this.historySelectedGame()?.movement_history.split(';');
+    if(this.historySelectedGame()?.p1_id == this.id){
+      this.soyAzul.set(false);
+    }else{
+      this.soyAzul.set(true);
+    }
+  }
+
+  
+  
+    
+  
+  
+ 
+
+  /*****************************************************************************/
+  /*                  Procesamiento mensaje  del backend                       */
+  /*****************************************************************************/
+
+
+  applyAction(action: string, direccion: boolean) {
+
+    const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?(?:%([^%]+)%)?(?:\{(\d+)\})?$/;
+    const match = action.match(moveRegex);
+
+    if (!match) {
+      console.log("esto no funca");
+      return;
+    }
+
+    const tipo = match[1];
+    const desde = this.gameUtils.fromChess(match[2], this.soyAzul());
+    const hasta = match[3] ? this.gameUtils.fromChess(match[3], this.soyAzul()) : null;
+    const captura = match[4] ? this.gameUtils.fromChess(match[4], this.soyAzul()) : null;
+    const laser = match[5];
+    const tiempo = match[6];
+
+    if(direccion){
+      console.log("Avanzo");
+    }else{
+      console.log("Retrocedo")
+    }
+    // MOVE
+    if (tipo === 'T' && desde && hasta) {
+      console.log("Tengo que mover")
+      if(direccion){
+        this.moverPiezaEnTablero(desde, hasta);
+      }else{
+        this.moverPiezaEnTablero(hasta, desde);
+      }
+    }
+
+    // ROTATE
+    if (tipo === 'R' || tipo === 'L') {
+      console.log("Tengo que rotar")
+      if(direccion){
+        this.rotarPiezaEnTablero(desde, tipo);
+      }else{
+        if (tipo === 'L'){
+          this.rotarPiezaEnTablero(desde, 'R');
+        }else{
+          this.rotarPiezaEnTablero(desde, 'L');
+       }
+      }
+    }
+    const path = laser
+        .split(',')
+        .filter(c => c.length > 0)
+        .map(c => this.gameUtils.fromChess(c,this.soyAzul()));
+    this.gameService.dispararLaser(path);
+
+    // CAPTURA
+    if (captura) {
+      if(direccion){
+            const pieza = this.listaPiezas().find(p => p.x === captura.x && p.y === captura.y);
+  
+            if (pieza) {
+              this.capturas.push(pieza); // guardar
+              this.eliminarPiezaEnTablero(captura);
+            }
+          }else{
+            // En caso de retroceder, hay que volver a colocar la pieza capturada
+            const pieza = this.capturas.pop();
+            if (pieza) {
+              this.listaPiezas.update(p => [...p, pieza]);
+            }
+          }
+    }
+
+
+    // Comprobar de quien es el primer movimiento
+    this.miTiempo.set(Number(tiempo));
+    this.tiempoRival.set(Number(tiempo));
+  }
+  
+
+
+      
+
+  
+
+    
+
+  /*****************************************************************************/
+  /*               Gestión y parseo de log tras reconexión                     */
+  /*****************************************************************************/
+
+  avanzar(){
+    if (this.indiceMovimiento >= this.movimientos.length) {
+      alert("No puedes avanzar más");
+      return;
+    }
+    console.log("avanzando con movimiento " + this.movimientos[this.indiceMovimiento]);
+    this.applyAction(this.movimientos[this.indiceMovimiento], true);
+    console.log("no me he muerto");
+    this.indiceMovimiento ++;
+    
+  }
+
+  retroceder(){
+    if (this.indiceMovimiento <= 0) {
+      alert("No puedes retroceder más");
+      return;
+    }
+    console.log("retrocediendo con movimiento " + this.movimientos[this.indiceMovimiento]);
+    this.indiceMovimiento --;
+    this.applyAction(this.movimientos[this.indiceMovimiento], false);
+    console.log("no me he muerto");
+
+  }
+  
+  
+
+  
+
+
+  /*****************************************************************************/
+  /*                     Tras confirmación del backend                         */
+  /*****************************************************************************/
+
+  // Mueve la pieza al recibir confimariones del backend
+  moverPiezaEnTablero(desde: {x: number, y: number}, hasta: {x: number, y: number}) {
+    console.log(`Moviendo pieza de ${desde.x},${desde.y} a ${hasta.x},${hasta.y}`);
+    this.listaPiezas.update(piezas => 
+      piezas.map(p => {
+        // Buscamos la pieza que coincide con la coordenada 'desde'
+        console.log("intentando mover desde "+ p.x + " " + p.y + " partiendo de " + desde.x + " " + desde.y );
+        if (p.x === desde.x && p.y === desde.y) {
+          console.log("Moviendo pieza");
+          return { ...p, x: hasta.x, y: hasta.y };
+        }
+
+        // Caso de permutaciones de piezas
+        if (p.x === hasta.x && p.y === hasta.y) {
+        console.log("Intercambiando pieza de destino a origen");
+        return { ...p, x: desde.x, y: desde.y };
+        }
+        return p;
+      })
+    );
+  }
+
+  // Rotar piezas al recibir confirmaciones del backend
+  rotarPiezaEnTablero(pos: {x: number, y: number}, direccion: 'L' | 'R') {
+    console.log(`Rotando pieza en ${pos.x},${pos.y} hacia ${direccion}`);
+    this.listaPiezas.update(piezas => 
+      piezas.map(p => {
+        if (p.x === pos.x && p.y === pos.y) {
+          const angulo = (direccion === 'R') ? 90 : -90; 
+          return { ...p, rotation: (p.rotation + angulo) };
+        }
+        return p;
+      })
+    );
+  }
+
+  eliminarPiezaEnTablero(pos: {x: number, y: number}) {
+    this.listaPiezas.update(piezas =>
+      piezas.filter(p => !(p.x === pos.x && p.y === pos.y))
+    );
+    console.log(`Pieza eliminada en ${pos.x}, ${pos.y}`);
+  }
+
+  dispararLaser(path: {x: number, y: number}[]) {
+    this.laserPath.set(path);
+    // Limpiar el láser después de 2 segundos 
+    setTimeout(() => this.laserPath.set([]), 3000);
+  }
+
+  
+}
+
+

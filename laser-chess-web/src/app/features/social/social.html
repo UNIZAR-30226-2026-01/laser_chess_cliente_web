@@ -327,7 +327,7 @@
         <ul class="game-list">
           @if (!gameInfo()){
             <p>No tienes partidas en curso</p>
-          } @else if (partidas.length === 0) {
+          } @else if (partidas().length === 0) {
             <p>No tienes partidas en curso</p>
           } @else {
             <!-- Aquí se listan las partidas pausadas -->

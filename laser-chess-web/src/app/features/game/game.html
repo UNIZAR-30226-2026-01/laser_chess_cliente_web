@@ -93,7 +93,7 @@
       [laserPath]="laserPath"
       [columnas]="columnas"
       [filas]="filas"
-      [isCasillaRestringida]="gameService.isCasillaRestringida.bind(this)"
+      [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
       [ocupado]="gameService.ocupado.bind(this)"
       (piezaSeleccionada)="seleccionarPieza($event)"
       (movimientoSolicitado)="gestionarMovimiento($event)"

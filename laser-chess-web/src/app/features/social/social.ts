@@ -86,13 +86,15 @@ export class Social  {
     { id: 'custom', label: 'Personalizado', baseSeconds: null, increments: null }
   ];
   public boards = [
-    { id: 1, name: 'ACE' },
-    { id: 2, name: 'CURIOSITY' },
+    { id: 0, name: 'ACE' },
+    { id: 1, name: 'CURIOSITY' },
+    { id: 2, name: 'SOPHIE' },
     { id: 3, name: 'GRAIL' },
-    { id: 4, name: 'MERCURY' },
-    { id: 5, name: 'SOPHIE' }
+    { id: 4, name: 'MERCURY' }
   ];
-  public selectedBoard = signal<number>(1); // ACE por defecto
+
+
+  public selectedBoard = signal<number>(0);// ACE por defecto
   public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
   public selectedIncrement = signal<number>(0); // incremento en segundos
   
@@ -459,14 +461,23 @@ export class Social  {
     const { startingTime, timeIncrement } = this.getChallengeParams();
 
     const endpoint = 'challenge';
-    
-    const params = {
+    var params
+    if (id) {
+      params = {
         username: this.friendToChallenge.username,
         board,
         starting_time: startingTime,
         time_increment: timeIncrement,
         match_id: id
       };
+    } else {
+      params = {
+        username: this.friendToChallenge.username,
+        board,
+        starting_time: startingTime,
+        time_increment: timeIncrement,
+      };
+    }
     
     this.gameState.startingTime.set(startingTime * 1000);
     this.gameState.increment.set(timeIncrement);

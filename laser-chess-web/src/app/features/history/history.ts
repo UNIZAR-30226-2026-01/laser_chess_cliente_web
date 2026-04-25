@@ -1,10 +1,10 @@
 import { Component , signal, inject} from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
 import { TimerService } from '../../model/remote/timer-service';
-import { GameRepository } from '../../repository/game-repository';
 import { Board } from '../../shared/board/board';
-import { GameState } from '../../model/remote/game-state';
 import { GameLogicService } from '../../model/remote/game-logic-service';
+import { HistoryService } from '../../model/remote/history-service';
+import { GameUtils } from '../../utils/game-utils';
 
 @Component({
   selector: 'app-history',
@@ -13,20 +13,36 @@ import { GameLogicService } from '../../model/remote/game-logic-service';
   styleUrl: './history.css',
 })
 export class History {
-  miTiempo = signal(0);
-  tiempoRival = signal(0);
-
+  
   timerService = inject(TimerService);
-  miNombre = signal('');
-  nombreRival = signal('')
+  
 
   gameService = inject(GameLogicService);
-  gameState = inject(GameState)
+  historyState = inject(HistoryService);
+  gameUtils = inject(GameUtils);
   
-  listaPiezas = this.gameState.listaPiezas;
-  laserPath = this.gameState.laserPath;
-
+  
   columnas = 10;
   filas = 8;
+  listaPiezas = this.historyState.listaPiezas;
+  laserPath = this.historyState.laserPath;
 
+
+  miTiempo = this.historyState.miTiempo;
+  tiempoRival = this.historyState.tiempoRival;
+
+  nombreRival = this.historyState.nombreRival;
+  miNombre = this.historyState.miNombre;
+
+  permitSalida = this.gameService.permitSalida;
+
+  ngOnInit(){
+    this.historyState.inicializarTablero();
+  }
+  siguiente(){
+    this.historyState.avanzar();
+  }
+  anterior(){
+    this.historyState.retroceder();
+  }
 }

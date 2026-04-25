@@ -420,8 +420,19 @@ export class Remote {
       );;
   }
 
-  getPausedGame():  Observable<GameResume[]> {
+  getPausedGames():  Observable<GameResume[]> {
     return this.http.get<GameResume[]>(`${API_URL}/api/match/history/${this.accountId}/paused`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting paused games :', err);
+        throw new Error('Error');
+      })
+    );
+  }
+
+  getFinishedGames():  Observable<GameResume[]> {
+    return this.http.get<GameResume[]>(`${API_URL}/api/match/history/${this.accountId}`, {
       //headers: { Authorization: `Bearer ${this.accessToken}` }
     }).pipe(
       catchError((err: Error) => {

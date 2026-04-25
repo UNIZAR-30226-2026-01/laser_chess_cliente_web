@@ -21,7 +21,7 @@
       [laserPath]="laserPath"
       [columnas]="columnas"
       [filas]="filas"
-      [isCasillaRestringida]="gameService.isCasillaRestringida.bind(this)"
+      [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
     ></app-board>
   </main>
 
@@ -35,6 +35,6 @@
 
   
   </aside>
-
-
+<button (click)="anterior()"> < </button>
+<button (click)="siguiente()"> > </button>
 
