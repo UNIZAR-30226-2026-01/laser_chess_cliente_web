@@ -1,85 +1,71 @@
 .shop-container {
   padding: 20px;
+}
+
+.user-info {
+  background: #f0f0f0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
   display: flex;
-  flex-direction: column;
-  gap: 40px;
+  gap: 20px;
 }
 
 .shop-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  margin-bottom: 40px;
 }
 
-.section-title {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.carousel-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-  gap: 10px;
-}
-
-.items-container {
-  display: flex;
-  overflow: hidden;
-  scroll-behavior: smooth;
-  gap: 15px;
-  padding: 10px;
-  flex: 1;
-  max-width: 100%;
-  white-space: nowrap; 
-}
-
-
-
-.items-container::-webkit-scrollbar {
-  display: none; 
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
 }
 
 .shop-card {
-  flex: 0 0 calc((100% - 60px) / 5);
-
-  background: white;
-  border: 2px solid black;
+  border: 1px solid #ccc;
   border-radius: 12px;
-  padding: 10px;
+  padding: 15px;
   text-align: center;
+  background: white;
 }
 
-.shop-card img {
-  width: 60px;
-  height: 60px;
+.shop-card.owned {
+  opacity: 0.7;
+  background: #e9e9e9;
 }
 
-.price {
-  margin-top: 5px;
+.icon {
+  font-size: 48px;
+}
+
+.name {
   font-weight: bold;
+  margin: 10px 0;
 }
 
-.buy-btn {
-  margin-top: 8px;
-  padding: 5px;
-  width: 100%;
-  cursor: pointer;
+.price, .requirement {
+  font-size: 0.9rem;
+  margin: 5px 0;
 }
 
-.owned {
-  opacity: 0.5;
-}
-
-.owned-label {
-  margin-top: 8px;
-  font-size: 12px;
-  color: green;
-}
-
-.arrow {
-  background: none;
+button {
+  background: #2c7a4d;
+  color: white;
   border: none;
-  font-size: 24px;
+  padding: 8px 12px;
+  border-radius: 20px;
   cursor: pointer;
+  margin-top: 10px;
+}
+
+button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.owned-badge {
+  display: inline-block;
+  margin-top: 10px;
+  color: #2c7a4d;
+  font-weight: bold;
 }
