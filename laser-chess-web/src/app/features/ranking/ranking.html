@@ -16,7 +16,8 @@
           </button>
         }
       </div>
-
+      
+      <div class="ranking-content">
       <!-- Estado de carga -->
       @if (loading()) {
         <div class="loading-state">
@@ -44,12 +45,29 @@
             </thead>
             <tbody>
               @for (player of topPlayers(); track player.userId; let i = $index) {
-                <tr (click)="openUserInfo(player)">
-                  <td class="rank">{{ i + 1 }}</td>
+                <tr (click)="openUserInfo(player)"
+                    [class.sticky-user-row]="userInfo()?.position === (i + 1)">
+                  <td class="rank">
+                    <div class="medal" 
+                        [class.gold]="i === 0" 
+                        [class.silver]="i === 1" 
+                        [class.bronze]="i === 2">
+                      {{ i + 1 }}
+                    </div>
+                  </td>
                   <td class="username">{{ player.username }}</td>
                   <td class="elo">{{ player.elo }}</td>
                 </tr>
               }
+
+              @if (userInfo() && userInfo()!.position > topPlayers().length) {
+                <tr class="sticky-user-row">
+                  <td class="rank">{{ userInfo()!.position }}</td>
+                  <td class="username">Tú</td>
+                  <td class="elo">{{ userInfo()!.elo }}</td>
+                </tr>
+              }
+
               @if (topPlayers().length === 0) {
                 <tr>
                   <td colspan="3" class="empty-table">No hay jugadores en el ranking</td>
@@ -59,19 +77,6 @@
           </table>
         </div>
       }
-
-      <!-- Posicion del user -->
-      @if (userInfo() && !loading() && !error()) {
-        <div class="user-rank-card">
-          <div class="user-rank-info">
-            <span class="rank-label">Tu posición en {{ selectedEloType() | uppercase }}:</span>
-            <span class="rank-value">#{{ userInfo()!.position }}</span>
-            <span class="elo-label">ELO:</span>
-            <span class="elo-value">{{ userInfo()!.elo }}</span>
-          </div>
-        </div>
-      }
-
     </div>
   </div>
 

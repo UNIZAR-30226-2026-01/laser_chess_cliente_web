@@ -1,70 +1,110 @@
 .page {
-  width: 100%;
-  min-height: 100vh;
+width: 100%;
+  height: 100vh;
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow: hidden;
+  position: relative; 
+}
+
+.page::before{
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+
+  background-image: url(../../../../../laser-chess-web/public/assets/vector-art/Backgrounds/BG-Soretro.svg);
+  background-size: 960px;
+  background-repeat: repeat;
+  animation: moveBackground 30s linear infinite;
+
+  filter: blur(4px);
+}
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 960px 540px; 
+  }
 }
 
 
 .folder-container {
   width: 90%;
-  max-width: 1200px;
+  max-width: 100rem;
   margin: 0 auto 2rem auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+.ranking-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; 
+  gap: 1rem;
 }
 
 .folder-body {
-  border: 0.2rem solid black;
-  padding: clamp(1rem, 2vw, 2rem);
-  margin-top: 0;
-  background: white;
+  padding: 5px;
+  margin-top: 1rem;
+  background: var(--LCBG);
   position: relative;
   box-sizing: border-box;
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* Contenedor de los botones de ELO (similar a tabs) */
 .elo-buttons-container {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
+  gap: 5px; 
+  margin-bottom: 3px;
+  width: 100%;
 }
 
 .elo-tab {
-  background: #dcdcdc;
-  border: 0.2rem solid black;
-  padding: 0.6rem 1.5rem;
-  font-size: 1rem;
+  flex: 1;
+  background-color: var(--S1);
+  color: var(--LCGray);
+  padding: 1rem 1.5rem;
+  font-size: var(--LCSmall);
   font-weight: bold;
-  color: black;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  border: none;
+  border-bottom: 4px solid transparent; 
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .elo-tab.active {
-  background: white;
-  border-bottom: none;
-  position: relative;
-  z-index: 2;
-}
-
-.elo-tab:hover:not(:disabled) {
-  background: #bbbbbb;
+  background-color: var(--S3);
+  color: var(--active-color, var(--LCRed)); 
+  border-bottom: 4px solid var(--active-color, var(--LCRed));
 }
 
 .elo-tab:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
-
 /* Estado de carga */
 .loading-state, .empty-state {
   text-align: center;
   padding: 2rem;
-  background: #f5f5f5;
-  border: 0.2rem solid black;
+  background: var(--S2);
   margin: 1rem 0;
   font-weight: bold;
 }
@@ -77,38 +117,97 @@
 
 /* Tabla del ranking */
 .ranking-table-wrapper {
+  flex: 1;
+  overflow-y: auto;
   overflow-x: auto;
-  border: 0.2rem solid black;
-  background: white;
-  margin-bottom: 2rem;
+  background: var(--S2);
+
 }
 
 .ranking-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-.ranking-table th,
-.ranking-table td {
-  padding: 0.85rem 1rem;
-  text-align: left;
-  border-bottom: 0.1rem solid #ccc;
+  background-color: var(--S1);
+  border-collapse: separate;
+  border-spacing: 0 0px;
+  font-size: var(--LCSmall);
 }
 
 .ranking-table th {
-  background-color: #e0e0e0;
+  padding: 0.85rem 1rem;
+  text-align: left;
+}
+
+.ranking-table td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 3px solid var(--LCBG);
+}
+
+.ranking-table th {
+  background-color: var(--S2);
   font-weight: bold;
-  border-bottom: 0.2rem solid black;
+  color: var(--LCWhite);
+  border-bottom: 3px solid var(--LCBG);
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
 }
 
 .ranking-table tr:hover {
-  background-color: #f0f0f0;
+  /*TODO*/
+  background: var(--S2);
+  color: var(--LCWhite)
+}
+
+.sticky-user-row {
+  position: sticky;
+  top: 1.80rem;
+  bottom: 0px;
+  z-index: 5;
+}
+
+.sticky-user-row td {
+  background-color: var(--S2);
+  font-weight: bold;
+  box-shadow: 0 -3px 0 0 var(--LCBG); 
+}
+
+.ranking-table tr.sticky-user-row:hover td {
+  background-color: var(--S3);
 }
 
 .rank {
   font-weight: bold;
   width: 80px;
+}
+
+.medal {
+  font-weight: bold;
+  width: fit-content;
+  font-size: var(--LCSmall);
+  padding: 0rem 0.4rem ;
+  border-radius: var(--BorderSmall);
+}
+
+.medal.gold {
+  font-weight: bolder;
+  color: var(--LCYellow);
+  border: 3px solid var(--LCYellow);
+
+}
+
+.medal.silver {
+    font-weight: bolder;
+    color: rgb(219, 212, 205);
+    border: 3px solid rgb(219, 212, 205);
+}
+
+.medal.bronze {
+  font-weight: bolder;
+  color: rgb(233, 141, 55);
+  border: 3px solid rgb(233, 141, 55);
 }
 
 .username {
@@ -126,41 +225,8 @@
   color: #666;
 }
 
-/* Tarjeta de posición del usuario */
-.user-rank-card {
-  border: 0.2rem solid black;
-  background: #f5f5f5;
-  padding: 1rem 1.5rem;
-  margin-top: 1rem;
-  text-align: center;
-}
 
-.user-rank-info {
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  font-size: 1.1rem;
-  font-weight: bold;
-}
 
-.user-rank-info .rank-label,
-.user-rank-info .elo-label {
-  font-weight: normal;
-  color: #333;
-}
-
-.user-rank-info .rank-value {
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-
-.user-rank-info .elo-value {
-  font-size: 1.8rem;
-  font-weight: bold;
-  font-family: monospace;
-}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -168,10 +234,23 @@
     width: 95%;
   }
   .elo-tab {
-    padding: 0.4rem 1rem;
+    padding: 0.1rem 0.5rem;
     font-size: 0.85rem;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: "...";
+    table-layout: fixed;
   }
-  .ranking-table th,
+  .elo-tab.active {
+    min-width: fit-content;
+    white-space: nowrap;
+    overflow: visible;
+
+  }
+  .ranking-table th{
+    padding: 0.2rem;
+  }
   .ranking-table td {
     padding: 0.6rem;
   }
@@ -202,7 +281,7 @@
 }
 
 .popup-userinfo {
-  background: white;
+  background: var(--LCBG);
   border: 0.15rem solid black;
   width: min(90%, 35rem);
   max-height: 90vh;
@@ -244,7 +323,6 @@
   background: rgba(0, 0, 0, 0.1);
   transform: scale(1.1);
 }
-
 .popup-content {
   padding: 1.5rem;
   overflow-y: auto;

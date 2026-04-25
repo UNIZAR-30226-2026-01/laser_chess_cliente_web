@@ -8,14 +8,17 @@
     max-width: 100%;
     box-sizing: border-box;
     flex-wrap: nowrap; /* Fuerza una sola línea */
+    background-color: (--LCBG);
+    box-shadow: 0 5px 0 0 var(--LCBG); 
 
 }
 
 .container {
   width: 100%;
   display: flex;
-
-  min-height: 8vh;
+  height: 8vh;
+  min-height: 3rem;
+ 
 }
 
 .lc-title {
@@ -29,6 +32,7 @@
   align-items: center;
 
   font-size: var(--LCMedium);
+  box-shadow: 5px 5px 0 0 var(--LCBG); 
 }
 
 .lc-title mat-icon {
@@ -41,6 +45,7 @@
   width: 20%;
   background-color: var(--S1);
   margin-right: 5px;
+  box-shadow: 5px 5px 0 0 var(--LCBG); 
 }
 
 
@@ -54,17 +59,17 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
+  box-shadow: 5px 5px 0 0 var(--LCBG); 
 }
 
 .profile-picture {
     width: clamp(50px, 6vw, 60px);
     height: clamp(50px, 6vw, 60px);
-    border: 4px solid var(--S3);
-    border-radius: 50%;
     overflow: hidden;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
+    padding-left: 10px;
 }
 
 /* Para el avatar pequeño (arriba a la izquierda) */
@@ -187,6 +192,8 @@
   align-items: center;
   justify-content: center;
   padding: 0 10px;
+  gap: 5px;
+  box-shadow: 5px 5px 0 0 var(--LCBG); 
 }
 
 .coin-counter mat-icon{
@@ -332,6 +339,16 @@
     align-items: center;
     text-align: center;
   }
+
+  .profile-card{
+    width: 80%;
+    margin-left: 5px;
+  }
+
+  .coin-counter{
+    width: 20%;
+  }
+
   .detail-row {
     flex-direction: column;
     align-items: center;

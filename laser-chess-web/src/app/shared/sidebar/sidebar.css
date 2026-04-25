@@ -2,7 +2,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  width: 10vh;
+  width: clamp(3rem, 10vh, 10rem);
+  box-shadow: 0 0 0 5px var(--LCBG); 
 }
 
 
@@ -20,12 +21,17 @@
   transition: background 0.2s;
 
   max-height: 8vh;
+  min-height: 2.5rem;
 }
 
 .item mat-icon {
-  font-size: var(--LCBig);
-  width: var(--LCBig);
-  height: var(--LCBig);
+  font-size: clamp(1.4rem, 3.5vh, 3.5vh);
+  height: 1em; 
+  width: 1em;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .item:hover {
