@@ -13,7 +13,7 @@ export class GameState {
 
   startingTime = signal<number>(0);
   increment = signal<number>(0);
-  nombreRival = signal<string>(this.remote.getUsername() ?? '');
+  nombreRival = signal<string>('');
   miNombre = signal<string>('');
 
   
@@ -30,6 +30,7 @@ export class GameState {
   estadoPausa = signal({ mostrar: false });
 
   finPartida = signal({ mostrar: false, mensaje: '' });
+  
 
 }
 

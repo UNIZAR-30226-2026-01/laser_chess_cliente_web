@@ -35,7 +35,7 @@ export class Profile implements OnInit {
         this.isMyProfile = false;
         this.loadUser(parseInt(id));
       } else {
-        // 🙋‍♀️ Mi perfil
+      
         this.isMyProfile = true;
         const myId = this.userService.getId(); // o como lo tengas
         this.loadUser(myId);

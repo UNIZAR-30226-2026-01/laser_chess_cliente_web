@@ -11,6 +11,8 @@ import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 
 import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
+import { GameRepository } from '../../repository/game-repository';
+import { GameState } from '../../utils/game-state';
 
 describe('Social', () => {
   let component: Social;
@@ -34,11 +36,21 @@ describe('Social', () => {
     getOwnAccount: ReturnType<typeof vi.fn>;
     getXpInfo: ReturnType<typeof vi.fn>;
     getUsername: ReturnType<typeof vi.fn>;
+    getId: ReturnType<typeof vi.fn>;
   };
 
   let iconServiceSpy: {
     getAvatarColor: ReturnType<typeof vi.fn>;
   };
+
+  let gameStateSpy: {
+    startingTime: { set: ReturnType<typeof vi.fn> };
+    increment: { set: ReturnType<typeof vi.fn> };
+    nombreRival: { set: ReturnType<typeof vi.fn> };
+  };
+  let gameRepoSpy: {
+    getPausedGame: ReturnType<typeof vi.fn>;
+  }
 
   beforeEach(async () => {
     // Mock del friendRepository
@@ -68,6 +80,7 @@ describe('Social', () => {
         })
       ),
       getUsername: vi.fn().mockReturnValue('testUser'),
+      getId: vi.fn().mockReturnValue(1),
     };
 
 iconServiceSpy = {
@@ -81,6 +94,16 @@ iconServiceSpy = {
       gameMessages$: of({ type: 'challenge_accepted' }),
     };
 
+    gameStateSpy = {
+      startingTime: { set: vi.fn() },
+      increment: { set: vi.fn() },
+      nombreRival: { set: vi.fn() },
+    };
+
+    gameRepoSpy = {
+      getPausedGame: vi.fn().mockReturnValue(of([])),
+    };
+
     await TestBed.configureTestingModule({
       imports: [Social],
       providers: [
@@ -89,6 +112,8 @@ iconServiceSpy = {
         { provide: Websocket, useValue: websocketSpy },
         { provide: UserRespository, useValue: userRepoSpy },
         { provide: IconService, useValue: iconServiceSpy },
+        { provide: GameState, useValue: gameStateSpy },
+        { provide: GameRepository, useValue: gameRepoSpy },
       ],
     }).compileComponents();
 
@@ -136,10 +161,14 @@ iconServiceSpy = {
     expect(friendRepoSpy.addFriend).not.toHaveBeenCalled();
   });
 
-  it('debería llamar a addFriend con el nombre correcto y cerrar popup si éxito', () => {
+  it('debería llamar a addFriend con el nombre correcto y cerrar popup si éxito', async () => {
     component.usernameInput = { nativeElement: { value: 'nuevo_usuario' } } as any;
     component.popUP_newFriend.set(true);
     component.addFriend();
+
+    await fixture.whenStable();
+    fixture.detectChanges();
+
     expect(friendRepoSpy.addFriend).toHaveBeenCalledWith({ receiver_username: 'nuevo_usuario' });
     expect(component.popUP_newFriend()).toBe(false);
     expect(component.errorAmigoNombreNoValido()).toBe(false);
@@ -158,8 +187,9 @@ iconServiceSpy = {
   // ------------------------------------------------------------------
   it('debería llamar a deleteFriend y recargar amigos si éxito', () => {
     component.deleteFriend('amigo1');
+
     expect(friendRepoSpy.deleteFriend).toHaveBeenCalledWith('amigo1');
-    expect(friendRepoSpy.getFriends).toHaveBeenCalled(); // porque dentro de deleteFriend se llama loadFriends()
+    expect(friendRepoSpy.getFriends).toHaveBeenCalledTimes(2); // porque dentro de deleteFriend se llama loadFriends()
   });
 
   // ------------------------------------------------------------------
@@ -190,15 +220,21 @@ iconServiceSpy = {
     // comprobar que se elimina de la lista 
     component.sentRequests.set([{ account_id: '1', username: 'destinatario', level: 1, avatar: 0 }]);
     component.cancelSentRequest('destinatario');
+    fixture.detectChanges();
+
     expect(component.sentRequests().length).toBe(0);
   });
 
   // ------------------------------------------------------------------
   // Tests de obtener ELO en la informacion de usuario
   // ------------------------------------------------------------------
-  it('debería obtener ratings al abrir información de un amigo', () => {
+  it('debería obtener ratings al abrir información de un amigo', async () => {
     const user: any = { account_id: '123', username: 'test', level: 5, avatar: 1 };
     component.openUserInfo(user, 'friend');
+
+    await fixture.whenStable();
+    fixture.detectChanges();
+
     expect(friendRepoSpy.getAllRatings).toHaveBeenCalledWith(123);
     expect(component.selectedUserEloBlitz()).toBe(1200);
     expect(component.selectedUserEloRapid()).toBe(1300);
@@ -213,7 +249,7 @@ iconServiceSpy = {
     component.selectedBoard.set(2);
     component.selectedMode.set({ id: 'blitz', baseSeconds: 300, increments: [0,2,5] });
     component.selectedIncrement.set(2);
-    component.sendChallenge();
+    component.sendChallenge(null);
     expect(websocketSpy.initConnection).toHaveBeenCalledWith(
       'challenge',
       expect.objectContaining({
