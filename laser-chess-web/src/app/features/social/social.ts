@@ -7,6 +7,7 @@ import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended'
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
@@ -15,7 +16,7 @@ import { GameState } from '../../model/remote/game-state'
 
 @Component({
   selector: 'app-social',
-  imports: [TopRow, FormsModule],
+  imports: [TopRow, FormsModule, MatIconModule],
   templateUrl: './social.html',
   styleUrl: './social.css',
 })
@@ -37,7 +38,7 @@ export class Social  {
   public state = signal(true); // State == true -> Social, State == false -> In Progress
 
   friends = signal<FriendSummaryExtended[]>([]); // Lista de amigos del usuario
-  request = signal<FriendSummary[]>([]); 
+  request = signal<FriendSummary[]>([]);
   sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
 
 
@@ -56,7 +57,7 @@ export class Social  {
 
   public requestTabState = signal<'received' | 'sent'>('received'); //Para diferenciar entre enviadas y recibidas
   public sentRequestsInfo = signal(false);
-  
+
   public selectedUserContext = signal<'friend' | 'received_request' | 'sent_request'>('friend'); //Para diferenciar q informacion mostrar
 
   //PARA LA CONFIGURACION DE LA PARTIDA
@@ -67,7 +68,7 @@ export class Social  {
 
   private gameState = inject(GameState);
 
-  
+
   // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
   public timeModes = [
     { id: 'blitz', label: 'Blitz', baseSeconds: 300, increments: [0, 2, 5] },
@@ -86,7 +87,7 @@ export class Social  {
   public selectedBoard = signal<number>(1); // ACE por defecto
   public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
   public selectedIncrement = signal<number>(0); // incremento en segundos
-  
+
 
   // Solo para modo personalizado
   public customMinutes = signal<number>(5);
@@ -100,11 +101,11 @@ export class Social  {
   ngOnInit(): void {
     this.loadFriends();
     this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn
-    this.loadSentRequests(); 
+    this.loadSentRequests();
   }
 
   ngOnDestroy(): void {
-    this.wsSubscription?.unsubscribe(); 
+    this.wsSubscription?.unsubscribe();
   }
 
   //Metodo para recargar todo TODO el rato :D
@@ -129,7 +130,7 @@ export class Social  {
   // Abrir pop-up de solicitudes
   openRequestPopup() {
     this.loadRequests();
-    this.loadSentRequests(); 
+    this.loadSentRequests();
     this.requestTabState.set('received'); //?
     this.popUP_request.set(true);
   }
@@ -200,7 +201,7 @@ export class Social  {
   challengeFromPopup() {
     const user = this.selectedUser();  // Guardar ANTES MUY IMPORTANTE SIN esto no van las privadas
     if (user) {
-      this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual 
+      this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual
       this.openChallengeConfig(user);
     }
   }
@@ -214,11 +215,11 @@ export class Social  {
   copyLink() {
     console.log('Copiar enlace');
   }
-  
+
   //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
   resumeGame(gameId?: string) {
     console.log('Retomando partida...');
-    this.router.navigate(['/game']); 
+    this.router.navigate(['/game']);
   }
 
   //Cargar lista de amigos
@@ -280,12 +281,12 @@ export class Social  {
             this.refreshSocialState();
             // Si no quedan solicitudes enviadas, actualizar la vista
             if (this.sentRequests().length === 0 && this.requestTabState() === 'sent') {
-              // Opcional: mantener el popup abierto si hay solicitudes recibidas 
+              // Opcional: mantener el popup abierto si hay solicitudes recibidas
             }
           }
         },
         error: (err: any) => {
-          console.error('Error al cancelar solicitud:', err);        
+          console.error('Error al cancelar solicitud:', err);
         }
     });
   }
@@ -293,10 +294,10 @@ export class Social  {
   //Añadir amigo
   addFriend() {
     const username = this.usernameInput.nativeElement.value.trim();
-    if (!username) { 
+    if (!username) {
       this.errorAmigoNombreNoValido.set(true);
-      return; 
-    } else { 
+      return;
+    } else {
 
       this.errorAmigoNombreNoValido.set(false);
     }
@@ -308,13 +309,13 @@ export class Social  {
     this.friendService.addFriend(request).subscribe({
       next: (result) => {
 
-        if (result) { 
+        if (result) {
           console.log('Solicitud de amistad enviada');
           this.popUP_newFriend.set(false);
           this.usernameInput.nativeElement.value = '';
           this.refreshSocialState();
         }
-        
+
       },
       error: (err:any) => {
         console.error(err);
@@ -377,7 +378,7 @@ export class Social  {
       next: (result) => {
         if (result) {
           console.log('Solicitud de amistad rechazada correctamente');
-          // Eliminar la solicitud de la lista local 
+          // Eliminar la solicitud de la lista local
           this.request.set(this.request().filter(req => req.username !== requestUsername)); //Actualizacion Optimista (Arquitectura Software :3)
           this.refreshSocialState();
 
@@ -386,7 +387,7 @@ export class Social  {
             this.popUP_request.set(false);
           }
         }
-        
+
       },
       error: (err: any) => {
         console.error('Error al rechazar solicitud:', err);
@@ -400,7 +401,7 @@ export class Social  {
   // Abre el popup al hacer clic en Retar
   openChallengeConfig(friend: FriendSummaryExtended): void {
     this.friendToChallenge = friend;
-    this.selectedBoard.set(1);   
+    this.selectedBoard.set(1);
     this.selectedMode.set(this.timeModes[0]);
     this.selectedIncrement.set(0);
     this.customMinutes.set(5);
@@ -462,9 +463,9 @@ export class Social  {
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
 
     this.websocket.initConnection(endpoint, params);
-    
 
-    this.closeConfigPopup(); 
+
+    this.closeConfigPopup();
     this.popUP_waiting.set(true);
   }
 

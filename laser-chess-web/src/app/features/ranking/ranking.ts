@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TopRow } from '../../shared/top-row/top-row';
 import { RankingRepository, RankingPlayer, UserRankingInfo, EloType } from '../../repository/ranking-repository';
+import { MatIconModule } from '@angular/material/icon';
 
 //Como en social vaya para los pop-up jeje
 import { FriendRespository } from '../../repository/friend-respository';
@@ -21,23 +22,23 @@ import { GameState } from '../../model/remote/game-state'
 
 @Component({
   selector: 'app-ranking',
-  imports: [CommonModule, FormsModule, TopRow],
+  imports: [CommonModule, FormsModule, TopRow, MatIconModule],
   templateUrl: './ranking.html',
   styleUrls: ['./ranking.css']
 })
 export class Ranking implements OnInit {
   private rankingRepo = inject(RankingRepository);
   private friendRepo = inject(FriendRespository);
-  private remote = inject(Remote); 
+  private remote = inject(Remote);
 
   // Señales
   public loading = signal(true);
   public error = signal<string | null>(null);
   public selectedEloType = signal<EloType>('blitz');
-  
+
   // Top 100 jugadores
   public topPlayers = signal<RankingPlayer[]>([]);
-  
+
   // Información del usuario actual
   public userInfo = signal<UserRankingInfo | null>(null);
 
@@ -69,10 +70,10 @@ export class Ranking implements OnInit {
     public showConfigPopup = signal(false);
     public friendToChallenge: FriendSummary | null = null;
     public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
-  
+
     private gameState = inject(GameState);
-  
-    
+
+
     // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
     public timeModes = [
       { id: 'blitz', label: 'Blitz', baseSeconds: 300, increments: [0, 2, 5] },
@@ -91,12 +92,12 @@ export class Ranking implements OnInit {
     public selectedBoard = signal<number>(1); // ACE por defecto
     public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
     public selectedIncrement = signal<number>(0); // incremento en segundos
-    
-  
+
+
     // Solo para modo personalizado
     public customMinutes = signal<number>(5);
     public customIncrementSec = signal<number>(0);
-  
+
     //WEBSOCKET
     public popUP_waiting = signal(false);// Para el nuevo pop-up del ESPERANDO
     private websocket = inject(Websocket);// Para meter el websocket en social
@@ -197,7 +198,7 @@ export class Ranking implements OnInit {
       this.popUP_userInfo.set(true);
       return;
     }
-    
+
     // Es otro usuario
     // Obtener los 4 ELOs del usuario
     this.friendRepo.getAllRatings(player.userId).subscribe({
@@ -321,7 +322,7 @@ export class Ranking implements OnInit {
   challengeFromPopup() {
     const user = this.selectedUser();  // Guardar ANTES MUY IMPORTANTE SIN esto no van las privadas
     if (user) {
-      this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual 
+      this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual
       this.openChallengeConfig(user);
     }
   }
@@ -329,7 +330,7 @@ export class Ranking implements OnInit {
   // Abre el popup al hacer clic en Retar
   openChallengeConfig(friend: FriendSummaryExtended): void {
     this.friendToChallenge = friend;
-    this.selectedBoard.set(1);   
+    this.selectedBoard.set(1);
     this.selectedMode.set(this.timeModes[0]);
     this.selectedIncrement.set(0);
     this.customMinutes.set(5);
@@ -391,9 +392,9 @@ export class Ranking implements OnInit {
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
 
     this.websocket.initConnection(endpoint, params);
-    
 
-    this.closeConfigPopup(); 
+
+    this.closeConfigPopup();
     this.popUP_waiting.set(true);
   }
 

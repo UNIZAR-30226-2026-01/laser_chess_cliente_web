@@ -14,7 +14,8 @@
                     </div>
 
                     <div class="tiempo">
-                        ⏱️ {{ reto.starting_time }} min + {{ reto.time_increment }}s
+                        <mat-icon style="margin-right: 10px" fontSet="material-symbols-outlined">timer</mat-icon>
+                        {{ formatTime(reto.starting_time) }} + {{ reto.time_increment / 1000 }}s
                     </div>
 
                     <button (click)="accept(reto)">Jugar</button>
@@ -22,7 +23,6 @@
                 } @empty {
                     <div class="no-data">
                     <p>No hay ninguna notificación</p>
-                    <span class="loader"></span>
                     </div>
                 }
             </div>
@@ -36,7 +36,7 @@
         <div class="game-selection">
 
         <div class="notif-elo-container">
-          <button class="icon-btn icon-notif" type="button" aria-label="Notificaciones" (click)="popUPNotis.set(true)">
+          <button class="icon-btn icon-notif" type="button" aria-label="Notificaciones" (click)="openNotifications()">
               @if (solicitudes().length > 0) {
                 <span class="notification-badge">{{ solicitudes().length }}</span>
               }
@@ -46,7 +46,12 @@
           <!-- Lo del elo -->
           <div class="elo-badge-container">
             <div class="elo-text-wrapper">
-              <span class="elo-rank-name">{{ eloRankName }}</span>
+              <span class="elo-rank-name">
+                {{ eloRankName }}
+                <!-- place holder, habrá que leer el valor que sea -->
+                · 1256 / 1500
+                <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+              </span>
             </div>
 
             <div class="elo-circle-wrapper">
@@ -64,26 +69,55 @@
 
 
         <div class="bottom-row">
-            <button class="setting-selector" type="button" aria-label="Cambiar modo de tiempo">
-                <div class="setting-content">
-                    <mat-icon style="--icon-color: var(--LCBlue)" fontSet="material-symbols-outlined">timer</mat-icon>
-                    <span class="setting-label">{{ timeModeLabel }}</span>
-                </div>
-                <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
-            </button>
 
-            <button class="setting-selector" type="button" aria-label="Cambiar tablero">
-                <div class="setting-content">
-                    <mat-icon style="--icon-color: var(--LCRed)" fontSet="material-symbols-outlined">crossword</mat-icon>
-                    <span class="setting-label">Tablero</span>
-                </div>
-                <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
-            </button>
+        <div class="dropdown-wrapper">
+                <button class="setting-selector" type="button" aria-label="Cambiar modo de tiempo" (click)="toggleTimeDropdown($event)">
+                    <div class="setting-content">
+                        <mat-icon style="--icon-color: var(--LCBlue)" fontSet="material-symbols-outlined">timer</mat-icon>
+                        <span class="setting-label">{{ selectedTime }}</span>
+                    </div>
+                    <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
+                </button>
+
+                @if (timeDropdownOpen()) {
+                    <ul class="dropdown-menu">
+                        @for (option of timeOptions; track option) {
+                            <li class="dropdown-item"
+                                (click)="selectTime(option, $event)"
+                                [class.selected]="option === selectedTime">
+                                {{ option }}
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+
+            <div class="dropdown-wrapper">
+                <button class="setting-selector" type="button" aria-label="Cambiar tablero" (click)="toggleBoardDropdown($event)">
+                    <div class="setting-content">
+                        <mat-icon style="--icon-color: var(--LCRed)" fontSet="material-symbols-outlined">crossword</mat-icon>
+                        <span class="setting-label">{{ selectedBoard }}</span>
+                    </div>
+                    <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
+                </button>
+
+                @if (boardDropdownOpen()) {
+                    <ul class="dropdown-menu">
+                        @for (option of boardOptions; track option) {
+                            <li class="dropdown-item"
+                                (click)="selectBoard(option, $event)"
+                                [class.selected]="option === selectedBoard">
+                                {{ option }}
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
         </div>
 
         <div class="play-group">
             <a class="play-btn" routerLink="/game">
-                PLAY
+              JUGAR
             </a>
             <button class="trophy-btn" type="button" aria-label="Trofeo">
                 <mat-icon fontSet="material-symbols-outlined">emoji_events</mat-icon>

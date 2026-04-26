@@ -1,4 +1,4 @@
-import { Component, signal, inject} from '@angular/core';
+import { Component, signal, inject, HostListener } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
@@ -15,8 +15,17 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './home.css',
 })
 export class Home {
-  timeModeLabel = 'Modo de tiempo';
-  boardPreviewUrl = '/assets/picture.jpeg';
+  // opciones de los selectores (no se si está guardado en algun otro lugar,
+  // a si que lo pongo aqui)
+  timeOptions = ['Blitz', 'Rapid', 'Classic', 'Extended'];
+  boardOptions = ['Ace', 'Curiosity', 'Grail', 'Mercury', 'Sophie'];
+
+  selectedTime = this.timeOptions[0];
+  selectedBoard = this.boardOptions[0];
+
+  // estado de los desplegables
+  timeDropdownOpen = signal(false);
+  boardDropdownOpen = signal(false);
 
   eloDashOffset: number = 276.46;
   eloRankName: string = 'PROTON · II';
@@ -31,6 +40,12 @@ export class Home {
   private gameState = inject(GameState);
 
 
+  // Cierra los desplegables si se hace clic fuera de ellos
+  @HostListener('document:click')
+  closeDropdowns() {
+    this.timeDropdownOpen.set(false);
+    this.boardDropdownOpen.set(false);
+  }
 
   ngOnInit() {
     // Aquí podrías cargar las solicitudes iniciales si quieres
@@ -43,11 +58,40 @@ export class Home {
     this.wsSubscription?.unsubscribe();
   }
 
+  toggleTimeDropdown(event: Event) {
+    event.stopPropagation(); // Evita que se dispare el @HostListener
+    this.timeDropdownOpen.set(!this.timeDropdownOpen());
+    this.boardDropdownOpen.set(false); // Cierra el otro por si acaso
+  }
+
+  toggleBoardDropdown(event: Event) {
+    event.stopPropagation();
+    this.boardDropdownOpen.set(!this.boardDropdownOpen());
+    this.timeDropdownOpen.set(false);
+  }
+
+  selectTime(option: string, event: Event) {
+    event.stopPropagation();
+    this.selectedTime = option;
+    this.timeDropdownOpen.set(false);
+  }
+
+  selectBoard(option: string, event: Event) {
+    event.stopPropagation();
+    this.selectedBoard = option;
+    this.boardDropdownOpen.set(false);
+  }
+
   getEloProgress() {
     // Por ahora se pone un placeholder, pero habrá que calcularlo
     const porcentaje = 65;
     const circunferencia = 289.02;
     this.eloDashOffset = circunferencia - (porcentaje / 100) * circunferencia;
+  }
+
+  openNotifications() {
+    this.loadFriends();
+    this.popUPNotis.set(true);
   }
 
   loadFriends(): void {
@@ -62,6 +106,20 @@ export class Home {
       });
     }
 
+    formatTime(milliseconds: number): string {
+      const totalSeconds = Math.floor(milliseconds / 1000);
+
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      if (minutes === 0) {
+        return `${seconds}s`;
+      }
+      if (seconds > 0) {
+        return `${minutes} min ${seconds}s`;
+      }
+      return `${minutes} min`;
+    }
 
   accept(reto: ChallengeResume) {
     const endpoint = 'challenge/accept';
