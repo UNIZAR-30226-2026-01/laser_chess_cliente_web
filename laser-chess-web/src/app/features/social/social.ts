@@ -114,6 +114,7 @@ export class Social  {
     this.loadFriends();
     this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn
     this.loadSentRequests(); 
+    this.loadGames();
   }
 
   ngOnDestroy(): void {
@@ -229,7 +230,9 @@ export class Social  {
   }
   
   //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
-  resumeGame(gameId: number) {
+  resumeGame(gameId: number, p1: number, p2:number) {
+    // Comprobar que jugador soy yo para darle valor al otro jugador
+    // this.friendToChallenge = 
     console.log('Retomando partida...');
     this.sendChallenge(gameId); // Iniciar la partida con el ID específico
   }
@@ -486,6 +489,7 @@ export class Social  {
 
     console.log('Parámetros' + startingTime);
     this.gameState.nombreRival.set(this.friendToChallenge.username);
+    this.gameState.miNombre.set(this.userService.getUsername() || '');
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
 
     this.websocket.initConnection(endpoint, params);
@@ -505,7 +509,7 @@ export class Social  {
     }
   }
 
-  cargarPartidas(){
+  loadGames(){
       this.gameRepo.getPausedGame().subscribe({
         next: (data: GameResume[]) => {
           console.log('Partidas cargadas:', data);

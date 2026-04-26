@@ -1,5 +1,4 @@
 import { Component, signal, inject} from '@angular/core';
-import { RouterLink } from "@angular/router";
 import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { Websocket } from '../../model/remote/websocket';
@@ -7,12 +6,13 @@ import { Remote } from '../../model/remote/remote';
 import { GameState } from '../../utils/game-state'
 import { MatIcon } from '@angular/material/icon';
 import { TimerService } from '../../services/timer-service';
+import { UserRespository } from '../../repository/user-respository';
 
 
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, TopRow, MatIcon],
+  imports: [ TopRow, MatIcon],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -25,6 +25,12 @@ export class Home {
   rankedPoints: number = 1234;
 
   popUPNotis = signal(false);
+  tipoPartida = signal('IA'); // Puede ser "Ranked", "IA", "Pública"
+  selectedBoard = signal(0);
+  startingTime = signal(300);
+  timeIncrement = signal(0);
+
+
   solicitudes = signal<ChallengeResume[]>([]);
   private websocket = inject(Websocket);
   private wsSubscription: any;
@@ -32,6 +38,7 @@ export class Home {
 
   private gameState = inject(GameState);
   private timerService = inject(TimerService);
+  private userRepo = inject(UserRespository);
 
 
 
@@ -76,7 +83,8 @@ export class Home {
 
     this.timerService.miTiempo.set(reto.starting_time);
     this.timerService.tiempoRival.set(reto.starting_time);
-
+    
+    this.gameState.miNombre.set(this.userRepo.getUsername() || '');
     this.gameState.nombreRival.set(reto.challenger_username);
 
     this.websocket.initConnection(endpoint, params);
@@ -84,5 +92,49 @@ export class Home {
 
   }
 
-  solicitarPartida(){}
+   // Inciiar a una partida amistosa DESAFIAR
+  sendChallenge(): void {
+
+    const board = this.selectedBoard();
+    const startingTime = this.startingTime();
+    const timeIncrement = this.timeIncrement();
+    const level = this.userRepo.getLevel();
+
+    var endpoint = '';
+    var params;
+    switch(this.tipoPartida()){
+      case 'Ranked':
+        endpoint = 'matchmaking'
+        params = {
+            board,
+            starting_time: startingTime,
+            time_increment: timeIncrement,
+            ranked: 1,
+          };
+        break;
+      case 'IA':
+        endpoint = 'bot'
+        params = {
+            board,
+            starting_time: startingTime,
+            time_increment: timeIncrement,
+            level: level
+          };
+        break;
+    
+    }
+
+    
+    
+    this.timerService.miTiempo.set(startingTime * 1000);
+    this.timerService.tiempoRival.set(startingTime * 1000);
+
+    console.log('Parámetros' + startingTime);
+    console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
+
+    this.websocket.initConnection(endpoint, params);
+    
+
+  }
+
 }

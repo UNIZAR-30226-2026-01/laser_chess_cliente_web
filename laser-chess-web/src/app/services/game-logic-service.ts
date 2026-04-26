@@ -94,7 +94,7 @@ export class GameLogicService {
       this.listaPiezas.set(piezas);
       this.state.cont.set(piezas.length);
       
-      if (Number(msg.Extra) !== this.id) {         //Ns q es el extra pero siempre es true esto (al final no siempre es true)
+      if (Number(msg.Extra) !== this.id) {        
         this.soyAzul.set(true);
         console.log("Soy el jugador azul");
         this.state.esMiTurno.set(false); // El jugador azul empieza segundo
@@ -105,6 +105,8 @@ export class GameLogicService {
       }
       this.timerService.startTimer();
       this.aceptoInitial.set(false);
+      const request: SendAction = { Type: "GetState", Content: "" }; 
+      this.wsService.sendAction(request);
 
       
     } else if ( msg.Type === "Move"){

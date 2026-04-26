@@ -83,12 +83,19 @@
         </div>
 
         <div class="play-group">
-            <a class="play-btn" routerLink="/game">
+            <a class="play-btn" (click)="this.sendChallenge()">
                 PLAY
             </a>
-            <button class="trophy-btn" type="button" aria-label="Trofeo">
-                <mat-icon fontSet="material-symbols-outlined">emoji_events</mat-icon>
-            </button>
+
+            @if(this.tipoPartida()=== 'Ranked'){
+                <button class="trophy-btn" (click)="this.tipoPartida()=== 'IA'" type="button" aria-label="Trofeo" >
+                    <mat-icon fontSet="material-symbols-outlined">emoji_events</mat-icon>
+                </button>
+            }@else {
+                <button class="trophy-btn" (click)="this.tipoPartida()=== 'Ranked'" type="button" aria-label="IA" >
+                    <mat-icon fontSet="material-symbols-outlined">emoji_events</mat-icon>
+                </button>
+            }
         </div>
 
     </div>

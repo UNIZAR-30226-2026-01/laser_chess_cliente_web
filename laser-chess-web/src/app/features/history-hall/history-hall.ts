@@ -40,6 +40,7 @@ export class HistoryHall {
 
   visualidaPartida(partida: GameResume) {
     this.historyService.historySelectedGame.set(partida);
+    localStorage.setItem('historyGame', JSON.stringify(partida));
     this.router.navigate(['/history']);
   }
 }

@@ -34,9 +34,14 @@ export class History {
   nombreRival = this.historyState.nombreRival;
   miNombre = this.historyState.miNombre;
 
-  permitSalida = this.gameService.permitSalida;
-
+  
+  
   ngOnInit(){
+    const saved = localStorage.getItem('historyGame');
+    if (saved) {
+      this.historyState.historySelectedGame.set(JSON.parse(saved));
+    }
+    
     this.historyState.inicializarTablero();
   }
   siguiente(){
@@ -44,5 +49,12 @@ export class History {
   }
   anterior(){
     this.historyState.retroceder();
+  }
+
+  primero(){
+    this.historyState.irAlPrimero();
+  }
+  ultimo(){
+    this.historyState.irAlUltimo();
   }
 }

@@ -6,6 +6,8 @@ import { Remote } from '../model/remote/remote';
 import { GameResume } from '../model/game/GameResume';
 import { GameLogicService } from './game-logic-service';
 import { GameUtils } from '../utils/game-utils';
+import { UserRespository } from '../repository/user-respository';
+import { History } from '../features/history/history';
 
 
 
@@ -15,7 +17,7 @@ import { GameUtils } from '../utils/game-utils';
 })
 
 export class HistoryService {
-  private remoteService = inject(Remote);
+  private remoteService = inject(UserRespository);
 
   TipoPieza = TipoPieza; 
 
@@ -23,25 +25,28 @@ export class HistoryService {
   private gameUtils = inject(GameUtils);
   columnas = 10;
   filas = 8;
-  id = this.remoteService.getAccountId();
+  id = this.remoteService.getId();
+
+  popUpLimites = signal(false);
+  popUpMensaje = signal('');  
 
   
-    nombreRival = signal<string>('Anónimo');
-    miNombre = signal<string>('Paulix');
+  nombreRival = signal<string>('Anónimo');
+  miNombre = signal<string>('Paulix');
   
-    miTiempo = signal<number>(0);
-    tiempoRival = signal<number>(0);
+  miTiempo = signal<number>(0);
+  tiempoRival = signal<number>(0);
   
-    listaPiezas = signal<PiezaData[]>([]);
-    esMiTurno = signal(true);
-    soyAzul = signal(true);
-    cont = signal(1); // Contador incremental para creación de piezas (id)
+  listaPiezas = signal<PiezaData[]>([]);
+  esMiTurno = signal(true);
+  soyAzul = signal(true);
+  cont = signal(1); // Contador incremental para creación de piezas (id)
   
-    laserPath = signal<{x:number,y:number}[]>([]);
+  laserPath = signal<{x:number,y:number}[]>([]);
 
-    indiceMovimiento = 0;
-    movimientos : string[] = [];
-    capturas: PiezaData[] = [];
+  indiceMovimiento = 0;
+  movimientos : string[] = [];
+  capturas: PiezaData[] = [];
   
    
 
@@ -118,15 +123,31 @@ export class HistoryService {
     this.indiceMovimiento = 0;
     console.log(this.historySelectedGame()?.movement_history);
     this.movimientos = this.historySelectedGame()?.movement_history.split(';');
+
     if(this.historySelectedGame()?.p1_id == this.id){
       this.soyAzul.set(false);
       this.esMiTurno.set(true);
+      const rivalProfile$ = this.remoteService.getAccount(this.historySelectedGame()?.p2_id);
+      rivalProfile$.subscribe(profile => {
+        this.nombreRival.set(profile.username);
+      });
     }else{
       this.soyAzul.set(true);
       this.esMiTurno.set(false);
+      const rivalProfile$ = this.remoteService.getAccount(this.historySelectedGame()?.p1_id);
+      rivalProfile$.subscribe(profile => {
+        this.nombreRival.set(profile.username);
+      });
     }
+
     this.miTiempo.set(this.historySelectedGame()?.time_base || 0);
     this.tiempoRival.set(this.historySelectedGame()?.time_base || 0);
+    var userProfile$ = this.remoteService.getOwnAccount();
+    userProfile$.subscribe(profile => {
+      this.miNombre.set(profile.username);
+    });
+
+
 
   }
 
@@ -222,6 +243,8 @@ export class HistoryService {
 
     
   }
+
+  
   
 
 
@@ -236,8 +259,9 @@ export class HistoryService {
   /*****************************************************************************/
 
   avanzar(){
-    if (this.indiceMovimiento >= this.movimientos.length) {
-      alert("No puedes avanzar más");
+    if (this.indiceMovimiento === this.movimientos.length - 1) {
+      this.popUpLimites.set(true);
+      this.popUpMensaje.set('Se ha alcanzado el final de partida')
       return;
     }
     console.log("avanzando con movimiento " + this.movimientos[this.indiceMovimiento]);
@@ -249,7 +273,8 @@ export class HistoryService {
 
   retroceder(){
     if (this.indiceMovimiento <= 0) {
-      alert("No puedes retroceder más");
+      this.popUpLimites.set(true);
+      this.popUpMensaje.set('Se ha alcanzo el inicio de partida, no es posible retroceder')
       return;
     }
     console.log("retrocediendo con movimiento " + this.movimientos[this.indiceMovimiento]);
@@ -258,6 +283,20 @@ export class HistoryService {
     console.log("no me he muerto");
 
   }
+
+  irAlPrimero(){
+    while (this.indiceMovimiento > 0) {
+      this.retroceder();
+    }
+  }
+
+  irAlUltimo(){
+    while(this.indiceMovimiento !== this.movimientos.length - 1){
+      this.avanzar();
+    }
+  }
+
+  
   
   
 
