@@ -79,7 +79,6 @@ export class Customize implements OnInit {
         // Revertir en caso de error
         this.groups.set(previousGroups);
         console.error('Error al equipar:', err);
-        alert('No se pudo equipar el ítem. Intenta de nuevo.');
       }
     });
   }

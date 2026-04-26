@@ -1,8 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit,  signal, computed  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShopRepository, ShopItemDisplay } from '../../repository/shop-repository';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Remote } from '../../model/remote/remote';
 import { AccountResponse } from '../../model/auth/AccountResponse';
 
@@ -21,44 +19,44 @@ export class Shop implements OnInit {
   private shopRepo = inject(ShopRepository);
   private remote = inject(Remote);
 
-  sections$!: Observable<ShopSection[]>;
-  userLevel = 0;
-  userMoney = 0;
+  items = signal<ShopItemDisplay[]>([]);
+  userMoney = signal<number>(0);
+  userLevel = signal<number>(0);
 
-
-  ngOnInit(): void {
-    // Cargar datos del usuario, un dia mas
-    this.loadUserData();
-    this.loadShopItems();
-  }
-  
-
-  private loadUserData(): void {
-    this.remote.getOwnAccount().subscribe({
-      next: (account: AccountResponse) => {
-        this.userLevel = account.level;
-        this.userMoney = account.money;
-      },
-      error: (err) => console.error('Error cargando usuario', err)
-    });
-  }
-
-  private loadShopItems(): void {
-    this.sections$ = this.shopRepo.getShopItemsWithOwnership().pipe(
-      map(items => this.groupByType(items))
-    );
-  }
-
-  private groupByType(items: ShopItemDisplay[]): ShopSection[] {
-    const groups = new Map<string, ShopItemDisplay[]>();
-    items.forEach(item => {
+  //señal computada, su valor se va recalculando
+  sections = computed<ShopSection[]>(() => {
+    const items = this.items(); //valor actual
+    const groups = new Map<string, ShopItemDisplay[]>(); //agrupar ítems por tipo
+    items.forEach(item => { //todos los items al map
       if (!groups.has(item.itemType)) groups.set(item.itemType, []);
-      groups.get(item.itemType)!.push(item);
+      groups.get(item.itemType)!.push(item); //meter el actual
     });
     return Array.from(groups.entries()).map(([type, itemList]) => ({
       title: this.getSectionTitle(type),
       items: itemList
     }));
+  });
+
+  ngOnInit(): void {
+    // Cargar datos del usuario, un dia mas
+    this.loadUserData();
+  }
+  
+
+  private loadUserData(): void {
+    // Cargar
+    this.shopRepo.getShopItemsWithOwnership().subscribe(items => {
+      this.items.set(items);
+    });
+
+    // Cargar datos del usuario
+    this.remote.getOwnAccount().subscribe({
+      next: (account: AccountResponse) => {
+        this.userMoney.set(account.money);
+        this.userLevel.set(account.level);
+      },
+      error: (err) => console.error('Error al cargar cuenta', err)
+    });
   }
 
   getSectionTitle(type: string): string {
@@ -71,22 +69,41 @@ export class Shop implements OnInit {
   }
 
   canBuy(item: ShopItemDisplay): boolean {
-    return !item.owned && this.userLevel >= item.levelRequisite && this.userMoney >= item.price;
+    return !item.owned && this.userLevel() >= item.levelRequisite && this.userMoney() >= item.price;
   }
 
   buyItem(item: ShopItemDisplay): void {
-    if (!this.canBuy(item)) {
-      alert('No puedes comprar este ítem. Revisa nivel o dinero.');
-      return;
-    }
+    if (!this.canBuy(item)) return;
+
+    // Guardar estado actual para posible reversión
+    const previousItems = this.items();
+    const previousMoney = this.userMoney();
+
+    // Actualizacion optimista (arquitectura software)
+    // Marcarlo como owned
+    const updatedItems = previousItems.map(i =>
+      i.id === item.id ? { ...i, owned: true } : i
+    );
+    this.items.set(updatedItems);
+
+    // Restar el precio
+    this.userMoney.set(previousMoney - item.price);
+
+    // Llamada al backend
     this.shopRepo.purchaseItem(item.id).subscribe({
       next: () => {
-        alert(`¡${item.name} comprado!`);
-        this.loadUserData(); // Recargar dinero actualizado
-        this.loadShopItems();
+        console.log(`Compra exitosa: ${item.name}`);
+        // recargar
+        this.loadUserData();
       },
-      error: (err) => alert(err.message)
+      error: (err) => {
+        console.error(` Error al comprar ${item.name}:`, err);
+        // Revertir
+        this.items.set(previousItems);
+        this.userMoney.set(previousMoney);
+      }
     });
   }
+
 
 }
