@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
 
 import { Social } from './social';
@@ -52,7 +53,7 @@ describe('Social', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [Social],
+      imports: [Social, HttpClientTestingModule],
       providers: [
         { provide: FriendRespository, useValue: friendRepoMock },
         { provide: UserRespository, useValue: userRepoMock },

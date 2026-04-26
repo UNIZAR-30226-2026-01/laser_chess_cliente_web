@@ -159,14 +159,14 @@ iconServiceSpy = {
   // Tests de añadir amigo
   // ------------------------------------------------------------------
   it('debería mostrar error si el nombre de usuario está vacío al añadir amigo', () => {
-    component.usernameInput = { nativeElement: { value: '' } } as any;
+    component.newFriendUsername.set('');
     component.addFriend();
     expect(component.errorAmigoNombreNoValido()).toBe(true);
     expect(friendRepoSpy.addFriend).not.toHaveBeenCalled();
   });
 
   it('debería llamar a addFriend con el nombre correcto y cerrar popup si éxito', async () => {
-    component.usernameInput = { nativeElement: { value: 'nuevo_usuario' } } as any;
+    component.newFriendUsername.set('nuevo_usuario');
     component.popUP_newFriend.set(true);
     component.addFriend();
 
@@ -180,7 +180,7 @@ iconServiceSpy = {
 
   it('no debería cerrar popup si addFriend falla', () => {
     friendRepoSpy.addFriend.mockReturnValue(of(false));
-    component.usernameInput = { nativeElement: { value: 'nuevo_usuario' } } as any;
+    component.newFriendUsername.set('nuevo_usuario');
     component.popUP_newFriend.set(true);
     component.addFriend();
     expect(component.popUP_newFriend()).toBe(true); // sigue abierto, sirve para cualquier fallo tipo si no existe el user y esas cosas
@@ -221,7 +221,7 @@ iconServiceSpy = {
   it('debería llamar a deleteFriend al cancelar solicitud enviada', () => {
     component.cancelSentRequest('destinatario');
     expect(friendRepoSpy.deleteFriend).toHaveBeenCalledWith('destinatario');
-    // comprobar que se elimina de la lista 
+    // comprobar que se elimina de la lista
     component.sentRequests.set([{ account_id: '1', username: 'destinatario', level: 1, avatar: 0 }]);
     component.cancelSentRequest('destinatario');
     fixture.detectChanges();
