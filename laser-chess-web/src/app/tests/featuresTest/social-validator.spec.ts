@@ -94,10 +94,14 @@ iconServiceSpy = {
       gameMessages$: of({ type: 'challenge_accepted' }),
     };
 
+    const startingTime = Object.assign(vi.fn(), { set: vi.fn() });
+    const increment = Object.assign(vi.fn(), { set: vi.fn() });
+    const nombreRival = Object.assign(vi.fn(), { set: vi.fn() });
+
     gameStateSpy = {
-      startingTime: { set: vi.fn() },
-      increment: { set: vi.fn() },
-      nombreRival: { set: vi.fn() },
+      startingTime,
+      increment,
+      nombreRival,
     };
 
     gameRepoSpy = {

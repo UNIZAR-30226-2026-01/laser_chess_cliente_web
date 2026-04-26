@@ -15,6 +15,7 @@ import { GameState } from '../../utils/game-state'
 import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
+import { TimerService } from '../../services/timer-service';
 
 @Component({
   selector: 'app-social',
@@ -48,6 +49,7 @@ export class Social  {
   private userService = inject(UserRespository);
   private gameState = inject(GameState);
   gameRepo = inject(GameRepository);
+  private timerService = inject(TimerService);
   private router = inject(Router);
   public friendsInfo = signal(false);
   public gameInfo = signal(false);
@@ -479,8 +481,10 @@ export class Social  {
       };
     }
     
-    this.gameState.startingTime.set(startingTime * 1000);
-    this.gameState.increment.set(timeIncrement);
+    this.timerService.miTiempo.set(startingTime * 1000);
+    this.timerService.tiempoRival.set(startingTime * 1000);
+
+    console.log('Parámetros' + startingTime);
     this.gameState.nombreRival.set(this.friendToChallenge.username);
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
 
