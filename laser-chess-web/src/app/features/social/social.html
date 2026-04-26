@@ -10,7 +10,7 @@
                     <div class="col-popup">
                         <h2>AÑADIR</h2>
                         <h3>Escribe su nombre de usuario</h3>
-                        <input #usernameInput type="text" class="form-control" placeholder="username">
+                        <input type="text" class="form-control" placeholder="username" [(ngModel)]="newFriendUsername">
                         @if (errorAmigoNombreNoValido()) {
                           <span class="error_message_form">
                             Por favor, ingresa un nombre de usuario válido.
@@ -297,7 +297,7 @@
     <div class="folder-body">
       @if (state()){
       <div class="social-top-actions">
-        <button class="friend-request-button" (click)="popUP_request.set(true)">
+        <button class="friend-request-button" (click)="openRequestPopup()">
           <div class="left">
             <mat-icon fontSet="material-symbols-outlined">all_inbox</mat-icon>
             <span class="request-text">Solicitudes de amistad</span>

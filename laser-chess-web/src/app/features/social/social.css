@@ -210,7 +210,6 @@
   cursor: pointer;
   transition: all 0.2s ease;
   color: var(--LCWhite);
-  font-size: var(--LCMedium);
 }
 
 .friend-request-button {
@@ -219,6 +218,8 @@
   justify-content: space-between;
   background-color: var(--S2);
   border: 3px solid var(--S3);
+  font-size: var(--LCSmall);
+  font-weight: bold;
 }
 
 .friend-request-button:hover {
@@ -234,6 +235,7 @@
   justify-content: center;
   background-color: var(--LCRed);
   border-radius: var(--BorderFull);
+  font-size: var(--LCMedium);
 }
 
 .add-friend-button:hover {

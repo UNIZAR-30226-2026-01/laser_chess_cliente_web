@@ -33,7 +33,8 @@ export class Social  {
   boardPreviewUrl = '/assets/picture.jpeg';
   coins = 1234;
   rankedPoints = 1234;
-  @ViewChild('usernameInput') usernameInput!: ElementRef<HTMLInputElement>;
+
+  public newFriendUsername = signal<string>('');
 
   // Llamada a remote para obtener datos
 
@@ -306,12 +307,12 @@ export class Social  {
 
   //Añadir amigo
   addFriend() {
-    const username = this.usernameInput.nativeElement.value.trim();
+    const username = this.newFriendUsername().trim();
+
     if (!username) {
       this.errorAmigoNombreNoValido.set(true);
       return;
     } else {
-
       this.errorAmigoNombreNoValido.set(false);
     }
 
@@ -321,14 +322,12 @@ export class Social  {
 
     this.friendService.addFriend(request).subscribe({
       next: (result) => {
-
         if (result) {
           console.log('Solicitud de amistad enviada');
           this.popUP_newFriend.set(false);
-          this.usernameInput.nativeElement.value = '';
+          this.newFriendUsername.set(''); // Limpiamos el input
           this.refreshSocialState();
         }
-
       },
       error: (err:any) => {
         console.error(err);
