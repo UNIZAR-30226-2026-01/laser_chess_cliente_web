@@ -1,7 +1,14 @@
 
     <app-top-row></app-top-row>
  
-
+  @if(popUpLimites()) {
+  <div id="overlay" class="overlay" (click)="popUpLimites.set(false)">
+    <div class="popup-error" (click)="$event.stopPropagation()">
+      {{ popUpMensaje() }}
+      <button (click)="popUpLimites.set(false)">Cerrar</button>
+    </div>
+  </div>
+}
 
 
   <!-- PANEL IZQUIERDO -->
@@ -35,6 +42,9 @@
 
   
   </aside>
+<button (click)="primero()"> First </button>
 <button (click)="anterior()"> < </button>
 <button (click)="siguiente()"> > </button>
+<button (click)="ultimo()"> Last </button>
+
 

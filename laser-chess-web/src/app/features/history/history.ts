@@ -34,8 +34,9 @@ export class History {
   nombreRival = this.historyState.nombreRival;
   miNombre = this.historyState.miNombre;
 
-  permitSalida = this.gameService.permitSalida;
-
+  popUpLimites = signal(false);
+  popUpMensaje = signal('');
+  
   ngOnInit(){
     this.historyState.inicializarTablero();
   }
@@ -44,5 +45,12 @@ export class History {
   }
   anterior(){
     this.historyState.retroceder();
+  }
+
+  primero(){
+    this.historyState.irAlPrimero();
+  }
+  ultimo(){
+    this.historyState.irAlUltimo();
   }
 }

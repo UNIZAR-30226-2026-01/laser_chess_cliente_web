@@ -37,7 +37,7 @@
     <div class="overlay" (click)="closeConfigPopup()">
       <div class="popup-challenge" (click)="$event.stopPropagation()">
         <div class="popup-header">
-          <h2>Configurar reto contra {{ friendToChallenge?.username }}</h2>
+          <h2>Configurar reto contra {{ friendToChallenge }}</h2>
           <button class="close-button" (click)="closeConfigPopup()">✕</button>
         </div>
         <div class="popup-content">
@@ -346,7 +346,7 @@
                     <span>Modo_tiempo</span>
                     <span>Tablero</span>
                   </div>
-                  <button class="btn-play" (click)="resumeGame(game.id)">RETOMAR</button>
+                  <button class="btn-play" (click)="resumeGame(game.id, game.p1_id, game.p2_id)">RETOMAR</button>
               </li>
             }
           
