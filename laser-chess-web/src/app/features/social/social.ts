@@ -11,7 +11,10 @@ import { FormsModule } from '@angular/forms';
 
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { FriendRespository } from '../../repository/friend-respository';
-import { GameState } from '../../model/remote/game-state'
+import { GameState } from '../../utils/game-state'
+import { GameResume } from '../../model/game/GameResume';
+import { GameRepository } from '../../repository/game-repository';
+import { UserRespository } from '../../repository/user-respository';
 
 @Component({
   selector: 'app-social',
@@ -39,11 +42,15 @@ export class Social  {
   friends = signal<FriendSummaryExtended[]>([]); // Lista de amigos del usuario
   request = signal<FriendSummary[]>([]); 
   sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
-
+  partidas= signal<GameResume[]>([]); // Lista de partidas pausadas
 
   private friendService = inject(FriendRespository);
+  private userService = inject(UserRespository);
+  private gameState = inject(GameState);
+  gameRepo = inject(GameRepository);
   private router = inject(Router);
   public friendsInfo = signal(false);
+  public gameInfo = signal(false);
   public requestInfo = signal(false);
   public popUP_userInfo = signal(false);
   public selectedUser = signal<FriendSummaryExtended | null> (null);
@@ -65,7 +72,9 @@ export class Social  {
   public friendToChallenge: FriendSummary | null = null;
   public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
 
-  private gameState = inject(GameState);
+  id = this.userService.getId(); // Para guardar el ID de la partida a retomar si venimos de una partida pausada
+
+  
 
   
   // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
@@ -77,13 +86,15 @@ export class Social  {
     { id: 'custom', label: 'Personalizado', baseSeconds: null, increments: null }
   ];
   public boards = [
-    { id: 1, name: 'ACE' },
-    { id: 2, name: 'CURIOSITY' },
+    { id: 0, name: 'ACE' },
+    { id: 1, name: 'CURIOSITY' },
+    { id: 2, name: 'SOPHIE' },
     { id: 3, name: 'GRAIL' },
-    { id: 4, name: 'MERCURY' },
-    { id: 5, name: 'SOPHIE' }
+    { id: 4, name: 'MERCURY' }
   ];
-  public selectedBoard = signal<number>(1); // ACE por defecto
+
+
+  public selectedBoard = signal<number>(0);// ACE por defecto
   public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
   public selectedIncrement = signal<number>(0); // incremento en segundos
   
@@ -216,9 +227,9 @@ export class Social  {
   }
   
   //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
-  resumeGame(gameId?: string) {
+  resumeGame(gameId: number) {
     console.log('Retomando partida...');
-    this.router.navigate(['/game']); 
+    this.sendChallenge(gameId); // Iniciar la partida con el ID específico
   }
 
   //Cargar lista de amigos
@@ -443,19 +454,31 @@ export class Social  {
 
 
   // Inciiar a una partida amistosa DESAFIAR
-  sendChallenge(): void {
+  sendChallenge( id: number | null): void {
     if (!this.friendToChallenge) return;
 
     const board = this.selectedBoard();
     const { startingTime, timeIncrement } = this.getChallengeParams();
 
     const endpoint = 'challenge';
-    const params = {
-      username: this.friendToChallenge.username,
-      board,
-      starting_time: startingTime,
-      time_increment: timeIncrement
-    };
+    var params
+    if (id) {
+      params = {
+        username: this.friendToChallenge.username,
+        board,
+        starting_time: startingTime,
+        time_increment: timeIncrement,
+        match_id: id
+      };
+    } else {
+      params = {
+        username: this.friendToChallenge.username,
+        board,
+        starting_time: startingTime,
+        time_increment: timeIncrement,
+      };
+    }
+    
     this.gameState.startingTime.set(startingTime * 1000);
     this.gameState.increment.set(timeIncrement);
     this.gameState.nombreRival.set(this.friendToChallenge.username);
@@ -472,10 +495,24 @@ export class Social  {
   challengeFriend(friendUsername: string): void {
     const friend = this.friends().find(f => f.username === friendUsername);
     if (friend) {
-      this.openChallengeConfig(friend);   // Abre
+      this.openChallengeConfig(friend);   
     } else {
       console.error('Amigo no encontrado');
     }
   }
+
+  cargarPartidas(){
+      this.gameRepo.getPausedGame().subscribe({
+        next: (data: GameResume[]) => {
+          console.log('Partidas cargadas:', data);
+          this.partidas.set(data);
+          this.gameInfo.set(true);
+        },
+        error: (error:any) => {
+          console.error('Error al cargar partidas:', error);
+        }
+    });
+    
+    }
 
 }

@@ -4,7 +4,7 @@ import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { Websocket } from '../../model/remote/websocket';
 import { Remote } from '../../model/remote/remote';
-import { GameState } from '../../model/remote/game-state'
+import { GameState } from '../../utils/game-state'
 import { MatIcon } from '@angular/material/icon';
 
 
@@ -76,4 +76,6 @@ export class Home {
     this.popUPNotis.set(false);
 
   }
+
+  solicitarPartida(){}
 }

@@ -53,7 +53,7 @@ describe('Login', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
 
-    vi.spyOn(router, 'navigate');
+    vi.spyOn(router, 'navigateByUrl');
 
     fixture.detectChanges();
   });
@@ -172,7 +172,7 @@ describe('Login', () => {
     });
     component.login();
 
-    expect(router.navigate).toHaveBeenCalledWith(['home']);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/home');    
     expect(component.showError()).toBe(false);
     expect(component.errorMessage()).toBe('');
   });
@@ -190,7 +190,7 @@ describe('Login', () => {
     expect(component.errorMessage()).toBe('Login failed: Invalid credentials');
     expect(component.loginForm.get('credential')?.value).toBeNull();
     expect(component.loginForm.get('password')?.value).toBeNull();
-    expect(router.navigate).not.toHaveBeenCalled();
+    expect(router.navigateByUrl).not.toHaveBeenCalled();
   });
 
   it('debería mostrar error "Login failed: Connection error" y resetear formulario si el status es ERR_CONNECTION', () => {
@@ -206,7 +206,7 @@ describe('Login', () => {
     expect(component.errorMessage()).toBe('Login failed: Connection error');
     expect(component.loginForm.get('credential')?.value).toBeNull();
     expect(component.loginForm.get('password')?.value).toBeNull();
-    expect(router.navigate).not.toHaveBeenCalled();
+    expect(router.navigateByUrl).not.toHaveBeenCalled();
   });
 
 });

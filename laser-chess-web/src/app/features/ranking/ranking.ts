@@ -16,7 +16,7 @@ import { Remote } from '../../model/remote/remote';
 
 
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
-import { GameState } from '../../model/remote/game-state'
+import { GameState } from '../../utils/game-state'
 
 
 @Component({

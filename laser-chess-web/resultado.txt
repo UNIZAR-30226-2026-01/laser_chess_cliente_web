@@ -1,0 +1,653 @@
+
+> laser-chess-web@0.0.0 test
+> ng test
+
+❯ Building...
+✔ Building...
+Initial chunk files                                    | Names                                               |  Raw size
+chunk-QMWBSVEM.js                                      | -                                                   | 116.20 kB | 
+chunk-5I4CXGII.js                                      | -                                                   |  67.34 kB | 
+spec-app-features-home-home.js                         | spec-app-features-home-home                         |  34.21 kB | 
+spec-app-features-game-game.js                         | spec-app-features-game-game                         |  31.28 kB | 
+chunk-LDKLYAIJ.js                                      | -                                                   |  29.90 kB | 
+spec-app-features-settings-settings.js                 | spec-app-features-settings-settings                 |  29.56 kB | 
+chunk-O35I226D.js                                      | -                                                   |  25.84 kB | 
+chunk-IVDNZUWT.js                                      | -                                                   |  18.77 kB | 
+chunk-3PV6I5RX.js                                      | -                                                   |  18.32 kB | 
+chunk-NAL75WIT.js                                      | -                                                   |  15.96 kB | 
+spec-app-features-shop-shop.js                         | spec-app-features-shop-shop                         |  13.01 kB | 
+chunk-FINKD6YW.js                                      | -                                                   |  12.06 kB | 
+spec-app-tests-featuresTest-ranking-validator.js       | spec-app-tests-featuresTest-ranking-validator       |  10.39 kB | 
+chunk-3PMLLNFV.js                                      | -                                                   |  10.03 kB | 
+styles.css                                             | styles                                              |   9.35 kB | 
+chunk-PK6XLFTM.js                                      | -                                                   |   9.21 kB | 
+spec-app-tests-authTest-sigin-validator.js             | spec-app-tests-authTest-sigin-validator             |   8.65 kB | 
+spec-app-features-history-hall-history-hall.js         | spec-app-features-history-hall-history-hall         |   8.55 kB | 
+chunk-RWE3AE73.js                                      | -                                                   |   8.30 kB | 
+spec-app-tests-featuresTest-social-validator.js        | spec-app-tests-featuresTest-social-validator        |   7.69 kB | 
+chunk-AR735ZDF.js                                      | -                                                   |   7.61 kB | 
+chunk-OXTUWJJU.js                                      | -                                                   |   7.10 kB | 
+spec-app-features-history-history.js                   | spec-app-features-history-history                   |   6.53 kB | 
+spec-app-tests-authTest-login-validator.js             | spec-app-tests-authTest-login-validator             |   5.91 kB | 
+chunk-7WJX5XC6.js                                      | -                                                   |   4.93 kB | 
+chunk-XGVJKZFS.js                                      | -                                                   |   4.86 kB | 
+chunk-RSTWSNOR.js                                      | -                                                   |   4.75 kB | 
+chunk-M45JURRO.js                                      | -                                                   |   4.38 kB | 
+spec-app-features-profile-profile.js                   | spec-app-features-profile-profile                   |   3.80 kB | 
+chunk-75ZI2SEX.js                                      | -                                                   |   3.72 kB | 
+chunk-ZABHQEIZ.js                                      | -                                                   |   3.50 kB | 
+chunk-SHJYU3VQ.js                                      | -                                                   |   3.23 kB | 
+spec-app-app.js                                        | spec-app-app                                        |   3.01 kB | 
+chunk-HHTNYQWC.js                                      | -                                                   |   2.95 kB | 
+spec-app-shared-layout-layout.js                       | spec-app-shared-layout-layout                       |   2.84 kB | 
+spec-app-features-ranking-ranking.js                   | spec-app-features-ranking-ranking                   |   2.57 kB | 
+chunk-JE3YRUEO.js                                      | -                                                   |   2.49 kB | 
+spec-app-features-customize-customize.js               | spec-app-features-customize-customize               |   2.33 kB | 
+spec-app-features-social-social.js                     | spec-app-features-social-social                     |   2.26 kB | 
+chunk-7MJBF3VU.js                                      | -                                                   |   1.97 kB | 
+spec-app-auth-login-login.js                           | spec-app-auth-login-login                           |   1.42 kB | 
+chunk-IQP6JW74.js                                      | -                                                   |   1.42 kB | 
+chunk-ETZ5MS2Z.js                                      | -                                                   |   1.39 kB | 
+spec-app-shared-board-board.js                         | spec-app-shared-board-board                         |   1.26 kB | 
+init-testbed.js                                        | init-testbed                                        |   1.21 kB | 
+spec-app-shared-top-row-top-row.js                     | spec-app-shared-top-row-top-row                     |   1.05 kB | 
+spec-app-shared-pieza-pieza.js                         | spec-app-shared-pieza-pieza                         |   1.03 kB | 
+vitest-mock-patch.js                                   | vitest-mock-patch                                   | 969 bytes | 
+spec-app-shared-sidebar-sidebar.js                     | spec-app-shared-sidebar-sidebar                     | 938 bytes | 
+spec-app-model-user-icon.js                            | spec-app-model-user-icon                            | 906 bytes | 
+spec-app-shared-pieza-rival-pieza-rival.js             | spec-app-shared-pieza-rival-pieza-rival             | 899 bytes | 
+spec-app-repository-game-repository.js                 | spec-app-repository-game-repository                 | 757 bytes | 
+spec-app-auth-signin-signin.js                         | spec-app-auth-signin-signin                         | 754 bytes | 
+spec-app-services-history-service.js                   | spec-app-services-history-service                   | 723 bytes | 
+spec-app-services-game-logic-service.js                | spec-app-services-game-logic-service                | 705 bytes | 
+spec-app-shared-notification-game-notification-game.js | spec-app-shared-notification-game-notification-game | 695 bytes | 
+spec-app-shared-laser-laser.js                         | spec-app-shared-laser-laser                         | 603 bytes | 
+spec-app-services-timer-service.js                     | spec-app-services-timer-service                     | 563 bytes | 
+spec-app-repository-friend-respository.js              | spec-app-repository-friend-respository              | 532 bytes | 
+spec-app-repository-user-respository.js                | spec-app-repository-user-respository                | 522 bytes | 
+spec-app-repository-auth-repository.js                 | spec-app-repository-auth-repository                 | 517 bytes | 
+spec-app-utils-game-state.js                           | spec-app-utils-game-state                           | 512 bytes | 
+spec-app-model-remote-websocket.js                     | spec-app-model-remote-websocket                     | 494 bytes | 
+spec-app-utils-game-utils.js                           | spec-app-utils-game-utils                           | 482 bytes | 
+spec-app-model-remote-remote.js                        | spec-app-model-remote-remote                        | 449 bytes | 
+chunk-SAODOGRP.js                                      | -                                                   | 430 bytes | 
+
+                                                       | Initial total                                       | 586.59 kB
+
+Application bundle generation complete. [4.312 seconds] - 2026-04-26T10:27:31.855Z
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.4 [39m[90m/home/paula/Escritorio/UNI/Proy/laser_chess_cliente_web/laser-chess-web[39m
+
+ [31m❯[39m [30m[42m laser-chess-web [49m[39m src/app/features/profile/profile.spec.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 72[2mms[22m[39m
+[31m     [31m×[31m should create[39m[32m 69[2mms[22m[39m
+[90mstdout[2m | src/app/features/shop/shop.spec.ts[2m > [22m[2mShop[2m > [22m[2mshould create
+[22m[39mSHOP ITEMS: []
+USER ITEMS: []
+
+[90mstdout[2m | src/app/features/customize/customize.spec.ts[2m > [22m[2mCustomize[2m > [22m[2mshould create
+[22m[39mGet account
+
+[90mstdout[2m | src/app/features/game/game.spec.ts[2m > [22m[2mGame[2m > [22m[2mshould create
+[22m[39mSuscribiéndome a WS en Game...
+
+[90mstdout[2m | src/app/features/game/game.spec.ts[2m > [22m[2mGame[2m > [22m[2mshould create
+[22m[39mDestruyendo Game, limpiando suscripción
+
+[90mstdout[2m | src/app/features/home/home.spec.ts[2m > [22m[2mHome[2m > [22m[2mshould create
+[22m[39mGet account
+
+[90mstdout[2m | src/app/features/home/home.spec.ts
+[22m[39mWS cerrado CloseEvent { isTrusted: [36m[Getter][39m }
+
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/features/shop/shop.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 280[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/board/board.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 275[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/features/customize/customize.spec.ts [2m([22m[2m1 test[22m[2m)[22m[33m 318[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 315[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/features/game/game.spec.ts [2m([22m[2m1 test[22m[2m)[22m[33m 340[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 337[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/features/home/home.spec.ts [2m([22m[2m1 test[22m[2m)[22m[33m 387[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 384[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/pieza-rival/pieza-rival.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 36[2mms[22m[39m
+ [31m❯[39m [30m[42m laser-chess-web [49m[39m src/app/features/history/history.spec.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 86[2mms[22m[39m
+[31m     [31m×[31m should create[39m[32m 83[2mms[22m[39m
+[90mstdout[2m | src/app/shared/top-row/top-row.spec.ts[2m > [22m[2mTopRow[2m > [22m[2mshould create
+[22m[39mGet account
+
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/top-row/top-row.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 105[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/sidebar/sidebar.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 162[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/notification-game/notification-game.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 102[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/repository/user-respository.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/layout/layout.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 243[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/laser/laser.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/repository/auth-repository.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/app.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/model/remote/websocket.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/services/game-logic-service.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/shared/pieza/pieza.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 162[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/auth/login/login.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 169[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/repository/friend-respository.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/model/remote/remote.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/auth/signin/signin.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 220[2mms[22m[39m
+[90mstdout[2m | src/app/features/history-hall/history-hall.spec.ts[2m > [22m[2mHistoryHall[2m > [22m[2mshould create
+[22m[39mGet account
+
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/services/history-service.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/utils/game-state.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 26[2mms[22m[39m
+[90mstdout[2m | src/app/features/history-hall/history-hall.spec.ts[2m > [22m[2mHistoryHall[2m > [22m[2mshould create
+[22m[39mPartidas cargadas: []
+
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/utils/game-utils.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 13[2mms[22m[39m
+ [31m❯[39m [30m[42m laser-chess-web [49m[39m src/app/features/history-hall/history-hall.spec.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 560[2mms[22m[39m
+[31m     [31m×[31m should create[39m[33m 557[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/repository/game-repository.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/services/timer-service.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 15[2mms[22m[39m
+[90mstdout[2m | src/app/features/ranking/ranking.spec.ts[2m > [22m[2mRanking[2m > [22m[2mshould create
+[22m[39mGet account
+
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/features/ranking/ranking.spec.ts [2m([22m[2m1 test[22m[2m)[22m[33m 630[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 627[2mms[22m[39m
+[90mstdout[2m | src/app/features/settings/settings.spec.ts[2m > [22m[2mSettings[2m > [22m[2mshould create
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería crear el componente
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería cargar top 100, posición del usuario, amigos y solicitudes enviadas al iniciar
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería manejar error al cargar el top 100
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería manejar error al obtener la posición del usuario
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería cambiar el tipo de ELO y recargar el ranking
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mno debería recargar si se selecciona el mismo tipo de ELO
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mopenUserInfo[2m > [22m[2mdebería abrir popup para el usuario actual (contexto self)
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mopenUserInfo[2m > [22m[2mdebería abrir popup para un amigo (contexto friend)
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mopenUserInfo[2m > [22m[2mdebería abrir popup para un usuario con solicitud enviada (contexto sent_request)
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mopenUserInfo[2m > [22m[2mdebería abrir popup para un usuario sin relación (contexto none)
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mopenUserInfo[2m > [22m[2mdebería manejar error al obtener los ELOs de otro usuario
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería cerrar el popup de información de usuario
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería enviar una solicitud de amistad y actualizar el contexto
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería enviar una solicitud de amistad y actualizar el contexto
+[22m[39mSolicitud enviada a stranger
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería cancelar una solicitud de amistad enviada
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería cancelar una solicitud de amistad enviada
+[22m[39mSolicitud cancelada a player3
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería eliminar un amigo
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mdebería eliminar un amigo
+[22m[39mAmigo eliminado: player2
+
+[90mstdout[2m | src/app/tests/authTest/sigin-validator.spec.ts[2m > [22m[2mSignin[2m > [22m[2mdebería poner formSubmitted a true al hacer register
+[22m[39mRegistration successful
+
+[90mstdout[2m | src/app/tests/authTest/sigin-validator.spec.ts[2m > [22m[2mSignin[2m > [22m[2mdebería llamar a AuthRepository.register con el request si el formulario es válido
+[22m[39mRegistration successful
+
+[90mstdout[2m | src/app/tests/authTest/sigin-validator.spec.ts[2m > [22m[2mSignin[2m > [22m[2mdebería navegar a login y no mostrar error si el registro es SUCCESS
+[22m[39mRegistration successful
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mshould create
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería cargar amigos, solicitudes recibidas y enviadas al iniciar
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería almacenar los amigos en la señal friends
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería almacenar los amigos en la señal friends
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: [36m<ref *1>[39m {
+    value: [ [36m[Object][39m ],
+    debugName: [32m'friends'[39m,
+    version: [33m2[39m,
+    consumers: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    },
+    consumersTail: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    }
+  }
+}
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería mostrar error si el nombre de usuario está vacío al añadir amigo
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a addFriend con el nombre correcto y cerrar popup si éxito
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a addFriend con el nombre correcto y cerrar popup si éxito
+[22m[39mSolicitud de amistad enviada
+Amigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: [36m<ref *1>[39m {
+    value: [],
+    debugName: [32m'friends'[39m,
+    version: [33m1[39m,
+    consumers: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    },
+    consumersTail: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    }
+  }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mno debería cerrar popup si addFriend falla
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a deleteFriend y recargar amigos si éxito
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a deleteFriend y recargar amigos si éxito
+[22m[39mAmigo eliminado: amigo1
+Amigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: [36m<ref *1>[39m {
+    value: [],
+    debugName: [32m'friends'[39m,
+    version: [33m1[39m,
+    consumers: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    },
+    consumersTail: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    }
+  }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a acceptRequest y recargar amigos y solicitudes
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a acceptRequest y recargar amigos y solicitudes
+[22m[39mSolicitud de amistad aceptada: solicitante
+Amigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: [36m<ref *1>[39m {
+    value: [],
+    debugName: [32m'friends'[39m,
+    version: [33m1[39m,
+    consumers: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    },
+    consumersTail: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    }
+  }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a deleteFriend al rechazar y actualizar listas
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a deleteFriend al rechazar y actualizar listas
+[22m[39mSolicitud de amistad rechazada: solicitante
+Solicitud de amistad rechazada correctamente
+Amigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: [36m<ref *1>[39m {
+    value: [],
+    debugName: [32m'friends'[39m,
+    version: [33m1[39m,
+    consumers: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    },
+    consumersTail: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    }
+  }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a deleteFriend al cancelar solicitud enviada
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería llamar a deleteFriend al cancelar solicitud enviada
+[22m[39mCancelando solicitud de amistad enviada a: destinatario
+Solicitud de amistad cancelada correctamente
+Amigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: [36m<ref *1>[39m {
+    value: [],
+    debugName: [32m'friends'[39m,
+    version: [33m1[39m,
+    consumers: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    },
+    consumersTail: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    }
+  }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Cancelando solicitud de amistad enviada a: destinatario
+Solicitud de amistad cancelada correctamente
+Amigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: [36m<ref *1>[39m {
+    value: [],
+    debugName: [32m'friends'[39m,
+    version: [33m1[39m,
+    consumers: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    },
+    consumersTail: {
+      producer: [36m[Circular *1][39m,
+      consumer: [36m[Object][39m,
+      nextProducer: [90mundefined[39m,
+      prevConsumer: [90mundefined[39m,
+      lastReadVersion: [33m1[39m,
+      nextConsumer: [90mundefined[39m
+    }
+  }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería obtener ratings al abrir información de un amigo
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería obtener ratings al abrir información de un amigo
+[22m[39mObteniendo ELOs para usuario ID: [33m123[39m
+ELOs obtenidos: { blitz: [33m1200[39m, rapid: [33m1300[39m, classic: [33m1400[39m, extended: [33m1500[39m }
+
+ [31m❯[39m [30m[42m laser-chess-web [49m[39m src/app/features/social/social.spec.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 648[2mms[22m[39m
+[31m     [31m×[31m should create[39m[33m 644[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/features/settings/settings.spec.ts [2m([22m[2m1 test[22m[2m)[22m[33m 623[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 619[2mms[22m[39m
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mno debería enviar solicitud si selectedUser es null
+[22m[39mGet account
+
+ [31m❯[39m [30m[42m laser-chess-web [49m[39m src/app/tests/authTest/login-validator.spec.ts [2m([22m[2m13 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 840[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 380[2mms[22m[39m
+     [32m✓[39m debería inicializar el formulario con credential y password[32m 94[2mms[22m[39m
+     [32m✓[39m debería marcar inválido si credential está vacía[32m 71[2mms[22m[39m
+     [32m✓[39m debería marcar inválido si credential tiene formato incorrecto[32m 45[2mms[22m[39m
+     [32m✓[39m debería marcar inválido si password está vacía[32m 39[2mms[22m[39m
+     [32m✓[39m debería marcar inválido si password tiene menos de 6 caracteres[32m 60[2mms[22m[39m
+     [32m✓[39m debería marcar inválido si password tiene más de 50 caracteres[32m 21[2mms[22m[39m
+     [32m✓[39m debería marcar válido con username y password correctos[32m 18[2mms[22m[39m
+     [32m✓[39m debería marcar válido con email y password correctos[32m 18[2mms[22m[39m
+     [32m✓[39m debería llamar a AuthRepository con el request si el formulario es válido[32m 31[2mms[22m[39m
+[31m     [31m×[31m debería navegar a home y limpiar errores si el login es SUCCESS[39m[32m 25[2mms[22m[39m
+     [32m✓[39m debería mostrar error "Login failed: Invalid credentials" y resetear formulario si el status es INVALID_CREDENTIALS[32m 17[2mms[22m[39m
+     [32m✓[39m debería mostrar error "Login failed: Connection error" y resetear formulario si el status es ERR_CONNECTION[32m 15[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/tests/authTest/sigin-validator.spec.ts [2m([22m[2m19 tests[22m[2m)[22m[33m 1003[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 409[2mms[22m[39m
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/model/user/icon.spec.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería iniciar conexión WebSocket al enviar desafío
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería iniciar conexión WebSocket al enviar desafío
+[22m[39mtiempo ini: 300, incremento:  2
+
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mno debería cancelar solicitud si selectedUser es null
+[22m[39mGet account
+
+[90mstdout[2m | src/app/tests/featuresTest/social-validator.spec.ts[2m > [22m[2mSocial[2m > [22m[2mdebería cerrar WebSocket al cancelar espera
+[22m[39mAmigos cargados: [Function: getter] {
+  toString: [36m[Function (anonymous)][39m,
+  set: [36m[Function: set][39m,
+  update: [36m[Function: update][39m,
+  asReadonly: [36m[Function: bound signalAsReadonlyFn][39m,
+  [32mSymbol(SIGNAL)[39m: { value: [], debugName: [32m'friends'[39m, version: [33m1[39m }
+}
+Solicitudes de amistad disponibles: []
+Solicitudes de amistad enviadas: []
+Get account
+
+ [31m❯[39m [30m[42m laser-chess-web [49m[39m src/app/tests/featuresTest/social-validator.spec.ts [2m([22m[2m13 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1328[2mms[22m[39m
+     [33m[2m✓[22m[39m should create [33m 744[2mms[22m[39m
+     [32m✓[39m debería cargar amigos, solicitudes recibidas y enviadas al iniciar[32m 65[2mms[22m[39m
+     [32m✓[39m debería almacenar los amigos en la señal friends[32m 67[2mms[22m[39m
+     [32m✓[39m debería mostrar error si el nombre de usuario está vacío al añadir amigo[32m 63[2mms[22m[39m
+     [32m✓[39m debería llamar a addFriend con el nombre correcto y cerrar popup si éxito[32m 52[2mms[22m[39m
+     [32m✓[39m no debería cerrar popup si addFriend falla[32m 54[2mms[22m[39m
+[31m     [31m×[31m debería llamar a deleteFriend y recargar amigos si éxito[39m[32m 51[2mms[22m[39m
+     [32m✓[39m debería llamar a acceptRequest y recargar amigos y solicitudes[32m 43[2mms[22m[39m
+     [32m✓[39m debería llamar a deleteFriend al rechazar y actualizar listas[32m 34[2mms[22m[39m
+     [32m✓[39m debería llamar a deleteFriend al cancelar solicitud enviada[32m 32[2mms[22m[39m
+     [32m✓[39m debería obtener ratings al abrir información de un amigo[32m 40[2mms[22m[39m
+     [32m✓[39m debería iniciar conexión WebSocket al enviar desafío[32m 49[2mms[22m[39m
+     [32m✓[39m debería cerrar WebSocket al cancelar espera[32m 31[2mms[22m[39m
+[90mstdout[2m | src/app/tests/featuresTest/ranking-validator.spec.ts[2m > [22m[2mRanking[2m > [22m[2mno debería eliminar amigo si selectedUser es null
+[22m[39mGet account
+
+ [32m✓[39m [30m[42m laser-chess-web [49m[39m src/app/tests/featuresTest/ranking-validator.spec.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 1349[2mms[22m[39m
+     [33m[2m✓[22m[39m debería crear el componente [33m 706[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m31 passed[39m[22m[90m (37)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m90 passed[39m[22m[90m (96)[39m
+[2m     Errors [22m [1m[31m5 errors[39m[22m
+[2m   Start at [22m 12:27:32
+[2m   Duration [22m 4.46s[2m (transform 3.24s, setup 9.36s, import 10.21s, tests 10.22s, environment 44.07s)[22m
+

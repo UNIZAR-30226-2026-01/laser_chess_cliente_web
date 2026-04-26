@@ -1,1 +1,6 @@
-<p>profile works!</p>
+
+  <app-top-row></app-top-row>
+
+  <h2>Perfil de {{ (userProfile$ | async)?.username }}</h2>
+
+  <button (click)="addFriend()">Solicitar amistad</button>

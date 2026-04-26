@@ -1,5 +1,5 @@
 import { Injectable, signal, Input, Output, inject} from '@angular/core';
-import { GameState } from './game-state';
+import { GameState } from '../utils/game-state';
 
 @Injectable({
   providedIn: 'root',

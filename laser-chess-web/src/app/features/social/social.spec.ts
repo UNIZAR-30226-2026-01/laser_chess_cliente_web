@@ -38,11 +38,12 @@ describe('Social', () => {
         xp: 50,
         required_xp: 100
       }),
-      getUsername: () => 'testUser'
+      getUsername: () => 'testUser',
+      getId: () => '123'
     };
 
     const remoteMock = {
-      getUsername: () => of('testUser'),
+      getUsername: () => 'testUser',
       getAccountId: () => '123'
     };
 

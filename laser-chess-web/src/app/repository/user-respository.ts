@@ -27,35 +27,15 @@ export class UserRespository {
   userProfile: MyProfile | null = null;
 
   // Obtener datos del perfil de un usuario
-  getAccount(): Observable<MyProfile> {
-    const accountId = this.remoteService.getAccountId();
+  getAccount( id: number): Observable<MyProfile> {
+    
 
-    if (!accountId) {
-      return of({
-        userId: 0,
-        username: 'Invitado',
-        mail: '',
-        xp: 0,
-        level: 0,
-        avatar: 0,
-        money: 0,
-        board_skin: 0,
-        piece_skin: 0,
-        win_animation: 0,
-        rankedPoints: 0,
-        blitzElo: undefined,
-        rapidElo: undefined,
-        classicElo: undefined,
-        extendedElo: undefined,
-      });
-    }
-
-    return this.remoteService.getAccount(accountId).pipe(
+    return this.remoteService.getAccount(id).pipe(
       switchMap(response => {
         const acc = response.body as any;
 
         const profile: MyProfile = {
-          userId: accountId,
+          userId: id,
           username: acc.username || 'Usuario',
           mail: acc.mail || '',
           xp: acc.xp ?? 0,
@@ -72,9 +52,8 @@ export class UserRespository {
           extendedElo: undefined,
         };
 
-        this.userProfile = profile;
 
-        return this.remoteService.getAllRatings(accountId).pipe(
+        return this.remoteService.getAllRatings(id).pipe(
           map((ratings: AllRatingsDTO) => ({
             ...profile,
             blitzElo: ratings.blitz,
@@ -130,6 +109,10 @@ export class UserRespository {
 
   getUsername() : string | undefined {
     return this.userProfile?.username;
+  }
+
+  getId() : number | undefined {
+    return this.userProfile?.userId;
   }
 
   // Actualizar datos del perfil del usuario

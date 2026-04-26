@@ -1,4 +1,5 @@
-export interface PausedGame {
+export interface GameResume {
+	id: number
 	p1_id: number
 	p2_id: number
 	p1_elo: number
@@ -8,7 +9,7 @@ export interface PausedGame {
 	termination: string
 	match_type: string
 	board: string
-	movemente_history: string
+	movement_history: string
 	time_base: number
 	time_increment: number
 }

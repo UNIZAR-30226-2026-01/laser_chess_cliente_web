@@ -39,6 +39,7 @@
           <button class="icon-btn icon-notif" type="button" aria-label="Notificaciones" (click)="popUPNotis.set(true)">
               @if (solicitudes().length > 0) {
                 <span class="notification-badge">{{ solicitudes().length }}</span>
+
               }
               <mat-icon fontSet="material-symbols-outlined">all_inbox</mat-icon>
           </button>

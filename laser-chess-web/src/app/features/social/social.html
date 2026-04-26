@@ -22,7 +22,7 @@
                     <div class="col-popup">
                         <h3> Enviale el siguiente enlace:</h3>
                         <div class="link-container">
-                        <span class="link">{{ 'https://laserchess.com/invite/' + username }}</span>
+                        <span class="link">{{ `http://localhost:4200/profile/${id}` }}</span>
                         <button class="copy-button" (click)="copyLink()">COPIAR</button>
                         </div>
                     </div>
@@ -90,7 +90,7 @@
 
           <div class="challenge-actions">
             <button class="btn-cancel" (click)="closeConfigPopup()">Cancelar</button>
-            <button class="btn-challenge-popup" (click)="sendChallenge()">Desafiar</button>
+            <button class="btn-challenge-popup" (click)="sendChallenge(null)">Desafiar</button>
           </div>
         </div>
       </div>
@@ -227,19 +227,7 @@
                             <span class="detail-value">{{ selectedUser()?.level || 'N/A' }}</span>
                         </div>
                         
-                        <!-- Esto lo comento pero para q este como en el movil deberia estar aqui xd pero es HORIBLE asiq lo dejo abajo
-                        <div class="user-actions-popup">
-                          @if (selectedUserContext() === 'friend') {
-                            <button class="btn-challenge-popup" (click)="challengeFromPopup()">Retar</button>
-                            <button class="btn-delete-popup" (click)="deleteFriendFromPopup()">Eliminar</button>
-                          } @else if (selectedUserContext() === 'received_request') {
-                            <button class="btn-accept" (click)="acceptFromPopup()">Aceptar</button>
-                            <button class="btn-reject" (click)="rejectFromPopup()">Rechazar</button>
-                          } @else if (selectedUserContext() === 'sent_request') {
-                            <button class="btn-cancel" (click)="cancelSentFromPopup()">Cancelar solicitud</button>
-                          }
-                        </div>
-                        -->
+                        
 
 
                         <!-- filas de ELO -->
@@ -337,75 +325,35 @@
       }
       @else{
         <ul class="game-list">
-          <li class="game-item">
-              <div class="player">
-                <span class="name">Yo</span>
-                <span class="time">10:50</span>
-              </div>
-              <div class="vs">VS</div>
-              <div class="player">
-                <span class="name">Usuario1</span>
-                <span class="time">10:30</span>
-              </div>
-              <div class="details">
-                <span>Modo_tiempo</span>
-                <span>Tablero</span>
-              </div>
-              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
-          </li>
-
-          <li class="game-item">
-              <div class="player">
-                <span class="name">Yo</span>
-                <span class="time">12:50</span>
-              </div>
-              <div class="vs">VS</div>
-              <div class="player">
-                <span class="name">Usuario2</span>
-                <span class="time">10:34</span>
-              </div>
-              <div class="details">
-                <span>Modo_tiempo</span>
-                <span>Tablero</span>
-              </div>
-              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
-          </li>
-
-          <li class="game-item">
-              <div class="player">
-                <span class="name">Yo</span>
-                <span class="time">11:50</span>
-              </div>
-              <div class="vs">VS</div>
-              <div class="player">
-                <span class="name">Usuario3</span>
-                <span class="time">09:30</span>
-              </div>
-              <div class="details">
-                <span>Modo_tiempo</span>
-                <span>Tablero</span>
-              </div>
-              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
-          </li>
-
-          <li class="game-item">
-              <div class="player">
-                <span class="name">Yo</span>
-                <span class="time">00:50</span>
-              </div>
-              <div class="vs">VS</div>
-              <div class="player">
-                <span class="name">Usuario4</span>
-                <span class="time">10:40</span>
-              </div>
-              <div class="details">
-                <span>Modo_tiempo</span>
-                <span>Tablero</span>
-              </div>
-              <button class="btn-play" (click)="resumeGame()">RETOMAR</button>
-          </li>
-
+          @if (!gameInfo()){
+            <p>No tienes partidas en curso</p>
+          } @else if (partidas().length === 0) {
+            <p>No tienes partidas en curso</p>
+          } @else {
+            <!-- Aquí se listan las partidas pausadas -->
+            @for(game of partidas(); track game) {
+              <li class="game-item">
+                  <div class="player">
+                    <span class="name">Yo</span>
+                    <span class="time">10:50</span>
+                  </div>
+                  <div class="vs">VS</div>
+                  <div class="player">
+                    <span class="name">Usuario1</span>
+                    <span class="time">10:30</span>
+                  </div>
+                  <div class="details">
+                    <span>Modo_tiempo</span>
+                    <span>Tablero</span>
+                  </div>
+                  <button class="btn-play" (click)="resumeGame(game.id)">RETOMAR</button>
+              </li>
+            }
+          
+          
+        }
         </ul>
+        
       }
     </div>
   </div>
