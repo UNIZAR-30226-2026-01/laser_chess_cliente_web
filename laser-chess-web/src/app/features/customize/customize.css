@@ -1,0 +1,57 @@
+.customize-container {
+  padding: 20px;
+}
+
+.customize-section {
+  margin-bottom: 40px;
+}
+
+.customize-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 8px;
+}
+
+.items-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.customize-card {
+  width: 150px;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  background-color: #f9f9f9;
+}
+
+.customize-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background-color: #fff;
+}
+
+.customize-card.equipped {
+  border: 3px solid gold;
+  background-color: #fff8e7;
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.name {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.equip-badge {
+  font-size: 0.85rem;
+  color: #555;
+}

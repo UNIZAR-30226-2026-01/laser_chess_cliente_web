@@ -140,7 +140,7 @@ export class Remote {
 
   // Solicitud a la API para actualizar los dellates de la cuenta
   updateAccount(updateRequest: UpdateAccountRequest){
-    return this.http.post<AccountResponse>(`http:${API_URL}/account/update`, updateRequest, { observe: 'response' }).pipe(
+    return this.http.post<AccountResponse>(`${API_URL}/api/account/update`, updateRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during updating account');
       })

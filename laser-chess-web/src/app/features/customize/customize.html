@@ -1,2 +1,22 @@
-<app-top-row></app-top-row>
-<p>customize works!</p>
+<div class="customize-container">
+  @for (group of groups(); track group.type) {
+    <div class="customize-section">
+      <h2>{{ group.title }}</h2>
+      <div class="items-grid">
+        @for (item of group.items; track item.id) {
+          <div class="customize-card" [class.equipped]="item.isEquipped" (click)="equip(item)">
+            <div class="icon">{{ item.icon }}</div>
+            <div class="name">{{ item.name }}</div>
+            <div class="equip-badge">
+              @if (item.isEquipped) {
+                Equipado
+              } @else {
+                Equipar
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
