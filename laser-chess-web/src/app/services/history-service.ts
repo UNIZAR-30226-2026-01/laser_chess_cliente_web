@@ -23,10 +23,12 @@ export class HistoryService {
 
   private gameService = inject(GameLogicService);
   private gameUtils = inject(GameUtils);
-  private historyUI = inject(History);
   columnas = 10;
   filas = 8;
   id = this.remoteService.getId();
+
+  popUpLimites = signal(false);
+  popUpMensaje = signal('');  
 
   
   nombreRival = signal<string>('Anónimo');
@@ -241,6 +243,8 @@ export class HistoryService {
 
     
   }
+
+  
   
 
 
@@ -255,9 +259,9 @@ export class HistoryService {
   /*****************************************************************************/
 
   avanzar(){
-    if (this.indiceMovimiento === this.movimientos.length) {
-      this.historyUI.popUpLimites.set(true);
-      this.historyUI.popUpMensaje.set('Se ha alcanzado el final de partida')
+    if (this.indiceMovimiento === this.movimientos.length - 1) {
+      this.popUpLimites.set(true);
+      this.popUpMensaje.set('Se ha alcanzado el final de partida')
       return;
     }
     console.log("avanzando con movimiento " + this.movimientos[this.indiceMovimiento]);
@@ -269,8 +273,8 @@ export class HistoryService {
 
   retroceder(){
     if (this.indiceMovimiento <= 0) {
-      this.historyUI.popUpLimites.set(true);
-      this.historyUI.popUpMensaje.set('Se ha alcanzo el inicio de partida, no es posible retroceder')
+      this.popUpLimites.set(true);
+      this.popUpMensaje.set('Se ha alcanzo el inicio de partida, no es posible retroceder')
       return;
     }
     console.log("retrocediendo con movimiento " + this.movimientos[this.indiceMovimiento]);
@@ -287,8 +291,8 @@ export class HistoryService {
   }
 
   irAlUltimo(){
-    while(this.indiceMovimiento < this.movimientos.length){
-      this.retroceder();
+    while(this.indiceMovimiento !== this.movimientos.length - 1){
+      this.avanzar();
     }
   }
 

@@ -1,11 +1,11 @@
 
     <app-top-row></app-top-row>
  
-  @if(popUpLimites()) {
-  <div id="overlay" class="overlay" (click)="popUpLimites.set(false)">
+  @if(historyState.popUpLimites()) {
+  <div id="overlay" class="overlay" (click)="historyState.popUpLimites.set(false)">
     <div class="popup-error" (click)="$event.stopPropagation()">
-      {{ popUpMensaje() }}
-      <button (click)="popUpLimites.set(false)">Cerrar</button>
+      {{ historyState.popUpMensaje() }}
+      <button (click)="historyState.popUpLimites.set(false)">Cerrar</button>
     </div>
   </div>
 }

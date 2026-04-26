@@ -34,10 +34,14 @@ export class History {
   nombreRival = this.historyState.nombreRival;
   miNombre = this.historyState.miNombre;
 
-  popUpLimites = signal(false);
-  popUpMensaje = signal('');
+  
   
   ngOnInit(){
+    const saved = localStorage.getItem('historyGame');
+    if (saved) {
+      this.historyState.historySelectedGame.set(JSON.parse(saved));
+    }
+    
     this.historyState.inicializarTablero();
   }
   siguiente(){

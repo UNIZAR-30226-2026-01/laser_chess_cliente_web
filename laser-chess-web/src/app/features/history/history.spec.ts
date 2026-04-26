@@ -39,7 +39,9 @@ describe('History', () => {
       miNombre: signal(''),
       inicializarTablero: vi.fn(),
       avanzar: vi.fn(),
-      retroceder: vi.fn()
+      retroceder: vi.fn(),
+      popUpLimites: signal(false),
+      popUpMensaje: signal(''),
     };
 
     const remoteMock = {
