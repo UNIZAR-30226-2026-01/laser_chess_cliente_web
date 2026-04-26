@@ -1,4 +1,40 @@
 
     <app-top-row></app-top-row>
-    <p>history works!</p>
+ 
+
+
+
+  <!-- PANEL IZQUIERDO -->
+  <aside class="side-panel">
+    <div class="player_card my-user">
+      <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
+      <div class="avatar">👤</div>
+      <span>{{ miNombre() }}</span>
+    </div>
+
+  </aside>
+
+  <!-- TABLERO -->
+  <main class="main-content">
+    <app-board
+      [piezas]="listaPiezas"
+      [laserPath]="laserPath"
+      [columnas]="columnas"
+      [filas]="filas"
+      [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
+    ></app-board>
+  </main>
+
+  <!-- PANEL DERECHO -->
+  <aside class="side-panel">
+    <div class="player_card">
+      <div class="avatar">👤</div>
+      <span>{{ nombreRival() }}</span>
+      <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
+    </div>
+
+  
+  </aside>
+<button (click)="anterior()"> < </button>
+<button (click)="siguiente()"> > </button>
 

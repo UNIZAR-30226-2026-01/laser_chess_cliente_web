@@ -14,7 +14,7 @@ import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
 
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
-import { GameState } from '../../model/remote/game-state'
+import { GameState } from '../../utils/game-state'
 
 describe('Ranking', () => {
   let component: Ranking;

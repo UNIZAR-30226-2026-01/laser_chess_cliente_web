@@ -4,8 +4,10 @@ import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { Websocket } from '../../model/remote/websocket';
 import { Remote } from '../../model/remote/remote';
-import { GameState } from '../../model/remote/game-state'
+import { GameState } from '../../utils/game-state'
 import { MatIcon } from '@angular/material/icon';
+import { TimerService } from '../../services/timer-service';
+
 
 
 @Component({
@@ -38,6 +40,7 @@ export class Home {
   private notificationService = inject(Remote);
 
   private gameState = inject(GameState);
+  private timerService = inject(TimerService);
 
 
   // Cierra los desplegables si se hace clic fuera de ellos
@@ -126,12 +129,18 @@ export class Home {
     const params = {
       username: reto.challenger_username,
     };
-    this.gameState.startingTime.set(reto.starting_time);
-    this.gameState.increment.set(reto.time_increment);
+    console.log('Aceptando reto de:', reto.challenger_username);
+    
+
+    this.timerService.miTiempo.set(reto.starting_time);
+    this.timerService.tiempoRival.set(reto.starting_time);
+
     this.gameState.nombreRival.set(reto.challenger_username);
 
     this.websocket.initConnection(endpoint, params);
     this.popUPNotis.set(false);
 
   }
+
+  solicitarPartida(){}
 }

@@ -93,7 +93,7 @@
       [laserPath]="laserPath"
       [columnas]="columnas"
       [filas]="filas"
-      [isCasillaRestringida]="gameService.isCasillaRestringida.bind(this)"
+      [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
       [ocupado]="gameService.ocupado.bind(this)"
       (piezaSeleccionada)="seleccionarPieza($event)"
       (movimientoSolicitado)="gestionarMovimiento($event)"
@@ -108,7 +108,7 @@
       <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
     </div>
 
-    <button class="debug-btn" (click)="gameService.solicitarPausa()">||</button>
+    <button class="debug-btn" (click)="gameService.solicitarPausa()">Solicitar pausa</button>
   </aside>
 
 </div>

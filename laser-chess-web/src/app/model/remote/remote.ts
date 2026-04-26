@@ -20,6 +20,7 @@ import { ChallengeResume } from '../game/ChallengeResume';
 import { XpInfo } from '../user/ProfileCardData';
 
 import { AllRatingsDTO } from '../rating/AllRatingsDTO';
+import { GameResume } from '../game/GameResume';
 
 import { ShopItemDTO } from '../shop/ShopItemDTO';
 
@@ -417,6 +418,28 @@ export class Remote {
               throw new Error('Error');
           })
       );;
+  }
+
+  getPausedGames():  Observable<GameResume[]> {
+    return this.http.get<GameResume[]>(`${API_URL}/api/match/history/${this.accountId}/paused`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting paused games :', err);
+        throw new Error('Error');
+      })
+    );
+  }
+
+  getFinishedGames():  Observable<GameResume[]> {
+    return this.http.get<GameResume[]>(`${API_URL}/api/match/history/${this.accountId}`, {
+      //headers: { Authorization: `Bearer ${this.accessToken}` }
+    }).pipe(
+      catchError((err: Error) => {
+        console.error('Error getting paused games :', err);
+        throw new Error('Error');
+      })
+    );
   }
 
 
