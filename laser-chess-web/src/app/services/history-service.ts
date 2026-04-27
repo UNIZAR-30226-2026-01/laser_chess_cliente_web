@@ -31,8 +31,8 @@ export class HistoryService {
   popUpMensaje = signal('');  
 
   
-  nombreRival = signal<string>('Anónimo');
-  miNombre = signal<string>('Paulix');
+  nombreRival = signal<string>('');
+  miNombre = signal<string>('');
   
   miTiempo = signal<number>(0);
   tiempoRival = signal<number>(0);
@@ -47,6 +47,7 @@ export class HistoryService {
   indiceMovimiento = 0;
   movimientos : string[] = [];
   capturas: PiezaData[] = [];
+
   
    
 
@@ -124,6 +125,10 @@ export class HistoryService {
     console.log(this.historySelectedGame()?.movement_history);
     this.movimientos = this.historySelectedGame()?.movement_history.split(';');
 
+    this.iniciarJugadores();
+  }
+
+  iniciarJugadores(){
     if(this.historySelectedGame()?.p1_id == this.id){
       this.soyAzul.set(false);
       this.esMiTurno.set(true);
@@ -146,9 +151,6 @@ export class HistoryService {
     userProfile$.subscribe(profile => {
       this.miNombre.set(profile.username);
     });
-
-
-
   }
 
   

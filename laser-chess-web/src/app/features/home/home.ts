@@ -86,6 +86,7 @@ export class Home {
     
     this.gameState.miNombre.set(this.userRepo.getUsername() || '');
     this.gameState.nombreRival.set(reto.challenger_username);
+    console.log('Jugadores: ' + this.gameState.miNombre() + ' vs ' + this.gameState.nombreRival());
 
     this.websocket.initConnection(endpoint, params);
     this.popUPNotis.set(false);

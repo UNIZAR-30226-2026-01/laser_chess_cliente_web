@@ -236,6 +236,7 @@ export class GameLogicService {
       console.log("Reaplicando log sobre estado existente");
 
       const log = msg.Content;
+      if(!log){ return;}
 
       const events = this.parseGameLog(log);
 
@@ -246,6 +247,10 @@ export class GameLogicService {
       // limpieza visual por seguridad
       this.laserPath.set([]);
       this.piezaActiva.set(null);
+
+    }else if (msg.Type === "RejectPause"){
+      // La petición de pausa ha sido rechazada
+      this.estadoPausa.set({ mostrar: false });
     }
     
   }
@@ -276,6 +281,8 @@ export class GameLogicService {
 
   cerrarToastPausa() {
     this.estadoPausa.set({ mostrar: false });
+    const request: SendAction = { Type: "PauseReject", Content: "" }; 
+    this.wsService.sendAction(request);
   }
 
     finPartidaHandler(){

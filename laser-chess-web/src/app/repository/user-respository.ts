@@ -119,6 +119,14 @@ export class UserRespository {
     return this.userProfile?.level;
   }
 
+
+  getUsernameById(id: number): Observable<string> {
+    return this.remoteService.getAccount(id).pipe(
+      map(response => response.body?.username ?? '')
+    );
+  }
+
+
   // Actualizar datos del perfil del usuario
   updateData(username: string , mail: String, board_skin: number, piece_skin: number, win_animation: number){
     console.log("Update data");
