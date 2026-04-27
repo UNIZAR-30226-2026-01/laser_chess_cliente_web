@@ -17,6 +17,8 @@ import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
 import { TimerService } from '../../services/timer-service';
 
+import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
+
 import { Popup } from '../social-ranking-popups/popup'; //los pop-ups (que miedo cargarmea glo)
 
 @Component({
@@ -112,11 +114,20 @@ export class Social  {
   private websocket = inject(Websocket);// Para meter el websocket en social
   private wsSubscription: any;//Para limpiar la sub del socket despues
 
+
+  constructor(private notificationService: NotificationService) {}
+
+
+  
+
   ngOnInit(): void {
     this.loadFriends();
     this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn
     this.loadSentRequests(); 
     this.loadGames();
+    this.notificationService.wakeSocial$.subscribe(() => {
+    this.popUP_request.set(true);
+  });
   }
 
   ngOnDestroy(): void {

@@ -5,6 +5,11 @@ import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
 
 import { Home } from './home';
+import { NotificationService } from '../../model/notifications/notification';
+import { GameState } from '../../utils/game-state';
+import { TimerService } from '../../services/timer-service';
+import { Websocket } from '../../model/remote/websocket';
+import { Remote } from '../../model/remote/remote';
 
 describe('Home', () => {
   let component: Home;
@@ -43,7 +48,40 @@ describe('Home', () => {
           }
         },
         { provide: UserRespository, useValue: userRepoMock },
-        { provide: IconService, useValue: iconServiceMock }
+        { provide: IconService, useValue: iconServiceMock },
+        {
+          provide: NotificationService,
+          useValue: {
+            wakeHome$: of(null)
+          }
+        },
+        {
+          provide: Websocket,
+          useValue: {
+            initConnection: vi.fn(),
+            checkAndReconnect: vi.fn()
+          }
+        },
+        {
+          provide: Remote,
+          useValue: {
+            checkSolicitudes: vi.fn().mockReturnValue(of([]))
+          }
+        },
+        {
+          provide: TimerService,
+          useValue: {
+            miTiempo: { set: vi.fn() },
+            tiempoRival: { set: vi.fn() }
+          }
+        },
+        {
+          provide: GameState,
+          useValue: {
+            miNombre: { set: vi.fn(), get: vi.fn() },
+            nombreRival: { set: vi.fn(), get: vi.fn() }
+          }
+        }
       ]
     }).compileComponents();
 

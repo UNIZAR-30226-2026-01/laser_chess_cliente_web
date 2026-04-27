@@ -40,7 +40,7 @@ export class Login implements OnInit {
     if (token && !this.remote.isTokenExpired(token)) {
       const userId = this.remote.getAccountId(); 
       if (userId) {
-        this.notificationService.setupAfterLogin(userId);
+        this.initNotifications(userId);
       }
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
       this.router.navigateByUrl(this.returnUrl);
@@ -51,7 +51,7 @@ export class Login implements OnInit {
           if (authenticated) {
             const userId = this.remote.getAccountId();
             if (userId) {
-              this.notificationService.setupAfterLogin(userId);
+              this.initNotifications(userId);
             }
             this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
             this.router.navigateByUrl(this.returnUrl);
@@ -98,7 +98,7 @@ export class Login implements OnInit {
         case ResponseStatus.SUCCESS:
           const userId = this.remote.getAccountId();
           if (userId) {
-            this.notificationService.setupAfterLogin(userId);
+            this.initNotifications(userId);
           }
           this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
           this.router.navigateByUrl(this.returnUrl);
@@ -124,5 +124,10 @@ export class Login implements OnInit {
     );
   }
 
+  private initNotifications(userId: number) {
+    this.notificationService.teardownOnLogout();
+    this.notificationService.setupAfterLogin(userId);
+  }
            
 }
+

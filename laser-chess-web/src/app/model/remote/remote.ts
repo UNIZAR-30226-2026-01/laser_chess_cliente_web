@@ -24,6 +24,8 @@ import { GameResume } from '../game/GameResume';
 
 import { ShopItemDTO } from '../shop/ShopItemDTO';
 
+import { SseService } from '../notifications/sse';
+
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +36,8 @@ export class Remote {
   private router: Router = inject(Router);
   private accessToken: string = "";
   private accountId: number | null = null;
+
+  private sseService = inject(SseService);
 
 
   constructor() {
@@ -529,6 +533,8 @@ export class Remote {
     this.accessToken = "";
     this.accountId = null;
     this.isAuthenticated$.next(false);
+
+    this.sseService.disconnect();
     this.router.navigate(['']);
   }
 

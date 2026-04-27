@@ -13,6 +13,7 @@ import { GameRepository } from '../../repository/game-repository';
 
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { DomSanitizer } from '@angular/platform-browser';
+import { NotificationService } from '../../model/notifications/notification';
 
 describe('Social Angular', () => {
   let component: Social;
@@ -93,12 +94,19 @@ describe('Social Angular', () => {
         { provide: IconService, useValue: iconServiceSpy },
         { provide: GameState, useValue: gameStateSpy },
         { provide: GameRepository, useValue: gameRepoSpy },
+        
 
         {
           provide: DomSanitizer,
           useValue: {
             bypassSecurityTrustHtml: (v: any) => v,
             bypassSecurityTrustResourceUrl: (v: any) => v
+          }
+        },
+        {
+          provide: NotificationService,
+          useValue: {
+            wakeSocial$: of(null)
           }
         }
       ]

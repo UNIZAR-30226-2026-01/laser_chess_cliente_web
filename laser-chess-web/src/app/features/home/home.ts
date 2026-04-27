@@ -9,6 +9,9 @@ import { TimerService } from '../../services/timer-service';
 import { UserRespository } from '../../repository/user-respository';
 
 
+import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
+
+
 
 @Component({
   selector: 'app-home',
@@ -34,12 +37,13 @@ export class Home {
   solicitudes = signal<ChallengeResume[]>([]);
   private websocket = inject(Websocket);
   private wsSubscription: any;
-  private notificationService = inject(Remote);
+  private remote = inject(Remote);
 
   private gameState = inject(GameState);
   private timerService = inject(TimerService);
   private userRepo = inject(UserRespository);
 
+  constructor(private notificationService: NotificationService) {}
 
 
   ngOnInit() {
@@ -47,6 +51,10 @@ export class Home {
     this.websocket.checkAndReconnect();
     this.loadFriends();
     this.getEloProgress();
+    this.notificationService.wakeHome$.subscribe(() => {
+        this.loadFriends();
+        this.popUPNotis.set(true);
+    });
   }
 
   ngOnDestroy(): void {
@@ -61,7 +69,7 @@ export class Home {
   }
 
   loadFriends(): void {
-      this.notificationService.checkSolicitudes().subscribe({
+      this.remote.checkSolicitudes().subscribe({
         next: (data : ChallengeResume[]) => {
         this.solicitudes.set(data);
         console.log('Solicitudes cargadas:', this.solicitudes);

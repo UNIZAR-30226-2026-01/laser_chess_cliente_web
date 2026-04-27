@@ -11,6 +11,7 @@ import { IconService } from '../../model/user/icon';
 import { GameState } from '../../utils/game-state';
 import { GameRepository } from '../../repository/game-repository';
 import { TimerService } from '../../services/timer-service';
+import { NotificationService } from '../../model/notifications/notification';
 
 /* ---------------------------
    helper para simular signals
@@ -97,14 +98,20 @@ describe('Social Validator', () => {
         { provide: GameState, useValue: gameStateSpy },
         { provide: GameRepository, useValue: gameRepoSpy },
 
-        // 🔥 FIX CLAVE: evita crash del constructor del servicio
+        
         {
           provide: TimerService,
           useValue: {
             miTiempo: { set: vi.fn() },
             tiempoRival: { set: vi.fn() }
           }
+        },
+        {
+        provide: NotificationService,
+        useValue: {
+          wakeSocial$: of(null),
         }
+      }
       ]
     }).compileComponents();
 

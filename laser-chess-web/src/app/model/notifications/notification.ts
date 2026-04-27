@@ -1,13 +1,22 @@
 // notification.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, } from '@angular/core';
 import { Router } from '@angular/router';
 import { SseService, SseMessage } from './sse';
 import { FcmService } from './fcm';
 import { Remote } from '../remote/remote'; 
+import { Subject } from 'rxjs';
+
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
   private isSetup = false;
+
+
+  private wakeSocialSubject = new Subject<void>();
+  private wakeHomeSubject = new Subject<void>();
+
+  wakeSocial$ = this.wakeSocialSubject.asObservable();
+  wakeHome$ = this.wakeHomeSubject.asObservable();
 
   constructor(
     private sse: SseService,
@@ -31,15 +40,28 @@ export class NotificationService {
     });
   }
 
+  private sseSub?: any;
+
+  private initSse() {
+    this.sseSub?.unsubscribe?.();
+
+    this.sseSub = this.sse.onMessage().subscribe(event => {
+      this.handleEvent(event);
+    });
+  }
+
   /**
    * Despues de iniciar sesion
    */
   async setupAfterLogin(userId: number) {
-    if (this.isSetup) return;
     const token = this.remote.getAccessToken();
     if (!token) return;
+
+    this.teardownOnLogout();
+
     this.sse.connect(token);
-    //await this.fcm.registerToken(userId);  //esto decomentarlo cuando fcm funcione bn
+    this.initSse(); // si lo has añadido
+
     this.isSetup = true;
   }
 
@@ -48,6 +70,7 @@ export class NotificationService {
    */
   teardownOnLogout() {
     this.sse.disconnect();
+    this.sseSub?.unsubscribe?.();
     this.isSetup = false;
   }
 
@@ -56,7 +79,7 @@ export class NotificationService {
   switch (event.eventType) {
     case 'FriendRequest':
       const username = typeof event.data === 'string' ? event.data : event.data?.username || 'alguien';
-      this.showWebNotification('Nueva solicitud de amistad', `Has recibido una solicitud de ${username}`);
+      this.showWebNotification('Nueva solicitud de amistad', `Has recibido una solicitud de ${username}`,{ type: 'friend_request', username });
       break;
     case 'Challenge':
       const challenger = typeof event.data === 'string' ? event.data : event.data?.challenger || 'alguien';
@@ -84,9 +107,16 @@ export class NotificationService {
         window.focus();
         if (data) {
           if (data.type === 'friend_request') {
-            this.router.navigate(['/social/friend-requests']);
+            this.wakeSocialSubject.next();
+            this.showWebNotification('Nueva solicitud de amistad', 'Tienes una nueva solicitud');
+            this.router.navigate(['/social']);
           } else if (data.type === 'challenge') {
-            this.router.navigate(['/game/challenges']);
+            this.wakeHomeSubject.next();
+            this.showWebNotification('Invitación de partida', 'Te han retado a una partida');
+            this.router.navigate(['/home']);
+          }else if (data.type === 'friend_accepted') {
+            this.wakeSocialSubject.next();
+            this.router.navigate(['/social']);
           }
         }
         notification.close();
