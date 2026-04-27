@@ -2,269 +2,72 @@
 
   <app-top-row></app-top-row>
 
-  @if(popUP_newFriend()) {
-    <div id="overlay" class="overlay" (click)="popUP_newFriend.set(false)">
-        <div class="popup-amigo" (click)="$event.stopPropagation()">
-            <div class="container text-center">
-                <div class="row-popup">
-                    <div class="col-popup">
-                        <h2>AÑADIR</h2>
-                        <h3>Escribe su nombre de usuario</h3>
-                        <input #usernameInput type="text" class="form-control" placeholder="username">
-                        @if (errorAmigoNombreNoValido()) {
-                          <span class="error_message_form">
-                            Por favor, ingresa un nombre de usuario válido.
-                          </span>
-                        }
-                        <button class="form-button" (click)="addFriend()">ENVIAR SOLICITUD</button>
-                        <h3>O espera a ser aceptad@</h3>
-                    </div>
-                    <div class="col-popup">
-                        <h3> Enviale el siguiente enlace:</h3>
-                        <div class="link-container">
-                        <span class="link">{{ `http://localhost:4200/profile/${id}` }}</span>
-                        <button class="copy-button" (click)="copyLink()">COPIAR</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  }
-
-  <!-- Popup para configurar el reto -->
-  @if(showConfigPopup()) {
-    <div class="overlay" (click)="closeConfigPopup()">
-      <div class="popup-challenge" (click)="$event.stopPropagation()">
-        <div class="popup-header">
-          <h2>Configurar reto contra {{ friendToChallenge?.username }}</h2>
-          <button class="close-button" (click)="closeConfigPopup()">✕</button>
-        </div>
-        <div class="popup-content">
-          
-          <!-- Selección de tablero -->
-          <div class="param-row">
-            <label>Tablero:</label>
-            <select [(ngModel)]="selectedBoard" class="form-control">
-              @for (board of boards; track board.id) {
-                <option [value]="board.id">{{ board.name }}</option>
-              }
-            </select>
-          </div>
-          
-          <!-- Selección de modo de tiempo -->
-          <div class="param-row">
-            <label>Modo de tiempo:</label>
-            <select [ngModel]="selectedMode()" (ngModelChange)="onModeChange($event)" class="form-control">
-              @for (mode of timeModes; track mode.id) {
-                <option [ngValue]="mode">{{ mode.label }}</option>
-              }
-            </select>
-          </div>
-
-          @if (selectedMode().id !== 'custom') {
-            <!-- Modo predefinido: muestra tiempo base y selector de incremento -->
-            <div class="param-row">
-              <label>Tiempo base:</label>
-              <span class="readonly-value">{{ selectedMode().baseSeconds / 60 }} minutos</span>
-            </div>
-            <div class="param-row">
-              <label>Incremento por jugada:</label>
-              <select [(ngModel)]="selectedIncrement" class="form-control">
-                @for (inc of selectedMode().increments; track inc) {
-                  <option [value]="inc">+{{ inc }} segundos</option>
-                }
-              </select>
-            </div>
-          } @else {
-            <!-- Modo personalizado -->
-            <div class="param-row">
-              <label>Duración (minutos, máx 180):</label>
-              <input type="number" [(ngModel)]="customMinutes" min="1" max="180" class="form-control">
-            </div>
-            <div class="param-row">
-              <label>Incremento por jugada (segundos, máx 60):</label>
-              <input type="number" [(ngModel)]="customIncrementSec" min="0" max="60" class="form-control">
-            </div>
-          }
-
-          <div class="challenge-actions">
-            <button class="btn-cancel" (click)="closeConfigPopup()">Cancelar</button>
-            <button class="btn-challenge-popup" (click)="sendChallenge(null)">Desafiar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  }
-
-  @if(popUP_request()) {
-    <div id="overlay" class="overlay" (click)="popUP_request.set(false)">
-      <div class="popup-solicitudes" (click)="$event.stopPropagation()">
-        <div class="popup-header">
-          <h2>Solicitudes de amistad</h2>
-          <button class="close-button" (click)="popUP_request.set(false)">✕</button>
-        </div>
-        
-        <!-- PESTAÑAS -->
-        <div class="popup-tabs">
-          <div class="popup-tab" [class.active]="requestTabState() === 'received'" (click)="setRequestTab('received')">
-            Recibidas
-            @if(request.length > 0) {
-              <span class="tab-badge">{{ request().length }}</span>
-            }
-          </div>
-          <div class="popup-tab" [class.active]="requestTabState() === 'sent'" (click)="setRequestTab('sent')">
-            Enviadas
-            @if(sentRequests.length > 0) {
-              <span class="tab-badge">{{ sentRequests().length }}</span>
-            }
-          </div>
-        </div>
-        
-        <div class="popup-content">
-          <!-- PESTAÑA RECIBIDAS -->
-          @if (requestTabState() === 'received') {
-            @if (!requestInfo()) {
-              <div class="loading-state">
-                <p>Cargando solicitudes...</p>
-              </div>
-            } @else if (request().length === 0) {
-              <div class="empty-state">
-                <p>No tienes solicitudes de amistad pendientes</p>
-              </div>
-            } @else {
-              <ul class="requests-list">
-                @for (friendship of request(); track friendship.username) {
-                  <li class="request-item" (click)="openUserInfo(friendship, 'received_request')">
-                    <div class="request-info">
-                      <div class="avatar-placeholder">
-                        <span class="avatar-icon">👤</span>
-                      </div>
-                      <div class="request-details">
-                        <span class="request-username">{{ friendship.username }}</span>
-                        <span class="request-xp">Nivel {{ friendship.level }}</span>
-                      </div>
-                    </div>
-                    <div class="request-actions" (click)="$event.stopPropagation()">
-                      <!-- Los botones de aceptar y rechazar estaban aqui antes -->
-                    </div>
-                  </li>
-                }
-              </ul>
-            }
-          }
-          
-          <!-- PESTAÑA ENVIADAS -->
-          @if (requestTabState() === 'sent') {
-            @if (!sentRequestsInfo()) {
-              <div class="loading-state">
-                <p>Cargando solicitudes enviadas...</p>
-              </div>
-            } @else if (sentRequests().length === 0) {
-              <div class="empty-state">
-                <p>No has enviado solicitudes de amistad pendientes</p>
-              </div>
-            } @else {
-              <ul class="requests-list">
-                @for (friendship of sentRequests(); track friendship.username) {
-                  <li class="request-item" (click)="openUserInfo(friendship, 'sent_request')">
-                    <div class="request-info">
-                      <div class="avatar-placeholder">
-                        <span class="avatar-icon">👤</span>
-                      </div>
-                      <div class="request-details">
-                        <span class="request-username">{{ friendship.username }}</span>
-                        <span class="request-xp">Nivel {{ friendship.level }}</span>
-                      </div>
-                      <div class="request-actions" (click)="$event.stopPropagation()">
-                        <span class="request-status">Pendiente</span>
-                      </div>
-                    </div>
-                    
-                    <div class="request-actions" (click)="$event.stopPropagation()">
-                      <!-- El boton de cancelar estaba aqui antes -->
-                    </div>
-                  </li>
-                }
-              </ul>
-            }
-          }
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- Pop-up de la info del user -->
-  @if(popUP_userInfo() && selectedUser()) {
-    <div id="overlay" class="overlay" (click)="closeUserInfo()">
-        <div class="popup-userinfo" (click)="$event.stopPropagation()">
-            <div class="popup-header">
-                <h2>Información de usuario</h2>
-                <button class="close-button" (click)="closeUserInfo()">✕</button>
-            </div>
-            
-            <div class="popup-content">
-                <!-- Ahora aqui se elige q tipo de pop-up enseñar basado en la zona en la q se clike-->
-                <div class="user-info-detail">
-                    <div class="user-avatar-large">
-                        @if (selectedUser()?.avatar) {
-                            <img [src]="'assets/avatars/' + selectedUser()?.avatar + '.png'" alt="Avatar">
-                        } @else {
-                            <div class="avatar-placeholder-large">
-                                <span class="avatar-icon-large">👤</span>
-                            </div>
-                        }
-                    </div>
-                    
-                    <div class="user-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Nombre de usuario:</span>
-                            <span class="detail-value">{{ selectedUser()?.username }}</span>
-                        </div>
-                        
-                        <div class="detail-row">
-                            <span class="detail-label">Nivel:</span>
-                            <span class="detail-value">{{ selectedUser()?.level || 'N/A' }}</span>
-                        </div>
-                        
-                        
+  <!-- Esto es lo que habia antes (para recordarlo si hiciera falta)-->
+  <!-- @if(popUP_newFriend()) { -->
+  <!-- Popup para configurar el reto @if(showConfigPopup()) {-->
+  <!-- @if(popUP_request()) { -->
+  <!-- Pop-up de la info del user @if(popUP_userInfo() && selectedUser()) { -->
+  <!-- Popup de espera @if(popUP_waiting()) { -->
 
 
-                        <!-- filas de ELO -->
-                        <div class="detail-row">
-                          <span class="detail-label">ELO Blitz:</span>
-                          <span class="detail-value">{{ selectedUserEloBlitz() }}</span>
-                        </div>
-                        <div class="detail-row">
-                          <span class="detail-label">ELO Rápido:</span>
-                          <span class="detail-value">{{ selectedUserEloRapid() }}</span>
-                        </div>
-                        <div class="detail-row">
-                          <span class="detail-label">ELO Clásico:</span>
-                          <span class="detail-value">{{ selectedUserEloClassic() }}</span>
-                        </div>
-                        <div class="detail-row">
-                          <span class="detail-label">ELO Extendido:</span>
-                          <span class="detail-value">{{ selectedUserEloExtended() }}</span>
-                        </div>
-                    </div>
-                </div>
+  <app-popup
+    [type]="popUP_newFriend() ? 'newFriend' : 'none'"
+    [newFriendError]="errorAmigoNombreNoValido()"
+    [userInfoUser]="{ username: '', account_id: id ? id.toString() : '', level: 0, avatar: 0 }"
+    (newFriendAdd)="addFriendFromPopup($event)"
+    (newFriendClose)="popUP_newFriend.set(false)">
+  </app-popup>
 
-                <div class="user-actions-popup">
-                  @if (selectedUserContext() === 'friend') {
-                    <button class="btn-challenge-popup" (click)="challengeFromPopup()">Retar</button>
-                    <button class="btn-delete-popup" (click)="deleteFriendFromPopup()">Eliminar</button>
-                  } @else if (selectedUserContext() === 'received_request') {
-                    <button class="btn-accept" (click)="acceptFromPopup()">Aceptar</button>
-                    <button class="btn-reject" (click)="rejectFromPopup()">Rechazar</button>
-                  } @else if (selectedUserContext() === 'sent_request') {
-                    <button class="btn-cancel" (click)="cancelSentFromPopup()">Cancelar solicitud</button>
-                  }
-                </div>
-            </div>
-        </div>
-    </div>
-  }
+  <app-popup
+    [type]="popUP_request() ? 'requests' : 'none'"
+    [requestsReceived]="request()"
+    [requestsSent]="sentRequests()"
+    [requestsLoading]="!requestInfo() || !sentRequestsInfo()"
+    [requestsTab]="requestTabState()"
+    (requestsTabChange)="setRequestTab($event)"
+    (requestsClose)="popUP_request.set(false)"
+    (requestOpenUserInfo)="openUserInfo($event.user, $event.context)">
+  </app-popup>
+
+  <app-popup
+    [type]="popUP_userInfo() ? 'userInfo' : 'none'"
+    [userInfoUser]="selectedUser()"
+    [userInfoContext]="selectedUserContext()"
+    [userInfoEloBlitz]="selectedUserEloBlitz()"
+    [userInfoEloRapid]="selectedUserEloRapid()"
+    [userInfoEloClassic]="selectedUserEloClassic()"
+    [userInfoEloExtended]="selectedUserEloExtended()"
+    (userInfoClose)="closeUserInfo()"
+    (userInfoChallenge)="challengeFromPopup()"
+    (userInfoDeleteFriend)="deleteFriendFromPopup()"
+    (userInfoAcceptRequest)="acceptFromPopup()"
+    (userInfoRejectRequest)="rejectFromPopup()"
+    (userInfoCancelSent)="cancelSentFromPopup()">
+  </app-popup>
+
+  <app-popup
+    [type]="showConfigPopup() ? 'challengeConfig' : 'none'"
+    [challengeFriendUsername]="friendToChallenge?.username || null"
+    [challengeBoards]="boards"
+    [challengeSelectedBoard]="selectedBoard()"
+    [challengeTimeModes]="timeModes"
+    [challengeSelectedMode]="selectedMode()"
+    [challengeSelectedIncrement]="selectedIncrement()"
+    [challengeCustomMinutes]="customMinutes()"
+    [challengeCustomIncrementSec]="customIncrementSec()"
+    (challengeConfigClose)="closeConfigPopup()"
+    (challengeModeChange)="onModeChange($event)"
+    (challengeSelectedBoardChange)="selectedBoard.set(+$event)"
+    (challengeSelectedIncrementChange)="selectedIncrement.set(+$event)"
+    (challengeCustomMinutesChange)="customMinutes.set(+$event)"
+    (challengeCustomIncrementSecChange)="customIncrementSec.set(+$event)"
+    (challengeSend)="sendChallenge(null)">
+  </app-popup>
+
+  <app-popup
+    [type]="popUP_waiting() ? 'waiting' : 'none'"
+    (waitingCancel)="cancelWaiting()">
+  </app-popup>
 
 
 
@@ -357,22 +160,5 @@
       }
     </div>
   </div>
-
-  <!-- Popup de espera -->
-  @if(popUP_waiting()) {
-    <div id="overlay" class="overlay" (click)="cancelWaiting()">
-      <div class="popup-waiting" (click)="$event.stopPropagation()">
-        <div class="popup-header">
-          <h2>Esperando respuesta</h2>
-          <button class="close-button" (click)="cancelWaiting()">✕</button>
-        </div>
-        <div class="popup-content waiting-content">
-          <p>Enviando reto... Esperando que el oponente acepte.</p>
-          <div class="spinner"></div>
-          <button class="btn-cancel-waiting" (click)="cancelWaiting()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  }
 
 </div>

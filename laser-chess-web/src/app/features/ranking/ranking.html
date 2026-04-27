@@ -80,145 +80,49 @@
     </div>
   </div>
 
-  <!-- Popup para configurar el reto -->
-  @if(showConfigPopup()) {
-    <div class="overlay" (click)="closeConfigPopup()">
-      <div class="popup-challenge" (click)="$event.stopPropagation()">
-        <div class="popup-header">
-          <h2>Configurar reto contra {{ friendToChallenge?.username }}</h2>
-          <button class="close-button" (click)="closeConfigPopup()">✕</button>
-        </div>
-        <div class="popup-content">
-          
-          <!-- Selección de tablero -->
-          <div class="param-row">
-            <label>Tablero:</label>
-            <select [(ngModel)]="selectedBoard" class="form-control">
-              @for (board of boards; track board.id) {
-                <option [value]="board.id">{{ board.name }}</option>
-              }
-            </select>
-          </div>
-          
-          <!-- Selección de modo de tiempo -->
-          <div class="param-row">
-            <label>Modo de tiempo:</label>
-            <select [ngModel]="selectedMode()" (ngModelChange)="onModeChange($event)" class="form-control">
-              @for (mode of timeModes; track mode.id) {
-                <option [ngValue]="mode">{{ mode.label }}</option>
-              }
-            </select>
-          </div>
 
-          @if (selectedMode().id !== 'custom') {
-            <div class="param-row">
-              <label>Tiempo base:</label>
-              <span class="readonly-value">{{ selectedMode().baseSeconds / 60 }} minutos</span>
-            </div>
-            <div class="param-row">
-              <label>Incremento por jugada:</label>
-              <select [(ngModel)]="selectedIncrement" class="form-control">
-                @for (inc of selectedMode().increments; track inc) {
-                  <option [value]="inc">+{{ inc }} segundos</option>
-                }
-              </select>
-            </div>
-          } @else {
-            <div class="param-row">
-              <label>Duración (minutos, máx 180):</label>
-              <input type="number" [(ngModel)]="customMinutes" min="1" max="180" class="form-control">
-            </div>
-            <div class="param-row">
-              <label>Incremento por jugada (segundos, máx 60):</label>
-              <input type="number" [(ngModel)]="customIncrementSec" min="0" max="60" class="form-control">
-            </div>
-          }
+  <!-- Esto es lo que habia antes (para recordarlo si hiciera falta)-->
+  <!-- Popup para configurar el reto @if(showConfigPopup()) { -->
+  <!-- Popup de espera @if(popUP_waiting()) {-->
+  <!-- Pop-up de info @if (popUP_userInfo() && selectedUser()) {-->
+  <app-popup
+    [type]="popUP_userInfo() ? 'userInfo' : 'none'"
+    [userInfoUser]="selectedUser()"
+    [userInfoContext]="selectedUserContext()"
+    [userInfoEloBlitz]="selectedUserEloBlitz()"
+    [userInfoEloRapid]="selectedUserEloRapid()"
+    [userInfoEloClassic]="selectedUserEloClassic()"
+    [userInfoEloExtended]="selectedUserEloExtended()"
+    (userInfoClose)="closeUserInfo()"
+    (userInfoChallenge)="challengeFromPopup()"
+    (userInfoDeleteFriend)="deleteFriend()"
+    (userInfoCancelSent)="cancelFriendRequest()"
+    (userInfoSendFriendRequest)="sendFriendRequest()">
+  </app-popup>
 
-          <div class="challenge-actions">
-            <button class="btn-cancel" (click)="closeConfigPopup()">Cancelar</button>
-            <button class="btn-challenge-popup" (click)="sendChallenge()">Desafiar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  }
+  <app-popup
+    [type]="showConfigPopup() ? 'challengeConfig' : 'none'"
+    [challengeFriendUsername]="friendToChallenge?.username || null"
+    [challengeBoards]="boards"
+    [challengeSelectedBoard]="selectedBoard()"
+    [challengeTimeModes]="timeModes"
+    [challengeSelectedMode]="selectedMode()"
+    [challengeSelectedIncrement]="selectedIncrement()"
+    [challengeCustomMinutes]="customMinutes()"
+    [challengeCustomIncrementSec]="customIncrementSec()"
+    (challengeConfigClose)="closeConfigPopup()"
+    (challengeModeChange)="onModeChange($event)"
+    (challengeSelectedBoardChange)="selectedBoard.set(+$event)"
+    (challengeSelectedIncrementChange)="selectedIncrement.set(+$event)"
+    (challengeCustomMinutesChange)="customMinutes.set(+$event)"
+    (challengeCustomIncrementSecChange)="customIncrementSec.set(+$event)"
+    (challengeSend)="sendChallenge()">
+  </app-popup>
 
-  <!-- Popup de espera -->
-  @if(popUP_waiting()) {
-    <div id="overlay" class="overlay" (click)="cancelWaiting()">
-      <div class="popup-waiting" (click)="$event.stopPropagation()">
-        <div class="popup-header">
-          <h2>Esperando respuesta</h2>
-          <button class="close-button" (click)="cancelWaiting()">✕</button>
-        </div>
-        <div class="popup-content waiting-content">
-          <p>Enviando reto... Esperando que el oponente acepte.</p>
-          <div class="spinner"></div>
-          <button class="btn-cancel-waiting" (click)="cancelWaiting()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- Pop-up de info -->
-    @if (popUP_userInfo() && selectedUser()) {
-    <div id="overlay" class="overlay" (click)="closeUserInfo()">
-        <div class="popup-userinfo" (click)="$event.stopPropagation()">
-        <div class="popup-header">
-            <h2>Información de usuario</h2>
-            <button class="close-button" (click)="closeUserInfo()">✕</button>
-        </div>
-        <div class="popup-content">
-            <div class="user-info-detail">
-            <div class="user-avatar-large">
-                <div class="avatar-placeholder-large">
-                <span class="avatar-icon-large">👤</span>
-                </div>
-            </div>
-            <div class="user-details">
-                <div class="detail-row">
-                <span class="detail-label">Nombre de usuario:</span>
-                <span class="detail-value">{{ selectedUser()?.username }}</span>
-                </div>
-                <!-- Mostramos los 4 ELOs -->
-                <div class="detail-row">
-                <span class="detail-label">ELO Blitz:</span>
-                <span class="detail-value">{{ selectedUserEloBlitz() }}</span>
-                </div>
-                <div class="detail-row">
-                <span class="detail-label">ELO Rápido:</span>
-                <span class="detail-value">{{ selectedUserEloRapid() }}</span>
-                </div>
-                <div class="detail-row">
-                <span class="detail-label">ELO Clásico:</span>
-                <span class="detail-value">{{ selectedUserEloClassic() }}</span>
-                </div>
-                <div class="detail-row">
-                <span class="detail-label">ELO Extendido:</span>
-                <span class="detail-value">{{ selectedUserEloExtended() }}</span>
-                </div>
-            </div>
-            </div>
-            
-            
-            <div class="user-actions-popup">
-            @if (selectedUserContext() === 'friend') {
-                <button class="btn-challenge-popup" (click)="challengeFromPopup()">Retar</button>
-                <button class="btn-delete-popup" (click)="deleteFriend()">Eliminar amigo</button>
-            } @else if (selectedUserContext() === 'sent_request') {
-                <button class="btn-cancel" (click)="cancelFriendRequest()">Cancelar solicitud</button>
-            } @else if (selectedUserContext() === 'self') {
-                <span class="detail-value" style="font-weight: bold;">Este eres tu tonto, q quieres ver</span>
-            } @else {
-                <button class="btn-challenge-popup" (click)="sendFriendRequest()">Enviar solicitud</button>
-            }
-            </div>
-
-
-        </div>
-        </div>
-    </div>
-    }
+  <app-popup
+    [type]="popUP_waiting() ? 'waiting' : 'none'"
+    (waitingCancel)="cancelWaiting()">
+  </app-popup>
 
 
 

@@ -17,9 +17,11 @@ import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
 import { TimerService } from '../../services/timer-service';
 
+import { Popup } from '../social-ranking-popups/popup'; //los pop-ups (que miedo cargarmea glo)
+
 @Component({
   selector: 'app-social',
-  imports: [TopRow, FormsModule],
+  imports: [TopRow, FormsModule, Popup],
   templateUrl: './social.html',
   styleUrl: './social.css',
 })
@@ -224,10 +226,6 @@ export class Social  {
     this.requestTabState.set(tab);
   }
 
-  copyLink() {
-    console.log('Copiar enlace');
-  }
-  
   //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
   resumeGame(gameId: number) {
     console.log('Retomando partida...');
@@ -517,6 +515,36 @@ export class Social  {
         }
     });
     
+  }
+
+
+  //Nuevo metodo pues ahora como el popup esta en otro sitio se necesita para leer el nombre del amigo al que se le envia solicutd de amistad
+  addFriendFromPopup(username: string) {
+    username = username.trim();
+    if (!username) {
+      this.errorAmigoNombreNoValido.set(true);
+      return;
     }
+
+    this.errorAmigoNombreNoValido.set(false);
+    const request: FriendshipRequest = {
+      receiver_username: username,
+    };
+
+    this.friendService.addFriend(request).subscribe({
+      next: (result) => {
+        if (result) {
+          console.log('Solicitud de amistad enviada');
+          this.popUP_newFriend.set(false);
+          this.refreshSocialState();
+        }
+      },
+      error: (err: any) => {
+        console.error(err);
+      }
+    });
+  }
+
+
 
 }

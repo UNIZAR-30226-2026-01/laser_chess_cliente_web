@@ -1,0 +1,208 @@
+
+
+<!-- Popup AÑADIR AMIGO -->
+@if (type === 'newFriend') {
+  <div id="overlay" class="overlay" (click)="newFriendClose.emit()">
+    <div class="popup-amigo" (click)="$event.stopPropagation()">
+      <div class="container text-center">
+        <div class="row-popup">
+          <div class="col-popup">
+            <h2>AÑADIR</h2>
+            <h3>Escribe su nombre de usuario</h3>
+            <input #usernameInput type="text" class="form-control" placeholder="username" (keyup.enter)="newFriendAdd.emit(usernameInput.value)">
+            @if (newFriendError) {
+              <span class="error_message_form">Por favor, ingresa un nombre de usuario válido.</span>
+            }
+            <button class="form-button" (click)="newFriendAdd.emit(usernameInput.value)">ENVIAR SOLICITUD</button>
+            <h3>O espera a ser aceptad@</h3>
+          </div>
+          <div class="col-popup">
+            <h3>Envíale el siguiente enlace:</h3>
+            <div class="link-container">
+              <span class="link">{{ 'http://localhost:4200/profile/' + (userInfoUser?.account_id || '') }}</span>
+              <button class="copy-button" (click)="copyLink()">COPIAR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Popup SOLICITUDES DE AMISTAD -->
+@if (type === 'requests') {
+  <div id="overlay" class="overlay" (click)="requestsClose.emit()">
+    <div class="popup-solicitudes" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h2>Solicitudes de amistad</h2>
+        <button class="close-button" (click)="requestsClose.emit()">✕</button>
+      </div>
+      <div class="popup-tabs">
+        <div class="popup-tab" [class.active]="requestsTab === 'received'" (click)="onTabChange('received')">
+          Recibidas @if(requestsReceived.length) { <span class="tab-badge">{{ requestsReceived.length }}</span> }
+        </div>
+        <div class="popup-tab" [class.active]="requestsTab === 'sent'" (click)="onTabChange('sent')">
+          Enviadas @if(requestsSent.length) { <span class="tab-badge">{{ requestsSent.length }}</span> }
+        </div>
+      </div>
+      <div class="popup-content">
+        @if (requestsTab === 'received') {
+          @if (requestsLoading) { <div class="loading-state"><p>Cargando solicitudes...</p></div> }
+          @else if (requestsReceived.length === 0) { <div class="empty-state"><p>No tienes solicitudes pendientes</p></div> }
+          @else {
+            <ul class="requests-list">
+              @for (req of requestsReceived; track req.username) {
+                <li class="request-item" (click)="onOpenUserInfo(req, 'received_request')">
+                  <div class="request-info">
+                    <div class="avatar-placeholder"><span class="avatar-icon">👤</span></div>
+                    <div class="request-details">
+                      <span class="request-username">{{ req.username }}</span>
+                      <span class="request-xp">Nivel {{ req.level }}</span>
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        } @else {
+          @if (requestsLoading) { <div class="loading-state"><p>Cargando solicitudes enviadas...</p></div> }
+          @else if (requestsSent.length === 0) { <div class="empty-state"><p>No has enviado solicitudes pendientes</p></div> }
+          @else {
+            <ul class="requests-list">
+              @for (req of requestsSent; track req.username) {
+                <li class="request-item" (click)="onOpenUserInfo(req, 'sent_request')">
+                  <div class="request-info">
+                    <div class="avatar-placeholder"><span class="avatar-icon">👤</span></div>
+                    <div class="request-details">
+                      <span class="request-username">{{ req.username }}</span>
+                      <span class="request-xp">Nivel {{ req.level }}</span>
+                      <span class="request-status">Pendiente</span>
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Popup INFORMACIÓN DE USUARIO -->
+@if (type === 'userInfo' && userInfoUser) {
+  <div id="overlay" class="overlay" (click)="userInfoClose.emit()">
+    <div class="popup-userinfo" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h2>Información de usuario</h2>
+        <button class="close-button" (click)="userInfoClose.emit()">✕</button>
+      </div>
+      <div class="popup-content">
+        <div class="user-info-detail">
+          <div class="user-avatar-large">
+            @if (userInfoUser.avatar) {
+              <img [src]="'assets/avatars/' + userInfoUser.avatar + '.png'" alt="Avatar">
+            } @else {
+              <div class="avatar-placeholder-large"><span class="avatar-icon-large">👤</span></div>
+            }
+          </div>
+          <div class="user-details">
+            <div class="detail-row"><span class="detail-label">Nombre:</span><span class="detail-value">{{ userInfoUser.username }}</span></div>
+            <div class="detail-row"><span class="detail-label">Nivel:</span><span class="detail-value">{{ userInfoUser.level || 'N/A' }}</span></div>
+            <div class="detail-row"><span class="detail-label">ELO Blitz:</span><span class="detail-value">{{ userInfoEloBlitz }}</span></div>
+            <div class="detail-row"><span class="detail-label">ELO Rápido:</span><span class="detail-value">{{ userInfoEloRapid }}</span></div>
+            <div class="detail-row"><span class="detail-label">ELO Clásico:</span><span class="detail-value">{{ userInfoEloClassic }}</span></div>
+            <div class="detail-row"><span class="detail-label">ELO Extendido:</span><span class="detail-value">{{ userInfoEloExtended }}</span></div>
+          </div>
+        </div>
+        <div class="user-actions-popup">
+          @switch (userInfoContext) {
+            @case ('friend') {
+              <button class="btn-challenge-popup" (click)="userInfoChallenge.emit()">Retar</button>
+              <button class="btn-delete-popup" (click)="userInfoDeleteFriend.emit()">Eliminar amigo</button>
+            }
+            @case ('received_request') {
+              <button class="btn-accept" (click)="userInfoAcceptRequest.emit()">Aceptar</button>
+              <button class="btn-reject" (click)="userInfoRejectRequest.emit()">Rechazar</button>
+            }
+            @case ('sent_request') {
+              <button class="btn-cancel" (click)="userInfoCancelSent.emit()">Cancelar solicitud</button>
+            }
+            @case ('self') {
+              <span class="detail-value" style="font-weight: bold;">Este eres tú</span>
+            }
+            @default {
+              <button class="btn-challenge-popup" (click)="userInfoSendFriendRequest.emit()">Enviar solicitud</button>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Popup CONFIGURACIÓN DE RETO -->
+@if (type === 'challengeConfig' && challengeFriendUsername) {
+  <div class="overlay" (click)="challengeConfigClose.emit()">
+    <div class="popup-challenge" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h2>Configurar reto contra {{ challengeFriendUsername }}</h2>
+        <button class="close-button" (click)="challengeConfigClose.emit()">✕</button>
+      </div>
+      <div class="popup-content">
+        <div class="param-row">
+          <label>Tablero:</label>
+          <select [ngModel]="challengeSelectedBoard" (ngModelChange)="challengeSelectedBoardChange.emit($event)" class="form-control">
+            @for (board of challengeBoards; track board.id) {
+              <option [value]="board.id">{{ board.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="param-row">
+          <label>Modo de tiempo:</label>
+          <select [ngModel]="challengeSelectedMode" (ngModelChange)="challengeModeChange.emit($event)" class="form-control">
+            @for (mode of challengeTimeModes; track mode.id) {
+              <option [ngValue]="mode">{{ mode.label }}</option>
+            }
+          </select>
+        </div>
+        @if (challengeSelectedMode?.id !== 'custom') {
+          <div class="param-row"><label>Tiempo base:</label><span class="readonly-value">{{ challengeSelectedMode?.baseSeconds / 60 }} minutos</span></div>
+          <div class="param-row">
+            <label>Incremento por jugada:</label>
+            <select [ngModel]="challengeSelectedIncrement" (ngModelChange)="challengeSelectedIncrementChange.emit($event)" class="form-control">
+              @for (inc of challengeSelectedMode?.increments || []; track inc) {
+                <option [value]="inc">+{{ inc }} segundos</option>
+              }
+            </select>
+          </div>
+        } @else {
+          <div class="param-row"><label>Duración (minutos, máx 180):</label><input type="number" [ngModel]="challengeCustomMinutes" (ngModelChange)="challengeCustomMinutesChange.emit($event)" min="1" max="180" class="form-control"></div>
+          <div class="param-row"><label>Incremento por jugada (segundos, máx 60):</label><input type="number" [ngModel]="challengeCustomIncrementSec" (ngModelChange)="challengeCustomIncrementSecChange.emit($event)" min="0" max="60" class="form-control"></div>
+        }
+        <div class="challenge-actions">
+          <button class="btn-cancel" (click)="challengeConfigClose.emit()">Cancelar</button>
+          <button class="btn-challenge-popup" (click)="challengeSend.emit()">Desafiar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Popup ESPERANDO RESPUESTA -->
+@if (type === 'waiting') {
+  <div id="overlay" class="overlay" (click)="waitingCancel.emit()">
+    <div class="popup-waiting" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h2>Esperando respuesta</h2>
+        <button class="close-button" (click)="waitingCancel.emit()">✕</button>
+      </div>
+      <div class="popup-content waiting-content">
+        <p>Enviando reto... Esperando que el oponente acepte.</p>
+        <div class="spinner"></div>
+        <button class="btn-cancel-waiting" (click)="waitingCancel.emit()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+}
+
