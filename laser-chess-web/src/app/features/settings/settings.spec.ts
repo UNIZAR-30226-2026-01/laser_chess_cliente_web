@@ -13,13 +13,17 @@ describe('Settings', () => {
     const userRepoMock = {
       getOwnAccount: () => of({ id: '1', username: 'test' }),
       getXpInfo: () => of({ level: 5, currentXp: 100, neededXp: 200 }),
-      getAllRatings: () => of([])
+      getAllRatings: () => of([]),
+      getCurrentEmail: () => of(''),
+      getNotificationEnabled: vi.fn().mockReturnValue(of(true)),
+      setNotificationEnabled: vi.fn().mockReturnValue(of(true))
     };
+    
     
     await TestBed.configureTestingModule({
       imports: [Settings],
       providers: [
-        { provide: UserRespository, useValue: userRepoMock }
+        { provide: UserRespository, useValue: userRepoMock },
       ]
     })
     .compileComponents();
