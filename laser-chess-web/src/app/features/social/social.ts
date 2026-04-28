@@ -243,7 +243,36 @@ export class Social  {
     // Comprobar que jugador soy yo para darle valor al otro jugador
     // this.friendToChallenge = 
     console.log('Retomando partida...');
-    this.sendChallenge(gameId); // Iniciar la partida con el ID específico
+    var id_rival;
+    if(this.id === p1){
+      id_rival = p2;
+
+    }else{
+      id_rival = p1;
+
+    }
+
+    this.userService.getAccount(id_rival).subscribe({
+      next: (response) => {        
+        const rivalUsername = response.username || 'Rival Desconocido';
+        const rival: FriendSummary = {
+          username: response.username || 'Rival Desconocido',
+          account_id: response.userId || 0,
+          level: response.level || 0, 
+          avatar: response.avatar || 0 
+        };
+        this.friendToChallenge = rival;
+        console.log('Nombre del rival obtenido:', rivalUsername);
+        this.sendChallenge(gameId); // Iniciar la partida con el ID específico
+      },
+
+      error: (err) => {
+        console.error('Error al obtener el nombre del rival:', err);
+        this.gameState.nombreRival.set('Rival Desconocido');
+      }
+    })
+    
+    
   }
 
   //Cargar lista de amigos

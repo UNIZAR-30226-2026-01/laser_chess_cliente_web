@@ -15,7 +15,7 @@
   <app-popup
     [type]="popUP_newFriend() ? 'newFriend' : 'none'"
     [newFriendError]="errorAmigoNombreNoValido()"
-    [userInfoUser]="{ username: '', account_id: id ? id.toString() : '', level: 0, avatar: 0 }"
+    [userInfoUser]="{ username: '', account_id: id ? id : 0, level: 0, avatar: 0 }"
     (newFriendAdd)="addFriendFromPopup($event)"
     (newFriendClose)="popUP_newFriend.set(false)">
   </app-popup>

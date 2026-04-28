@@ -1,5 +1,5 @@
 export interface FriendSummaryExtended {
-    account_id: string;
+    account_id: number;
     username: string;
     level: number;
     avatar: number;

@@ -190,7 +190,7 @@ export class Ranking implements OnInit {
       });
       const userSummary: FriendSummaryExtended = {
         username: player.username,
-        account_id: player.userId.toString(),
+        account_id: player.userId,
         level: 0,
         avatar: 0
       };
@@ -222,7 +222,7 @@ export class Ranking implements OnInit {
 
         const userSummary: FriendSummaryExtended  = {
           username: player.username,
-          account_id: player.userId.toString(),
+          account_id: player.userId,
           level: 0,
           avatar: 0
         };
@@ -244,7 +244,7 @@ export class Ranking implements OnInit {
 
         const userSummary: FriendSummaryExtended  = {
           username: player.username,
-          account_id: player.userId.toString(),
+          account_id: player.userId,
           level: 0,
           avatar: 0
         };
