@@ -44,7 +44,7 @@ export class Home {
   popUPNotis = signal(false);
   tipoPartida = signal('IA'); // Puede ser "Ranked", "IA", "Pública"
   
-  timeIncrement = signal(0);
+  timeIncrement = signal(2);
 
   boardState = inject(BoardState);
   columnas = 10;
@@ -228,19 +228,18 @@ export class Home {
       case 'Ranked':
         endpoint = 'matchmaking'
         params = {
-            board,
-            starting_time: startingTime,
+            time_base: startingTime,
             time_increment: timeIncrement,
+            board,
             ranked: 0,
-            
           };
         break;
       case 'IA':
         endpoint = 'bot'
         params = {
-            board,
             starting_time: startingTime,
             time_increment: timeIncrement,
+            board,
             level: level
           };
         break;
@@ -248,7 +247,7 @@ export class Home {
         endpoint = 'matchmaking'
         params = {
             board,
-            starting_time: startingTime,
+            time_base: startingTime,
             time_increment: timeIncrement,
             ranked: 1,
           };
