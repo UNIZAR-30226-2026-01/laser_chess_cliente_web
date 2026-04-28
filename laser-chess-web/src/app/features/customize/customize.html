@@ -1,3 +1,11 @@
+<app-board
+            [piezas]="listaPiezas"
+            [laserPath]="laserPath"
+            [columnas]="columnas"
+            [filas]="filas"
+            [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
+            ></app-board>
+
 <div class="customize-container">
   @for (group of groups(); track group.type) {
     <div class="customize-section">

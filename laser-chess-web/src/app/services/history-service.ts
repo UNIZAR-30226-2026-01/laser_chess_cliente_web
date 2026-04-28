@@ -7,6 +7,7 @@ import { GameLogicService } from './game-logic-service';
 import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
 import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY } from '../constants/boards';
+import { BoardState } from '../utils/board-state'
 
 
 
@@ -22,6 +23,8 @@ export class HistoryService {
 
   private gameService = inject(GameLogicService);
   private gameUtils = inject(GameUtils);
+  private boardState = inject(BoardState);
+
   columnas = 10;
   filas = 8;
   id = this.remoteService.getId();
@@ -56,31 +59,7 @@ export class HistoryService {
 
 
   inicializarTablero(){
-    console.log(this.historySelectedGame()?.board);
-    switch (this.historySelectedGame()?.board){
-      case 'ACE':
-        this.listaPiezas.set(this.gameUtils.importarTablero(ACE));
-        console.log(ACE);
-        break;
-      case 'CURIOSITY':
-        this.listaPiezas.set(this.gameUtils.importarTablero(CURIOSITY));
-        console.log(CURIOSITY);
-        break;
-      case 'SOPHIE':
-        this.listaPiezas.set(this.gameUtils.importarTablero(SOPHIE));
-        console.log(SOPHIE);
-        break;
-      case 'MERCURY':
-        this.listaPiezas.set(this.gameUtils.importarTablero(MERCURY));
-        console.log(MERCURY);
-        break;
-      case 'GRAIL': 
-        this.listaPiezas.set(this.gameUtils.importarTablero(GRAIL));
-        console.log(GRAIL);
-        break;
-    }
-    
-    
+    this.listaPiezas.set(this.boardState.iniciarTablero(this.historySelectedGame()?.board))
     this.cont.set(this.listaPiezas().length);
     // Dividir el log por acciones y aplicar a un array + añadir un iterador para saber por donde estamos
     this.indiceMovimiento = 0;

@@ -40,10 +40,10 @@ export class GameUtils {
         };
 
         const rotaciones: Record<string, number> = {
-          'U': 0,
-          'R': 90,
-          'D': 180,
-          'L': 270
+          'U': 180,
+          'R': 270,
+          'D': 0,
+          'L': 90
         };
 
         return {

@@ -217,6 +217,10 @@ export class UserRespository {
     return this.userProfile?.extendedElo;
   }
 
+  getPieceSkin(): number | undefined {
+    return this.userProfile?.piece_skin;
+  }
+
 
   // Actualizar datos del perfil del usuario
   updateData(username: string , mail: String, board_skin: number, piece_skin: number, win_animation: number){

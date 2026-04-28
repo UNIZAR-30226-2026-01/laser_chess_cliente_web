@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { CustomizeRepository, CustomizeItemDisplay } from '../../repository/customize-repository';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Board } from '../../shared/board/board'
+import { GameUtils } from '../../utils/game-utils'
+import { BoardState } from '../../utils/board-state'
 
 interface CustomizeGroup {
   type: string;
@@ -13,16 +16,26 @@ interface CustomizeGroup {
 @Component({
   selector: 'app-customize',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Board],
   templateUrl: './customize.html',
   styleUrls: ['./customize.css']
 })
+
 export class Customize implements OnInit {
   private customizeRepo = inject(CustomizeRepository);
+  gameUtils = inject(GameUtils);
+  boardState = inject(BoardState);
   groups: WritableSignal<CustomizeGroup[]> = signal<CustomizeGroup[]>([]);
+
+  columnas = 10;
+  filas = 8;
+  listaPiezas = this.boardState.listaPiezas;
+  laserPath = this.boardState.laserPath;
+  board = this.boardState.currentBoard;
 
   ngOnInit(): void {
     this.loadItems();
+    this.boardState.listaPiezas.set(this.boardState.iniciarTablero(this.board()));
   }
 
   private loadItems(): void {

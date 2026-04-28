@@ -23,7 +23,8 @@ describe('Customize', () => {
     const userRepoMock = {
       getOwnAccount: () => of({ id: '1', username: 'test' }),
       getXpInfo: () => of({ level: 5, currentXp: 100, neededXp: 200 }),
-      getAllRatings: () => of([])
+      getAllRatings: () => of([]),
+      getPieceSkin: () => '0'
     };
 
     const customizeRepoMock = {

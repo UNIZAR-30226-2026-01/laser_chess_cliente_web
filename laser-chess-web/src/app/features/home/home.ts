@@ -3,7 +3,6 @@ import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { Websocket } from '../../model/remote/websocket';
 import { Remote } from '../../model/remote/remote';
-import { HistoryService } from '../../services/history-service';
 import { MatIcon } from '@angular/material/icon';
 import { TimerService } from '../../services/timer-service';
 import { UserRespository } from '../../repository/user-respository';
@@ -14,6 +13,7 @@ import { Board } from '../../shared/board/board';
 import { GameUtils } from '../../utils/game-utils';
 import { PiezaData } from '../../model/game/PiezaData';
 import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY, VACIO} from '../../constants/boards';
+import { BoardState } from '../../utils/board-state'
 
 
 
@@ -46,11 +46,11 @@ export class Home {
   
   timeIncrement = signal(0);
 
-  historyState = inject(HistoryService);
+  boardState = inject(BoardState);
   columnas = 10;
   filas = 8;
-  listaPiezas = this.historyState.listaPiezas;
-  laserPath = this.historyState.laserPath;
+  listaPiezas = this.boardState.listaPiezas;
+  laserPath = this.boardState.laserPath;
 
 
   solicitudes = signal<ChallengeResume[]>([]);
@@ -89,20 +89,11 @@ export class Home {
   }
 
   cargarTablero(): void {
-    this.historyState.listaPiezas.set([]);
-    this.historyState.laserPath.set([]);
-
-    let tablero = VACIO;
-    switch (this.selectedBoard()) {
-      case 'Ace':       tablero = ACE;       break;
-      case 'Curiosity': tablero = CURIOSITY; break;
-      case 'Sophie':    tablero = SOPHIE;    break;
-      case 'Mercury':   tablero = MERCURY;   break;
-      case 'Grail':     tablero = GRAIL;     break;
-    }
+    this.boardState.listaPiezas.set([]);
+    this.boardState.laserPath.set([]);
 
     // Una sola llamada, sin pasar por VACIO
-    this.historyState.listaPiezas.set(this.gameUtils.importarTablero(tablero));
+    this.boardState.listaPiezas.set(this.boardState.iniciarTablero(this.selectedBoard().toUpperCase()));
   }
 
   toggleTimeDropdown(event: Event) {
@@ -127,6 +118,7 @@ export class Home {
   selectBoard(option: string, event: Event) {
     event.stopPropagation();
     this.selectedBoard.set(option);
+    this.boardState.currentBoard.set(option.toUpperCase());
     this.cargarTablero();
     this.boardDropdownOpen.set(false);
   }
@@ -218,19 +210,15 @@ export class Home {
     switch(this.selectedTime()){
       case 'Blitz':
         startingTime = 300;
-        ranked = this.userRepo.getBlitzElo() || 0;
         break;
       case 'Rapid':
         startingTime = 900;
-        ranked = this.userRepo.getRapidElo() || 0;
         break;
       case 'Classic':
         startingTime = 1800;
-        ranked = this.userRepo.getClassicElo() || 0;
         break;
       case 'Extended':
         startingTime = 3600;
-        ranked = this.userRepo.getExtendedElo() || 0;
         break;
     }
 
@@ -243,7 +231,8 @@ export class Home {
             board,
             starting_time: startingTime,
             time_increment: timeIncrement,
-            ranked: 1,
+            ranked: 0,
+            
           };
         break;
       case 'IA':
@@ -255,6 +244,16 @@ export class Home {
             level: level
           };
         break;
+      case 'Public':
+        endpoint = 'matchmaking'
+        params = {
+            board,
+            starting_time: startingTime,
+            time_increment: timeIncrement,
+            ranked: 1,
+          };
+        break;
+
 
     }
 

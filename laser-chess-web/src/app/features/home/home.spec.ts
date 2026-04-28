@@ -31,6 +31,7 @@ describe('Home', () => {
       getUsername: () => 'testUser',
       getAccountId: () => '1',
       getId: () => '1', 
+      getPieceSkin: () => '0'
     };
 
     const iconServiceMock = {
