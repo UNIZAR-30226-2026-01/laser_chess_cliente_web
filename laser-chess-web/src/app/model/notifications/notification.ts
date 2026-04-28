@@ -1,17 +1,15 @@
-// notification.service.ts
 import { Injectable, } from '@angular/core';
 import { Router } from '@angular/router';
 import { SseService, SseMessage } from './sse';
-import { FcmService } from './fcm';
 import { Remote } from '../remote/remote'; 
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { UserRespository } from '../../repository/user-respository';
 
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
   private isSetup = false;
-
-
+  private sseSub?: Subscription;
   private wakeSocialSubject = new Subject<void>();
   private wakeHomeSubject = new Subject<void>();
 
@@ -20,35 +18,10 @@ export class NotificationService {
 
   constructor(
     private sse: SseService,
-    private fcm: FcmService,
     private remote: Remote,
-    private router: Router
-  ) {
-    // Escuchar eventos sse y fcm 
-    this.sse.onMessage().subscribe(event => {
-      console.log('TODOS LOS EVENTOS SSE:', event);
-      this.handleEvent(event);
-    });
-    this.fcm.onForegroundMessage().subscribe(payload => {
-      if (payload.notification) {
-        this.showWebNotification(
-          payload.notification.title || 'Notificación',
-          payload.notification.body || '',
-          payload.data
-        );
-      }
-    });
-  }
-
-  private sseSub?: any;
-
-  private initSse() {
-    this.sseSub?.unsubscribe?.();
-
-    this.sseSub = this.sse.onMessage().subscribe(event => {
-      this.handleEvent(event);
-    });
-  }
+    private router: Router,
+    private userRepo: UserRespository
+  ) {}
 
   /**
    * Despues de iniciar sesion
@@ -60,7 +33,11 @@ export class NotificationService {
     this.teardownOnLogout();
 
     this.sse.connect(token);
-    this.initSse(); // si lo has añadido
+
+    this.sseSub = this.sse.onMessage().subscribe(event => {
+      console.log('Evento SSE recibido:', event);
+      this.handleEvent(event);
+    });
 
     this.isSetup = true;
   }
@@ -72,10 +49,10 @@ export class NotificationService {
     this.sse.disconnect();
     this.sseSub?.unsubscribe?.();
     this.isSetup = false;
+    this.sseSub = undefined;
   }
 
   private handleEvent(event: SseMessage): void {
-  console.log('Evento SSE recibido:', event);
   switch (event.eventType) {
     case 'FriendRequest':
       const username = typeof event.data === 'string' ? event.data : event.data?.username || 'alguien';
@@ -91,39 +68,59 @@ export class NotificationService {
       break;
     default:
       if (event.eventType === 'Notification') {
-        this.showWebNotification('Aviso', event.data.message, null);
+        const message =
+          typeof event.data === 'string'
+            ? event.data
+            : event.data?.message || 'Tienes una nueva notificación';
+
+        this.showWebNotification('Aviso', message, null);
       }
   }
 }
 
   private showWebNotification(title: string, body: string, data: any = null): void {
+    if (!this.userRepo.getNotificationEnabled()) {
+      return;
+    }
     if (!('Notification' in window)) {
       console.warn('Este navegador no soporta notificaciones web');
       return;
     }
     if (Notification.permission === 'granted') {
-      const notification = new Notification(title, { body, icon: '/assets/icon.png' });
+      const notification = new Notification(title, {
+        body,
+        icon: '/assets/icon.png'
+      });
+
       notification.onclick = () => {
         window.focus();
-        if (data) {
-          if (data.type === 'friend_request') {
-            this.wakeSocialSubject.next();
-            this.showWebNotification('Nueva solicitud de amistad', 'Tienes una nueva solicitud');
-            this.router.navigate(['/social']);
-          } else if (data.type === 'challenge') {
-            this.wakeHomeSubject.next();
-            this.showWebNotification('Invitación de partida', 'Te han retado a una partida');
-            this.router.navigate(['/home']);
-          }else if (data.type === 'friend_accepted') {
-            this.wakeSocialSubject.next();
-            this.router.navigate(['/social']);
-          }
+
+        if (data?.type === 'friend_request') {
+          this.wakeSocialSubject.next();
+          this.router.navigate(['/social']);
         }
+
+        if (data?.type === 'challenge') {
+          this.wakeHomeSubject.next();
+          this.router.navigate(['/home']);
+        }
+
+        if (data?.type === 'friend_accepted') {
+          this.wakeSocialSubject.next();
+          this.router.navigate(['/social']);
+        }
+
         notification.close();
       };
-    } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then(perm => {
-        if (perm === 'granted') this.showWebNotification(title, body, data);
+
+      return;
+    }
+
+    if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          this.showWebNotification(title, body, data);
+        }
       });
     }
   }

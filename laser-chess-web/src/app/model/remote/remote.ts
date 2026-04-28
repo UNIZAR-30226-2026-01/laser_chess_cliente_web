@@ -152,10 +152,25 @@ export class Remote {
   }
 
   // Solicitud a a la API para borrar la cuenta
-  deleteAccount(){
-    return this.http.post(`${API_URL}/account/delete`, { observe: 'response' }).pipe(
-      catchError((err: Error) => {
-        throw new Error('Error during deleteing account');
+  deleteAccount(): Observable<void>{
+    return this.http.delete<void>(`${API_URL}/api/account/delete`).pipe(
+      catchError(err => {
+        console.error('Error eliminando cuenta', err);
+        return throwError(() => new Error('No se pudo eliminar la cuenta'));
+      })
+    );
+  }
+
+
+  // Solicitud a la API para cambiar la constrseña
+  changePassword(oldPassword: string, newPassword: string): Observable<void> {
+    return this.http.put<void>(`${API_URL}/api/account/passwd`, {
+      old_password: oldPassword,
+      new_password: newPassword
+    }).pipe(
+      catchError(err => {
+        console.error('Error cambiando contraseña', err);
+        return throwError(() => new Error('No se pudo cambiar la contraseña'));
       })
     );
   }

@@ -1,208 +1,157 @@
-.main-settings-frame {
-  background: var(--LCBG);
-  border: 3px solid #000; 
-  padding: 40px;
-  margin: 20px;
-  min-height: 500px;
-}
 
-.title_settings {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 40px;
+.main-settings-frame {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
 }
 
 .title_settings h1 {
-  font-size: var(--LCBig);
-  margin: 0;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .settings-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0; /* Quitamos gap para usar el borde como divisor */
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-/* Columna Izquierda con línea vertical */
-.card_datos {
-  border-right: 2px solid #000;
-  padding-right: 40px;
+.card_datos, .card_settings {
+  background: #f9f9f9;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  flex: 1;
+  min-width: 280px;
 }
 
-.card_datos_header h2 {
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  margin-bottom: 25px;
+.card_datos_header h2, .card_settings h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+.email-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .email-box {
-  border: 2px solid #000;
-  padding: 5px 15px;
-  margin-left: 10px;
-  display: inline-block;
-  font-weight: bold;
+  background: #e9ecef;
+  padding: 0.3rem 0.8rem;
+  border-radius: 1rem;
+  font-family: monospace;
+  word-break: break-all;
 }
 
 .link {
-  text-decoration: underline;
-  font-weight: bold;
+  color: #4a6fff;
   cursor: pointer;
-  margin: 15px 0;
+  margin: 0.5rem 0;
+  text-decoration: underline;
+  font-size: 0.9rem;
 }
 
-/* Columna Derecha (Checkboxes) */
-.card_settings {
-  padding-left: 40px;
+.link:hover {
+  color: #2c4bc2;
 }
 
 .setting-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
-  font-weight: bold;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
 }
 
-/* El cuadradito del checkbox */
-.checkbox-box {
-  width: 30px;
-  height: 30px;
-  border: 2px solid #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.setting-label {
+  font-weight: 500;
 }
 
 .checkbox-box input {
-  width: 20px;
-  height: 20px;
+  width: 1.2rem;
+  height: 1.2rem;
   cursor: pointer;
-  accent-color: #000;
 }
 
-/* Sección Inferior */
 .accessibility-section {
-  margin-top: 40px;
-  border-top: 2px solid #000;
-  padding-top: 20px;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f1f3f5;
+  border-radius: 1rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 15px;
-  font-size: 1.5rem;
-  font-weight: bold;
 }
 
 .access-icon {
-  border: 2px solid #000;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-size: 2rem;
 }
 
-/* Responsive para que no se rompa la línea vertical */
-@media (max-width: 768px) {
-  .settings-content { grid-template-columns: 1fr; }
-  .card_datos { border-right: none; border-bottom: 2px solid #000; padding-bottom: 20px; }
-  .card_settings { padding-left: 0; padding-top: 20px; }
-}
-
-.icon {
-    width: 50px;
-    height: auto;
-}
-
-
-
-/* Tarjeta adaptable */
-.form-container {
-  background: white;
-  padding: clamp(2rem, 5vw, 4rem);
-  border-radius: 1.5rem;
-  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
-
-  width: 100%;
-  max-width: 40rem;  
-  min-width: 35rem;
-}
-
-
-/* Labels */
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  font-size: clamp(0.9rem, 1.2vw, 1rem);
-}
-
-/* Inputs */
-input.form-control {
-  width: 100%;
-  padding: clamp(0.8rem, 1.5vw, 1.2rem);
-  border-radius: 1rem;
-  border: 0.08rem solid #ddd;
-  font-size: clamp(0.9rem, 1.2vw, 1rem);
-  transition: all 0.3s ease;
-}
-
-input.form-control:focus {
-  border-color: #6c8cff;
-  box-shadow: 0 0 0 0.25rem rgba(108, 140, 255, 0.2);
-  outline: none;
-}
-
-/* Texto ayuda */
-#passwordHelpBlock {
-  margin-top: 0.5rem;
-  font-size: clamp(0.75rem, 1vw, 0.85rem);
-  color: #777;
-}
-
-/* Botón */
-button {
-  width: 100%;
-  margin-top: 2rem;
-  padding: clamp(0.9rem, 1.5vw, 1.2rem);
-  border-radius: 1rem;
-  border: none;
-  font-size: clamp(1rem, 1.5vw, 1.1rem);
-  font-weight: 600;
-  background: linear-gradient(135deg, #6c8cff, #4a6fff);
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  transform: translateY(-0.2rem);
-  box-shadow: 0 1rem 2rem rgba(74, 111, 255, 0.3);
-}
-
-.error_message_form {
-  margin-top: 1rem;
-  display: block;
-  color: #e74c3c;
-  font-size: clamp(0.75rem, 1vw, 0.85rem);
-}
-
+/* Popups */
 .overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
-.popup-error {
+.popup-card, .popup-message {
   background: white;
-  color: black;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  border-radius: 0.75rem;
-  width: clamp(18rem, 90vw, 30rem);
+  padding: 2rem;
+  border-radius: 1rem;
+  min-width: 300px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.popup-card input {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+.popup-card button {
+  background: #4a6fff;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.popup-message {
+  text-align: center;
+}
+
+.popup-message.error { border-top: 4px solid #e74c3c; }
+.popup-message.success { border-top: 4px solid #2ecc71; }
+
+.error {
+  color: #e74c3c;
+  font-size: 0.75rem;
+  display: block;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  width: auto;
 }
