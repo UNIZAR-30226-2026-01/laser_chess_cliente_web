@@ -4,11 +4,11 @@
 
   <div class="folder-container">
     <div class="folder-body">
-      
+
       <!-- Botones para seleccionar elo -->
       <div class="elo-buttons-container">
         @for (type of eloTypes; track type.id) {
-          <button class="elo-tab" 
+          <button class="elo-tab"
                   [class.active]="selectedEloType() === type.id"
                   (click)="onSelectEloType(type.id)"
                   [disabled]="loading()">
@@ -16,7 +16,7 @@
           </button>
         }
       </div>
-      
+
       <div class="ranking-content">
       <!-- Estado de carga -->
       @if (loading()) {
@@ -48,15 +48,20 @@
                 <tr (click)="openUserInfo(player)"
                     [class.sticky-user-row]="userInfo()?.position === (i + 1)">
                   <td class="rank">
-                    <div class="medal" 
-                        [class.gold]="i === 0" 
-                        [class.silver]="i === 1" 
+                    <div class="medal"
+                        [class.gold]="i === 0"
+                        [class.silver]="i === 1"
                         [class.bronze]="i === 2">
                       {{ i + 1 }}
                     </div>
                   </td>
                   <td class="username">{{ player.username }}</td>
-                  <td class="elo">{{ player.elo }}</td>
+                  <td class="elo">
+                    <div class="elo-content">
+                    {{ player.elo }}
+                    <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+                    </div>
+                  </td>
                 </tr>
               }
 
@@ -64,7 +69,12 @@
                 <tr class="sticky-user-row">
                   <td class="rank">{{ userInfo()!.position }}</td>
                   <td class="username">Tú</td>
-                  <td class="elo">{{ userInfo()!.elo }}</td>
+                  <td class="elo">
+                    <div class="elo-content">
+                    {{ userInfo()!.elo }}
+                    <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+                    </div>
+                  </td>
                 </tr>
               }
 
@@ -79,7 +89,6 @@
       }
     </div>
   </div>
-
 
   <!-- Esto es lo que habia antes (para recordarlo si hiciera falta)-->
   <!-- Popup para configurar el reto @if(showConfigPopup()) { -->

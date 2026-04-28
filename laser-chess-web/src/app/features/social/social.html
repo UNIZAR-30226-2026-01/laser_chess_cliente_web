@@ -9,9 +9,6 @@
   <!-- @if(popUP_request()) { -->
   <!-- Pop-up de la info del user @if(popUP_userInfo() && selectedUser()) { -->
   <!-- Popup de espera @if(popUP_waiting()) { -->
-
-
-
   <app-popup
     [type]="popUP_newFriend() ? 'newFriend' : 'none'"
     [newFriendError]="errorAmigoNombreNoValido()"
@@ -83,14 +80,15 @@
       @else {
         <div class="tab" (click)="state.set(true)">SOCIAL</div>
         <div class="tab active">IN PROGRESS</div>
-      } 
+      }
     </div>
 
     <div class="folder-body">
       @if (state()){
-        <div class="friend-request-button" (click)="openRequestPopup()">
+      <div class="social-top-actions">
+        <button class="friend-request-button" (click)="openRequestPopup()">
           <div class="left">
-            <span class="avatar">👥</span>
+            <mat-icon fontSet="material-symbols-outlined">all_inbox</mat-icon>
             <span class="request-text">Solicitudes de amistad</span>
           </div>
           <div class="right">
@@ -98,7 +96,14 @@
               <span class="notification-badge">{{ request().length }}</span>
             }
           </div>
-        </div>
+        </button>
+
+        <button class="add-friend-button" (click)="popUP_newFriend.set(true)">
+          <mat-icon fontSet="material-symbols-outlined">add_circle</mat-icon>
+          <span>Agregar amigo</span>
+        </button>
+
+      </div>
 
         <ul class="user-list">
             @if (!friendsInfo()) {
@@ -126,7 +131,6 @@
         </ul>
 
 
-        <button class="fab-plus" (click)="nuevoAmigo()">+</button>
       }
       @else{
         <ul class="game-list">
@@ -154,11 +158,11 @@
                   <button class="btn-play" (click)="resumeGame(game.id, game.p1_id, game.p2_id)">RETOMAR</button>
               </li>
             }
-          
-          
+
+
         }
         </ul>
-        
+
       }
     </div>
   </div>
