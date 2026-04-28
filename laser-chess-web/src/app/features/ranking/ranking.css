@@ -5,7 +5,7 @@ width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  position: relative; 
+  position: relative;
 }
 
 .page::before{
@@ -30,7 +30,7 @@ width: 100%;
     background-position: 0 0;
   }
   100% {
-    background-position: 960px 540px; 
+    background-position: 960px 540px;
   }
 }
 
@@ -50,7 +50,7 @@ width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0; 
+  min-height: 0;
   gap: 1rem;
 }
 
@@ -60,7 +60,7 @@ width: 100%;
   background: var(--LCBG);
   position: relative;
   box-sizing: border-box;
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -70,7 +70,7 @@ width: 100%;
 .elo-buttons-container {
   display: flex;
   justify-content: center;
-  gap: 5px; 
+  gap: 5px;
   margin-bottom: 3px;
   width: 100%;
 }
@@ -86,13 +86,13 @@ width: 100%;
   letter-spacing: 1px;
   cursor: pointer;
   border: none;
-  border-bottom: 4px solid transparent; 
+  border-bottom: 4px solid transparent;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
 .elo-tab.active {
   background-color: var(--S3);
-  color: var(--active-color, var(--LCRed)); 
+  color: var(--active-color, var(--LCRed));
   border-bottom: 4px solid var(--active-color, var(--LCRed));
 }
 
@@ -132,11 +132,6 @@ width: 100%;
   font-size: var(--LCSmall);
 }
 
-.ranking-table th {
-  padding: 0.85rem 1rem;
-  text-align: left;
-}
-
 .ranking-table td {
   padding: 0.85rem 1rem;
   text-align: left;
@@ -144,6 +139,8 @@ width: 100%;
 }
 
 .ranking-table th {
+  padding: 0.4rem 1rem;
+  text-align: left;
   background-color: var(--S2);
   font-weight: bold;
   color: var(--LCWhite);
@@ -151,8 +148,6 @@ width: 100%;
   position: sticky;
   z-index: 10;
   top: 0;
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
 }
 
 .ranking-table tr:hover {
@@ -162,16 +157,17 @@ width: 100%;
 }
 
 .sticky-user-row {
-  position: sticky;
-  top: 1.80rem;
-  bottom: 0px;
-  z-index: 5;
 }
 
 .sticky-user-row td {
+  position: sticky;
+  top: 2.2rem;
+  bottom: 0px;
+  z-index: 50;
+
   background-color: var(--S2);
   font-weight: bold;
-  box-shadow: 0 -3px 0 0 var(--LCBG); 
+  box-shadow: 0 -3px 0 0 var(--LCBG);
 }
 
 .ranking-table tr.sticky-user-row:hover td {
@@ -215,8 +211,23 @@ width: 100%;
 }
 
 .elo {
-  font-family: monospace;
   font-weight: bold;
+}
+
+.elo-content {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.elo-content mat-icon {
+  display: flex;
+  align-items: center;
+  color: var(--LCYellow);
+
+  font-size: var(--LCSmall);
+  height: var(--LCSmall);
+  width: var(--LCSmall);
 }
 
 .empty-table {
@@ -249,7 +260,7 @@ width: 100%;
 
   }
   .ranking-table th{
-    padding: 0.2rem;
+    padding: 0.4rem;
   }
   .ranking-table td {
     padding: 0.6rem;

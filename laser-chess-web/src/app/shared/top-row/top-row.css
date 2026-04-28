@@ -9,7 +9,7 @@
     box-sizing: border-box;
     flex-wrap: nowrap; /* Fuerza una sola línea */
     background-color: (--LCBG);
-    box-shadow: 0 5px 0 0 var(--LCBG); 
+    box-shadow: 0 5px 0 0 var(--LCBG);
 
 }
 
@@ -18,7 +18,7 @@
   display: flex;
   height: 8vh;
   min-height: 3rem;
- 
+
 }
 
 .lc-title {
@@ -32,7 +32,7 @@
   align-items: center;
 
   font-size: var(--LCMedium);
-  box-shadow: 5px 5px 0 0 var(--LCBG); 
+  box-shadow: 5px 5px 0 0 var(--LCBG);
 }
 
 .lc-title mat-icon {
@@ -45,7 +45,7 @@
   width: 20%;
   background-color: var(--S1);
   margin-right: 5px;
-  box-shadow: 5px 5px 0 0 var(--LCBG); 
+  box-shadow: 5px 5px 0 0 var(--LCBG);
 }
 
 
@@ -59,7 +59,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
-  box-shadow: 5px 5px 0 0 var(--LCBG); 
+  box-shadow: 5px 5px 0 0 var(--LCBG);
 }
 
 .profile-picture {
@@ -156,7 +156,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--S3);
+    border: 2px solid var(--S2);
     background: var(--S1);
     cursor: pointer;
     padding: 0;
@@ -193,7 +193,7 @@
   justify-content: center;
   padding: 0 10px;
   gap: 5px;
-  box-shadow: 5px 5px 0 0 var(--LCBG); 
+  box-shadow: 5px 5px 0 0 var(--LCBG);
 }
 
 .coin-counter mat-icon{
@@ -226,7 +226,7 @@
 
 .popup-profile {
   background: var(--S1);
-  border: 0.15rem solid var(--S3);
+  border: 0.15rem solid var(--S2);
   width: min(90%, 35rem);
   max-height: 90vh;
   display: flex;

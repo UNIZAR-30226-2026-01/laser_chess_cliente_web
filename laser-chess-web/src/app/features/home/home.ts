@@ -1,4 +1,4 @@
-import { Component, signal, inject} from '@angular/core';
+import { Component, signal, inject, HostListener } from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { Websocket } from '../../model/remote/websocket';
@@ -20,8 +20,17 @@ import { NotificationService } from '../../model/notifications/notification'; //
   styleUrl: './home.css',
 })
 export class Home {
-  timeModeLabel = 'Modo de tiempo';
-  boardPreviewUrl = '/assets/picture.jpeg';
+  // opciones de los selectores (no se si está guardado en algun otro lugar,
+  // a si que lo pongo aqui)
+  timeOptions = ['Blitz', 'Rapid', 'Classic', 'Extended'];
+  boardOptions = ['Ace', 'Curiosity', 'Grail', 'Mercury', 'Sophie'];
+
+  selectedTime = this.timeOptions[0];
+  selectedBoard = this.boardOptions[0];
+
+  // estado de los desplegables
+  timeDropdownOpen = signal(false);
+  boardDropdownOpen = signal(false);
 
   eloDashOffset: number = 276.46;
   eloRankName: string = 'PROTON · II';
@@ -29,7 +38,8 @@ export class Home {
 
   popUPNotis = signal(false);
   tipoPartida = signal('IA'); // Puede ser "Ranked", "IA", "Pública"
-  selectedBoard = signal(0);
+  //selectedBoard = signal(0);  esto no se como iba yo habia puesto arriba una cosita
+  //                            pero no se si lo rompe o lo que sea
   startingTime = signal(300);
   timeIncrement = signal(0);
 
@@ -45,6 +55,12 @@ export class Home {
 
   constructor(private notificationService: NotificationService) {}
 
+  // Cierra los desplegables si se hace clic fuera de ellos
+  @HostListener('document:click')
+  closeDropdowns() {
+    this.timeDropdownOpen.set(false);
+    this.boardDropdownOpen.set(false);
+  }
 
   ngOnInit() {
     // Aquí podrías cargar las solicitudes iniciales si quieres
@@ -61,11 +77,40 @@ export class Home {
     this.wsSubscription?.unsubscribe();
   }
 
+  toggleTimeDropdown(event: Event) {
+    event.stopPropagation(); // Evita que se dispare el @HostListener
+    this.timeDropdownOpen.set(!this.timeDropdownOpen());
+    this.boardDropdownOpen.set(false); // Cierra el otro por si acaso
+  }
+
+  toggleBoardDropdown(event: Event) {
+    event.stopPropagation();
+    this.boardDropdownOpen.set(!this.boardDropdownOpen());
+    this.timeDropdownOpen.set(false);
+  }
+
+  selectTime(option: string, event: Event) {
+    event.stopPropagation();
+    this.selectedTime = option;
+    this.timeDropdownOpen.set(false);
+  }
+
+  selectBoard(option: string, event: Event) {
+    event.stopPropagation();
+    this.selectedBoard = option;
+    this.boardDropdownOpen.set(false);
+  }
+
   getEloProgress() {
     // Por ahora se pone un placeholder, pero habrá que calcularlo
     const porcentaje = 65;
     const circunferencia = 289.02;
     this.eloDashOffset = circunferencia - (porcentaje / 100) * circunferencia;
+  }
+
+  openNotifications() {
+    this.loadFriends();
+    this.popUPNotis.set(true);
   }
 
   loadFriends(): void {
@@ -80,6 +125,20 @@ export class Home {
       });
     }
 
+    formatTime(milliseconds: number): string {
+      const totalSeconds = Math.floor(milliseconds / 1000);
+
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      if (minutes === 0) {
+        return `${seconds}s`;
+      }
+      if (seconds > 0) {
+        return `${minutes} min ${seconds}s`;
+      }
+      return `${minutes} min`;
+    }
 
   accept(reto: ChallengeResume) {
     const endpoint = 'challenge/accept';
@@ -87,11 +146,11 @@ export class Home {
       username: reto.challenger_username,
     };
     console.log('Aceptando reto de:', reto.challenger_username);
-    
+
 
     this.timerService.miTiempo.set(reto.starting_time);
     this.timerService.tiempoRival.set(reto.starting_time);
-    
+
     this.gameState.miNombre.set(this.userRepo.getUsername() || '');
     this.gameState.nombreRival.set(reto.challenger_username);
     console.log('Jugadores: ' + this.gameState.miNombre() + ' vs ' + this.gameState.nombreRival());
@@ -104,7 +163,7 @@ export class Home {
    // Inciiar a una partida amistosa DESAFIAR
   sendChallenge(): void {
 
-    const board = this.selectedBoard();
+    const board = this.selectedBoard;
     const startingTime = this.startingTime();
     const timeIncrement = this.timeIncrement();
     const level = this.userRepo.getLevel();
@@ -130,11 +189,11 @@ export class Home {
             level: level
           };
         break;
-    
+
     }
 
-    
-    
+
+
     this.timerService.miTiempo.set(startingTime * 1000);
     this.timerService.tiempoRival.set(startingTime * 1000);
 
@@ -142,7 +201,7 @@ export class Home {
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
 
     this.websocket.initConnection(endpoint, params);
-    
+
 
   }
 

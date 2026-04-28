@@ -1,6 +1,4 @@
-/* ----------------------------------------- */
-/* --------- HOME - PANTALLA PRINCIPAL ----- */
-/* ----------------------------------------- */
+/* --------- HOME ----- */
 .home {
     min-height: 100vh;
     display: flex;
@@ -132,17 +130,43 @@
     font-size: var(--LCSmall);
 }
 
-/* BOARD SELECTOR */
-.board-selector { border: 0; background: transparent; cursor: pointer; padding: 0; }
-
-.board-preview {
-    width: 45vw;
-    max-width: 300px;
-    height: auto;
-    display: block;
+.dropdown-wrapper {
+    position: relative;
+    width: 100%;
 }
 
-.time-selector:hover, .board-selector:hover { transform: translateY(-3px); }
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--S1);
+    border: 2px solid var(--S2);
+    /* Usamos el mismo borde redondeado que el resto de tu interfaz */
+    border-radius: var(--BorderNormal);
+    margin-top: 8px;
+    padding: 8px 0;
+    list-style: none;
+    z-index: 10;
+    animation: popupAppear 0.2s ease;
+    box-sizing: border-box;
+}
+
+.dropdown-item {
+    padding: 12px 20px;
+    color: var(--LCWhite);
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: var(--LCSmall);
+}
+
+.dropdown-item:hover {
+    background: var(--S2);
+}
+
+.dropdown-item.selected {
+    background: var(--S2);
+}
 
 /* ---------------- BOTTOM ROW ---------------- */
 .bottom-row {
@@ -195,18 +219,6 @@
     font-weight: 700;
     font-size: clamp(16px, 1.5vw, 20px);
     white-space: nowrap;
-}
-
-.mode-btn {
-    width: clamp(50px, 6vw, 70px);
-    height: clamp(50px, 6vw, 70px);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--S3);
-    background: var(--S1);
-    cursor: pointer;
-    border-radius: var(--BorderSmall);
 }
 
 .elo-icon {
@@ -330,14 +342,87 @@
 /* POPUP NOTIFICACIONES */
 .popup-solicitudes {
   background: var(--S1);
+  border: 2px solid var(--S2);
+  border-radius: var(--BorderNormal);
   width: min(90%, 45rem);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  padding: 20px;
   animation: popupAppear 0.2s ease;
   position: relative;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-y: auto;
+}
+
+.card-reto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--S1);
+  border: 2px solid var(--S2);
+  border-radius: var(--BorderSmall);
+  padding: 12px 20px;
+  color: var(--LCWhite);
+  transition: 0.2s;
+}
+
+.card-reto:hover {
+  background: var(--S2);
+}
+
+.card-reto .info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-reto .info strong {
+  color: var(--LCWhite);
+  font-size: var(--LCSmall);
+}
+
+.card-reto .info span {
+  font-size: 0.85em;
+  opacity: 0.8;
+}
+
+.card-reto .tiempo {
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Botón de aceptar reto */
+.card-reto button {
+  background: var(--LCPurple);
+  color: var(--LCWhite);
+  border: none;
+  border-radius: var(--BorderSmall);
+  padding: 10px 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 1rem;
+}
+
+.card-reto button:hover {
+  background: var(--LCWhite);
+  color: var(--LCPurple);
+}
+
+/* Estado cuando no hay notificaciones */
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--LCWhite);
+  opacity: 0.6;
+  font-weight: 600;
 }
 
 /* puntico rojo */
@@ -380,7 +465,7 @@
   width: 7em;
   height: 7em;
   border-radius: 50%;
-  background: var(--S3);
+  background: var(--S2);
   border: 0.4em solid var(--S1);
   display: flex;
   align-items: center;
@@ -403,6 +488,18 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.elo-rank-name mat-icon {
+
+  color: var(--LCYellow);
+  font-size: var(--LCMedium);
+  width: var(--LCMedium);
+  height: var(--LCMedium);
 }
 
 .progress-ring {
