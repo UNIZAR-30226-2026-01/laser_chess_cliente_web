@@ -4,8 +4,8 @@ import { AllRatingsDTO } from '../model/rating/AllRatingsDTO';
 import { UpdateAccountRequest } from '../model/auth/UpdateAccountRequest';
 import { MyProfile } from '../model/user/MyProfile';
 import { XpInfo } from '../model/user/ProfileCardData';
-import { Observable, switchMap, map, of, shareReplay} from 'rxjs';
-
+import { Observable, switchMap, map, shareReplay, BehaviorSubject, throwError} from 'rxjs';
+import { catchError } from 'rxjs/operators';
 export type { XpInfo } from '../model/user/ProfileCardData';
 
 
@@ -17,8 +17,6 @@ export type { XpInfo } from '../model/user/ProfileCardData';
  * - Actualizar la información del perfil del usuario.
  * - Eliminar la cuenta del usuario.
 */
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -26,10 +24,87 @@ export class UserRespository {
   private remoteService = inject(Remote);
   userProfile: MyProfile | null = null;
 
+  private notificationsSubject = new BehaviorSubject<boolean>(this.getStoredNotificationEnabled());
+
+  constructor() {
+    // Sincronizar cambios con localStorage
+    this.notificationsSubject.subscribe(enabled => {
+      localStorage.setItem('notifications_enabled', JSON.stringify(enabled));
+    });
+  }
+
+  private getStoredNotificationEnabled(): boolean {
+    const stored = localStorage.getItem('notifications_enabled');
+    return stored ? JSON.parse(stored) : true; // por defecto true
+  }
+
+  getNotificationEnabled(): boolean {
+    return this.notificationsSubject.value;
+  }
+
+  setNotificationEnabled(enabled: boolean): void {
+    this.notificationsSubject.next(enabled);
+  }
+
+  // Obtener email actual
+  getCurrentEmail(): Observable<string> {
+    return this.remoteService.getOwnAccount().pipe(
+      map(acc => acc.mail ?? '')
+    );
+  }
+
+  // Cambiar email
+  changeEmail(newEmail: string): Observable<void> {
+    return this.getOwnAccount().pipe(
+      switchMap(currentProfile => {
+        const updateRequest: UpdateAccountRequest = {
+          username: currentProfile.username,
+          mail: newEmail,
+          board_skin: currentProfile.board_skin,
+          piece_skin: currentProfile.piece_skin,
+          win_animation: currentProfile.win_animation
+        };
+        return this.remoteService.updateAccount(updateRequest).pipe(
+          map(() => {})
+        );
+      }),
+      catchError(err => {
+        console.error('Error changing email', err);
+        return throwError(() => new Error('No se pudo cambiar el email'));
+      })
+    );
+  }
+
+  // Cambiar contraseña
+  changePassword(oldPassword: string, newPassword: string): Observable<void> {
+    return this.remoteService.changePassword(oldPassword, newPassword).pipe(
+      catchError(err => {
+        console.error('Error changing password', err);
+        return throwError(() => new Error('Contraseña actual incorrecta o error en el servidor'));
+      })
+    );
+  }
+
+  // Cerrar sesión
+  logout(): void {
+    this.remoteService.logout();
+  }
+
+  // Eliminar cuenta
+  deleteAccount(): Observable<void> {
+    return this.remoteService.deleteAccount().pipe(
+      catchError(err => {
+        console.error('Error deleting account', err);
+        return throwError(() => new Error('No se pudo eliminar la cuenta'));
+      })
+    );
+  }
+
+
+
+
   // Obtener datos del perfil de un usuario
   getAccount( id: number): Observable<MyProfile> {
-    
-
     return this.remoteService.getAccount(id).pipe(
       switchMap(response => {
         const acc = response.body as any;
@@ -156,25 +231,6 @@ export class UserRespository {
     });
 
 
-  }
-
-  // Borrar la cuenta del usuarios
-  deleteAccount(){
-    console.log("Delete account");
-    this.remoteService.deleteAccount().subscribe({
-      next: (httpResponse) => {
-        if (httpResponse) {
-          console.log('Cuenta eliminada con éxito');
-          this.remoteService.logout();
-        } else {
-          console.warn('Delete failed: Unexpected response status');
-        }
-      },
-      error: (err) => {
-        console.error('HTTP error during delete', err);
-        console.log('Delete failed: No response body');
-      }
-    });
   }
 
   getXpInfo(): Observable<XpInfo> {
