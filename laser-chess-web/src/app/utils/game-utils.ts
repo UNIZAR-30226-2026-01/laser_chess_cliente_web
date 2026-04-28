@@ -18,40 +18,43 @@ export class GameUtils {
       @param y: number -> coordenada y de la pieza
      */
     parsearPiezaCompacta(
-  codigo: string,
-  x: number,
-  y: number,
-  id: number
-): PiezaData | null {
+        codigo: string,
+        x: number,
+        y: number,
+        id: number
+      ): PiezaData | null {
 
-  if (codigo === '') return null;
+        if (codigo === '') return null;
 
-  const [tipoLetra, colorLetra, direccionLetra] = codigo.split('');
+        codigo.split('');
+        const tipoLetra = codigo[0];
+        const colorLetra = codigo[1];
+        const direccionLetra = codigo[2] ?? 'U';
 
-  const tipos: Record<string, TipoPieza> = {
-    'L': TipoPieza.LASER,
-    'K': TipoPieza.REY,
-    'D': TipoPieza.DEFLECTOR,
-    'S': TipoPieza.SWITCH,
-    'E': TipoPieza.ESCUDO
-  };
+        const tipos: Record<string, TipoPieza> = {
+          'L': TipoPieza.LASER,
+          'K': TipoPieza.REY,
+          'D': TipoPieza.DEFLECTOR,
+          'S': TipoPieza.SWITCH,
+          'E': TipoPieza.ESCUDO
+        };
 
-  const rotaciones: Record<string, number> = {
-    'U': 0,
-    'R': 90,
-    'D': 180,
-    'L': 270
-  };
+        const rotaciones: Record<string, number> = {
+          'U': 0,
+          'R': 90,
+          'D': 180,
+          'L': 270
+        };
 
-  return {
-    id,
-    x,
-    y,
-    tipoPieza: tipos[tipoLetra],
-    rotation: rotaciones[direccionLetra],
-    esMia: colorLetra === 'A'
-  };
-}
+        return {
+          id,
+          x,
+          y,
+          tipoPieza: tipos[tipoLetra],
+          rotation: rotaciones[direccionLetra],
+          esMia: colorLetra === 'A'
+        };
+      }
   
     
     isCasillaRestringida(x: number, y: number): 'azul' | 'rojo' | null {
@@ -79,7 +82,6 @@ export class GameUtils {
     */
     importarTablero(board: string): PiezaData[] {
       const piezasFinal: PiezaData[] = [];
-      let id = 0;
 
       const filasTablero = board.split('\n');
 
@@ -90,11 +92,11 @@ export class GameUtils {
           const codigo = piezas[i].trim();
 
           if (codigo !== '') {
-            const pieza = this.parsearPiezaCompacta(codigo, i + 1, j + 1, id);
+            const pieza = this.parsearPiezaCompacta(codigo, i + 1, j + 1, this.cont);
 
             if (pieza) {
               piezasFinal.push(pieza);
-              id++;
+              this.cont++;
             }
           }
         }

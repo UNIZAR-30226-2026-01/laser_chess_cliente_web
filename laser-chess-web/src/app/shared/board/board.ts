@@ -15,7 +15,6 @@ import { GameState } from '../../utils/game-state';
 
 export class Board {
   state = inject(GameState);
-  listaPiezas = this.state.listaPiezas;
 
   @Input() piezas!: Signal<PiezaData[]>;
   @Input() laserPath!: Signal<{x:number,y:number}[]>;

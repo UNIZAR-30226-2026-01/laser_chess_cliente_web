@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { signal, inject} from '@angular/core';
 import { PiezaData } from '../model/game/PiezaData';
 import { TipoPieza } from '../model/game/TipoPieza'
-import { Remote } from '../model/remote/remote';
 import { GameResume } from '../model/game/GameResume';
 import { GameLogicService } from './game-logic-service';
 import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
-import { History } from '../features/history/history';
+import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY } from '../constants/boards';
 
 
 
@@ -52,50 +51,7 @@ export class HistoryService {
    
 
   historySelectedGame = signal<GameResume> (null as unknown as GameResume);
-	ACE = `LAD,,,,EAD,KA,EAD,DAL,,
-        ,,DAU,,,,,,,
-        ,,,DRR,,,,,,
-        DAD,,DRU,,SAD,SAL,,DAL,,DRR
-        DAL,,DRR,,SRR,SRU,,DAD,,DRU
-        ,,,,,,DAL,,,
-        ,,,,,,,DRD,,
-        ,,DRR,ERU,KR,ERU,,,,LRU`
-
-	CURIOSITY = `LAD,,,,EAD,KA,EAD,SAL,,
-              ,,,,,,,,,
-              ,,,DRR,,,DAD,,,
-              DAD,DRU,,,DRL,SAL,,,DAL,DRR
-              DAL,DRR,,,SRR,DAR,,,DAD,DRU
-              ,,,DRU,,,DAL,,,
-              ,,,,,,,,,
-              ,,SRR,ERU,KR,ERU,,,,LRU`
-
-	GRAIL = `LAD,,,,DAU,EAD,DAL,,,
-          ,,,,,KA,,,,
-          DAD,,,,DAU,EAD,SAL,,,
-          DAL,,SAD,,DRR,,DRL,,,
-          ,,,DAR,,DAL,,SRD,,DRR
-          ,,,SRL,ERU,DRD,,,,DRU
-          ,,,,KR,,,,,
-          ,,,DRR,ERU,DRD,,,,LRU`
-
-	SOPHIE = `LAD,,,,KA,DRR,DAL,,,
-            ,,,EAU,,EAL,,,,DRU
-            DAD,,,,DAU,DAL,,SRL,,DRR
-            ,,,,,,,SAD,,
-            ,,SRD,,,,,,,
-            DAL,,SAL,,DRR,DRD,,,,DRU
-            DAD,,,,ERR,,ERD,,,
-            ,,,DRR,DAL,KR,,,,LRU`
-
-  MERCURY = `LAR,,,,DAU,KA,DAL,,,SRL
-            ,,,,,EAU,DAL,,,
-            DAL,,,SAL,,EAU,,,,
-            DAD,,,,DRR,,,,DRU,
-            ,DAD,,,,DAL,,,,DRU
-            ,,,,ERD,,SRL,,,DRR
-            ,,,DRR,ERD,,,,,
-            SAL,,,DRR,KR,DRD,,,,LRL`
+	
 
 
 
@@ -103,23 +59,29 @@ export class HistoryService {
     console.log(this.historySelectedGame()?.board);
     switch (this.historySelectedGame()?.board){
       case 'ACE':
-        this.listaPiezas.set(this.gameUtils.importarTablero(this.ACE));
+        this.listaPiezas.set(this.gameUtils.importarTablero(ACE));
+        console.log(ACE);
         break;
       case 'CURIOSITY':
-        this.listaPiezas.set(this.gameUtils.importarTablero(this.CURIOSITY));
+        this.listaPiezas.set(this.gameUtils.importarTablero(CURIOSITY));
+        console.log(CURIOSITY);
         break;
       case 'SOPHIE':
-        this.listaPiezas.set(this.gameUtils.importarTablero(this.SOPHIE));
+        this.listaPiezas.set(this.gameUtils.importarTablero(SOPHIE));
+        console.log(SOPHIE);
         break;
       case 'MERCURY':
-        this.listaPiezas.set(this.gameUtils.importarTablero(this.MERCURY));
+        this.listaPiezas.set(this.gameUtils.importarTablero(MERCURY));
+        console.log(MERCURY);
         break;
       case 'GRAIL': 
-        this.listaPiezas.set(this.gameUtils.importarTablero(this.GRAIL));
+        this.listaPiezas.set(this.gameUtils.importarTablero(GRAIL));
+        console.log(GRAIL);
         break;
     }
     
-    this.cont.set(this.listaPiezas.length);
+    
+    this.cont.set(this.listaPiezas().length);
     // Dividir el log por acciones y aplicar a un array + añadir un iterador para saber por donde estamos
     this.indiceMovimiento = 0;
     console.log(this.historySelectedGame()?.movement_history);
@@ -128,6 +90,7 @@ export class HistoryService {
     this.iniciarJugadores();
   }
 
+  
   iniciarJugadores(){
     if(this.historySelectedGame()?.p1_id == this.id){
       this.soyAzul.set(false);

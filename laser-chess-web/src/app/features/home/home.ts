@@ -3,19 +3,23 @@ import { TopRow } from '../../shared/top-row/top-row';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { Websocket } from '../../model/remote/websocket';
 import { Remote } from '../../model/remote/remote';
-import { GameState } from '../../utils/game-state'
+import { HistoryService } from '../../services/history-service';
 import { MatIcon } from '@angular/material/icon';
 import { TimerService } from '../../services/timer-service';
 import { UserRespository } from '../../repository/user-respository';
-
+import { GameState } from '../../utils/game-state';
 
 import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
+import { Board } from '../../shared/board/board';
+import { GameUtils } from '../../utils/game-utils';
+import { PiezaData } from '../../model/game/PiezaData';
+import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY, VACIO} from '../../constants/boards';
 
 
 
 @Component({
   selector: 'app-home',
-  imports: [ TopRow, MatIcon],
+  imports: [ TopRow, MatIcon, Board],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -42,6 +46,12 @@ export class Home {
   
   timeIncrement = signal(0);
 
+  historyState = inject(HistoryService);
+  columnas = 10;
+  filas = 8;
+  listaPiezas = this.historyState.listaPiezas;
+  laserPath = this.historyState.laserPath;
+
 
   solicitudes = signal<ChallengeResume[]>([]);
   private websocket = inject(Websocket);
@@ -51,6 +61,7 @@ export class Home {
   private gameState = inject(GameState);
   private timerService = inject(TimerService);
   private userRepo = inject(UserRespository);
+  gameUtils = inject(GameUtils);
 
   constructor(private notificationService: NotificationService) {}
 
@@ -70,10 +81,28 @@ export class Home {
         this.loadFriends();
         this.popUPNotis.set(true);
     });
+    this.cargarTablero();
   }
 
   ngOnDestroy(): void {
     this.wsSubscription?.unsubscribe();
+  }
+
+  cargarTablero(): void {
+    this.historyState.listaPiezas.set([]);
+    this.historyState.laserPath.set([]);
+
+    let tablero = VACIO;
+    switch (this.selectedBoard()) {
+      case 'Ace':       tablero = ACE;       break;
+      case 'Curiosity': tablero = CURIOSITY; break;
+      case 'Sophie':    tablero = SOPHIE;    break;
+      case 'Mercury':   tablero = MERCURY;   break;
+      case 'Grail':     tablero = GRAIL;     break;
+    }
+
+    // Una sola llamada, sin pasar por VACIO
+    this.historyState.listaPiezas.set(this.gameUtils.importarTablero(tablero));
   }
 
   toggleTimeDropdown(event: Event) {
@@ -91,12 +120,14 @@ export class Home {
   selectTime(option: string, event: Event) {
     event.stopPropagation();
     this.selectedTime.set(option);
+  
     this.timeDropdownOpen.set(false);
   }
 
   selectBoard(option: string, event: Event) {
     event.stopPropagation();
     this.selectedBoard.set(option);
+    this.cargarTablero();
     this.boardDropdownOpen.set(false);
   }
 

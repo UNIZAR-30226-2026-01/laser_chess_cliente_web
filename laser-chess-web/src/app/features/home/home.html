@@ -31,7 +31,13 @@
 
     <div class="main-section">
         <div class="tablero-placeholder">
-            <img src="assets/tablero-placeholder.png">
+            <app-board
+            [piezas]="listaPiezas"
+            [laserPath]="laserPath"
+            [columnas]="columnas"
+            [filas]="filas"
+            [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
+            ></app-board>
         </div>
         <div class="game-selection">
 

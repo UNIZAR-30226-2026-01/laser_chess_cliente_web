@@ -23,33 +23,30 @@ export class PiezaRival {
   ngOnInit() {
     // Al iniciar, colocamos la pieza en su sitio
     this.position.set({ x: this.x(), y: this.y() });
-  
+
+    // Inicialización de la interfaz de la pieza, en función de tipoPieza
+    this.actualizarInterfaz();
+
+    
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
     // Al iniciar, colocamos la pieza en su sitio
-    if (changes['x'] || changes['y']) {
+    if (changes['initialX'] || changes['initialY']) {
       this.position.set({ x: this.x(), y: this.y() });
-    }
-
-    // Inicialización de la interfaz de la pieza, en función de tipoPieza
-    switch(this.tipoPieza()){
-        case TipoPieza.DEFLECTOR :
-          this.interfazPieza = "assets/icons/red_deflector.png";
-          break;
-        case TipoPieza.ESCUDO :
-          this.interfazPieza = "assets/icons/red_shield.png";
-          break;
-        case TipoPieza.LASER :
-          this.interfazPieza = "assets/icons/red_lasser.png";
-          break;
-        case TipoPieza.REY :
-          this.interfazPieza = "assets/icons/red_king.png";
-          break;
-        case TipoPieza.SWITCH :
-          this.interfazPieza = "assets/icons/red_switch.png";       
-          break;
+      this.actualizarInterfaz();
     }
   
+  }
+  
+  actualizarInterfaz() {
+    switch(this.tipoPieza()) {
+      case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/icons/red_deflector.png"; break;
+      case TipoPieza.ESCUDO:    this.interfazPieza = "assets/icons/red_shield.png";    break;
+      case TipoPieza.LASER:     this.interfazPieza = "assets/icons/red_lasser.png";    break;
+      case TipoPieza.REY:       this.interfazPieza = "assets/icons/red_king.png";      break;
+      case TipoPieza.SWITCH:    this.interfazPieza = "assets/icons/red_switch.png";    break;
+    }
   }
 }

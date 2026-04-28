@@ -28,7 +28,9 @@ describe('Home', () => {
         xp: 50,
         required_xp: 100
       }),
-      getUsername: () => 'testUser'
+      getUsername: () => 'testUser',
+      getAccountId: () => '1',
+      getId: () => '1', 
     };
 
     const iconServiceMock = {
@@ -64,7 +66,8 @@ describe('Home', () => {
         },
         {
           provide: Remote,
-          useValue: {
+          useValue: { 
+            getAccountId: () => '1',
             checkSolicitudes: vi.fn().mockReturnValue(of([]))
           }
         },

@@ -41,6 +41,7 @@ export class Pieza implements OnInit, OnChanges{
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
 
+  
   puedeEntrar(nx: number, ny: number): boolean {
     const pieza = this.ocupado?.(nx, ny);
     const tipo = pieza?.tipoPieza;
@@ -79,23 +80,7 @@ export class Pieza implements OnInit, OnChanges{
     this.position.set({ x: this.initialX(), y: this.initialY() });
 
     // Inicialización de la interfaz de la pieza, en función de tipoPieza
-    switch(this.tipoPieza()){
-        case TipoPieza.DEFLECTOR :
-          this.interfazPieza = "assets/icons/blue_deflector.png";
-          break;
-        case TipoPieza.ESCUDO :
-          this.interfazPieza = "assets/icons/blue_shield.png";
-          break;
-        case TipoPieza.LASER :
-          this.interfazPieza = "assets/icons/blue_lasser.png";
-          break;
-        case TipoPieza.REY :
-          this.interfazPieza = "assets/icons/blue_king.png";
-          break;
-        case TipoPieza.SWITCH :
-          this.interfazPieza = "assets/icons/blue_switch.png";       
-          break;
-    }
+    this.actualizarInterfaz();
 
     
 
@@ -105,10 +90,20 @@ export class Pieza implements OnInit, OnChanges{
     // Al iniciar, colocamos la pieza en su sitio
     if (changes['initialX'] || changes['initialY']) {
       this.position.set({ x: this.initialX(), y: this.initialY() });
+      this.actualizarInterfaz();
     }
   
   }
   
+  actualizarInterfaz() {
+    switch(this.tipoPieza()) {
+      case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/icons/blue_deflector.png"; break;
+      case TipoPieza.ESCUDO:    this.interfazPieza = "assets/icons/blue_shield.png";    break;
+      case TipoPieza.LASER:     this.interfazPieza = "assets/icons/blue_lasser.png";    break;
+      case TipoPieza.REY:       this.interfazPieza = "assets/icons/blue_king.png";      break;
+      case TipoPieza.SWITCH:    this.interfazPieza = "assets/icons/blue_switch.png";    break;
+    }
+  }
   select() {
     //this.showSpots.set(true);
     this.selected.emit(this);
