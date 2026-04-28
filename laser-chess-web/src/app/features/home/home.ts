@@ -11,8 +11,6 @@ import { GameState } from '../../utils/game-state';
 import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
 import { Board } from '../../shared/board/board';
 import { GameUtils } from '../../utils/game-utils';
-import { PiezaData } from '../../model/game/PiezaData';
-import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY, VACIO} from '../../constants/boards';
 import { BoardState } from '../../utils/board-state'
 
 
