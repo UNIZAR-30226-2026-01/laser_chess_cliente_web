@@ -1,18 +1,16 @@
-import { Component, signal, inject, HostListener } from '@angular/core';
-import { TopRow } from '../../shared/top-row/top-row';
-import { ChallengeResume } from '../../model/game/ChallengeResume';
-import { Websocket } from '../../model/remote/websocket';
-import { Remote } from '../../model/remote/remote';
+import { Component, HostListener, inject, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { TimerService } from '../../services/timer-service';
-import { UserRespository } from '../../repository/user-respository';
-import { GameState } from '../../utils/game-state';
-
+import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
+import { Remote } from '../../model/remote/remote';
+import { Websocket } from '../../model/remote/websocket';
+import { UserRespository } from '../../repository/user-respository';
+import { TimerService } from '../../services/timer-service';
 import { Board } from '../../shared/board/board';
+import { TopRow } from '../../shared/top-row/top-row';
+import { BoardState } from '../../utils/board-state';
+import { GameState } from '../../utils/game-state';
 import { GameUtils } from '../../utils/game-utils';
-import { BoardState } from '../../utils/board-state'
-
 
 
 @Component({
@@ -33,6 +31,7 @@ export class Home {
   // estado de los desplegables
   timeDropdownOpen = signal(false);
   boardDropdownOpen = signal(false);
+  incrementDropdownOpen = signal(false);
   modeDropdownOpen = signal(false);
 
   eloDashOffset: number = 276.46;
@@ -40,15 +39,30 @@ export class Home {
   rankedPoints: number = 1234;
 
   popUPNotis = signal(false);
-  tipoPartida = signal('IA'); // Puede ser "Ranked", "IA", "Pública"
+  // valores internos: 'ranked', 'ia', 'public'
+  tipoPartida = signal('public');
   
+  // startingTime signal (in seconds)
+  startingTime = signal(300);
   timeIncrement = signal(2);
+  aiLevel = signal(1);
+  aiLevelDropdownOpen = signal(false);
 
   boardState = inject(BoardState);
   columnas = 10;
   filas = 8;
   listaPiezas = this.boardState.listaPiezas;
   laserPath = this.boardState.laserPath;
+
+  // Mapeo entre etiqueta y modos soportados por el backend (segundos)
+  private timeModes: { [key: string]: { starting: number; increments: number[] } } = {
+    'Blitz': { starting: 300, increments: [0, 2, 5] },
+    'Rapid': { starting: 900, increments: [0, 5, 10] },
+    'Classic': { starting: 1800, increments: [0, 10, 15] },
+    'Extended': { starting: 3600, increments: [0, 15, 20] },
+  };
+
+  incrementOptions: number[] = [];
 
 
   solicitudes = signal<ChallengeResume[]>([]);
@@ -68,6 +82,8 @@ export class Home {
   closeDropdowns() {
     this.timeDropdownOpen.set(false);
     this.boardDropdownOpen.set(false);
+    this.incrementDropdownOpen.set(false);
+    this.aiLevelDropdownOpen.set(false);
   }
 
   ngOnInit() {
@@ -80,6 +96,9 @@ export class Home {
         this.popUPNotis.set(true);
     });
     this.cargarTablero();
+
+    // Inicializar opciones de incremento según el modo de tiempo seleccionado
+    this.selectTime(this.selectedTime(), new Event('init'));
   }
 
   ngOnDestroy(): void {
@@ -96,14 +115,14 @@ export class Home {
 
   toggleTimeDropdown(event: Event) {
     event.stopPropagation(); // Evita que se dispare el @HostListener
+    this.closeDropdowns(); // Cierra otros desplegables abiertos
     this.timeDropdownOpen.set(!this.timeDropdownOpen());
-    this.boardDropdownOpen.set(false); // Cierra el otro por si acaso
   }
 
   toggleBoardDropdown(event: Event) {
     event.stopPropagation();
+    this.closeDropdowns(); // Cierra otros desplegables abiertos
     this.boardDropdownOpen.set(!this.boardDropdownOpen());
-    this.timeDropdownOpen.set(false);
   }
 
   selectTime(option: string, event: Event) {
@@ -111,6 +130,38 @@ export class Home {
     this.selectedTime.set(option);
   
     this.timeDropdownOpen.set(false);
+
+    const mode = this.timeModes[option];
+    if (mode) {
+      this.startingTime.set(mode.starting);
+      this.incrementOptions = mode.increments;
+      // escoger primer incremento por defecto
+      this.timeIncrement.set(mode.increments.length > 0 ? mode.increments[0] : 0);
+    }
+  }
+
+  toggleIncrementDropdown(event: Event) {
+    event.stopPropagation();
+    this.closeDropdowns(); // Cierra otros desplegables abiertos
+    this.incrementDropdownOpen.set(!this.incrementDropdownOpen());
+  }
+
+  toggleAiLevelDropdown(event: Event) {
+    event.stopPropagation();
+    this.closeDropdowns();
+    this.aiLevelDropdownOpen.set(!this.aiLevelDropdownOpen());
+  }
+
+  selectAiLevel(level: number, event: Event) {
+    event.stopPropagation();
+    this.aiLevel.set(level);
+    this.aiLevelDropdownOpen.set(false);
+  }
+
+  selectIncrement(option: number, event: Event) {
+    event.stopPropagation();
+    this.timeIncrement.set(option);
+    this.incrementDropdownOpen.set(false);
   }
 
   selectBoard(option: string, event: Event) {
@@ -202,7 +253,8 @@ export class Home {
         break;
     }
     const timeIncrement = this.timeIncrement();
-    const level = this.userRepo.getLevel();
+    const rawLevel = this.userRepo.getLevel() ?? 0;
+    const level = Math.min(rawLevel, 3); // cap level to max 3
     var ranked = 0;
     var startingTime = 0;
     switch(this.selectedTime()){
@@ -223,7 +275,7 @@ export class Home {
     var endpoint = '';
     var params;
     switch(this.tipoPartida()){
-      case 'Ranked':
+      case 'ranked':
         endpoint = 'matchmaking'
         params = {
             time_base: startingTime,
@@ -232,16 +284,16 @@ export class Home {
             ranked: 0,
           };
         break;
-      case 'IA':
+      case 'ia':
         endpoint = 'bot'
         params = {
             starting_time: startingTime,
             time_increment: timeIncrement,
             board,
-            level: level
+            level: this.aiLevel() 
           };
         break;
-      case 'Public':
+      case 'public':
         endpoint = 'matchmaking'
         params = {
             board,
@@ -253,7 +305,7 @@ export class Home {
 
 
     }
-
+    ranked = params?.ranked ?? 0;
     this.timerService.miTiempo.set(startingTime * 1000);
     this.timerService.tiempoRival.set(startingTime * 1000);
 

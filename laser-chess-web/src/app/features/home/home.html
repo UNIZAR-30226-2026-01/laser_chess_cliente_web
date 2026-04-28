@@ -77,11 +77,12 @@
 
         <div class="bottom-row">
 
-        <div class="dropdown-wrapper">
+        <div class="time-row">
+            <div class="dropdown-wrapper">
                 <button class="setting-selector" type="button" aria-label="Cambiar modo de tiempo" (click)="toggleTimeDropdown($event)">
                     <div class="setting-content">
                         <mat-icon style="--icon-color: var(--LCBlue)" fontSet="material-symbols-outlined">timer</mat-icon>
-                        <span class="setting-label">{{ selectedTime() }}</span>
+                            <span class="setting-label">{{ selectedTime() }}</span>
                     </div>
                     <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
                 </button>
@@ -89,9 +90,9 @@
                 @if (timeDropdownOpen()) {
                     <ul class="dropdown-menu">
                         @for (option of timeOptions; track option) {
-                            <li class="dropdown-item"
-                                (click)="selectTime(option, $event)"
-                                [class.selected]="option === selectedTime()">
+                                <li class="dropdown-item"
+                                    (click)="selectTime(option, $event)"
+                                        [class.selected]="option === selectedTime()">
                                 {{ option }}
                             </li>
                         }
@@ -100,10 +101,34 @@
             </div>
 
             <div class="dropdown-wrapper">
+                <button class="setting-selector" type="button" aria-label="Cambiar incremento" (click)="toggleIncrementDropdown($event)">
+                    <div class="setting-content">
+                        <mat-icon style="--icon-color: var(--LCBlue)" fontSet="material-symbols-outlined">add</mat-icon>
+                            <span class="setting-label">+{{ timeIncrement() }}s</span>
+                    </div>
+                    <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
+                </button>
+
+                @if (incrementDropdownOpen()) {
+                    <ul class="dropdown-menu">
+                        @for (option of incrementOptions; track option) {
+                            <li class="dropdown-item"
+                                (click)="selectIncrement(option, $event)"
+                                    [class.selected]="option === timeIncrement()">
+                                +{{ option }}s
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <div class="board-row">
+            <div class="dropdown-wrapper">
                 <button class="setting-selector" type="button" aria-label="Cambiar tablero" (click)="toggleBoardDropdown($event)">
                     <div class="setting-content">
                         <mat-icon style="--icon-color: var(--LCRed)" fontSet="material-symbols-outlined">crossword</mat-icon>
-                        <span class="setting-label">{{ selectedBoard() }}</span>
+                            <span class="setting-label">{{ selectedBoard() }}</span>
                     </div>
                     <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
                 </button>
@@ -113,13 +138,38 @@
                         @for (option of boardOptions; track option) {
                             <li class="dropdown-item"
                                 (click)="selectBoard(option, $event)"
-                                [class.selected]="option === selectedBoard()">
+                                    [class.selected]="option === selectedBoard()">
                                 {{ option }}
                             </li>
                         }
                     </ul>
                 }
             </div>
+
+            @if (tipoPartida() === 'ia') {
+                <div class="dropdown-wrapper">
+                    <button class="setting-selector" type="button" aria-label="Nivel IA" (click)="toggleAiLevelDropdown($event)">
+                        <div class="setting-content">
+                            <mat-icon style="--icon-color: var(--LCRed)" fontSet="material-symbols-outlined">psychology</mat-icon>
+                            <span class="setting-label">IA Nivel {{ aiLevel() }}</span>
+                        </div>
+                        <mat-icon fontSet="material-symbols-outlined">expand_more</mat-icon>
+                    </button>
+
+                    @if (aiLevelDropdownOpen()) {
+                        <ul class="dropdown-menu">
+                            @for (option of [1,2,3]; track option) {
+                                <li class="dropdown-item"
+                                    (click)="selectAiLevel(option, $event)"
+                                        [class.selected]="option === aiLevel()">
+                                    Nivel {{ option }}
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        </div>
 
             <div class="play-group">
                 <a class="play-btn" (click)="this.sendChallenge()">
@@ -129,32 +179,34 @@
                 
                 <div class="dropdown-wrapper play-dropdown">
                     <button class="trophy-btn"
-                            (click)="modeDropdownOpen.set(!modeDropdownOpen())"
-                            type="button">
-                        <mat-icon fontSet="material-symbols-outlined">
-                        {{ tipoPartida() === 'IA' ? 'smart_toy' : 'emoji_events' }}
-                        </mat-icon>
-                    </button>
+                                (click)="modeDropdownOpen.set(!modeDropdownOpen())"
+                                type="button">
+                            <mat-icon fontSet="material-symbols-outlined">
+                            {{ tipoPartida() === 'ia' ? 'smart_toy' : (tipoPartida() === 'ranked' ? 'emoji_events' : 'handshake') }}
+                            </mat-icon>
+                        </button>
 
                     @if (modeDropdownOpen()) {
-                        <ul class="dropdown-menu">
-                        <li class="dropdown-item"
-                            (click)="tipoPartida.set('Ranked'); modeDropdownOpen.set(false)">
-                            Ranked
-                        </li>
+                        <div class="mode-modal-overlay" (click)="modeDropdownOpen.set(false)">
+                            <div class="mode-modal" (click)="$event.stopPropagation()">
+                                <button class="mode-option" type="button" (click)="tipoPartida.set('ranked'); modeDropdownOpen.set(false)">
+                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">emoji_events</mat-icon>
+                                    <span class="mode-label">Competitiva</span>
+                                </button>
 
-                        <li class="dropdown-item"
-                            (click)="tipoPartida.set('IA'); modeDropdownOpen.set(false)">
-                            IA
-                        </li>
+                                <button class="mode-option" type="button" (click)="tipoPartida.set('ia'); modeDropdownOpen.set(false)">
+                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">smart_toy</mat-icon>
+                                    <span class="mode-label">IA</span>
+                                </button>
 
-                        <li class="dropdown-item"
-                            (click)="tipoPartida.set('Public'); modeDropdownOpen.set(false)">
-                            Public
-                        </li>
-                        </ul>
+                                <button class="mode-option" type="button" (click)="tipoPartida.set('public'); modeDropdownOpen.set(false)">
+                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">handshake</mat-icon>
+                                    <span class="mode-label">Publica</span>
+                                </button>
+                            </div>
+                        </div>
                     }
-                    </div>
+                </div>
                     
 
                 </div>
