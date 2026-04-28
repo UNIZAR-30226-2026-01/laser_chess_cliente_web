@@ -35,13 +35,14 @@ export const SOPHIE = `LAD,,,,KA,DRR,DAL,,,
             ,,,DRR,DAL,KR,,,,LRU`
 
 export const MERCURY = `LAR,,,,DAU,KA,DAL,,,SRL
-            ,,,,,EAU,DAL,,,
-            DAL,,,SAL,,EAU,,,,
+            ,,,,,EAD,DAL,,,
+            DAL,,,SAL,,EAD,,,,
             DAD,,,,DRR,,,,DRU,
             ,DAD,,,,DAL,,,,DRU
-            ,,,,ERD,,SRL,,,DRR
-            ,,,DRR,ERD,,,,,
+            ,,,,ERU,,SRL,,,DRR
+            ,,,DRR,ERU,,,,,
             SAL,,,DRR,KR,DRD,,,,LRL`
+
             
 export const VACIO = `,,,,,,,,,
             ,,,,,,,,,

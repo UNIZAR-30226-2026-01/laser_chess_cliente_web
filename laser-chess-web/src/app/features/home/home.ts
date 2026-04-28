@@ -23,7 +23,8 @@ export class Home {
   // opciones de los selectores (no se si está guardado en algun otro lugar,
   // a si que lo pongo aqui)
   timeOptions = ['Blitz', 'Rapid', 'Classic', 'Extended'];
-  boardOptions = ['Ace', 'Curiosity', 'Grail', 'Sophie', 'Mercury'];
+  // order must match backend Board_T enum: ACE(0), CURIOSITY(1), GRAIL(2), MERCURY(3), SOPHIE(4)
+  boardOptions = ['Ace', 'Curiosity', 'Grail', 'Mercury', 'Sophie'];
 
   selectedTime = signal(this.timeOptions[0]);
   selectedBoard = signal(this.boardOptions[0]);
@@ -234,22 +235,23 @@ export class Home {
    // Inciiar a una partida amistosa DESAFIAR
   sendChallenge(): void {
 
-    var board = 0;
-    switch(this.selectedBoard()){
+    // Map selected board to backend Board_T numeric values
+    let board = 0;
+    switch (this.selectedBoard()) {
       case 'Ace':
-        board= 0;
+        board = 0;
         break;
       case 'Curiosity':
-        board= 1;
+        board = 1;
         break;
       case 'Grail':
-        board= 2;
-        break;
-      case 'Sophie':
-        board= 3;
+        board = 2;
         break;
       case 'Mercury':
-        board= 4;
+        board = 3;
+        break;
+      case 'Sophie':
+        board = 4;
         break;
     }
     const timeIncrement = this.timeIncrement();
