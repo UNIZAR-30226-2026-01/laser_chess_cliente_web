@@ -68,11 +68,11 @@
 
           @if (piezaActiva()?.tipoPieza() == TipoPieza.LASER){
 
-            @if (piezaActiva()?.rotationInput() == 180){
+            @if (piezaActiva()?.rotationInput() == 0){
               <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
             }
 
-            @if (piezaActiva()?.rotationInput() == 90){
+            @if (piezaActiva()?.rotationInput() == -90){
               <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
             }
 
