@@ -230,14 +230,15 @@
 /* ---------------- PLAY BUTTON ---------------- */
 .play-group {
     display: flex;
-    align-items: stretch;
+    margin-right: 0;
     width: 100%;
-
+    gap: 0;
     height: clamp(65px, 10vw, 95px);
 }
 
 .play-btn {
     flex: 1;
+    width: auto;
     background: var(--LCPurple);
     color: var(--LCWhite);
     cursor: pointer;
@@ -264,10 +265,20 @@
   transition: 0.2s;
 }
 
+.play-dropdown {
+    width: 72px;
+    height: 100%;
+    position: relative;
+    flex-shrink: 0;
+    flex: 0;
+}
+
+
 .trophy-btn {
-    width: 25%;
     background: var(--S1);
     color: var(--LCWhite);
+    height: 100%;
+
 
     border: 2px solid var(--S2);
 

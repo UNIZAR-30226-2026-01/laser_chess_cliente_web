@@ -23,14 +23,15 @@ export class Home {
   // opciones de los selectores (no se si está guardado en algun otro lugar,
   // a si que lo pongo aqui)
   timeOptions = ['Blitz', 'Rapid', 'Classic', 'Extended'];
-  boardOptions = ['Ace', 'Curiosity', 'Grail', 'Mercury', 'Sophie'];
+  boardOptions = ['Ace', 'Curiosity', 'Grail', 'Sophie', 'Mercury'];
 
-  selectedTime = this.timeOptions[0];
-  selectedBoard = this.boardOptions[0];
+  selectedTime = signal(this.timeOptions[0]);
+  selectedBoard = signal(this.boardOptions[0]);
 
   // estado de los desplegables
   timeDropdownOpen = signal(false);
   boardDropdownOpen = signal(false);
+  modeDropdownOpen = signal(false);
 
   eloDashOffset: number = 276.46;
   eloRankName: string = 'PROTON · II';
@@ -38,9 +39,7 @@ export class Home {
 
   popUPNotis = signal(false);
   tipoPartida = signal('IA'); // Puede ser "Ranked", "IA", "Pública"
-  //selectedBoard = signal(0);  esto no se como iba yo habia puesto arriba una cosita
-  //                            pero no se si lo rompe o lo que sea
-  startingTime = signal(300);
+  
   timeIncrement = signal(0);
 
 
@@ -64,7 +63,7 @@ export class Home {
 
   ngOnInit() {
     // Aquí podrías cargar las solicitudes iniciales si quieres
-    this.websocket.checkAndReconnect();
+    
     this.loadFriends();
     this.getEloProgress();
     this.notificationService.wakeHome$.subscribe(() => {
@@ -91,13 +90,13 @@ export class Home {
 
   selectTime(option: string, event: Event) {
     event.stopPropagation();
-    this.selectedTime = option;
+    this.selectedTime.set(option);
     this.timeDropdownOpen.set(false);
   }
 
   selectBoard(option: string, event: Event) {
     event.stopPropagation();
-    this.selectedBoard = option;
+    this.selectedBoard.set(option);
     this.boardDropdownOpen.set(false);
   }
 
@@ -163,10 +162,46 @@ export class Home {
    // Inciiar a una partida amistosa DESAFIAR
   sendChallenge(): void {
 
-    const board = this.selectedBoard;
-    const startingTime = this.startingTime();
+    var board = 0;
+    switch(this.selectedBoard()){
+      case 'Ace':
+        board= 0;
+        break;
+      case 'Curiosity':
+        board= 1;
+        break;
+      case 'Grail':
+        board= 2;
+        break;
+      case 'Sophie':
+        board= 3;
+        break;
+      case 'Mercury':
+        board= 4;
+        break;
+    }
     const timeIncrement = this.timeIncrement();
     const level = this.userRepo.getLevel();
+    var ranked = 0;
+    var startingTime = 0;
+    switch(this.selectedTime()){
+      case 'Blitz':
+        startingTime = 300;
+        ranked = this.userRepo.getBlitzElo() || 0;
+        break;
+      case 'Rapid':
+        startingTime = 900;
+        ranked = this.userRepo.getRapidElo() || 0;
+        break;
+      case 'Classic':
+        startingTime = 1800;
+        ranked = this.userRepo.getClassicElo() || 0;
+        break;
+      case 'Extended':
+        startingTime = 3600;
+        ranked = this.userRepo.getExtendedElo() || 0;
+        break;
+    }
 
     var endpoint = '';
     var params;
@@ -192,13 +227,11 @@ export class Home {
 
     }
 
-
-
     this.timerService.miTiempo.set(startingTime * 1000);
     this.timerService.tiempoRival.set(startingTime * 1000);
 
     console.log('Parámetros' + startingTime);
-    console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
+    console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement + ", ranked: " + ranked + " nivel: " + level);
 
     this.websocket.initConnection(endpoint, params);
 

@@ -1,9 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-<<<<<<< HEAD
 import { provideRouter } from '@angular/router';
-=======
-import { HttpClientTestingModule } from '@angular/common/http/testing';
->>>>>>> mimi
+
 import { of } from 'rxjs';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
@@ -85,14 +82,12 @@ describe('Social Angular', () => {
     };
 
     await TestBed.configureTestingModule({
-<<<<<<< HEAD
       imports: [
         Social,
         MatIconTestingModule   // 🔥 FIX REAL
       ],
-=======
-      imports: [Social, HttpClientTestingModule],
->>>>>>> mimi
+
+
       providers: [
         provideRouter([]),
 

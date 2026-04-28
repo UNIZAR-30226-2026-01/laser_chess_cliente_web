@@ -126,6 +126,22 @@ export class UserRespository {
     );
   }
 
+  getBlitzElo(): number | undefined {
+    return this.userProfile?.blitzElo;
+  }
+
+  getRapidElo(): number | undefined {
+    return this.userProfile?.rapidElo;
+  }
+
+  getClassicElo(): number | undefined {
+    return this.userProfile?.classicElo;
+  }
+
+  getExtendedElo(): number | undefined {
+    return this.userProfile?.extendedElo;
+  }
+
 
   // Actualizar datos del perfil del usuario
   updateData(username: string , mail: String, board_skin: number, piece_skin: number, win_animation: number){

@@ -140,7 +140,8 @@ describe('Social Validator', () => {
     } as any;
 
     component.friendToChallenge = friend;
-
+    
+  });
   // ------------------------------------------------------------------
   // Tests de añadir amigo
   // ------------------------------------------------------------------
@@ -208,7 +209,7 @@ describe('Social Validator', () => {
     component.cancelSentRequest('destinatario');
     expect(friendRepoSpy.deleteFriend).toHaveBeenCalledWith('destinatario');
     // comprobar que se elimina de la lista
-    component.sentRequests.set([{ account_id: '1', username: 'destinatario', level: 1, avatar: 0 }]);
+    component.sentRequests.set([{ account_id: 1, username: 'destinatario', level: 1, avatar: 0 }]);
     component.cancelSentRequest('destinatario');
     fixture.detectChanges();
 
@@ -234,7 +235,7 @@ describe('Social Validator', () => {
   // Tests de desafiar a un amigo con el websocket
   // ------------------------------------------------------------------
   it('debería iniciar conexión WebSocket al enviar desafío', () => {
-    const friend = { account_id: '1', username: 'rival', level: 2, avatar: 0 };
+    const friend = { account_id: 1, username: 'rival', level: 2, avatar: 0 };
     component.openChallengeConfig(friend);
     component.selectedBoard.set(2);
     component.selectedMode.set({
@@ -265,3 +266,4 @@ describe('Social Validator', () => {
     expect(websocketSpy.close).toHaveBeenCalled();
     expect(component.popUP_waiting()).toBe(false);
   });
+});

@@ -49,10 +49,10 @@ describe('Ranking', () => {
   ];
   const mockUserInfo: UserRankingInfo = { position: 50, elo: 1500 };
   const mockFriends: FriendSummary[] = [
-    { account_id: '2', username: 'player2', level: 3, avatar: 1 },
+    { account_id: 2, username: 'player2', level: 3, avatar: 1 },
   ];
   const mockSentRequests: FriendSummary[] = [
-    { account_id: '3', username: 'player3', level: 1, avatar: 0 },
+    { account_id: 3, username: 'player3', level: 1, avatar: 0 },
   ];
   const mockRatings: AllRatingsDTO = {
     userId: '2',
@@ -243,7 +243,7 @@ describe('Ranking', () => {
 
   it('debería cerrar el popup de información de usuario', () => {
     component.popUP_userInfo.set(true);
-    component.selectedUser.set({ username: 'test', account_id: '1', level: 0, avatar: 0 });
+    component.selectedUser.set({ username: 'test', account_id: 1, level: 0, avatar: 0 });
     component.closeUserInfo();
     expect(component.popUP_userInfo()).toBe(false);
     expect(component.selectedUser()).toBeNull();
@@ -253,7 +253,7 @@ describe('Ranking', () => {
   // solicitudes de amistad
   // ------------------------------------------------------------------
   it('debería enviar una solicitud de amistad y actualizar el contexto', () => {
-    component.selectedUser.set({ username: 'stranger', account_id: '99', level: 0, avatar: 0 });
+    component.selectedUser.set({ username: 'stranger', account_id: 99, level: 0, avatar: 0 });
     component.selectedUserContext.set('none');
     component.sendFriendRequest();
     expect(friendRepoSpy.addFriend).toHaveBeenCalledWith({ receiver_username: 'stranger' });
@@ -262,7 +262,7 @@ describe('Ranking', () => {
   });
 
   it('debería cancelar una solicitud de amistad enviada', () => {
-    component.selectedUser.set({ username: 'player3', account_id: '3', level: 0, avatar: 0 });
+    component.selectedUser.set({ username: 'player3', account_id: 3, level: 0, avatar: 0 });
     component.selectedUserContext.set('sent_request');
     component.cancelFriendRequest();
     expect(friendRepoSpy.deleteFriend).toHaveBeenCalledWith('player3');
@@ -271,7 +271,7 @@ describe('Ranking', () => {
   });
 
   it('debería eliminar un amigo', () => {
-    component.selectedUser.set({ username: 'player2', account_id: '2', level: 0, avatar: 0 });
+    component.selectedUser.set({ username: 'player2', account_id: 2, level: 0, avatar: 0 });
     component.selectedUserContext.set('friend');
     component.deleteFriend();
     expect(friendRepoSpy.deleteFriend).toHaveBeenCalledWith('player2');

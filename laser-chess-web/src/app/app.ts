@@ -32,7 +32,7 @@ export class App {
 
   ngOnInit() {
   const token = this.remote.getAccessToken();
-
+  this.ws.checkAndReconnect();
   if (token && !this.remote.isTokenExpired(token)) {
     const userId = this.remote.getAccountId();
 
