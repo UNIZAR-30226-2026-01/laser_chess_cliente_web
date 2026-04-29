@@ -348,7 +348,7 @@ export class GameLogicService {
     const match = action.match(moveRegex);
 
     if (!match) return;
-
+    
     const tipo = match[1];
     const desde = this.gameUtils.fromChess(match[2], this.soyAzul());
     const hasta = match[3] ? this.gameUtils.fromChess(match[3], this.soyAzul()): null;
@@ -378,7 +378,7 @@ export class GameLogicService {
   // Mueve la pieza al recibir confimariones del backend
   moverPiezaEnTablero(desde: {x: number, y: number}, hasta: {x: number, y: number}) {
     
-    this.listaPiezas.update(piezas => 
+    this.state.listaPiezas.update(piezas => 
       piezas.map(p => {
         // Buscamos la pieza que coincide con la coordenada 'desde'
         console.log("intentando mover desde "+ p.x + " " + p.y + " partiendo de " + desde.x + " " + desde.y );
@@ -399,7 +399,7 @@ export class GameLogicService {
 
   // Rotar piezas al recibir confirmaciones del backend
   rotarPiezaEnTablero(pos: {x: number, y: number}, direccion: 'L' | 'R') {
-    this.listaPiezas.update(piezas => 
+    this.state.listaPiezas.update(piezas => 
       piezas.map(p => {
         if (p.x === pos.x && p.y === pos.y) {
           const angulo = (direccion === 'R') ? 90 : -90; 

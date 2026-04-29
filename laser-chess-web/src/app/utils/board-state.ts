@@ -18,7 +18,7 @@ export class BoardState {
   userRepo = inject(UserRespository);
 
   //Hay que mirar esto bien
-  skinUsario = signal(this.userRepo.getPieceSkin() ?? 0);
+  skinUsario = signal(1);//signal(this.userRepo.getPieceSkin() ?? 0);
   skinRival = signal(0);
 
 
