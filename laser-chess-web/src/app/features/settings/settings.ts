@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TopRow } from '../../shared/top-row/top-row';
 import { UserRespository } from '../../repository/user-respository';
+import { AuthRepository } from '../../repository/auth-repository';
 import { passwordMatchValidator } from '../../auth/signin/signin';
 
 @Component({
@@ -12,6 +13,7 @@ import { passwordMatchValidator } from '../../auth/signin/signin';
 })
 export class Settings implements OnInit {
   private repo = inject(UserRespository);
+  private auth = inject(AuthRepository);
 
   // Popups
   popupPassword = signal(false);
@@ -97,7 +99,7 @@ export class Settings implements OnInit {
     if (confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) {
       this.repo.deleteAccount().subscribe({
         next: () => {
-          this.repo.logout(); // Cierra sesión después de eliminar
+          this.auth.logout(); // Cierra sesión después de eliminar
         },
         error: (err) => {
           this.errorMessage.set(err.message || 'Error al eliminar cuenta');
@@ -108,7 +110,7 @@ export class Settings implements OnInit {
   }
 
   logout() {
-    this.repo.logout();
+    this.auth.logout();
   }
 
   // Alternar notificaciones

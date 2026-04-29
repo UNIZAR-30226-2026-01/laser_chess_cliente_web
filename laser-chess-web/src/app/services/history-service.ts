@@ -164,7 +164,7 @@ export class HistoryService {
             const pieza = this.listaPiezas().find(p => p.x === captura.x && p.y === captura.y);
   
             if (pieza) {
-              this.capturas.push(pieza); // guardar
+              this.capturas.push(structuredClone(pieza)); // guardar
               this.eliminarPiezaEnTablero(captura);
             }
           }else{
@@ -202,42 +202,51 @@ export class HistoryService {
   /*               Gestión y parseo de log tras reconexión                     */
   /*****************************************************************************/
 
-  avanzar(){
-    if (this.indiceMovimiento === this.movimientos.length - 1) {
-      this.popUpLimites.set(true);
-      this.popUpMensaje.set('Se ha alcanzado el final de partida')
-      return;
+
+  reconstruirEstado() {
+    // estado inicial limpio
+    this.listaPiezas.set(
+      this.boardState.iniciarTablero(this.historySelectedGame()?.board)
+    );
+
+    this.esMiTurno.set(true); // o como corresponda
+    this.capturas = [];
+
+    for (let i = 0; i < this.indiceMovimiento; i++) {
+      this.applyAction(this.movimientos[i], true);
     }
-    console.log("avanzando con movimiento " + this.movimientos[this.indiceMovimiento]);
-    this.applyAction(this.movimientos[this.indiceMovimiento], true);
-    console.log("no me he muerto");
-    this.indiceMovimiento ++;
-    
   }
 
-  retroceder(){
-    if (this.indiceMovimiento <= 0) {
+  avanzar() {
+    if (this.indiceMovimiento >= this.movimientos.length) {
       this.popUpLimites.set(true);
-      this.popUpMensaje.set('Se ha alcanzo el inicio de partida, no es posible retroceder')
+      this.popUpMensaje.set('Se ha alcanzado el final de partida');
       return;
     }
-    console.log("retrocediendo con movimiento " + this.movimientos[this.indiceMovimiento]);
-    this.indiceMovimiento --;
-    this.applyAction(this.movimientos[this.indiceMovimiento], false);
-    console.log("no me he muerto");
+    
+    this.reconstruirEstado();
+    this.indiceMovimiento++;
+  }
 
+  retroceder() {
+    if (this.indiceMovimiento <= 0) {
+      this.popUpLimites.set(true);
+      this.popUpMensaje.set('Inicio de partida');
+      return;
+    }
+
+    this.indiceMovimiento--;
+    this.reconstruirEstado();
   }
 
   irAlPrimero(){
-    while (this.indiceMovimiento > 0) {
-      this.retroceder();
-    }
+    this.indiceMovimiento = 1;
+    this.reconstruirEstado();
   }
 
   irAlUltimo(){
-    while(this.indiceMovimiento !== this.movimientos.length - 1){
-      this.avanzar();
-    }
+    this.indiceMovimiento = this.movimientos.length - 1;
+    this.reconstruirEstado();
   }
 
   

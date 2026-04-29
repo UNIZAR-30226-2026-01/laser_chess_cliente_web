@@ -34,11 +34,8 @@ export class App {
   const token = this.remote.getAccessToken();
   this.ws.checkAndReconnect();
   if (token && !this.remote.isTokenExpired(token)) {
-    const userId = this.remote.getAccountId();
-
-    if (userId) {
-      this.notificationService.setupAfterLogin(userId);
-    }
+    this.notificationService.initIfLoggedIn();
+    
   }
 }
 }

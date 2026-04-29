@@ -42,7 +42,7 @@ export class Websocket {
     const searchParams = new URLSearchParams(params);
     if (token) searchParams.append('token', token);
 
-    const url = `ws:${API_URL}/api/rt/${endpoint}?${searchParams.toString()}`;
+    const url = `${API_URL}/api/rt/${endpoint}?${searchParams.toString()}`;
     console.log('Conectando WS a:', url);
 
     this.socket$ = webSocket({
@@ -103,7 +103,7 @@ export class Websocket {
 checkAndReconnect() {
   const token = this.remote.getAccessToken();
   // Usamos la URL que confirmaste
-  const url = `ws://localhost:8080/api/rt/reconnect?token=${token}`; 
+  const url = `${API_URL}/api/rt/reconnect?token=${token}`; 
 
   this.socket$ = webSocket({
     url: url,

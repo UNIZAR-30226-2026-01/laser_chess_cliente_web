@@ -225,11 +225,13 @@ export class GameLogicService {
       // Pop up que pregunta si queremos pausar también (aceptar request)
       
 
-    }else if (msg.Type === "Pause"){
-      
+    }else if (msg.Type === "Paused"){
+      console.log("La partida ha sido pausada");
+      this.finPartida.set({ mostrar: true, mensaje: 'La partida ha sido pausada' });
       // La partida se ha pausado 
       // Cierre del websocket + retorno a home ??
       this.timerService.stopTimer();
+      
 
     }else if (msg.Type === "State"){
 
