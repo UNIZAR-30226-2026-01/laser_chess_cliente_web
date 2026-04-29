@@ -12,12 +12,13 @@ import { NotificationService } from '../../model/notifications/notification'; //
 import { Board } from '../../shared/board/board';
 import { GameUtils } from '../../utils/game-utils';
 import { BoardState } from '../../utils/board-state'
+import { Popup } from '../../shared/popups/popup'
 
 
 
 @Component({
   selector: 'app-home',
-  imports: [ TopRow, MatIcon, Board],
+  imports: [ TopRow, MatIcon, Board, Popup],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -60,6 +61,13 @@ export class Home {
   private timerService = inject(TimerService);
   private userRepo = inject(UserRespository);
   gameUtils = inject(GameUtils);
+
+  popUP_waiting = signal(false);
+
+  cancelWaiting(){
+    this.popUP_waiting.set(false);
+    this.websocket.close();
+  }
 
   constructor(private notificationService: NotificationService) {}
 
@@ -180,7 +188,7 @@ export class Home {
 
   }
 
-   // Inciiar a una partida amistosa DESAFIAR
+   // Rentaria desacoplar esto
   sendChallenge(): void {
 
     var board = 0;
@@ -260,6 +268,7 @@ export class Home {
     console.log('Parámetros' + startingTime);
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement + ", ranked: " + ranked + " nivel: " + level);
 
+    this.popUP_waiting.set(true);
     this.websocket.initConnection(endpoint, params);
 
 

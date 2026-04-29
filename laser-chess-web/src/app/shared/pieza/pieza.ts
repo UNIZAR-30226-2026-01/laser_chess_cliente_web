@@ -40,7 +40,7 @@ export class Pieza implements OnInit, OnChanges{
   // Indica si los spots deben mostrarse
   showSpots = signal(false);
 
-  skin = signal (this.boardState.skinUsario());
+  skin = signal (this.boardState.skinUsario()); // Se podría crear como input
 
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
@@ -94,7 +94,7 @@ export class Pieza implements OnInit, OnChanges{
     // Al iniciar, colocamos la pieza en su sitio
     if (changes['initialX'] || changes['initialY']) {
       this.position.set({ x: this.initialX(), y: this.initialY() });
-      this.actualizarInterfaz();
+      this.actualizarInterfaz(); 
     }
   
   }

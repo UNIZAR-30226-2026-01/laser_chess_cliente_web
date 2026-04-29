@@ -20,7 +20,7 @@ import { TimerService } from '../../services/timer-service';
 
 import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
 
-import { Popup } from '../social-ranking-popups/popup'; //los pop-ups (que miedo cargarmea glo)
+import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo cargarmea glo)
 
 @Component({
   selector: 'app-social',
