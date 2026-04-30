@@ -75,11 +75,11 @@
     <div class="tabs-header">
       @if (state()){
       <div class="tab active">SOCIAL</div>
-      <div class="tab" (click)="state.set(false)">IN PROGRESS</div>
+      <div class="tab" (click)="state.set(false)">PARTIDAS PAUSADAS</div>
       }
       @else {
         <div class="tab" (click)="state.set(true)">SOCIAL</div>
-        <div class="tab active">IN PROGRESS</div>
+        <div class="tab active">PARTIDAS PAUSADAS</div>
       }
     </div>
 
@@ -140,26 +140,23 @@
             <p>No tienes partidas en curso</p>
           } @else {
             <!-- Aquí se listan las partidas pausadas -->
-            @for(game of partidas(); track game) {
-              <li class="game-item">
-                  <div class="player">
-                    <span class="name">Yo</span>
-                    <span class="time">10:50</span>
-                  </div>
-                  <div class="vs">VS</div>
-                  <div class="player">
-                    <span class="name">Usuario1</span>
-                    <span class="time">10:30</span>
-                  </div>
-                  <div class="details">
-                    <span>Modo_tiempo</span>
-                    <span>Tablero</span>
-                  </div>
-                  <button class="btn-play" (click)="resumeGame(game.id, game.p1_id, game.p2_id)">RETOMAR</button>
-              </li>
+            @for(game of partidas(); track game.id) {
+                <li class="game-item">
+                    <div class="player">
+                      <span class="name">{{ game.p1_username }}</span>
+                      <span class="time">{{ formatTime(game.time_base) }}</span>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="player">
+                      <span class="name">{{ game.p2_username }}</span>
+                      <span class="time">{{ formatTime(game.time_base) }}</span>
+                    </div>
+                    <div class="details">
+                      <span>{{ game.board }}</span>
+                    </div>
+                    <button class="btn-play" (click)="resumeGame(game.id, game.p1_id, game.p2_id)">RETOMAR</button>
+                </li>
             }
-
-
         }
         </ul>
 

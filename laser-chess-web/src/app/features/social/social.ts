@@ -259,13 +259,13 @@ export class Social  {
     }
 
     this.userService.getAccount(id_rival).subscribe({
-      next: (response) => {        
+      next: (response) => {
         const rivalUsername = response.username || 'Rival Desconocido';
         const rival: FriendSummary = {
           username: response.username || 'Rival Desconocido',
           account_id: response.userId || 0,
-          level: response.level || 0, 
-          avatar: response.avatar || 0 
+          level: response.level || 0,
+          avatar: response.avatar || 0
         };
         this.friendToChallenge = rival;
         console.log('Nombre del rival obtenido:', rivalUsername);
@@ -277,8 +277,8 @@ export class Social  {
         this.gameState.nombreRival.set('Rival Desconocido');
       }
     })
-    
-    
+
+
   }
 
   //Cargar lista de amigos
@@ -549,6 +549,13 @@ export class Social  {
     } else {
       console.error('Amigo no encontrado');
     }
+  }
+
+  // Formatea milisegundos a mm:ss
+  formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60000);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
   loadGames(){
