@@ -21,7 +21,7 @@ export class HistoryHall {
   router = inject(Router)
   partidas = signal<GameResume[]> ([]);
   infoCargada = signal(false);
-  usernames: Record<number, string> = {};
+  usernames = signal<Record<number, string>>({});
 
   ngOnInit() {
     this.cargarPartidas();
@@ -47,15 +47,21 @@ export class HistoryHall {
   cargarUsernames() {
     this.partidas().forEach(game => {
 
-      if (!this.usernames[game.p1_id]) {
+      if (!this.usernames()[game.p1_id]) {
         this.userRepo.getUsernameById(game.p1_id).subscribe(username => {
-          this.usernames[game.p1_id] = username;
+          this.usernames.update(u => ({
+            ...u,
+            [game.p1_id]: username
+          }));
         });
       }
 
-      if (!this.usernames[game.p2_id]) {
+      if (!this.usernames()[game.p2_id]) {
         this.userRepo.getUsernameById(game.p2_id).subscribe(username => {
-          this.usernames[game.p2_id] = username;
+          this.usernames.update(u => ({
+            ...u,
+            [game.p2_id]: username
+          }));
         });
       }
 

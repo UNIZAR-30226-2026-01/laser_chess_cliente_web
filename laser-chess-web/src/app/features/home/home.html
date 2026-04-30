@@ -3,6 +3,11 @@
 
     <app-top-row></app-top-row>
 
+    <app-popup
+        [type]="popUP_waiting() ? 'waiting' : 'none'"
+        (waitingCancel)="cancelWaiting()">
+    </app-popup>
+
     @if(popUPNotis()){
         <div id="overlay" class="overlay" (click)="popUPNotis.set(false)">
             <div class="popup-solicitudes" (click)="$event.stopPropagation()">

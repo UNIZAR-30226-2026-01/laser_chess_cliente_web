@@ -7,7 +7,6 @@ import { signal } from '@angular/core';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
 import { Remote } from '../../model/remote/remote';
-import { NotificationService } from '../../model/notifications/notification';
 import { RouterLink } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
@@ -27,7 +26,6 @@ export class Login implements OnInit {
 
   private authService = inject(AuthRepository);
   private router = inject(Router);
-  private notificationService = inject(NotificationService);
   private remote = inject(Remote);
   public showError = signal(false);
   public errorMessage = signal('');
@@ -38,10 +36,7 @@ export class Login implements OnInit {
     // access_token valido, vamos directo al home
     const token = this.remote.getAccessToken();
     if (token && !this.remote.isTokenExpired(token)) {
-      const userId = this.remote.getAccountId(); 
-      if (userId) {
-        this.initNotifications(userId);
-      }
+      
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
       this.router.navigateByUrl(this.returnUrl);
     } else {
@@ -49,10 +44,7 @@ export class Login implements OnInit {
       this.remote.autoLogin().subscribe({
         next: (authenticated) => {
           if (authenticated) {
-            const userId = this.remote.getAccountId();
-            if (userId) {
-              this.initNotifications(userId);
-            }
+            
             this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
             this.router.navigateByUrl(this.returnUrl);
           }
@@ -97,9 +89,7 @@ export class Login implements OnInit {
       switch(status){  
         case ResponseStatus.SUCCESS:
           const userId = this.remote.getAccountId();
-          if (userId) {
-            this.initNotifications(userId);
-          }
+          
           this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
           this.router.navigateByUrl(this.returnUrl);
           this.showError.set(false);
@@ -124,10 +114,6 @@ export class Login implements OnInit {
     );
   }
 
-  private initNotifications(userId: number) {
-    this.notificationService.teardownOnLogout();
-    this.notificationService.setupAfterLogin(userId);
-  }
            
 }
 

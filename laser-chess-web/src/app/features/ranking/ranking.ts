@@ -19,7 +19,7 @@ import { Remote } from '../../model/remote/remote';
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
 import { GameState } from '../../utils/game-state'
 
-import { Popup } from '../social-ranking-popups/popup'; //los pop-ups (que miedo cargarmea glo)
+import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo cargarmea glo)
 
 @Component({
   selector: 'app-ranking',

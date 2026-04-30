@@ -1,5 +1,6 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import { API_URL } from '../../constants/app.const';
 
 export interface SseMessage {
   eventType: string;   // 'Init', 'Notification', 'GameUpdate', etc.
@@ -20,24 +21,20 @@ export class SseService implements OnDestroy {
     this.disconnect();
     
 
-    const url = `http://localhost:8080/api/events?token=${encodeURIComponent(token)}`;
+    const url = `${API_URL}/api/events?token=${encodeURIComponent(token)}`;
     this.eventSource = new EventSource(url);
 
     this.eventSource.onopen = () => console.log('SSE connected');
     this.eventSource.onerror = (err) => {
       console.error('SSE error', err);
+    };
 
-      if (this.reconnectTimeout) return;
-
-      this.disconnect();
-
-      this.reconnectTimeout = setTimeout(() => {
-        this.reconnectTimeout = undefined;
-
-        if (this.token) {
-          this.connect(this.token);
-        }
-      }, 5000);
+    this.eventSource.onmessage = (event: MessageEvent) => {
+      this.ngZone.run(() => {
+        let parsedData = event.data;
+        try { parsedData = JSON.parse(event.data); } catch {}
+        this.messageSubject.next({ eventType: 'message', data: parsedData });
+      });
     };
 
     // Eventos que conozco

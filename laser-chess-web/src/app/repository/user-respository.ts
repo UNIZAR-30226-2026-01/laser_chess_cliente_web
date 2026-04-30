@@ -9,6 +9,7 @@ import { catchError } from 'rxjs/operators';
 export type { XpInfo } from '../model/user/ProfileCardData';
 
 
+
 /*
  * UserRepository : El UserRepository agrupa toda la lógica asociada al dominio de los usuarios de la aplicación.
  * Dependencia: Remote
@@ -85,10 +86,7 @@ export class UserRespository {
     );
   }
 
-  // Cerrar sesión
-  logout(): void {
-    this.remoteService.logout();
-  }
+  
 
   // Eliminar cuenta
   deleteAccount(): Observable<void> {

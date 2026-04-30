@@ -7,15 +7,17 @@ import { Websocket } from '../../model/remote/websocket';
 import { UserRespository } from '../../repository/user-respository';
 import { TimerService } from '../../services/timer-service';
 import { Board } from '../../shared/board/board';
+import { Popup } from '../../shared/popups/popup';
 import { TopRow } from '../../shared/top-row/top-row';
 import { BoardState } from '../../utils/board-state';
 import { GameState } from '../../utils/game-state';
 import { GameUtils } from '../../utils/game-utils';
 
 
+
 @Component({
   selector: 'app-home',
-  imports: [ TopRow, MatIcon, Board],
+  imports: [ TopRow, MatIcon, Board, Popup],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -75,6 +77,13 @@ export class Home {
   private timerService = inject(TimerService);
   private userRepo = inject(UserRespository);
   gameUtils = inject(GameUtils);
+
+  popUP_waiting = signal(false);
+
+  cancelWaiting(){
+    this.popUP_waiting.set(false);
+    this.websocket.close();
+  }
 
   constructor(private notificationService: NotificationService) {}
 
@@ -232,7 +241,7 @@ export class Home {
 
   }
 
-   // Inciiar a una partida amistosa DESAFIAR
+   // Rentaria desacoplar esto
   sendChallenge(): void {
 
     // Map selected board to backend Board_T numeric values
@@ -314,6 +323,7 @@ export class Home {
     console.log('Parámetros' + startingTime);
     console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement + ", ranked: " + ranked + " nivel: " + level);
 
+    this.popUP_waiting.set(true);
     this.websocket.initConnection(endpoint, params);
 
 

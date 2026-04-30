@@ -38,7 +38,7 @@ export class PiezaRival {
 
   ngOnChanges(changes: SimpleChanges) {
     // Al iniciar, colocamos la pieza en su sitio
-    if (changes['initialX'] || changes['initialY']) {
+    if (changes['x'] || changes['y']) {
       this.position.set({ x: this.x(), y: this.y() });
       this.actualizarInterfaz();
     }

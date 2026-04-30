@@ -23,10 +23,25 @@ export class NotificationService {
     private userRepo: UserRespository
   ) {}
 
+
+  initIfLoggedIn(): void {
+    const token = this.remote.getAccessToken();
+
+    if (!token || this.remote.isTokenExpired(token)) {
+      return;
+    }
+
+    const userId = this.remote.getAccountId();
+    if (!userId) return;
+
+    this.setupAfterLogin();
+  }
+
   /**
    * Despues de iniciar sesion
    */
-  async setupAfterLogin(userId: number) {
+  async setupAfterLogin() {
+    if (this.isSetup) return;
     const token = this.remote.getAccessToken();
     if (!token) return;
 
