@@ -50,7 +50,7 @@ export class Popup {
   // popup challengeConfig
   @Input() challengeFriendUsername: string | null = null;
   @Input() challengeBoards: { id: number; name: string }[] = [];
-  @Input() challengeSelectedBoard = 'Ace';
+  @Input() challengeSelectedBoard = 'ACE';
   @Input() challengeTimeModes: any[] = [];
   @Input() challengeSelectedMode: any = null;
   @Input() challengeSelectedIncrement = 0;

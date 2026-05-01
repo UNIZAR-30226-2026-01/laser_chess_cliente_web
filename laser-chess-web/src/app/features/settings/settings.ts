@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TopRow } from '../../shared/top-row/top-row';
 import { UserRespository } from '../../repository/user-respository';
 import { AuthRepository } from '../../repository/auth-repository';
-import { passwordMatchValidator } from '../../auth/signin/signin';
+import { passwordMatchValidator } from '../signin/signin';
 
 @Component({
   selector: 'app-settings',

@@ -194,6 +194,7 @@ export class GameLogicService {
         this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' });
       }
       this.timerService.stopTimer();
+      localStorage.removeItem('gameState');
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
@@ -301,7 +302,7 @@ export class GameLogicService {
       this.state.finPartida.set({ mostrar: false, mensaje: '' });
 
       this.waitingForConfirmation = false;
-      this.permitSalida.set(true);
+      this.state.permitSalida.set(true);
       this.router.navigate(['/home']);
     }
 

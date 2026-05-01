@@ -5,6 +5,7 @@ import { UserRespository } from '../repository/user-respository';
 import  { GameState } from '../utils/game-state'
 import { Websocket } from '../model/remote/websocket';
 import { FriendRespository } from '../repository/friend-respository';
+import { BOARD_TO_ID } from '../constants/boards'
 
 @Injectable({
   providedIn: 'root',
@@ -41,8 +42,8 @@ export class ChallengeManager {
     }else{
       this.gameState.avatarRival.set(1); //Aplicamos skin por defecto
     }
-    
-    
+    this.gameState.tipoPartida.set('private');
+    this.gameState.permitSalida.set(false);
 
     console.log('Jugadores: ' + this.gameState.miNombre() + ' vs ' + this.gameState.nombreRival());
     this.webSocket.initConnection(endpoint, params);
@@ -65,27 +66,8 @@ export class ChallengeManager {
   sendChallenge(tablero: string, timeBase: number, increment: number, tipoPartida: string, iaLevel: number | null, id: number | null, username: string | null): void {
 
     // Map selected board to backend Board_T numeric values
-    let board = 0;
-    switch (tablero) {
-      case 'Ace':
-        board = 1;
-        break;
-      case 'Curiosity':
-        board = 2;
-        break;
-      case 'Grail':
-        board = 3;
-        break;
-      case 'Mercury':
-        board = 4;
-        break;
-      case 'Sophie':
-        board = 5;
-        break;
-    }
-    const rawLevel = this.userRepo.getLevel() ?? 0;
-    const level = Math.min(rawLevel, 3); // cap level to max 3
-    
+    const board = BOARD_TO_ID[tablero.toLocaleUpperCase()];
+      
 
     var endpoint = '';
     var params;
@@ -133,11 +115,16 @@ export class ChallengeManager {
           };
         }
 
+        localStorage.setItem('gameState', JSON.stringify({
+          type: tipoPartida,
+        }));
+        this.gameState.tipoPartida.set(tipoPartida);
 
 
     }
     this.timerService.miTiempo.set(timeBase * 1000);
     this.timerService.tiempoRival.set(timeBase * 1000);
+    this.gameState.permitSalida.set(false);
 
     this.webSocket.initConnection(endpoint, params);
 

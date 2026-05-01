@@ -1,4 +1,4 @@
-export const ACE = `LAD,,,,EAD,KA,EAD,DAL,,
+export const TABLERO_ACE = `LAD,,,,EAD,KA,EAD,DAL,,
         ,,DAU,,,,,,,
         ,,,DRR,,,,,,
         DAD,,DRU,,SAD,SAL,,DAL,,DRR
@@ -7,7 +7,7 @@ export const ACE = `LAD,,,,EAD,KA,EAD,DAL,,
         ,,,,,,,DRD,,
         ,,DRR,ERU,KR,ERU,,,,LRU`
 
-export const CURIOSITY = `LAD,,,,EAD,KA,EAD,SAL,,
+export const TABLERO_CURIOSITY = `LAD,,,,EAD,KA,EAD,SAL,,
               ,,,,,,,,,
               ,,,DRR,,,DAD,,,
               DAD,DRU,,,DRL,SAL,,,DAL,DRR
@@ -16,7 +16,7 @@ export const CURIOSITY = `LAD,,,,EAD,KA,EAD,SAL,,
               ,,,,,,,,,
               ,,SRR,ERU,KR,ERU,,,,LRU`
 
-export const GRAIL = `LAD,,,,DAU,EAD,DAL,,,
+export const TABLERO_GRAIL = `LAD,,,,DAU,EAD,DAL,,,
           ,,,,,KA,,,,
           DAD,,,,DAU,EAD,SAL,,,
           DAL,,SAD,,DRR,,DRL,,,
@@ -25,7 +25,7 @@ export const GRAIL = `LAD,,,,DAU,EAD,DAL,,,
           ,,,,KR,,,,,
           ,,,DRR,ERU,DRD,,,,LRU`
 
-export const SOPHIE = `LAD,,,,KA,DRR,DAL,,,
+export const TABLERO_SOPHIE = `LAD,,,,KA,DRR,DAL,,,
             ,,,EAD,,EAR,,,,DRU
             DAD,,,,DAU,DAL,,SRL,,DRR
             ,,,,,,,SAD,,
@@ -34,7 +34,7 @@ export const SOPHIE = `LAD,,,,KA,DRR,DAL,,,
             DAD,,,,ERL,,ERU,,,
             ,,,DRR,DAL,KR,,,,LRU`
 
-export const MERCURY = `LAR,,,,DAU,KA,DAL,,,SRL
+export const TABLERO_MERCURY = `LAR,,,,DAU,KA,DAL,,,SRL
             ,,,,,EAD,DAL,,,
             DAL,,,SAL,,EAD,,,,
             DAD,,,,DRR,,,,DRU,
@@ -44,7 +44,7 @@ export const MERCURY = `LAR,,,,DAU,KA,DAL,,,SRL
             SAL,,,DRR,KR,DRD,,,,LRL`
 
             
-export const VACIO = `,,,,,,,,,
+export const TABLERO_VACIO = `,,,,,,,,,
             ,,,,,,,,,
             ,,,,,,,,,
             ,,,,,,,,,
@@ -54,17 +54,10 @@ export const VACIO = `,,,,,,,,,
             ,,,,,,,,,`
 
 export const BOARD_TO_ID: Record<string, number> = {
-  Ace: 0,
-  Curiosity: 1,
-  Grail: 2,
-  Mercury: 3,
-  Sophie: 4,
+  ACE: 1,
+  CURIOSITY: 2,
+  GRAIL: 3,
+  MERCURY: 4,
+  SOPHIE: 5,
 };
 
-export const ID_TO_BOARD: Record<number, string> = {
-  0: 'Ace',
-  1: 'Curiosity',
-  2: 'Grail',
-  3: 'Mercury',
-  4: 'Sophie',
-};

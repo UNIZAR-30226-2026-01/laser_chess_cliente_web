@@ -102,7 +102,7 @@ export class Social  {
   ];
 
 
-  public selectedBoard = signal<string>('Ace');// ACE por defecto
+  public selectedBoard = signal<string>('ACE');// ACE por defecto
   public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
   public selectedIncrement = signal<number>(0); // incremento en segundos
 
@@ -477,7 +477,7 @@ export class Social  {
   // Abre el popup al hacer clic en Retar
   openChallengeConfig(friend: FriendSummaryExtended): void {
     this.friendToChallenge = friend;
-    this.selectedBoard.set('Ace');
+    this.selectedBoard.set('ACE');
     this.selectedMode.set(this.timeModes[0]);
     this.selectedIncrement.set(0);
     this.customMinutes.set(5);

@@ -6,7 +6,6 @@ import { GameResume } from '../model/game/GameResume';
 import { GameLogicService } from './game-logic-service';
 import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
-import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY } from '../constants/boards';
 import { BoardState } from '../utils/board-state'
 
 

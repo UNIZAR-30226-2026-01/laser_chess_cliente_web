@@ -1,7 +1,7 @@
 import { Injectable, signal, inject} from '@angular/core';
 import { PiezaData } from '../model/game/PiezaData'
 import { GameUtils } from '../utils/game-utils'
-import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY } from '../constants/boards';
+import { TABLERO_ACE, TABLERO_CURIOSITY, TABLERO_GRAIL, TABLERO_SOPHIE, TABLERO_MERCURY } from '../constants/boards';
 import { UserRespository } from '../repository/user-respository';
 
 
@@ -25,15 +25,15 @@ export class BoardState {
   iniciarTablero(board: string) : PiezaData[] {
     switch (board){
           case 'ACE':
-            return this.gameUtils.importarTablero(ACE);
+            return this.gameUtils.importarTablero(TABLERO_ACE);
           case 'CURIOSITY':
-            return this.gameUtils.importarTablero(CURIOSITY);
+            return this.gameUtils.importarTablero(TABLERO_CURIOSITY);
           case 'SOPHIE':
-            return this.gameUtils.importarTablero(SOPHIE);
+            return this.gameUtils.importarTablero(TABLERO_SOPHIE);
           case 'MERCURY':
-            return this.gameUtils.importarTablero(MERCURY);
+            return this.gameUtils.importarTablero(TABLERO_MERCURY);
           case 'GRAIL': 
-            return this.gameUtils.importarTablero(GRAIL);
+            return this.gameUtils.importarTablero(TABLERO_GRAIL);
           default:
             return [];
            

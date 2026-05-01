@@ -55,7 +55,8 @@ export class Game implements OnInit {
   miAvatar = signal(1);
   avatarRival = signal(1);
 
-  permitSalida = this.gameService.permitSalida;
+  permitSalida = this.gameState.permitSalida;
+  tipoPartida = this.gameState.tipoPartida;
 
   
   columnas = 10;
@@ -72,8 +73,6 @@ export class Game implements OnInit {
   ngOnInit(): void {
     console.log('Suscribiéndome a WS en Game...');
     
-  
-
 
     // Suscribimos al ReplaySubject que recibe los mensajes
     this.wsSubscription = this.wsService.gameMessages$.subscribe({
