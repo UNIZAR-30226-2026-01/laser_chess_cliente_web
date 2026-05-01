@@ -24,15 +24,31 @@ import { AllRatingsDTO } from '../model/rating/AllRatingsDTO';
 export class FriendRespository {
   private remoteService = inject(Remote);
 
+  private friendsMap = new Map<string, FriendSummary>();
+
   // Obtenición de listado de amigos del usuario
   getFriends(): Observable<FriendSummary[]> {
     return this.remoteService.getFriends().pipe(
-      map((data: FriendSummary[]) => data || []),
+      map((data: FriendSummary[]) => {
+        const friends = data || [];
+
+        this.friendsMap.clear();
+
+        for (const f of friends) {
+          this.friendsMap.set(f.username, f);
+        }
+
+        return data;
+      }),
       catchError((err: any) => {
         console.error('Error al cargar amigos:', err);
         return of([]);
       })
     );
+  }
+
+  getInfoFriend(username: string): FriendSummary | undefined {
+    return this.friendsMap.get(username);
   }
 
   // Obtenición de retings del usuario dado

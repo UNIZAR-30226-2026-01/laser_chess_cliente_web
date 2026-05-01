@@ -57,7 +57,7 @@
   <aside class="side-panel">
     <div class="player_card my-user">
       <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
-      <div class="avatar">👤</div>
+      <img [src]="'assets/vector-art/ProfilePictures/bot' + miAvatar() + '.svg'" alt="Avatar" class="avatar">
       <span>{{ miNombre() }}</span>
     </div>
 
@@ -103,7 +103,7 @@
   <!-- PANEL DERECHO -->
   <aside class="side-panel">
     <div class="player_card">
-      <div class="avatar">👤</div>
+      <img [src]="'assets/vector-art/ProfilePictures/bot' + avatarRival() + '.svg'" alt="Avatar" class="avatar">
       <span>{{ nombreRival() }}</span>
       <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
     </div>

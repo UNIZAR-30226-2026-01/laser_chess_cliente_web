@@ -52,11 +52,10 @@ export class Game implements OnInit {
 
   nombreRival = this.gameState.nombreRival;
   miNombre = this.gameState.miNombre;
+  miAvatar = signal(1);
+  avatarRival = signal(1);
 
   permitSalida = this.gameService.permitSalida;
-  
-
-
 
   
   columnas = 10;
@@ -72,6 +71,7 @@ export class Game implements OnInit {
 
   ngOnInit(): void {
     console.log('Suscribiéndome a WS en Game...');
+    
   
 
 

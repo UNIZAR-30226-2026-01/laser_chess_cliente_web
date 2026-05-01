@@ -101,7 +101,7 @@
         <div class="user-info-detail">
           <div class="user-avatar-large">
             @if (userInfoUser.avatar) {
-              <img [src]="'assets/avatars/' + userInfoUser.avatar + '.png'" alt="Avatar">
+              <img [src]="'assets/vector-art/ProfilePictures/bot' + userInfoUser.avatar + '.svg'" alt="Avatar">
             } @else {
               <div class="avatar-placeholder-large"><span class="avatar-icon-large">👤</span></div>
             }
@@ -154,7 +154,7 @@
           <label>Tablero:</label>
           <select [ngModel]="challengeSelectedBoard" (ngModelChange)="challengeSelectedBoardChange.emit($event)" class="form-control">
             @for (board of challengeBoards; track board.id) {
-              <option [value]="board.id">{{ board.name }}</option>
+              <option [ngValue]="board.name">{{ board.name }}</option>
             }
           </select>
         </div>

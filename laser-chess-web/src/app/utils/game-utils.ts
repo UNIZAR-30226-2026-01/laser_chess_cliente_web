@@ -29,7 +29,7 @@ export class GameUtils {
         codigo.split('');
         const tipoLetra = codigo[0];
         const colorLetra = codigo[1];
-        const direccionLetra = codigo[2] ?? 'U';
+        const direccionLetra = codigo[2] ?? 'D';
 
         const tipos: Record<string, TipoPieza> = {
           'L': TipoPieza.LASER,
@@ -43,7 +43,8 @@ export class GameUtils {
           'U': 180,
           'R': 270,
           'D': 0,
-          'L': 90
+          'L': 90,
+  
         };
 
         return {

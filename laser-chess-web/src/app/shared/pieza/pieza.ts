@@ -121,11 +121,11 @@ export class Pieza implements OnInit, OnChanges{
         break;
       case 2:
         switch(this.tipoPieza()) {
-            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Soretro/DEF-B-Soretro.svg"; break;
-            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/ESC-B-Soretro.svg";    break;
-            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Soretro/LAS-B-Soretro.svg";    break;
-            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.svg";      break;
-            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-B-Soretro.svg";    break;
+            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Soretro/DEF-B-Soretro.png"; break;
+            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/ESC-B-Soretro.png";    break;
+            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Soretro/LAS-B-Soretro.png";    break;
+            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.png";      break;
+            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-B-Soretro.png";    break;
           }
         break;
       

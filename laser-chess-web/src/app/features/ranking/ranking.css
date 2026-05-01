@@ -17,7 +17,7 @@ width: 100%;
   right: -20px;
   bottom: -20px;
 
-  background-image: url(../../../../../laser-chess-web/public/assets/vector-art/Backgrounds/BG-Soretro.svg);
+  background-image: url(../../../../public/assets/vector-art/Backgrounds/Soretro/BG-soretro.svg);
   background-size: 960px;
   background-repeat: repeat;
   animation: moveBackground 30s linear infinite;
@@ -156,8 +156,6 @@ width: 100%;
   color: var(--LCWhite)
 }
 
-.sticky-user-row {
-}
 
 .sticky-user-row td {
   position: sticky;

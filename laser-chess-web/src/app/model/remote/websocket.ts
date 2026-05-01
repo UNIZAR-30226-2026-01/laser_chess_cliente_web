@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ReplaySubject, Subject} from 'rxjs';
 import { Remote } from './remote'; // <--- Importa tu servicio
-import { API_URL } from '../../constants/app.const';
+import { API_URL_WS } from '../../constants/app.const';
 import {  Router } from '@angular/router';
 
 
@@ -20,6 +20,9 @@ import {  Router } from '@angular/router';
 export class Websocket {
 
   private socket$?: WebSocketSubject<any>;
+  public connectionClosed$ = new Subject<void>();
+  public connectionError$ = new Subject<void>();
+
 
   private mode: 'lobby' | 'game' = 'lobby';
 
@@ -42,14 +45,18 @@ export class Websocket {
     const searchParams = new URLSearchParams(params);
     if (token) searchParams.append('token', token);
 
-    const url = `${API_URL}/api/rt/${endpoint}?${searchParams.toString()}`;
+    const url = `${API_URL_WS}/api/rt/${endpoint}?${searchParams.toString()}`;
     console.log('Conectando WS a:', url);
 
     this.socket$ = webSocket({
       url: url,
       deserializer: msg => JSON.parse(msg.data),
       openObserver: { next: () => console.log('WS conectado') },
-      closeObserver: { next: () => console.log('WS cerrado') }
+      closeObserver: { next: () => {
+        console.log('WS cerrado');
+        this.connectionClosed$.next();
+        }
+       }
     });
 
     this.socket$.subscribe({
@@ -103,7 +110,7 @@ export class Websocket {
 checkAndReconnect() {
   const token = this.remote.getAccessToken();
   // Usamos la URL que confirmaste
-  const url = `${API_URL}/api/rt/reconnect?token=${token}`; 
+  const url = `${API_URL_WS}/api/rt/reconnect?token=${token}`; 
 
   this.socket$ = webSocket({
     url: url,
@@ -118,6 +125,7 @@ checkAndReconnect() {
     closeObserver: {
       next: (e) => {
         console.log('WS cerrado', e);
+        this.connectionClosed$.next();
       }
     }
   });
@@ -128,6 +136,7 @@ checkAndReconnect() {
         if (err?.code === 1006) return; // cierre normal en muchos backends
         console.error('Error WS:', err);
         this.socket$ = undefined;
+        this.connectionError$.next();
       },
       complete: () => {
         console.log('WS COMPLETADO');

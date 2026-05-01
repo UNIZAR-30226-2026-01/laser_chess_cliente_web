@@ -6,15 +6,14 @@ import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { Social } from '../../features/social/social';
 import { FriendRespository } from '../../repository/friend-respository';
-import { Websocket } from '../../model/remote/websocket';
 import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
-import { GameState } from '../../utils/game-state';
 import { GameRepository } from '../../repository/game-repository';
 
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NotificationService } from '../../model/notifications/notification';
+import { ChallengeManager } from '../../services/challenge-manager';
 
 describe('Social Angular', () => {
   let component: Social;
@@ -26,6 +25,7 @@ describe('Social Angular', () => {
   let iconServiceSpy: any;
   let gameStateSpy: any;
   let gameRepoSpy: any;
+  let challengeSpy: any;
 
   beforeEach(async () => {
     friendRepoSpy = {
@@ -81,10 +81,14 @@ describe('Social Angular', () => {
       getAvatarColor: vi.fn().mockReturnValue('blue')
     };
 
+    challengeSpy = {
+      sendChallenge: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         Social,
-        MatIconTestingModule   // 🔥 FIX REAL
+        MatIconTestingModule   
       ],
 
 
@@ -92,10 +96,9 @@ describe('Social Angular', () => {
         provideRouter([]),
 
         { provide: FriendRespository, useValue: friendRepoSpy },
-        { provide: Websocket, useValue: websocketSpy },
+        { provide: ChallengeManager, useValue: challengeSpy },
         { provide: UserRespository, useValue: userRepoSpy },
         { provide: IconService, useValue: iconServiceSpy },
-        { provide: GameState, useValue: gameStateSpy },
         { provide: GameRepository, useValue: gameRepoSpy },
         
 

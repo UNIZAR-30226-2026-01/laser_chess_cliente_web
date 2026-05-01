@@ -52,3 +52,19 @@ export const VACIO = `,,,,,,,,,
             ,,,,,,,,,
             ,,,,,,,,,
             ,,,,,,,,,`
+
+export const BOARD_TO_ID: Record<string, number> = {
+  Ace: 0,
+  Curiosity: 1,
+  Grail: 2,
+  Mercury: 3,
+  Sophie: 4,
+};
+
+export const ID_TO_BOARD: Record<number, string> = {
+  0: 'Ace',
+  1: 'Curiosity',
+  2: 'Grail',
+  3: 'Mercury',
+  4: 'Sophie',
+};

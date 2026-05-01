@@ -2,16 +2,14 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { ChallengeResume } from '../../model/game/ChallengeResume';
 import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
-import { Remote } from '../../model/remote/remote';
-import { Websocket } from '../../model/remote/websocket';
-import { UserRespository } from '../../repository/user-respository';
-import { TimerService } from '../../services/timer-service';
+import { GameRepository } from '../../repository/game-repository';
 import { Board } from '../../shared/board/board';
 import { Popup } from '../../shared/popups/popup';
 import { TopRow } from '../../shared/top-row/top-row';
 import { BoardState } from '../../utils/board-state';
-import { GameState } from '../../utils/game-state';
 import { GameUtils } from '../../utils/game-utils';
+import { ChallengeManager } from '../../services/challenge-manager';
+import { TIMEMODE_TO_MINS } from '../../constants/time.mode'
 
 
 
@@ -69,20 +67,18 @@ export class Home {
 
 
   solicitudes = signal<ChallengeResume[]>([]);
-  private websocket = inject(Websocket);
   private wsSubscription: any;
-  private remote = inject(Remote);
+  private gameRepo = inject(GameRepository);
 
-  private gameState = inject(GameState);
-  private timerService = inject(TimerService);
-  private userRepo = inject(UserRespository);
+  
+  private challengeManager = inject(ChallengeManager);
   gameUtils = inject(GameUtils);
 
   popUP_waiting = signal(false);
 
   cancelWaiting(){
     this.popUP_waiting.set(false);
-    this.websocket.close();
+    this.challengeManager
   }
 
   constructor(private notificationService: NotificationService) {}
@@ -99,10 +95,10 @@ export class Home {
   ngOnInit() {
     // Aquí podrías cargar las solicitudes iniciales si quieres
     
-    this.loadFriends();
+    this.loadRequest();
     this.getEloProgress();
     this.notificationService.wakeHome$.subscribe(() => {
-        this.loadFriends();
+        this.loadRequest();
         this.popUPNotis.set(true);
     });
     this.cargarTablero();
@@ -190,21 +186,21 @@ export class Home {
   }
 
   openNotifications() {
-    this.loadFriends();
+    this.loadRequest();
     this.popUPNotis.set(true);
   }
 
-  loadFriends(): void {
-      this.remote.checkSolicitudes().subscribe({
-        next: (data : ChallengeResume[]) => {
-        this.solicitudes.set(data);
-        console.log('Solicitudes cargadas:', this.solicitudes);
-        },
-        error: (err : any) => {
-          console.error('Error al cargar amigos:', err);
-        }
-      });
-    }
+  loadRequest(): void {
+    this.gameRepo.getChallengeRequest().subscribe({
+      next: (data : ChallengeResume[]) => {
+      this.solicitudes.set([...data]);
+      console.log('Solicitudes cargadas:', this.solicitudes);
+      },
+      error: (err : any) => {
+        console.error('Error al cargar amigos:', err);
+      }
+    });
+  }
 
     formatTime(milliseconds: number): string {
       const totalSeconds = Math.floor(milliseconds / 1000);
@@ -222,111 +218,22 @@ export class Home {
     }
 
   accept(reto: ChallengeResume) {
-    const endpoint = 'challenge/accept';
-    const params = {
-      username: reto.challenger_username,
-    };
-    console.log('Aceptando reto de:', reto.challenger_username);
-
-
-    this.timerService.miTiempo.set(reto.starting_time);
-    this.timerService.tiempoRival.set(reto.starting_time);
-
-    this.gameState.miNombre.set(this.userRepo.getUsername() || '');
-    this.gameState.nombreRival.set(reto.challenger_username);
-    console.log('Jugadores: ' + this.gameState.miNombre() + ' vs ' + this.gameState.nombreRival());
-
-    this.websocket.initConnection(endpoint, params);
+    this.challengeManager.accept(reto)
     this.popUPNotis.set(false);
 
   }
 
-   // Rentaria desacoplar esto
+  reject(reto: ChallengeResume) {
+    this.challengeManager.reject(reto);
+    this.loadRequest();
+
+    this.popUPNotis.set(false);
+
+  }
+
   sendChallenge(): void {
-
-    // Map selected board to backend Board_T numeric values
-    let board = 0;
-    switch (this.selectedBoard()) {
-      case 'Ace':
-        board = 0;
-        break;
-      case 'Curiosity':
-        board = 1;
-        break;
-      case 'Grail':
-        board = 2;
-        break;
-      case 'Mercury':
-        board = 3;
-        break;
-      case 'Sophie':
-        board = 4;
-        break;
-    }
-    const timeIncrement = this.timeIncrement();
-    const rawLevel = this.userRepo.getLevel() ?? 0;
-    const level = Math.min(rawLevel, 3); // cap level to max 3
-    var ranked = 0;
-    var startingTime = 0;
-    switch(this.selectedTime()){
-      case 'Blitz':
-        startingTime = 300;
-        break;
-      case 'Rapid':
-        startingTime = 900;
-        break;
-      case 'Classic':
-        startingTime = 1800;
-        break;
-      case 'Extended':
-        startingTime = 3600;
-        break;
-    }
-
-    var endpoint = '';
-    var params;
-    switch(this.tipoPartida()){
-      case 'ranked':
-        endpoint = 'matchmaking'
-        params = {
-            time_base: startingTime,
-            time_increment: timeIncrement,
-            board,
-            ranked: 0,
-          };
-        break;
-      case 'ia':
-        endpoint = 'bot'
-        params = {
-            starting_time: startingTime,
-            time_increment: timeIncrement,
-            board,
-            level: this.aiLevel() 
-          };
-        break;
-      case 'public':
-        endpoint = 'matchmaking'
-        params = {
-            board,
-            time_base: startingTime,
-            time_increment: timeIncrement,
-            ranked: 1,
-          };
-        break;
-
-
-    }
-    ranked = params?.ranked ?? 0;
-    this.timerService.miTiempo.set(startingTime * 1000);
-    this.timerService.tiempoRival.set(startingTime * 1000);
-
-    console.log('Parámetros' + startingTime);
-    console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement + ", ranked: " + ranked + " nivel: " + level);
-
+    this.challengeManager.sendChallenge(this.selectedBoard(), TIMEMODE_TO_MINS[this.selectedTime()], this.timeIncrement(), this.tipoPartida(), this.aiLevel(), null, null);
     this.popUP_waiting.set(true);
-    this.websocket.initConnection(endpoint, params);
-
-
   }
 
 }

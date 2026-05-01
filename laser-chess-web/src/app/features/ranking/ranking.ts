@@ -90,7 +90,7 @@ export class Ranking implements OnInit {
       { id: 4, name: 'MERCURY' },
       { id: 5, name: 'SOPHIE' }
     ];
-    public selectedBoard = signal<number>(1); // ACE por defecto
+    public selectedBoard = signal<string>('Ace'); // ACE por defecto
     public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
     public selectedIncrement = signal<number>(0); // incremento en segundos
 
@@ -331,7 +331,7 @@ export class Ranking implements OnInit {
   // Abre el popup al hacer clic en Retar
   openChallengeConfig(friend: FriendSummaryExtended): void {
     this.friendToChallenge = friend;
-    this.selectedBoard.set(1);
+    this.selectedBoard.set('Ace');
     this.selectedMode.set(this.timeModes[0]);
     this.selectedIncrement.set(0);
     this.customMinutes.set(5);

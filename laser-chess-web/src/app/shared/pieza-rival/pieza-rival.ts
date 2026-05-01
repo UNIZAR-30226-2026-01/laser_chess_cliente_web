@@ -67,11 +67,11 @@ export class PiezaRival {
         break;
       case 2:
         switch(this.tipoPieza()) {
-            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Soretro/DEF-R-Soretro.svg"; break;
-            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/ESC-R-Soretro.svg";    break;
-            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Soretro/LAS-R-Soretro.svg";    break;
-            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Soretro/KIN-R-Soretro.svg";      break;
-            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-R-Soretro.svg";    break;
+            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Soretro/DEF-R-Soretro.png"; break;
+            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/ESC-R-Soretro.png";    break;
+            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Soretro/LAS-R-Soretro.png";    break;
+            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Soretro/KIN-R-Soretro.png";      break;
+            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-R-Soretro.png";    break;
           }
         break;
     }

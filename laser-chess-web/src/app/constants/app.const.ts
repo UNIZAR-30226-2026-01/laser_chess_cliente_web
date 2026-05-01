@@ -1,5 +1,5 @@
-export const API_URL = 'https://laserchess-api.elcangrejo.es';
-export const API_URS_WS = 'wss://laserchess-api.elcangrejo.es/api/rt';
+export const API_URL = 'http://localhost:8080';//'https://laserchess-api.elcangrejo.es';
+export const API_URL_WS = 'ws://localhost:8080' //'wss://laserchess-api.elcangrejo.es';
 
 // Sería necesario añadir las acciones de autenticación
 export const ACCESS_TOKEN = 'access';

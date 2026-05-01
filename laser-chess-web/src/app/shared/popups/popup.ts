@@ -50,15 +50,15 @@ export class Popup {
   // popup challengeConfig
   @Input() challengeFriendUsername: string | null = null;
   @Input() challengeBoards: { id: number; name: string }[] = [];
-  @Input() challengeSelectedBoard = 1;
+  @Input() challengeSelectedBoard = 'Ace';
   @Input() challengeTimeModes: any[] = [];
   @Input() challengeSelectedMode: any = null;
   @Input() challengeSelectedIncrement = 0;
   @Input() challengeCustomMinutes = 5;
   @Input() challengeCustomIncrementSec = 0;
   @Output() challengeConfigClose = new EventEmitter<void>();
-  @Output() challengeModeChange = new EventEmitter<any>();
-  @Output() challengeSelectedBoardChange = new EventEmitter<number>();
+  @Output() challengeModeChange = new EventEmitter<string>();
+  @Output() challengeSelectedBoardChange = new EventEmitter<string>();
   @Output() challengeSelectedIncrementChange = new EventEmitter<number>();
   @Output() challengeCustomMinutesChange = new EventEmitter<number>();
   @Output() challengeCustomIncrementSecChange = new EventEmitter<number>();

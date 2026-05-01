@@ -56,7 +56,7 @@
     [challengeCustomIncrementSec]="customIncrementSec()"
     (challengeConfigClose)="closeConfigPopup()"
     (challengeModeChange)="onModeChange($event)"
-    (challengeSelectedBoardChange)="selectedBoard.set(+$event)"
+    (challengeSelectedBoardChange)="selectedBoard.set($event)"
     (challengeSelectedIncrementChange)="selectedIncrement.set(+$event)"
     (challengeCustomMinutesChange)="customMinutes.set(+$event)"
     (challengeCustomIncrementSecChange)="customIncrementSec.set(+$event)"
@@ -115,7 +115,7 @@
                     <li class="user-item" (click)="openUserInfo(friend, 'friend')">
                         <div class="user-info">
                             <div class="left">
-                                <span class="avatar">👤</span>
+                                <img [src]="'assets/vector-art/ProfilePictures/bot' + friend.avatar + '.svg'" alt="Avatar">
                                 <span class="username">{{ friend.username }}</span>
                             </div>
                             <div class="user-stats">

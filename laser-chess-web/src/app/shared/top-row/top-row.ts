@@ -25,7 +25,7 @@ export class TopRow implements OnInit {
   rankedPoints = signal(0);
   xpPercentage = signal(0);
   xpInfoDetail = signal({ current: 0, required: 100 });
-  avatar?: 'red' | 'blue' | 'green' | 'yellow';
+  avatar = signal(0);
   private iconService = inject(IconService);
   userProfile$!: Observable<MyProfile>;
 
@@ -43,7 +43,7 @@ export class TopRow implements OnInit {
 
       this.userProfile$ = this.remote.getOwnAccount();
       this.userProfile$.subscribe(profile => {
-        this.avatar = this.iconService.getAvatarColor(profile.avatar);
+        this.avatar.set(profile.avatar);
     });
   }
 
