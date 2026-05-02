@@ -1,56 +1,101 @@
 .custom-toast {
-  width: 280px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  border: 1px solid #eee;
+  width: 320px;
+  background: var(--S1);
+  color: var(--LCWhite);
+  border-radius: var(--BorderSmall, 10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 2px solid var(--S3);
   overflow: hidden;
-  animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: slideInRight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
-.border-red { border-left: 5px solid #ff4d4d; }
+/* Si es desconexión, cambiamos el borde a rojo */
+.custom-toast.border-red {
+  border-color: var(--LCRed);
+}
 
 .toast-header {
   display: flex;
   align-items: center;
-  padding: 10px 15px;
-  background: #fdfdfd;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1.1rem;
 }
 
-.status-icon { width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; }
-.bg-red { background: #ff4d4d; box-shadow: 0 0 8px #ff4d4d; }
-.bg-blue { background: #007aff; box-shadow: 0 0 8px #007aff; }
+.status-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
 
-.toast-body { padding: 15px; }
+/* Colores para el puntito de estado */
+.bg-red { background: var(--LCRed); box-shadow: 0 0 8px var(--LCRed); }
+.bg-blue { background: var(--LCRed); box-shadow: 0 0 8px var(--LCRed); }
+
+.me-auto {
+  flex-grow: 1;
+  color: var(--LCWhite);
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: var(--LCGray);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn-close:hover {
+  color: var(--LCRed);
+}
+
+.toast-body {
+  padding: 15px;
+  font-size: 1rem;
+  color: var(--LCGray);
+}
+
+.toast-body p {
+  margin: 0;
+}
 
 .toast-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-top: 15px;
 }
 
-.btn-accept {
+/* Botones de Aceptar y Rechazar */
+.btn-accept, .btn-reject {
   flex: 1;
-  background: #007aff;
+  font-weight: bold;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
   color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 5px;
-  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.btn-reject {
-  flex: 1;
-  background: #f0f0f0;
-  color: #333;
-  border: none;
-  padding: 8px;
-  border-radius: 5px;
-  cursor: pointer;
+.btn-accept { background-color: var(--LCGreen); } /* Verde éxito */
+.btn-reject { background-color: var(--LCRed); } /* Rojo cancelar */
+
+.btn-accept:hover {
+  background-color: var(--LCGreen);
+  transform: translateY(-2px);
+}
+.btn-reject:hover {
+  background-color: var(--LCRed);
+  transform: translateY(-2px);
 }
 
-@keyframes slideIn {
-  from { transform: translateX(120%); }
-  to { transform: translateX(0); }
+/* Animación fluida de entrada desde la derecha */
+@keyframes slideInRight {
+  0% { transform: translateX(120%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }

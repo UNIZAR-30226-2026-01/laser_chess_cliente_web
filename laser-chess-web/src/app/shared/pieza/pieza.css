@@ -1,7 +1,7 @@
 /* pieza.css */
 
 :host {
-  display: contents; 
+  display: contents;
 }
 
 
@@ -21,16 +21,25 @@
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.spot {
-  width: 70%;
-  height: 70%;
-  margin: auto;
-  background-color: rgba(0, 200, 0, 0.4);
-  border-radius: 50%;
+.spot-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  z-index: 999; /* Por debajo de la pieza */
+  z-index: 998;
 }
 
-.spot:hover{
-  background-color: rgba(0, 153, 0, 0.4);
+.spot {
+  width: 30%;
+  height: 30%;
+  background-color: var(--LCYellow);
+  border-radius: 50%;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.spot-container:hover .spot {
+  opacity: 1;
+  transform: scale(1.2);
 }

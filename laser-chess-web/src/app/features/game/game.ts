@@ -33,7 +33,7 @@ export class Game implements OnInit {
   gameService = inject(GameLogicService);
   gameUtils = inject(GameUtils);
   private wsSubscription?: Subscription;
-  
+
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
 
   gameState = inject(GameState);
@@ -58,25 +58,25 @@ export class Game implements OnInit {
   permitSalida = this.gameState.permitSalida;
   tipoPartida = this.gameState.tipoPartida;
 
-  
+
   columnas = 10;
   filas = 8;
 
   cont = 1; // Contado incremental para creación de piezas (id)
   id = this.remoteService.getAccountId();
-    
+
 
   mostrarAvisoSalida = signal(false);
   aceptoInitial = signal(true);
-  
+
 
   ngOnInit(): void {
     console.log('Suscribiéndome a WS en Game...');
-    
+
 
     // Suscribimos al ReplaySubject que recibe los mensajes
     this.wsSubscription = this.wsService.gameMessages$.subscribe({
-      next: (msg: MessageGame) => { 
+      next: (msg: MessageGame) => {
         this.gameService.procesarAccion(msg);
         if (msg.Type === 'EOC') {
           console.log('EOC recibido en Game → cerrando todo');
@@ -106,13 +106,13 @@ export class Game implements OnInit {
     this.wsService.close();
   }
 
- 
+
 
 
   /*****************************************************************************/
   /*               Procesamiento de piezas de jugador principal                */
   /*****************************************************************************/
-  
+
   seleccionarPieza(pieza: Pieza) {
   if (!this.esMiTurno()) return;
     const anterior = this.piezaActiva();
@@ -141,14 +141,14 @@ export class Game implements OnInit {
     if (!pieza) return;
 
     const origenPos = pieza.position();
-    
+
     // 1. Traducimos a formato backend (invirtiendo la Y)
     const origenAjedrez = this.gameUtils.toChess(origenPos.x, origenPos.y, this.soyAzul());
     const destinoAjedrez = this.gameUtils.toChess(destino.x, destino.y, this.soyAzul());
 
     // 2. Formamos el mensaje: "Te8:e7"
     const mensaje = `T${origenAjedrez}:${destinoAjedrez}`; //He quitado la T? la he vuelto a poner?
-    
+
     console.log("Pidiendo permiso para mover:", mensaje);
 
     this.gameService.sendMovement(mensaje);
@@ -165,7 +165,7 @@ export class Game implements OnInit {
       console.log("Pidiendo permiso para rotar" + mensaje);
 
       this.gameService.sendMovement(mensaje);
-      
+
     }
   }
 }

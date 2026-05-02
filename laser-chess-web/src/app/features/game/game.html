@@ -20,9 +20,9 @@
 
   <!-- TOASTS -->
   <div class="toast-container">
-    
+
     @if (estadoDesconexion().mostrar) {
-      <app-notification-game 
+      <app-notification-game
         tipo="desconexion"
         [mensaje]="'El rival se ha ido de la partida...'"
         (alCerrar)="gameService.cerrarToast()">
@@ -38,11 +38,11 @@
         (alCerrar)="gameService.cerrarToastPausa()">
       </app-notification-game>
     }
-    
+
   </div>
 
   <!-- FIN PARTIDA -->
-  @if(finPartida().mostrar){ 
+  @if(finPartida().mostrar){
     <div class="popup-overlay">
       <div class="popup-content" (click)="$event.stopPropagation()">
         <p>{{finPartida().mensaje}}</p>
@@ -56,6 +56,9 @@
 
   <!-- PANEL IZQUIERDO -->
   <aside class="side-panel">
+    @if(tipoPartida() === 'private'){
+      <button class="debug-btn" (click)="gameService.solicitarPausa()">Solicitar pausa</button>
+    }
     <div class="player_card my-user">
       <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
       <img [src]="'assets/vector-art/ProfilePictures/bot' + miAvatar() + '.svg'" alt="Avatar" class="avatar">
@@ -65,7 +68,7 @@
     <div class="controls-panel">
       @if (piezaActiva()) {
 
-        @if (piezaActiva()?.tipoPieza() != TipoPieza.REY ) { 
+        @if (piezaActiva()?.tipoPieza() != TipoPieza.REY ) {
 
           @if (piezaActiva()?.tipoPieza() == TipoPieza.LASER){
 
@@ -78,8 +81,8 @@
             }
 
           } @else {
-            <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
             <button class="btn-girar" (click)="rotateSelected(-90)">↺</button>
+            <button class="btn-girar" (click)="rotateSelected(90)">↻</button>
           }
 
         }
@@ -104,14 +107,11 @@
   <!-- PANEL DERECHO -->
   <aside class="side-panel">
     <div class="player_card">
+      <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
       <img [src]="'assets/vector-art/ProfilePictures/bot' + avatarRival() + '.svg'" alt="Avatar" class="avatar">
       <span>{{ nombreRival() }}</span>
-      <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
     </div>
 
-    @if(tipoPartida() === 'private'){
-      <button class="debug-btn" (click)="gameService.solicitarPausa()">Solicitar pausa</button>
-    }
   </aside>
 
 </div>

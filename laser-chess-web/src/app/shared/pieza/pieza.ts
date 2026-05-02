@@ -6,14 +6,14 @@ import { BoardState } from '../../utils/board-state'
 @Component({
   selector: 'app-pieza',
   standalone: true,
-  imports: [], 
+  imports: [],
   templateUrl: './pieza.html',
   styleUrls: ['./pieza.css'],
 })
 export class Pieza implements OnInit, OnChanges{
   boardState = inject(BoardState);
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
-  
+
   // Recibimos la posición inicial y el tamaño desde el padre
   initialX = input.required<number>();
   initialY = input.required<number>();
@@ -45,7 +45,7 @@ export class Pieza implements OnInit, OnChanges{
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
 
-  
+
   puedeEntrar(nx: number, ny: number): boolean {
     const pieza = this.ocupado?.(nx, ny);
     const tipo = pieza?.tipoPieza;
@@ -86,7 +86,7 @@ export class Pieza implements OnInit, OnChanges{
     // Inicialización de la interfaz de la pieza, en función de tipoPieza
     this.actualizarInterfaz();
 
-    
+
 
   }
 
@@ -94,14 +94,14 @@ export class Pieza implements OnInit, OnChanges{
     // Al iniciar, colocamos la pieza en su sitio
     if (changes['initialX'] || changes['initialY']) {
       this.position.set({ x: this.initialX(), y: this.initialY() });
-      this.actualizarInterfaz(); 
+      this.actualizarInterfaz();
     }
-  
+
   }
-  
+
   actualizarInterfaz() {
     switch(this.skin()){
-      case 0: 
+      case 0:
         switch(this.tipoPieza()) {
             case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Classic/DEF-B-Classic.svg"; break;
             case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Classic/ESC-B-Classic.svg";    break;
@@ -128,9 +128,9 @@ export class Pieza implements OnInit, OnChanges{
             case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-B-Soretro.png";    break;
           }
         break;
-      
+
     }
-    
+
   }
 
   select() {
