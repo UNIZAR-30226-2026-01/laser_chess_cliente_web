@@ -64,6 +64,7 @@ export class Shop implements OnInit {
       case 'win_animation': return 'Wins';
       case 'board_skin': return 'Tableros';
       case 'piece_skin': return 'Piezas';
+      case 'avatar': return 'Avatares';
       default: return 'Otros';
     }
   }

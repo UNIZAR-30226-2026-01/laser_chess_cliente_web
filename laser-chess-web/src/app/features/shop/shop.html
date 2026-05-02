@@ -6,7 +6,11 @@
       <div class="items-grid">
         @for (item of section.items; track item.id) {
           <div class="shop-card" [class.owned]="item.owned">
-            <div class="icon">{{ item.icon }}</div>
+            
+            <div class="icon">
+              <img [src]="item.icon" alt="{{ item.name }}" (error)="item.icon = 'assets/default_item.png'">
+            </div>
+
             <div class="name">{{ item.name }}</div>
             <div class="price">{{ item.price }}</div>
             <div class="requirement"> Nivel {{ item.levelRequisite }}</div>

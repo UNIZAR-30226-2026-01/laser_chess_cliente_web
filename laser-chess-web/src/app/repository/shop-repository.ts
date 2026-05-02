@@ -55,18 +55,52 @@ export class ShopRepository {
     const type = dto.item_type?.toLowerCase();
     
     switch (type) {
+
       case 'win_animation':
         name = `Animacion de victoria ${dto.item_id}`;
         icon = '';
         break;
+
       case 'board_skin':
-        name = `Tablero ${dto.item_id}`;
-        icon = '';
+        switch (dto.item_id) {
+          case 4:
+            name = 'Classic';
+            icon = 'assets/vector-art/Backgrounds/Classic/BG-classic.svg';
+            break;
+          case 5:
+            name = 'Soretro';
+            icon = 'assets/vector-art/Backgrounds/Soretro/BG-soretro.svg';
+            break;
+          case 6:
+            name = 'Cats';
+            icon = 'assets/vector-art/Backgrounds/Cats/BG-cats.svg';
+            break;
+        }
         break;
+
       case 'piece_skin':
-        name = `Pieza ${dto.item_id}`;
-        icon = '';
+        switch (dto.item_id) {
+          case 1:
+            name = 'Classic';
+            icon = 'assets/vector-art/PieceSets/Classic/KIN-B-Classic.svg';
+            break;
+          case 2:
+            name = 'Soretro';
+            icon = 'assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.png';
+            break;
+          case 3:
+            name = 'Cats';
+            icon = 'assets/vector-art/PieceSets/Cats/KIN-B-Cats.svg';
+            break;
+        }
         break;
+
+      case 'avatar':                 
+        const botNumber = dto.item_id - 9; // Formulita pues el id del primer avatar es 10, y el nombre de la imagen es bot1
+        name = `Avatar ${botNumber}`;  
+        icon = `assets/vector-art/ProfilePictures/bot${botNumber}.svg`;
+        break;
+
       default:
         name = `?? ${dto.item_id}`; //otra cosa
         icon = '';
