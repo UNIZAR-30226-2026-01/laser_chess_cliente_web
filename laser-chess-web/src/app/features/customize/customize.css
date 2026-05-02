@@ -55,3 +55,87 @@
   font-size: 0.85rem;
   color: #555;
 }
+
+
+.icon img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.customize-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.customize-card.equipped {
+  border: 2px solid #2c7a4d;
+  background: #e8f5e9;
+}
+
+
+.customize-layout {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+
+.board-preview {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  justify-content: center;
+}
+
+.customize-panel {
+  flex: 1;
+  min-width: 300px;
+  max-height: 80vh;    
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.customize-container {
+  width: 100%;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+
+.customize-bg {
+  position: fixed;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background-size: 960px;
+  background-repeat: repeat;
+  animation: moveBackground 30s linear infinite;
+  filter: blur(4px);
+  z-index: -1;
+}
+
+@keyframes moveBackground {
+  0% { background-position: 0 0; }
+  100% { background-position: 960px 540px; }
+}
+
+
+.customize-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
