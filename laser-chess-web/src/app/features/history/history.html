@@ -1,6 +1,14 @@
 <div class="page">
   <app-top-row></app-top-row>
 
+  @if(historyState.popUpLimites()) {
+  <div id="overlay" class="overlay" (click)="historyState.popUpLimites.set(false)">
+    <div class="popup-error" (click)="$event.stopPropagation()">
+      {{ historyState.popUpMensaje() }}
+      <button (click)="historyState.popUpLimites.set(false)" class="btn-close">Cerrar</button>
+    </div>
+  </div>
+}
   <div class="game-layout">
     <!-- Contenedor que agrupa jugadores y tablero -->
     <div class="game-container">

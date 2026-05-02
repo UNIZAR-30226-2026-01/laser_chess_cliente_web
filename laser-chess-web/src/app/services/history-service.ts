@@ -154,11 +154,13 @@ export class HistoryService {
        }
       }
     }
+    /*
     const path = laser
         .split(',')
         .filter(c => c.length > 0)
         .map(c => this.gameUtils.fromChess(c,this.soyAzul()));
-    this.gameService.dispararLaser(path);
+    this.dispararLaser(path);
+    */
 
     // CAPTURA
     if (captura) {
@@ -220,6 +222,7 @@ export class HistoryService {
   }
 
   avanzar() {
+    this.indiceMovimiento++;
     if (this.indiceMovimiento >= this.movimientos.length) {
       this.popUpLimites.set(true);
       this.popUpMensaje.set('Se ha alcanzado el final de partida');
@@ -227,7 +230,7 @@ export class HistoryService {
     }
     
     this.reconstruirEstado();
-    this.indiceMovimiento++;
+    
   }
 
   retroceder() {
@@ -242,12 +245,12 @@ export class HistoryService {
   }
 
   irAlPrimero(){
-    this.indiceMovimiento = 1;
+    this.indiceMovimiento = 0;
     this.reconstruirEstado();
   }
 
   irAlUltimo(){
-    this.indiceMovimiento = this.movimientos.length - 1;
+    this.indiceMovimiento = this.movimientos.length -1;
     this.reconstruirEstado();
   }
 
