@@ -40,6 +40,7 @@ export class App {
   this.ws.checkAndReconnect();
   if (token && !this.remote.isTokenExpired(token)) {
     this.notificationService.initIfLoggedIn();
+    this.router.navigate(['/']);
     
   }
 }

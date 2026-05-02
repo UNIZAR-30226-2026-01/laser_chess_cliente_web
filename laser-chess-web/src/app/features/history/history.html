@@ -1,50 +1,46 @@
+<div class="page">
+  <app-top-row></app-top-row>
 
-    <app-top-row></app-top-row>
- 
-  @if(historyState.popUpLimites()) {
-  <div id="overlay" class="overlay" (click)="historyState.popUpLimites.set(false)">
-    <div class="popup-error" (click)="$event.stopPropagation()">
-      {{ historyState.popUpMensaje() }}
-      <button (click)="historyState.popUpLimites.set(false)">Cerrar</button>
+  <div class="game-layout">
+    <!-- Contenedor que agrupa jugadores y tablero -->
+    <div class="game-container">
+      
+      <!-- JUGADOR IZQUIERDA -->
+      <aside class="side-panel">
+        <div class="player_card my-user">
+          <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
+          <img [src]="'assets/vector-art/ProfilePictures/bot' + miAvatar() + '.svg'" alt="Avatar" class="avatar-circle blue">
+          <span class="player-name">{{ miNombre() }}</span>
+        </div>
+      </aside>
+
+      <!-- TABLERO CENTRADO -->
+      <main class="main-content">
+        <app-board
+          [piezas]="listaPiezas"
+          [laserPath]="laserPath"
+          [columnas]="columnas"
+          [filas]="filas"
+          [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
+        ></app-board>
+
+        <div class="controls">
+          <button (click)="primero()"><span>| <</span></button>
+          <button (click)="anterior()"><span><</span></button>
+          <button (click)="siguiente()"><span>></span></button>
+          <button (click)="ultimo()"><span>> |</span></button>
+        </div>
+      </main>
+
+      <!-- JUGADOR DERECHA -->
+      <aside class="side-panel">
+        <div class="player_card rival">
+          <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
+          <img [src]="'assets/vector-art/ProfilePictures/bot' + rivalAvatar() + '.svg'" alt="Avatar" class="avatar-circle red">
+          <span class="player-name">{{ nombreRival() }}</span>
+        </div>
+      </aside>
+
     </div>
   </div>
-}
-
-
-  <!-- PANEL IZQUIERDO -->
-  <aside class="side-panel">
-    <div class="player_card my-user">
-      <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
-      <div class="avatar">👤</div>
-      <span>{{ miNombre() }}</span>
-    </div>
-
-  </aside>
-
-  <!-- TABLERO -->
-  <main class="main-content">
-    <app-board
-      [piezas]="listaPiezas"
-      [laserPath]="laserPath"
-      [columnas]="columnas"
-      [filas]="filas"
-      [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)"
-    ></app-board>
-  </main>
-
-  <!-- PANEL DERECHO -->
-  <aside class="side-panel">
-    <div class="player_card">
-      <div class="avatar">👤</div>
-      <span>{{ nombreRival() }}</span>
-      <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
-    </div>
-
-  
-  </aside>
-<button (click)="primero()"> First </button>
-<button (click)="anterior()"> < </button>
-<button (click)="siguiente()"> > </button>
-<button (click)="ultimo()"> Last </button>
-
-
+</div>

@@ -54,10 +54,10 @@ export const TABLERO_VACIO = `,,,,,,,,,
             ,,,,,,,,,`
 
 export const BOARD_TO_ID: Record<string, number> = {
-  ACE: 1,
-  CURIOSITY: 2,
-  GRAIL: 3,
-  MERCURY: 4,
-  SOPHIE: 5,
+  ACE: 0,
+  CURIOSITY: 1,
+  GRAIL: 2,
+  MERCURY: 3,
+  SOPHIE: 4,
 };
 

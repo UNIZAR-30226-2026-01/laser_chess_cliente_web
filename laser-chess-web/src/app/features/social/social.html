@@ -140,7 +140,7 @@
             <p>No tienes partidas en curso</p>
           } @else {
             <!-- Aquí se listan las partidas pausadas -->
-            @for(game of partidas(); track game.id) {
+            @for(game of partidas(); track game.match_id) {
                 <li class="game-item">
                     <div class="player">
                       <span class="name">{{ game.p1_username }}</span>
@@ -154,7 +154,7 @@
                     <div class="details">
                       <span>{{ game.board }}</span>
                     </div>
-                    <button class="btn-play" (click)="resumeGame(game.id, game.p1_id, game.p2_id)">RETOMAR</button>
+                    <button class="btn-play" (click)="resumeGame(game.match_id, game.p1_id, game.p2_id)">RETOMAR</button>
                 </li>
             }
         }

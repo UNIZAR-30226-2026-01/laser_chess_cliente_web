@@ -215,6 +215,7 @@ export class GameLogicService {
     }else if (msg.Type === "Reconnection"){
       // El oponenete se ha reconectado
       // this.startTimer()
+      // this.timerService.miTiempo.set(Number(msg.Extra));
       this.estadoDesconexion.set({ mostrar: false });
 
       // Se oculta el pop-up de espera a reconexión

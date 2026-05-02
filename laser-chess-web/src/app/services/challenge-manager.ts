@@ -33,7 +33,7 @@ export class ChallengeManager {
     this.gameState.miAvatar.set(this.userRepo.getAvatar() || 1);
 
     this.gameState.nombreRival.set(reto.challenger_username);
-    const friend = this.friendService.getInfoFriend('pepe123')?.account_id;
+    const friend = this.friendService.getInfoFriend(reto.challenger_username)?.account_id;
     if(friend){
       const rivalProfile$ = this.userRepo.getAccount(friend);
       rivalProfile$.subscribe(profile => {
@@ -68,7 +68,7 @@ export class ChallengeManager {
     // Map selected board to backend Board_T numeric values
     const board = BOARD_TO_ID[tablero.toLocaleUpperCase()];
       
-
+    console.log('mi id es : ' +  this.userRepo.getId())
     var endpoint = '';
     var params;
     switch(tipoPartida){
@@ -104,6 +104,9 @@ export class ChallengeManager {
         if (id) {
           params = {
             username: username,
+            board,
+            starting_time: timeBase,
+            time_increment: increment,
             match_id: id
           };
         } else {

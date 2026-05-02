@@ -16,7 +16,7 @@ import { BoardState } from '../utils/board-state'
 })
 
 export class HistoryService {
-  private remoteService = inject(UserRespository);
+  private userRepo = inject(UserRespository);
 
   TipoPieza = TipoPieza; 
 
@@ -26,7 +26,7 @@ export class HistoryService {
 
   columnas = 10;
   filas = 8;
-  id = this.remoteService.getId();
+  id = this.userRepo.getId();
 
   popUpLimites = signal(false);
   popUpMensaje = signal('');  
@@ -49,7 +49,8 @@ export class HistoryService {
   movimientos : string[] = [];
   capturas: PiezaData[] = [];
 
-  
+  miAvatar = signal(1);
+  rivalAvatar = signal(1);
    
 
   historySelectedGame = signal<GameResume> (null as unknown as GameResume);
@@ -73,25 +74,27 @@ export class HistoryService {
     if(this.historySelectedGame()?.p1_id == this.id){
       this.soyAzul.set(false);
       this.esMiTurno.set(true);
-      const rivalProfile$ = this.remoteService.getAccount(this.historySelectedGame()?.p2_id);
+      const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p2_id);
       rivalProfile$.subscribe(profile => {
         this.nombreRival.set(profile.username);
+        this.rivalAvatar.set(profile.avatar);
       });
     }else{
       this.soyAzul.set(true);
       this.esMiTurno.set(false);
-      const rivalProfile$ = this.remoteService.getAccount(this.historySelectedGame()?.p1_id);
+      const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p1_id);
       rivalProfile$.subscribe(profile => {
         this.nombreRival.set(profile.username);
+        this.rivalAvatar.set(profile.avatar);
       });
     }
 
+    
+
     this.miTiempo.set(this.historySelectedGame()?.time_base || 0);
     this.tiempoRival.set(this.historySelectedGame()?.time_base || 0);
-    var userProfile$ = this.remoteService.getOwnAccount();
-    userProfile$.subscribe(profile => {
-      this.miNombre.set(profile.username);
-    });
+    this.miNombre.set(this.userRepo.getUsername() || 'Yo');
+    
   }
 
   
