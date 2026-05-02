@@ -1,17 +1,200 @@
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+
+.page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Evita el scroll que mencionas */
+  position: relative;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background-image: url(../../../../public/assets/vector-art/Backgrounds/Soretro/BG-soretro.svg);
+  background-size: 960px;
+  background-repeat: repeat;
+  animation: moveBackground 30s linear infinite;
+  filter: blur(4px);
+}
+
+@keyframes moveBackground {
+  0% { background-position: 0 0; }
+  100% { background-position: 960px 540px; }
+}
+
+.game-layout {
+  flex: 1; 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
+
+.game-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem; 
+  width: 100%;
+  max-width: 1400px; 
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+
+.side-panel {
+  width: 180px;
+  display: flex;
+  justify-content: center;
+}
+
+.player_card {
+  background: var(--S1);
+  color: white;
+  padding: 1.2rem;
+  border-radius: 1.5rem;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  border: 2px solid #312e4d; /* Borde oscuro como el de los botones */
+}
+
+.avatar-circle {
+  width: 75px;
+  height: 75px;
+  background: #2a2a40;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem auto;
+  font-size: 2.2rem;
+  border: 4px solid;
+}
+
+.blue { border-color: var(--LCBlue); color: var(--LCBlue); }
+.red { border-color: var(--LCRed); color: var(--LCRed); }
+
+.timer {
+  font-family: 'Courier New', monospace;
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+
+/* --- BOTONES: CLONES DE IMAGE.PNG --- */
+.controls {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem;
+}
+
+.controls button {
+  width: 52px;
+  height: 48px;
+  background-color: var(--S1);
+  color: white;
+  border: 2px solid #312e4d; /* Borde lila oscuro idéntico a la foto */
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.controls button span {
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.controls button:hover {
+  border-color: var(--LCBlue);
+  background: #252538;
+}
+
+/* --- RESPONSIVE ADAPTATION --- */
+@media (max-width: 1100px) {
+  .game-container {
+    gap: 1rem; /* Aún más cerca en pantallas medianas */
+  }
+}
+
+@media (max-width: 992px) {
+  .game-layout {
+    overflow-y: auto; /* Aquí sí permitimos scroll si no cabe en vertical */
+  }
+  .game-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .player_card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 280px;
+    padding: 0.5rem 1rem;
+  }
+  .avatar-circle { margin: 0; width: 45px; height: 45px; font-size: 1.2rem; }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85); /* Más oscuro para resaltar el pop-up */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Por encima de todo */
+  backdrop-filter: blur(5px); /* Efecto cristal de fondo */
+}
+
+
 .popup-error {
-  background: white;
-  color: black;
-  padding: clamp(1rem, 3vw, 1.5rem);
-  border-radius: 0.75rem;
-  width: clamp(18rem, 90vw, 30rem);
+  background: var(--S1);
+  color: white;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  width: clamp(280px, 90%, 400px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;          
+  
+  text-align: center;
+  border: 2px solid #312e4d;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  animation: scaleIn 0.3s ease-out;
+}
+
+.btn-close {
+  background: var(--LCBlue, #3b82f6);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content; 
+}
+
+.btn-close:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }

@@ -288,6 +288,7 @@ export class Social  {
         };
         this.friendToChallenge = rival;
         console.log('Nombre del rival obtenido:', rivalUsername);
+        console.log(gameId);
         this.sendChallenge(gameId); // Iniciar la partida con el ID específico
       },
 
@@ -523,6 +524,7 @@ export class Social  {
   sendChallenge( id: number | null): void {
     if (!this.friendToChallenge) return;
     const { startingTime, timeIncrement } = this.getChallengeParams();
+    console.log('El id de la partida es ' + id);
     this.challengeManager.sendChallenge(this.selectedBoard(), startingTime, timeIncrement, 'private', null, id, this.friendToChallenge.username);
     
 

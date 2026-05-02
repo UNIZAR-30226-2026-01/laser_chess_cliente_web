@@ -34,6 +34,9 @@ export class History {
   nombreRival = this.historyState.nombreRival;
   miNombre = this.historyState.miNombre;
 
+  miAvatar = this.historyState.miAvatar;
+  rivalAvatar = this.historyState.rivalAvatar;
+
   
   
   ngOnInit(){

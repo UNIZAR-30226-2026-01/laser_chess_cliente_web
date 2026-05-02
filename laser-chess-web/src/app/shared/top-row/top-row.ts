@@ -43,7 +43,8 @@ export class TopRow implements OnInit {
 
       this.userProfile$ = this.remote.getOwnAccount();
       this.userProfile$.subscribe(profile => {
-        this.avatar.set(profile.avatar);
+        const cAvatar = profile.avatar - 9;
+        this.avatar.set(cAvatar);
     });
   }
 

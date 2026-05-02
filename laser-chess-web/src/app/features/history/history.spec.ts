@@ -19,7 +19,8 @@ describe('History', () => {
     const userRepoMock = {
       getOwnAccount: vi.fn().mockReturnValue(of({ id: '1', username: 'test' })),
       getXpInfo: vi.fn().mockReturnValue(of({ level: 5, currentXp: 100, neededXp: 200 })),
-      getAllRatings: vi.fn().mockReturnValue(of([]))
+      getAllRatings: vi.fn().mockReturnValue(of([])),
+      getAvatar: vi.fn()
     };
 
     const timerMock = {
@@ -42,6 +43,9 @@ describe('History', () => {
       retroceder: vi.fn(),
       popUpLimites: signal(false),
       popUpMensaje: signal(''),
+      miAvatar: signal(1),
+      rivalAvatar: signal(1)
+
     };
 
     const remoteMock = {

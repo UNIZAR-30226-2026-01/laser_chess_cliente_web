@@ -1,5 +1,5 @@
 export interface GameResume {
-	id: number
+	match_id: number
 	p1_id: number
 	p2_id: number
   p1_username: string
