@@ -99,7 +99,6 @@ export class Home {
     this.getEloProgress();
     this.notificationService.wakeHome$.subscribe(() => {
         this.loadRequest();
-        this.popUPNotis.set(true);
     });
     this.cargarTablero();
 
