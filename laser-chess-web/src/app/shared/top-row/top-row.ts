@@ -42,10 +42,12 @@ export class TopRow implements OnInit {
     console.log("Get account");
 
       this.userProfile$ = this.remote.getOwnAccount();
+
       this.userProfile$.subscribe(profile => {
         const cAvatar = profile.avatar - 9;
         this.avatar.set(cAvatar);
     });
+
   }
 
   loadXpData() {

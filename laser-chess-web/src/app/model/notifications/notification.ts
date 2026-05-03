@@ -72,14 +72,17 @@ export class NotificationService {
     case 'FriendRequest':
       const username = typeof event.data === 'string' ? event.data : event.data?.username || 'alguien';
       this.showWebNotification('Nueva solicitud de amistad', `Has recibido una solicitud de ${username}`,{ type: 'friend_request', username });
+      this.wakeSocialSubject.next();
       break;
     case 'Challenge':
       const challenger = typeof event.data === 'string' ? event.data : event.data?.challenger || 'alguien';
       this.showWebNotification('Invitación de partida', `${challenger} te ha retado a una partida`, { type: 'challenge', challenger });
+      this.wakeHomeSubject.next();
       break;
     case 'NewFriend': 
       const friendName = typeof event.data === 'string' ? event.data : event.data?.username || 'alguien';
       this.showWebNotification('¡Nuevo amigo!', `Ahora eres amigo de ${friendName}`, { type: 'friend_accepted', username: friendName });
+      this.wakeSocialSubject.next();
       break;
     default:
       if (event.eventType === 'Notification') {
@@ -111,17 +114,14 @@ export class NotificationService {
         window.focus();
 
         if (data?.type === 'friend_request') {
-          this.wakeSocialSubject.next();
           this.router.navigate(['/social']);
         }
 
         if (data?.type === 'challenge') {
-          this.wakeHomeSubject.next();
           this.router.navigate(['/home']);
         }
 
         if (data?.type === 'friend_accepted') {
-          this.wakeSocialSubject.next();
           this.router.navigate(['/social']);
         }
 

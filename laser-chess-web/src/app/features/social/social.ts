@@ -131,9 +131,10 @@ export class Social  {
     this.loadSentRequests();
     this.loadGames();
     this.notificationService.wakeSocial$.subscribe(() => {
-      this.loadFriends();
+      
       this.loadRequests();
       this.loadSentRequests();
+      this.loadFriends();
     });
 
     this.websocket.connectionClosed$.subscribe(() => {
