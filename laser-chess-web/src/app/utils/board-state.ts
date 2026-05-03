@@ -18,8 +18,10 @@ export class BoardState {
   userRepo = inject(UserRespository);
 
   //Hay que mirar esto bien
-  skinUsario = signal(2);//signal(this.userRepo.getPieceSkin() ?? 0);
+  skinUsario = signal(0);//signal(this.userRepo.getPieceSkin() ?? 0);
   skinRival = signal(0);
+
+  boardBackgroundUrl = signal<string>('assets/vector-art/Backgrounds/Classic/BG-classic.svg');
 
 
   iniciarTablero(board: string) : PiezaData[] {
@@ -40,4 +42,38 @@ export class BoardState {
         }
 
   }
+
+  setPieceSkinFromItemId(itemId: number) {
+  const map: Record<number, number> = {
+    1: 0,   
+    2: 2,   
+    3: 1    
+  };
+  const newSkin = map[itemId];
+  if (newSkin !== undefined && this.skinUsario() !== newSkin) {
+    this.skinUsario.set(newSkin);
+    this.refreshBoard();
+  }
+}
+
+private refreshBoard() {
+  const boardName = this.currentBoard(); 
+  const nuevasPiezas = this.iniciarTablero(boardName);
+  this.listaPiezas.set(nuevasPiezas);
+}
+
+
+ private boardSkinMap: Record<number, string> = {
+    4: 'assets/vector-art/Backgrounds/Classic/BG-classic.svg',
+    5: 'assets/vector-art/Backgrounds/Soretro/BG-soretro.svg',
+    6: 'assets/vector-art/Backgrounds/Cats/BG-cats.svg'
+  };
+
+  setBoardSkinFromItemId(itemId: number) {
+    const newUrl = this.boardSkinMap[itemId];
+    if (newUrl && this.boardBackgroundUrl() !== newUrl) {
+      this.boardBackgroundUrl.set(newUrl);
+    }
+  }
+
 }
