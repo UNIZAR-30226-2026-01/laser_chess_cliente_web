@@ -1,8 +1,10 @@
-<div class="board">
+<div class="board"
+     [style.--rune-azul]="getRuneUrl('B')"
+     [style.--rune-rojo]="getRuneUrl('R')">
   @for (y of [].constructor(filas); let row = $index; track row) {
     @for (x of [].constructor(columnas); let col = $index; track col) {
 
-      <div 
+      <div
         class="cell"
         [class.azul]="isCasillaRestringida(col+1, row+1) === 'azul'"
         [class.rojo]="isCasillaRestringida(col+1, row+1) === 'rojo'"
@@ -15,10 +17,10 @@
 
   @for (p of piezas(); track p.id) {
     @if (p.esMia) {
-      <app-pieza 
+      <app-pieza
         #piezaRef
-        [initialX]="p.x" 
-        [initialY]="p.y" 
+        [initialX]="p.x"
+        [initialY]="p.y"
         [rotationInput]="p.rotation"
         [cols]="columnas"
         [rows]="filas"
@@ -31,8 +33,8 @@
       </app-pieza>
 
     } @else {
-      <app-pieza-rival 
-        [x]="p.x" 
+      <app-pieza-rival
+        [x]="p.x"
         [y]="p.y"
         [tipoPieza]="p.tipoPieza"
         [rotationInput]="p.rotation">

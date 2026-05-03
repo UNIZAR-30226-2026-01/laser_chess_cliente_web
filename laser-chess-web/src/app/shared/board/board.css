@@ -25,6 +25,7 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+  position: relative;
 }
 
 /* Default light squares use S3 */
@@ -46,11 +47,27 @@
   background-color: var(--S1);
 }
 
-/* Restricted overlays keep their tint on top */
-.cell.azul {
-  background-color: rgba(0, 0, 255, 0.2);
+.cell.azul::after,
+.cell.rojo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 80%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  opacity: 0.3;
+
+  pointer-events: none;
 }
 
-.cell.rojo {
-  background-color: rgba(255, 0, 0, 0.2);
+.cell.azul::after {
+  background-image: var(--rune-azul);
+}
+
+.cell.rojo::after {
+  background-image: var(--rune-rojo);
 }
