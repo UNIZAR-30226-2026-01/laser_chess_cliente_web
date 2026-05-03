@@ -1,3 +1,7 @@
+<div class="animated-bg"
+     [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
+</div>
+
 <div class="page">
   <app-top-row></app-top-row>
 
@@ -12,7 +16,7 @@
   <div class="game-layout">
     <!-- Contenedor que agrupa jugadores y tablero -->
     <div class="game-container">
-      
+
       <!-- JUGADOR IZQUIERDA -->
       <aside class="side-panel">
         <div class="player_card my-user">

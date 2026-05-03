@@ -95,7 +95,7 @@
 .customize-panel {
   flex: 1;
   min-width: 300px;
-  max-height: 80vh;    
+  max-height: 80vh;
   overflow-y: auto;
   padding-right: 0.5rem;
 }
@@ -110,24 +110,6 @@
   gap: 1rem;
 }
 
-
-.customize-bg {
-  position: fixed;
-  top: -20px;
-  left: -20px;
-  right: -20px;
-  bottom: -20px;
-  background-size: 960px;
-  background-repeat: repeat;
-  animation: moveBackground 30s linear infinite;
-  filter: blur(4px);
-  z-index: -1;
-}
-
-@keyframes moveBackground {
-  0% { background-position: 0 0; }
-  100% { background-position: 960px 540px; }
-}
 
 
 .customize-layout {

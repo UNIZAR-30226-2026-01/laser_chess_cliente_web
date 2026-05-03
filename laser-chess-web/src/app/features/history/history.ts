@@ -5,6 +5,7 @@ import { Board } from '../../shared/board/board';
 import { GameLogicService } from '../../services/game-logic-service';
 import { HistoryService } from '../../services/history-service';
 import { GameUtils } from '../../utils/game-utils';
+import { BoardState } from '../../utils/board-state';
 
 @Component({
   selector: 'app-history',
@@ -13,15 +14,16 @@ import { GameUtils } from '../../utils/game-utils';
   styleUrl: './history.css',
 })
 export class History {
-  
+  boardState = inject(BoardState);
+
   timerService = inject(TimerService);
-  
+
 
   gameService = inject(GameLogicService);
   historyState = inject(HistoryService);
   gameUtils = inject(GameUtils);
-  
-  
+
+
   columnas = 10;
   filas = 8;
   listaPiezas = this.historyState.listaPiezas;
@@ -37,14 +39,14 @@ export class History {
   miAvatar = this.historyState.miAvatar;
   rivalAvatar = this.historyState.rivalAvatar;
 
-  
-  
+
+
   ngOnInit(){
     const saved = localStorage.getItem('historyGame');
     if (saved) {
       this.historyState.historySelectedGame.set(JSON.parse(saved));
     }
-    
+
     this.historyState.inicializarTablero();
   }
   siguiente(){

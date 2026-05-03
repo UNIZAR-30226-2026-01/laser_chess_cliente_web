@@ -5,6 +5,7 @@ import { TopRow } from "../../shared/top-row/top-row";
 import { HistoryService } from '../../services/history-service';
 import { Router } from '@angular/router';
 import { UserRespository } from '../../repository/user-respository';
+import { BoardState } from '../../utils/board-state';
 
 
 @Component({
@@ -22,10 +23,11 @@ export class HistoryHall {
   partidas = signal<GameResume[]> ([]);
   infoCargada = signal(false);
   usernames = signal<Record<number, string>>({});
+  boardState = inject(BoardState);
 
   ngOnInit() {
     this.cargarPartidas();
-    
+
   }
 
   // Método para cargar las partidas desde el repositorio
@@ -41,7 +43,7 @@ export class HistoryHall {
         console.error('Error al cargar partidas:', error);
       }
     });
-  
+
   }
 
   cargarUsernames() {

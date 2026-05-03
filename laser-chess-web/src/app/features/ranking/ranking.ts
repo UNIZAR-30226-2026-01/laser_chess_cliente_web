@@ -15,6 +15,7 @@ import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { Remote } from '../../model/remote/remote';
 
+import { BoardState } from '../../utils/board-state';
 
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
 import { GameState } from '../../utils/game-state'
@@ -64,6 +65,7 @@ export class Ranking implements OnInit {
   public friends = signal<FriendSummary[]>([]);
   public sentRequests = signal<FriendSummary[]>([]);
 
+  boardState = inject(BoardState);
 
 
   //PARA LA CONFIGURACION DE LA PARTIDA

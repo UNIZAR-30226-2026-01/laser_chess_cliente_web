@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ShopRepository, ShopItemDisplay } from '../../repository/shop-repository';
 import { Remote } from '../../model/remote/remote';
 import { AccountResponse } from '../../model/auth/AccountResponse';
+import { BoardState } from '../../utils/board-state';
 
 interface ShopSection {
   title: string;
@@ -18,6 +19,8 @@ interface ShopSection {
 export class Shop implements OnInit {
   private shopRepo = inject(ShopRepository);
   private remote = inject(Remote);
+
+  boardState = inject(BoardState);
 
   items = signal<ShopItemDisplay[]>([]);
   userMoney = signal<number>(0);
@@ -41,7 +44,7 @@ export class Shop implements OnInit {
     // Cargar datos del usuario, un dia mas
     this.loadUserData();
   }
-  
+
 
   private loadUserData(): void {
     // Cargar

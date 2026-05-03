@@ -1,3 +1,7 @@
+<div class="animated-bg"
+     [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
+</div>
+
 <app-top-row></app-top-row>
 <ul class="game-list">
           @if (!infoCargada()){
@@ -22,7 +26,7 @@
                   <button class="btn-play" (click)="visualidaPartida(game)">VISUALIZAR</button>
               </li>
             }
-          
-          
+
+
         }
         </ul>

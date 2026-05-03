@@ -1,3 +1,7 @@
+<div class="animated-bg"
+     [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
+</div>
+
 <div class="shop-container">
 
   @for (section of sections(); track section.title) {
@@ -6,7 +10,7 @@
       <div class="items-grid">
         @for (item of section.items; track item.id) {
           <div class="shop-card" [class.owned]="item.owned">
-            
+
             <div class="icon">
               <img [src]="item.icon" alt="{{ item.name }}">
             </div>

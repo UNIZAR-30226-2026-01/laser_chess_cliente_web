@@ -11,6 +11,7 @@ import { Board } from '../../shared/board/board';
 import { TimerService } from '../../services/timer-service';
 import { GameLogicService } from '../../services/game-logic-service';
 import { GameUtils } from '../../utils/game-utils';
+import { BoardState } from '../../utils/board-state';
 
 
 @Component({
@@ -29,10 +30,12 @@ export class Game implements OnInit {
   // Inyectamos el servicio de Websocket
   private wsService = inject(Websocket);
   private remoteService = inject(Remote);
+  private wsSubscription?: Subscription;
+
   timerService = inject(TimerService);
   gameService = inject(GameLogicService);
   gameUtils = inject(GameUtils);
-  private wsSubscription?: Subscription;
+  boardState = inject(BoardState);
 
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
 

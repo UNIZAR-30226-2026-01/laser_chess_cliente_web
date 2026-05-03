@@ -4,6 +4,7 @@ import { TopRow } from '../../shared/top-row/top-row';
 import { UserRespository } from '../../repository/user-respository';
 import { AuthRepository } from '../../repository/auth-repository';
 import { passwordMatchValidator } from '../signin/signin';
+import { BoardState } from '../../utils/board-state';
 
 @Component({
   selector: 'app-settings',
@@ -32,6 +33,8 @@ export class Settings implements OnInit {
   notificationsEnabled = signal(this.repo.getNotificationEnabled());
 
   formSubmitted = signal(false);
+
+  boardState = inject(BoardState);
 
   ngOnInit() {
     // Cargar email actual

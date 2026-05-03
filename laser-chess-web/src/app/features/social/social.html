@@ -1,3 +1,7 @@
+<div class="animated-bg"
+     [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
+</div>
+
 <div class="page">
 
   <app-top-row></app-top-row>
@@ -88,7 +92,7 @@
       <div class="social-top-actions">
         <button class="friend-request-button" (click)="openRequestPopup()">
           <div class="left">
-            <mat-icon fontSet="material-symbols-outlined">all_inbox</mat-icon>
+            <mat-icon fontSet="material-symbols-outlined">mail</mat-icon>
             <span class="request-text">Solicitudes de amistad</span>
           </div>
           <div class="right">

@@ -17,6 +17,7 @@ import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
 import { ChallengeManager } from '../../services/challenge-manager';
+import { BoardState } from '../../utils/board-state';
 
 import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
 
@@ -31,6 +32,8 @@ import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo carg
 
 
 export class Social  {
+  boardState = inject(BoardState);
+
   username = 'User';
   pictureURL = '/assets/picture.jpeg';
   timeModeLabel = 'Modo de tiempo';
@@ -55,7 +58,7 @@ export class Social  {
   private userService = inject(UserRespository);
   private gameState = inject(GameState);
   gameRepo = inject(GameRepository);
-  
+
   public friendsInfo = signal(false);
   public gameInfo = signal(false);
   public requestInfo = signal(false);
@@ -120,7 +123,7 @@ export class Social  {
   constructor(private notificationService: NotificationService) {}
 
 
-  
+
 
   ngOnInit(): void {
     this.loadFriends();
@@ -526,7 +529,7 @@ export class Social  {
     const { startingTime, timeIncrement } = this.getChallengeParams();
     console.log('El id de la partida es ' + id);
     this.challengeManager.sendChallenge(this.selectedBoard(), startingTime, timeIncrement, 'private', null, id, this.friendToChallenge.username);
-    
+
 
     this.closeConfigPopup();
     this.popUP_waiting.set(true);
