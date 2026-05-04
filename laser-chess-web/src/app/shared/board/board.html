@@ -43,7 +43,9 @@
   }
 
   @if (laserPath().length > 0) {
-    <app-laser [path]="laserPath()"></app-laser>
+    @if (laserPath().length > 0) {
+  <app-laser [path]="laserPath()" [color]="this.boardState.laserColor()" [static]="laserStatic"></app-laser>
+}
   }
 </div>
 

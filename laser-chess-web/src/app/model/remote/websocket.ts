@@ -26,7 +26,7 @@ export class Websocket {
 
   private mode: 'lobby' | 'game' = 'lobby';
 
-  public gameMessages$ = new ReplaySubject<any>(1);
+  public gameMessages$ = new ReplaySubject<any>(10);
   public lobbyEvents$ = new Subject<any>();
   public navigation$ = new Subject<string>();
 
@@ -39,7 +39,7 @@ export class Websocket {
     }
 
     this.mode = 'lobby';
-    this.gameMessages$ = new ReplaySubject<any>(1);
+    this.gameMessages$ = new ReplaySubject<any>(10);
 
     const token = this.remote.getAccessToken();
     const searchParams = new URLSearchParams(params);
@@ -76,7 +76,12 @@ export class Websocket {
   private handleMessage(msg: any) {
 
     if (this.mode === 'lobby') {
-
+      console.log('LOBBY MSG:', msg.Type, msg.Content);
+       if (msg.Type === 'MatchStart') {
+        // Guardarlo en gameMessages$ para que game lo reciba al suscribirse
+        this.gameMessages$.next(msg);
+        return;
+      }
       if (msg.Type === 'InitialState') {
         console.log('Pasando a GAME');
 

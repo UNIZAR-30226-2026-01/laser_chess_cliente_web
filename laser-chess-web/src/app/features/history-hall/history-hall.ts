@@ -25,7 +25,6 @@ export class HistoryHall {
   infoCargada = signal(false);
   users = signal<Record<number, MyProfile>>({});
   boardState = inject(BoardState);
-  opponentId = 0;
 
   ngOnInit() {
     this.cargarPartidas();
@@ -49,37 +48,34 @@ export class HistoryHall {
   }
 
   cargarUsernames() {
-  const myId = this.userRepo.getId();
+    const myId = this.userRepo.getId();
+    const idsToLoad = new Set<number>();
 
-  this.partidas().forEach(game => {
-
-    this.opponentId =
-      game.p1_id === myId ? game.p2_id : game.p1_id;
-
-    // si ya lo tienes, no vuelvas a pedirlo
-    if (this.users()[this.opponentId]) return;
-
-    this.userRepo.getAccount(this.opponentId).subscribe(profile => {
-      this.users.update(u => ({
-        ...u,
-        [this.opponentId]: profile
-      }));
+    // Recoger todos los IDs únicos
+    this.partidas().forEach(game => {
+      idsToLoad.add(game.p1_id);
+      idsToLoad.add(game.p2_id);
     });
-    this.userRepo.getOwnAccount().subscribe(profile => {
-      this.users.update(u => ({
-        ...u,
-        [myId || 0]: profile
-      }));
-    });
-    
 
-  });
-}
+    // Cargar cada uno una sola vez
+    idsToLoad.forEach(id => {
+      if (this.users()[id]) return;
+
+      this.userRepo.getAccount(id).subscribe(profile => {
+        this.users.update(u => ({ ...u, [id]: profile }));
+      });
+    });
+  }
 
   visualidaPartida(partida: GameResume) {
+
     this.historyService.historySelectedGame.set(partida);
-    
-    this.userRepo.getAccount(this.opponentId).subscribe(profile => {
+    const myId = this.userRepo.getId();
+    var oponente = partida.p1_id;
+    if(myId === partida.p1_id){
+      oponente = partida.p2_id;
+    }
+    this.userRepo.getAccount(oponente).subscribe(profile => {
       this.historyService.rivalAvatar.set(profile.avatar || 1);
       this.boardState.skinRival.set(profile.piece_skin || 1);
     });

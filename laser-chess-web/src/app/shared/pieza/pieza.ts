@@ -58,10 +58,14 @@ export class Pieza implements OnInit, OnChanges{
 
         }
         console.log ("La pieza con la que quiero permutar es : " + pieza?.tipoPieza + " y es mia? " + pieza?.esMia);
-        if(casillaActual === 'azul' && !pieza?.esMia){
-          return false;
+        if(casillaActual === 'azul' && pieza){
+          if(!pieza?.esMia){
+            return true;
+          }else{
+            return false;
+          }
         }
-
+        
         return true;
 
     }else {

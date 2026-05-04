@@ -24,6 +24,7 @@ export class BoardState {
 
   skinUsario = signal<number>(0);
   skinRival = signal<number>(1);
+  laserColor = signal<'blue' | 'red'>('red');
 
   boardBackgroundUrl = signal<string>(
     'assets/vector-art/Backgrounds/Classic/BG-classic.svg'

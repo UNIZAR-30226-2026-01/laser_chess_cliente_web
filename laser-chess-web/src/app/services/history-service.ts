@@ -115,7 +115,6 @@ export class HistoryService {
     const match = action.match(moveRegex);
 
     if (!match) {
-      console.log("esto no funca");
       return;
     }
 
@@ -154,13 +153,13 @@ export class HistoryService {
        }
       }
     }
-    /*
+    
     const path = laser
         .split(',')
         .filter(c => c.length > 0)
         .map(c => this.gameUtils.fromChess(c,this.soyAzul()));
     this.dispararLaser(path);
-    */
+    
 
     // CAPTURA
     if (captura) {
@@ -213,7 +212,7 @@ export class HistoryService {
       this.boardState.iniciarTablero(this.historySelectedGame()?.board)
     );
 
-    this.esMiTurno.set(true); // o como corresponda
+    this.esMiTurno.set(!this.soyAzul()); 
     this.capturas = [];
 
     for (let i = 0; i < this.indiceMovimiento; i++) {
@@ -226,6 +225,7 @@ export class HistoryService {
     if (this.indiceMovimiento >= this.movimientos.length) {
       this.popUpLimites.set(true);
       this.popUpMensaje.set('Se ha alcanzado el final de partida');
+      this.indiceMovimiento--;
       return;
     }
     
@@ -309,9 +309,8 @@ export class HistoryService {
   }
 
   dispararLaser(path: {x: number, y: number}[]) {
+    this.boardState.laserColor.set(this.esMiTurno() ? 'blue' : 'red');
     this.laserPath.set(path);
-    // Limpiar el láser después de 2 segundos 
-    setTimeout(() => this.laserPath.set([]), 3000);
   }
 
   

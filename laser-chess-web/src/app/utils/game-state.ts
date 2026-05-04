@@ -9,7 +9,7 @@ import { PiezaData } from '../model/game/PiezaData';
 })
 
 export class GameState {
-  private remote = inject(UserRespository);
+  
 
   startingTime = signal<number>(0);
   increment = signal<number>(0);
@@ -34,6 +34,7 @@ export class GameState {
   estadoPausa = signal({ mostrar: false });
 
   finPartida = signal({ mostrar: false, mensaje: '' });
+  
   
 
 }

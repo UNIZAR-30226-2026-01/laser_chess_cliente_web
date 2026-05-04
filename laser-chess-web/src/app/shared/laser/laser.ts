@@ -27,6 +27,9 @@ function makeSegment(x1: number, y1: number, x2: number, y2: number) {
 })
 export class Laser implements OnChanges {
   @Input() path: { x: number, y: number }[] = [];
+  @Input() color: 'blue' | 'red' = 'red';
+  @Input() static: boolean = false;
+
   columnas = 10;
   filas = 8;
 
@@ -41,26 +44,46 @@ export class Laser implements OnChanges {
   
 
   updateSegments() {
-    const segs: any[] = [];
     if (!this.path || this.path.length < 2) {
       this.segments.set([]);
       return;
     }
 
-    const cellWidth = 100 / this.columnas;
-    const cellHeight = 100 / this.filas;
+    const cellWpct = 100 / this.columnas; // % ancho por celda
+    const cellHpct = 100 / this.filas;    // % alto por celda
 
+    // Tamaño real en px de cada celda (para calcular longitudes correctas)
+    const vmin = Math.min(window.innerWidth, window.innerHeight) / 100;
+    const boardWpx = 95 * vmin;
+    const boardHpx = 76 * vmin;
+    const cellWpx = boardWpx / this.columnas;
+    const cellHpx = boardHpx / this.filas;
+
+    const toCenter = (p: { x: number, y: number }) => ({
+      pctX: (p.x - 0.5) * cellWpct,  // posición en % para left/top
+      pctY: (p.y - 0.5) * cellHpct,
+      px: (p.x - 0.5) * cellWpx,     // posición en px para calcular longitud
+      py: (p.y - 0.5) * cellHpx,
+    });
+
+    const segs = [];
     for (let i = 0; i < this.path.length - 1; i++) {
-      const p1 = this.path[i];
-      const p2 = this.path[i + 1];
+      const p1 = toCenter(this.path[i]);
+      const p2 = toCenter(this.path[i + 1]);
 
-      const x1 = (p1.x - 0.5) * cellWidth;
-      const y1 = (p1.y - 0.5) * cellHeight;
+      const dxPx = p2.px - p1.px;
+      const dyPx = p2.py - p1.py;
 
-      const x2 = (p2.x - 0.5) * cellWidth;
-      const y2 = (p2.y - 0.5) * cellHeight;
+      // Longitud real en px → convertir a % del ancho para width
+      const lengthPx = Math.sqrt(dxPx * dxPx + dyPx * dyPx);
+      const widthPct = (lengthPx / boardWpx) * 100;
 
-      segs.push(makeSegment(x1, y1, x2, y2));
+      segs.push({
+        left: p1.pctX,
+        top: p1.pctY,
+        width: widthPct,
+        angle: Math.atan2(dyPx, dxPx) * (180 / Math.PI)
+      });
     }
 
     this.segments.set(segs);

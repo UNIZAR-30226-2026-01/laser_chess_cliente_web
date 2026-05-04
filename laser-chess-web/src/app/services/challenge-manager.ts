@@ -58,13 +58,7 @@ export class ChallengeManager {
 
   }
 
-  private startGame(endpoint: string, params: any) {
-    this.timerService.miTiempo.set(params.starting_time);
-    this.timerService.tiempoRival.set(params.starting_time);
-    this.gameState.permitSalida.set(false);
-
-    this.webSocket.initConnection(endpoint, params);
-  }
+  
 
   reject(reto: ChallengeResume) {
     const endpoint = 'challenge/reject';
@@ -82,6 +76,7 @@ export class ChallengeManager {
 
     // Map selected board to backend Board_T numeric values
     const board = BOARD_TO_ID[tablero.toLocaleUpperCase()];
+    var oponente = username;
       
     console.log('mi id es : ' +  this.userRepo.getId())
     var endpoint = '';
@@ -104,7 +99,7 @@ export class ChallengeManager {
             board,
             level: iaLevel 
           };
-          username = "IA";
+          oponente = "IA";
         break;
       case 'public':
         endpoint = 'matchmaking'
@@ -150,8 +145,18 @@ export class ChallengeManager {
 
     this.gameState.miNombre.set(this.userRepo.getUsername() || '');
     this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
-    if(username === "IA"){
 
+    if(oponente === "IA"){
+      const rivalProfile$ = this.userRepo.getOwnAccount();
+        rivalProfile$.subscribe(profile => {
+          this.gameState.avatarRival.set(profile.avatar || 1);
+          this.boardState.skinRival.set(profile.piece_skin || 1);
+          this.gameState.nombreRival.set('IA');
+          setTimeout(() => {
+            this.webSocket.initConnection(endpoint, params);
+          });
+          
+        });
     }
     else if(username){
       this.gameState.nombreRival.set(username);
@@ -172,7 +177,11 @@ export class ChallengeManager {
         this.webSocket.initConnection(endpoint, params);
       }
       
-    }
+    }else{
+        this.gameState.avatarRival.set(10); //Aplicamos skin por defecto
+        this.boardState.skinRival.set(1);
+        this.webSocket.initConnection(endpoint, params);
+      }
 
     
 

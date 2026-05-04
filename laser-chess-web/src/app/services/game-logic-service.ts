@@ -11,16 +11,17 @@ import { Subscription } from 'rxjs';
 import { GameState } from '../utils/game-state'
 import { TimerService } from './timer-service';
 import { GameUtils } from '../utils/game-utils';
+import { UserRespository } from '../repository/user-respository';
+import { BoardState } from '../utils/board-state';
 
 
-
-const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
-const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
+const LASER_DURATION_MS = 2000;
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameLogicService {
+  
   private wsService = inject(Websocket);
   private remoteService = inject(Remote);
   private timerService = inject(TimerService);
@@ -28,6 +29,8 @@ export class GameLogicService {
   private waitingForConfirmation = false;
   private router = inject(Router);
   private gameUtils = inject(GameUtils);
+  private userRepo = inject(UserRespository);
+  private boardState = inject(BoardState);
   
   TipoPieza = TipoPieza; 
 
@@ -86,13 +89,23 @@ export class GameLogicService {
     console.log("Contenido:", msg.Content);
 
     if (msg.Type === "MatchStart"){
-      console.log("Tu oponenete es " + msg.Content);
+      console.log("Tu oponenete es " + Number(msg.Content));
+      if(Number(msg.Content) != 1){ // Excluimos el caso de la IA
+        const rivalProfile$ = this.userRepo.getAccount(Number(msg.Content));
+          rivalProfile$.subscribe(profile => {
+            this.state.avatarRival.set(profile.avatar || 1);
+            this.boardState.skinRival.set(profile.piece_skin || 1);
+            this.state.nombreRival.set(profile.username);
+          });
+      }
+
 
     } else if (msg.Type === "InitialState" && this.aceptoInitial()){
       console.log("Procesando el estado inicial");
       const piezas = this.gameUtils.importarTablero(msg.Content);
       this.listaPiezas.set(piezas);
       this.state.cont.set(piezas.length);
+      console.log(Number(msg.Extra) + "   mi id es: " + this.id);
       
       if (Number(msg.Extra) !== this.id) {        
         this.soyAzul.set(true);
@@ -422,9 +435,15 @@ export class GameLogicService {
   }
 
   dispararLaser(path: {x: number, y: number}[]) {
+    const color = this.waitingForConfirmation ? 'blue' : 'red';
     this.laserPath.set(path);
-    // Limpiar el láser después de 2 segundos 
-    setTimeout(() => this.laserPath.set([]), 3000);
+    this.boardState.laserColor.set(color);
+    return new Promise<void>(resolve => 
+      setTimeout(() => {
+        this.laserPath.set([]);
+        resolve();
+      }, LASER_DURATION_MS)
+    );
   }
 
   ocupado(x: number, y: number): PiezaData | null {
