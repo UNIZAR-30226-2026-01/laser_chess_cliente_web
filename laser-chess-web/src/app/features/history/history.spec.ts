@@ -57,7 +57,8 @@ describe('History', () => {
     };
 
     const gameUtilsMock = {
-      isCasillaRestringida: vi.fn()
+      isCasillaRestringida: vi.fn(),
+      importarTablero: vi.fn()
     };
 
     await TestBed.configureTestingModule({

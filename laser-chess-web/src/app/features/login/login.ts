@@ -36,7 +36,6 @@ export class Login implements OnInit {
     // access_token valido, vamos directo al home
     const token = this.remote.getAccessToken();
     if (token && !this.remote.isTokenExpired(token)) {
-      
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
       this.router.navigateByUrl(this.returnUrl);
     } else {
@@ -44,7 +43,6 @@ export class Login implements OnInit {
       this.remote.autoLogin().subscribe({
         next: (authenticated) => {
           if (authenticated) {
-            
             this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
             this.router.navigateByUrl(this.returnUrl);
           }
@@ -88,7 +86,6 @@ export class Login implements OnInit {
       this.authService.login(request).subscribe((status) => {
       switch(status){  
         case ResponseStatus.SUCCESS:
-          const userId = this.remote.getAccountId();
           
           this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
           this.router.navigateByUrl(this.returnUrl);

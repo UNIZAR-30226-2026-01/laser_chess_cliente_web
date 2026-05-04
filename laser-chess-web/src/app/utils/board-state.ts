@@ -1,79 +1,115 @@
-import { Injectable, signal, inject} from '@angular/core';
-import { PiezaData } from '../model/game/PiezaData'
-import { GameUtils } from '../utils/game-utils'
-import { TABLERO_ACE, TABLERO_CURIOSITY, TABLERO_GRAIL, TABLERO_SOPHIE, TABLERO_MERCURY } from '../constants/boards';
-import { UserRespository } from '../repository/user-respository';
-
+import { Injectable, signal, inject, effect } from '@angular/core';
+import { PiezaData } from '../model/game/PiezaData';
+import { GameUtils } from '../utils/game-utils';
+import {
+  TABLERO_ACE,
+  TABLERO_CURIOSITY,
+  TABLERO_GRAIL,
+  TABLERO_SOPHIE,
+  TABLERO_MERCURY
+} from '../constants/boards';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoardState {
+
+  // ======================
+  // STATE
+  // ======================
   listaPiezas = signal<PiezaData[]>([]);
-  laserPath = signal<{x:number,y:number}[]>([]);
+  laserPath = signal<{ x: number; y: number }[]>([]);
 
-  currentBoard = signal('ACE');
+  currentBoard = signal<string>('ACE');
 
+  skinUsario = signal<number>(0);
+  skinRival = signal<number>(1);
+
+  boardBackgroundUrl = signal<string>(
+    'assets/vector-art/Backgrounds/Classic/BG-classic.svg'
+  );
+
+  // ======================
+  // DEPENDENCIAS
+  // ======================
   gameUtils = inject(GameUtils);
-  userRepo = inject(UserRespository);
 
-  //Hay que mirar esto bien
-  skinUsario = signal(0);//signal(this.userRepo.getPieceSkin() ?? 0);
-  skinRival = signal(0);
+  // ======================
+  // INIT REACTIVO
+  // ======================
+  constructor() {
+    effect(() => {
+      // dependencias reactivas
+      const board = this.currentBoard();
+      this.skinUsario();
+      this.skinRival();
 
-  boardBackgroundUrl = signal<string>('assets/vector-art/Backgrounds/Classic/BG-classic.svg');
-
-
-  iniciarTablero(board: string) : PiezaData[] {
-    switch (board){
-          case 'ACE':
-            return this.gameUtils.importarTablero(TABLERO_ACE);
-          case 'CURIOSITY':
-            return this.gameUtils.importarTablero(TABLERO_CURIOSITY);
-          case 'SOPHIE':
-            return this.gameUtils.importarTablero(TABLERO_SOPHIE);
-          case 'MERCURY':
-            return this.gameUtils.importarTablero(TABLERO_MERCURY);
-          case 'GRAIL': 
-            return this.gameUtils.importarTablero(TABLERO_GRAIL);
-          default:
-            return [];
-           
-        }
-
+      this.buildBoard(board);
+    });
   }
 
-  setPieceSkinFromItemId(itemId: number) {
-  const map: Record<number, number> = {
-    1: 0,   
-    2: 2,   
-    3: 1    
-  };
-  const newSkin = map[itemId];
-  if (newSkin !== undefined && this.skinUsario() !== newSkin) {
-    this.skinUsario.set(newSkin);
-    this.refreshBoard();
+  initSkins(mySkin: number, rivalSkin: number = 1) {
+    this.skinUsario.set(mySkin);
+    this.skinRival.set(rivalSkin);
   }
-}
 
-private refreshBoard() {
-  const boardName = this.currentBoard(); 
-  const nuevasPiezas = this.iniciarTablero(boardName);
-  this.listaPiezas.set(nuevasPiezas);
-}
+  // ======================
+  // CORE: construir tablero
+  // ======================
+  private buildBoard(board: string) {
+    const piezas = this.iniciarTablero(board);
+    this.listaPiezas.set(piezas);
+  }
 
-
- private boardSkinMap: Record<number, string> = {
-    4: 'assets/vector-art/Backgrounds/Classic/BG-classic.svg',
-    5: 'assets/vector-art/Backgrounds/Soretro/BG-soretro.svg',
-    6: 'assets/vector-art/Backgrounds/Cats/BG-cats.svg'
-  };
-
-  setBoardSkinFromItemId(itemId: number) {
-    const newUrl = this.boardSkinMap[itemId];
-    if (newUrl && this.boardBackgroundUrl() !== newUrl) {
-      this.boardBackgroundUrl.set(newUrl);
+  // ======================
+  // TABLEROS
+  // ======================
+  iniciarTablero(board: string): PiezaData[] {
+    switch (board) {
+      case 'ACE':
+        return this.gameUtils.importarTablero(TABLERO_ACE);
+      case 'CURIOSITY':
+        return this.gameUtils.importarTablero(TABLERO_CURIOSITY);
+      case 'SOPHIE':
+        return this.gameUtils.importarTablero(TABLERO_SOPHIE);
+      case 'MERCURY':
+        return this.gameUtils.importarTablero(TABLERO_MERCURY);
+      case 'GRAIL':
+        return this.gameUtils.importarTablero(TABLERO_GRAIL);
+      default:
+        return [];
     }
   }
 
+  // ======================
+  // SETTERS SIMPLES
+  // ======================
+  setPieceSkinFromItemId(itemId: number) {
+    if (itemId !== undefined) {
+      this.skinUsario.set(itemId);
+    }
+  }
+
+  setRivalSkin(itemId: number) {
+    if (itemId !== undefined) {
+      this.skinRival.set(itemId);
+    }
+  }
+
+  setBoard(board: string) {
+    this.currentBoard.set(board);
+  }
+
+  setBoardSkinFromItemId(itemId: number) {
+    const map: Record<number, string> = {
+      4: 'assets/vector-art/Backgrounds/Classic/BG-classic.svg',
+      5: 'assets/vector-art/Backgrounds/Soretro/BG-soretro.svg',
+      6: 'assets/vector-art/Backgrounds/Cats/BG-cats.svg'
+    };
+
+    const url = map[itemId];
+    if (url) {
+      this.boardBackgroundUrl.set(url);
+    }
+  }
 }

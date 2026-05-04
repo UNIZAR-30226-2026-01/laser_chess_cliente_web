@@ -154,7 +154,7 @@ export class UserRespository {
           avatar: acc.avatar ?? 0,
           money: acc.money ?? 0,
           board_skin: acc.board_skin ?? 0,
-          piece_skin: acc.piece_skin ?? 0,
+          piece_skin: acc.piece_skin ?? 1,
           win_animation: acc.win_animation ?? 0,
           rankedPoints: acc.rankedPoints ?? 0,
           blitzElo: undefined,
@@ -241,6 +241,7 @@ export class UserRespository {
       next: (httpResponse) => {
         if (httpResponse && httpResponse.body) {
           console.log('Perfil actualizado con éxito');
+          this.getOwnAccount();
 
         } else {
           console.log('Update failed: No response body');
@@ -251,6 +252,7 @@ export class UserRespository {
           console.log('Update failed: No response body');
       }
     });
+    console.log("mi skin es : " + this.userProfile?.board_skin);
 
 
   }

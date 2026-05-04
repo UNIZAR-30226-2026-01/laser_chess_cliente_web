@@ -6,6 +6,7 @@ import  { GameState } from '../utils/game-state'
 import { Websocket } from '../model/remote/websocket';
 import { FriendRespository } from '../repository/friend-respository';
 import { BOARD_TO_ID } from '../constants/boards'
+import { BoardState } from '../utils/board-state';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class ChallengeManager {
 
   timerService = inject(TimerService);
   gameState = inject(GameState);
+  boardState = inject(BoardState)
   userRepo = inject(UserRespository);
   webSocket = inject(Websocket);
   friendService = inject(FriendRespository);
@@ -30,25 +32,38 @@ export class ChallengeManager {
     this.timerService.tiempoRival.set(reto.starting_time);
 
     this.gameState.miNombre.set(this.userRepo.getUsername() || '');
-    this.gameState.miAvatar.set(this.userRepo.getAvatar() || 1);
+    this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
 
-    this.gameState.nombreRival.set(reto.challenger_username);
-    const friend = this.friendService.getInfoFriend(reto.challenger_username)?.account_id;
-    if(friend){
-      const rivalProfile$ = this.userRepo.getAccount(friend);
-      rivalProfile$.subscribe(profile => {
-        this.gameState.avatarRival.set(profile.avatar || 1);
-      });
-    }else{
-      this.gameState.avatarRival.set(1); //Aplicamos skin por defecto
-    }
     this.gameState.tipoPartida.set('private');
     this.gameState.permitSalida.set(false);
 
-    console.log('Jugadores: ' + this.gameState.miNombre() + ' vs ' + this.gameState.nombreRival());
+    this.gameState.nombreRival.set(reto.challenger_username);
+    const friend = this.friendService.getInfoFriend(reto.challenger_username)?.account_id;
+    if (!friend) {
+      this.gameState.avatarRival.set(10);
+      this.boardState.skinRival.set(1);
+
+      this.webSocket.initConnection(endpoint, params);
+      return;
+    }
+
+  this.userRepo.getAccount(friend).subscribe(profile => {
+    this.gameState.avatarRival.set(profile.avatar || 1);
+    this.boardState.skinRival.set(profile.piece_skin || 1);
+
     this.webSocket.initConnection(endpoint, params);
+  });
+    
     
 
+  }
+
+  private startGame(endpoint: string, params: any) {
+    this.timerService.miTiempo.set(params.starting_time);
+    this.timerService.tiempoRival.set(params.starting_time);
+    this.gameState.permitSalida.set(false);
+
+    this.webSocket.initConnection(endpoint, params);
   }
 
   reject(reto: ChallengeResume) {
@@ -70,11 +85,11 @@ export class ChallengeManager {
       
     console.log('mi id es : ' +  this.userRepo.getId())
     var endpoint = '';
-    var params;
+    var params_ini;
     switch(tipoPartida){
       case 'ranked':
         endpoint = 'matchmaking'
-        params = {
+        params_ini = {
             time_base: timeBase,
             time_increment: increment,
             board,
@@ -83,16 +98,17 @@ export class ChallengeManager {
         break;
       case 'ia':
         endpoint = 'bot'
-        params = {
+        params_ini = {
             starting_time: timeBase,
             time_increment: increment,
             board,
             level: iaLevel 
           };
+          username = "IA";
         break;
       case 'public':
         endpoint = 'matchmaking'
-        params = {
+        params_ini = {
             board,
             time_base: timeBase,
             time_increment: increment,
@@ -102,7 +118,7 @@ export class ChallengeManager {
       case 'private':
         endpoint = 'challenge';
         if (id) {
-          params = {
+          params_ini = {
             username: username,
             board,
             starting_time: timeBase,
@@ -110,7 +126,7 @@ export class ChallengeManager {
             match_id: id
           };
         } else {
-          params = {
+          params_ini = {
             username: username,
             board,
             starting_time: timeBase,
@@ -125,11 +141,40 @@ export class ChallengeManager {
 
 
     }
+    const params = params_ini;
     this.timerService.miTiempo.set(timeBase * 1000);
     this.timerService.tiempoRival.set(timeBase * 1000);
     this.gameState.permitSalida.set(false);
 
-    this.webSocket.initConnection(endpoint, params);
+
+
+    this.gameState.miNombre.set(this.userRepo.getUsername() || '');
+    this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
+    if(username === "IA"){
+
+    }
+    else if(username){
+      this.gameState.nombreRival.set(username);
+      const friend = this.friendService.getInfoFriend(username)?.account_id;
+      if(friend){
+        const rivalProfile$ = this.userRepo.getAccount(friend);
+        rivalProfile$.subscribe(profile => {
+          this.gameState.avatarRival.set(profile.avatar || 1);
+          this.boardState.skinRival.set(profile.piece_skin || 1);
+          setTimeout(() => {
+            this.webSocket.initConnection(endpoint, params);
+          });
+          
+        });
+      }else{
+        this.gameState.avatarRival.set(10); //Aplicamos skin por defecto
+        this.boardState.skinRival.set(1);
+        this.webSocket.initConnection(endpoint, params);
+      }
+      
+    }
+
+    
 
 
   }

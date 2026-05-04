@@ -4,6 +4,8 @@ import { ShopRepository, ShopItemDisplay } from '../../repository/shop-repositor
 import { Remote } from '../../model/remote/remote';
 import { AccountResponse } from '../../model/auth/AccountResponse';
 import { BoardState } from '../../utils/board-state';
+import { TopRow } from '../../shared/top-row/top-row';
+
 
 interface ShopSection {
   title: string;
@@ -12,7 +14,7 @@ interface ShopSection {
 
 @Component({
   selector: 'app-shop',
-  imports: [CommonModule],
+  imports: [CommonModule, TopRow],
   templateUrl: './shop.html',
   styleUrls: ['./shop.css']
 })

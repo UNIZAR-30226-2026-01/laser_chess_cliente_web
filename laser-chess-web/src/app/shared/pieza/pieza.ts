@@ -40,7 +40,7 @@ export class Pieza implements OnInit, OnChanges{
   // Indica si los spots deben mostrarse
   showSpots = signal(false);
 
-  skin = signal (this.boardState.skinUsario()); // Se podría crear como input
+  skin = this.boardState.skinUsario; 
 
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
@@ -101,22 +101,13 @@ export class Pieza implements OnInit, OnChanges{
 
   actualizarInterfaz() {
     switch(this.skin()){
-      case 0:
+      case 1:
         switch(this.tipoPieza()) {
             case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Classic/DEF-B-Classic.svg"; break;
             case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Classic/ESC-B-Classic.svg";    break;
             case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Classic/LAS-B-Classic.svg";    break;
             case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Classic/KIN-B-Classic.svg";      break;
             case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Classic/SWI-B-Classic.svg";    break;
-          }
-        break;
-      case 1:
-        switch(this.tipoPieza()) {
-            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Cats/DEF-B-Cats.svg"; break;
-            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Cats/ESC-B-Cats.svg";    break;
-            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Cats/LAS-B-Cats.svg";    break;
-            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Cats/KIN-B-Cats.svg";      break;
-            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Cats/SWI-B-Cats.svg";    break;
           }
         break;
       case 2:
@@ -126,6 +117,17 @@ export class Pieza implements OnInit, OnChanges{
             case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Soretro/LAS-B-Soretro.png";    break;
             case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.png";      break;
             case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-B-Soretro.png";    break;
+            
+          }
+        break;
+      case 3:
+        switch(this.tipoPieza()) {
+            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Cats/DEF-B-Cats.svg"; break;
+            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Cats/ESC-B-Cats.svg";    break;
+            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Cats/LAS-B-Cats.svg";    break;
+            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Cats/KIN-B-Cats.svg";      break;
+            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Cats/SWI-B-Cats.svg";    break;
+            
           }
         break;
 

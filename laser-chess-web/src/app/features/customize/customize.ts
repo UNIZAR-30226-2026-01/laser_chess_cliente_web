@@ -7,6 +7,9 @@ import { Remote } from '../../model/remote/remote';
 import { Board } from '../../shared/board/board'
 import { GameUtils } from '../../utils/game-utils'
 import { BoardState } from '../../utils/board-state'
+import { TopRow } from '../../shared/top-row/top-row';
+import { UserRespository } from '../../repository/user-respository';
+
 
 interface CustomizeGroup {
   type: string;
@@ -17,7 +20,7 @@ interface CustomizeGroup {
 @Component({
   selector: 'app-customize',
   standalone: true,
-  imports: [CommonModule, Board],
+  imports: [CommonModule, Board, TopRow],
   templateUrl: './customize.html',
   styleUrls: ['./customize.css']
 })
@@ -26,7 +29,7 @@ export class Customize implements OnInit {
   private customizeRepo = inject(CustomizeRepository);
   gameUtils = inject(GameUtils);
   boardState = inject(BoardState);
-  private remote = inject(Remote);
+  private remote = inject(UserRespository);
   groups: WritableSignal<CustomizeGroup[]> = signal<CustomizeGroup[]>([]);
 
   columnas = 10;
@@ -37,15 +40,9 @@ export class Customize implements OnInit {
 
   ngOnInit(): void {
     this.loadItems();
-    this.refreshBoardPreview();
   }
 
-  private refreshBoardPreview(): void {
-  this.remote.getOwnAccount().subscribe(account => {
-    this.boardState.setPieceSkinFromItemId(account.piece_skin);
-    this.boardState.setBoardSkinFromItemId(account.board_skin);
-  });
-}
+  
 
   private loadItems(): void {
     this.customizeRepo.getCustomizeItems().pipe(
@@ -97,7 +94,7 @@ export class Customize implements OnInit {
       next: () => {
         // Recargar 
         this.loadItems();
-        this.refreshBoardPreview();
+        this.boardState.skinUsario.set(item.id);
       },
       error: (err: any) => {
         // Revertir en caso de error

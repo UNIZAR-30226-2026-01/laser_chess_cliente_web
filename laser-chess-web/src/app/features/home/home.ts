@@ -10,6 +10,8 @@ import { BoardState } from '../../utils/board-state';
 import { GameUtils } from '../../utils/game-utils';
 import { ChallengeManager } from '../../services/challenge-manager';
 import { TIMEMODE_TO_MINS } from '../../constants/time.mode'
+import { UserRespository } from '../../repository/user-respository';
+import { FriendRespository } from '../../repository/friend-respository';
 
 
 
@@ -72,6 +74,8 @@ export class Home {
 
   
   private challengeManager = inject(ChallengeManager);
+  private userRepo = inject(UserRespository)
+  private friendRepo = inject(FriendRespository)
   gameUtils = inject(GameUtils);
 
   popUP_waiting = signal(false);
@@ -100,7 +104,14 @@ export class Home {
     this.notificationService.wakeHome$.subscribe(() => {
         this.loadRequest();
     });
+    this.boardState.skinRival.set(1);
+    this.userRepo.getOwnAccount().subscribe(profile => {
+      this.boardState.skinUsario.set(profile.piece_skin);
+    });
     this.cargarTablero();
+    this.friendRepo.getFriends().subscribe();
+
+    
 
     // Inicializar opciones de incremento según el modo de tiempo seleccionado
     this.selectTime(this.selectedTime(), new Event('init'));

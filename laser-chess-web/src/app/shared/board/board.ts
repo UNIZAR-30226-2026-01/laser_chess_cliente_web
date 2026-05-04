@@ -15,7 +15,7 @@ import { BoardState } from '../../utils/board-state';
 })
 
 export class Board {
-  state = inject(GameState);
+  gameState = inject(GameState);
   boardState = inject(BoardState);
 
   @Input() piezas!: Signal<PiezaData[]>;
@@ -29,6 +29,10 @@ export class Board {
 
   @Input() isCasillaRestringida!: (x: number, y: number) => 'azul' | 'rojo' | null;
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
+
+  
+
+
 
   getRuneUrl(tipoRuna: 'B' | 'R'): string {
     // Obtenemos la ruta del background activo

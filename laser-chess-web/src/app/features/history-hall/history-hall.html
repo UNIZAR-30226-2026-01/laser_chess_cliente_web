@@ -13,11 +13,11 @@
             @for(game of partidas(); track game) {
               <li class="game-item">
                   <div class="player">
-                    <span class="name">Jugador 1: {{ usernames()[game.p1_id] }} </span>
+                    <span class="name">Jugador 1: {{ users()[game.p1_id].username }} </span>
                   </div>
                   <div class="vs">VS</div>
                   <div class="player">
-                    <span class="name"> Jugador 2: {{ usernames()[game.p2_id] }}</span>
+                    <span class="name"> Jugador 2: {{ users()[game.p2_id].username }}</span>
                   </div>
                   <div class="details">
                     <span>Winner: {{ game.winner}}</span>
