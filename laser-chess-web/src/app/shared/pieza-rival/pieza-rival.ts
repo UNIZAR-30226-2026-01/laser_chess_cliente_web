@@ -1,4 +1,4 @@
-import { Component,  signal, input, SimpleChanges, inject, effect} from '@angular/core';
+import { Component,  signal, Input, input, SimpleChanges, inject, effect} from '@angular/core';
 import { TipoPieza } from '../../model/game/TipoPieza'
 import { BoardState } from '../../utils/board-state'
 
@@ -21,6 +21,8 @@ export class PiezaRival {
   tipoPieza = input.required<TipoPieza>();
   interfazPieza: string = "";
   skin = this.boardState.skinRival;
+
+  @Input() isBeingCaptured: boolean = false;
   
 
   position = signal({ x: 0, y: 0 });

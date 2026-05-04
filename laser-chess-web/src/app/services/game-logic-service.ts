@@ -13,6 +13,7 @@ import { TimerService } from './timer-service';
 import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
 import { BoardState } from '../utils/board-state';
+import { NotificationService } from '../model/notifications/notification';
 
 
 const LASER_DURATION_MS = 2000;
@@ -31,6 +32,7 @@ export class GameLogicService {
   private gameUtils = inject(GameUtils);
   private userRepo = inject(UserRespository);
   private boardState = inject(BoardState);
+  private notificationService= inject(NotificationService)
   
   TipoPieza = TipoPieza; 
 
@@ -38,7 +40,7 @@ export class GameLogicService {
   
   columnas = 10;
   filas = 8;
-  id = this.remoteService.getAccountId();
+  
 
   mostrarAvisoSalida = signal(false);
   aceptoInitial = signal(true);
@@ -105,9 +107,10 @@ export class GameLogicService {
       const piezas = this.gameUtils.importarTablero(msg.Content);
       this.listaPiezas.set(piezas);
       this.state.cont.set(piezas.length);
-      console.log(Number(msg.Extra) + "   mi id es: " + this.id);
+      const id = this.remoteService.getAccountId();
+      console.log(Number(msg.Extra) + "   mi id es: " + id);
       
-      if (Number(msg.Extra) !== this.id) {        
+      if (Number(msg.Extra) !== id) {        
         this.soyAzul.set(true);
         console.log("Soy el jugador azul");
         this.state.esMiTurno.set(false); // El jugador azul empieza segundo
@@ -200,14 +203,17 @@ export class GameLogicService {
       
       if ((!this.soyAzul() && msg.Content === "P1_WINS" )|| (this.soyAzul() && msg.Content === "P2_WINS")) {
         console.log("¡Has ganado!");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has ganado!' });
+        this.finPartida.set({ mostrar: true, mensaje: '¡Has ganado!' + msg.Extra});
 
       }else{
         console.log("Has perdido, mejor suerte la próxima vez.");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' });
+        this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' + msg.Extra});
       }
       this.timerService.stopTimer();
       localStorage.removeItem('gameState');
+    }else if(msg.Type === "Rewards"){
+      const mensaje = `Has ganado ${msg.Content} XP y ${msg.Extra} monedas 💰`;
+      this.notificationService.showWebNotification("Recompensas", mensaje);
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
@@ -269,6 +275,7 @@ export class GameLogicService {
       // La petición de pausa ha sido rechazada
       this.estadoPausa.set({ mostrar: false });
     }
+    console.log(msg.Type);
     
   }
 
@@ -428,10 +435,22 @@ export class GameLogicService {
   }
 
   eliminarPiezaEnTablero(pos: {x: number, y: number}) {
+
+    // 1. marcar pieza como "capturada"
     this.listaPiezas.update(piezas =>
-      piezas.filter(p => !(p.x === pos.x && p.y === pos.y))
+      piezas.map(p =>
+        (p.x === pos.x && p.y === pos.y)
+          ? { ...p, isBeingCaptured: true }
+          : p
+      )
     );
-    console.log(`Pieza eliminada en ${pos.x}, ${pos.y}`);
+
+    // 2. eliminar después de animación
+    setTimeout(() => {
+      this.listaPiezas.update(piezas =>
+        piezas.filter(p => !(p.x === pos.x && p.y === pos.y))
+      );
+    }, 400); // duración animación
   }
 
   dispararLaser(path: {x: number, y: number}[]) {

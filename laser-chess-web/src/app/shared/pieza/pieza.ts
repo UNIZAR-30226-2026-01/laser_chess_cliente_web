@@ -44,6 +44,7 @@ export class Pieza implements OnInit, OnChanges{
 
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
+  @Input() isBeingCaptured: boolean = false;
 
 
   puedeEntrar(nx: number, ny: number): boolean {

@@ -1,10 +1,10 @@
 <div
   class="pieza"
+  [class.captured]="isBeingCaptured"
   [style.gridColumn]="position().x"
   [style.gridRow]="position().y"
   [style.transform]="'rotate(' + rotationInput() + 'deg)'"
   [style.backgroundImage]="'url(' + interfazPieza + ')'"
-  style="transition: transform 0.3s ease-in-out;"
   (click)="select()"
 ></div>
 

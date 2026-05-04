@@ -16,9 +16,12 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  z-index: 1; /* Por encima de los spots */
+  z-index: 1;
   transform-origin: center;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* transition base para rotación */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.3s ease-out,
+              opacity 0.3s ease-out;
 }
 
 .spot {
@@ -33,4 +36,10 @@
 
 .spot:hover{
   background-color: rgba(0, 153, 0, 0.4);
+}
+
+.pieza.captured {
+  filter: brightness(4);
+  opacity: 0;
+  
 }

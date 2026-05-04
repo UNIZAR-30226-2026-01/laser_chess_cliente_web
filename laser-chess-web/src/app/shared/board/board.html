@@ -27,7 +27,7 @@
         [tipoPieza]="p.tipoPieza"
         [isCasillaRestringida]="isCasillaRestringida"
         [ocupado]="ocupado"
-
+        [isBeingCaptured]="p.isBeingCaptured ?? false"
         (selected)="piezaSeleccionada.emit(piezaRef)"
         (moveRequested)="movimientoSolicitado.emit($event)">
       </app-pieza>
@@ -37,6 +37,7 @@
         [x]="p.x"
         [y]="p.y"
         [tipoPieza]="p.tipoPieza"
+        [isBeingCaptured]="p.isBeingCaptured ?? false"
         [rotationInput]="p.rotation">
       </app-pieza-rival>
     }

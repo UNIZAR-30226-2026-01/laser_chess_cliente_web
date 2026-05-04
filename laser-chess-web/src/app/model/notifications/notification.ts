@@ -96,7 +96,7 @@ export class NotificationService {
   }
 }
 
-  private showWebNotification(title: string, body: string, data: any = null): void {
+  showWebNotification(title: string, body: string, data: any = null): void {
     if (!this.userRepo.getNotificationEnabled()) {
       return;
     }
