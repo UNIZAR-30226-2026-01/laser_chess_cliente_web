@@ -164,8 +164,7 @@ export class ChallengeManager {
       if(friend){
         const rivalProfile$ = this.userRepo.getAccount(friend);
         rivalProfile$.subscribe(profile => {
-          this.gameState.avatarRival.set(profile.avatar || 1);
-          this.boardState.skinRival.set(profile.piece_skin || 1);
+          this.setupPlayers(profile.userId, null);
           setTimeout(() => {
             this.webSocket.initConnection(endpoint, params);
           });
@@ -187,6 +186,32 @@ export class ChallengeManager {
 
 
   }
+
+
+  setupPlayers(rivalId: number | null, rivalUsername: string | null): void {
+    this.gameState.miNombre.set(this.userRepo.getUsername() || '');
+    this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
+
+    if (!rivalId) {
+      this.gameState.avatarRival.set(10);
+      this.boardState.skinRival.set(1);
+      if (rivalUsername) this.gameState.nombreRival.set(rivalUsername);
+      return;
+    }
+
+    this.userRepo.getAccount(rivalId).subscribe(profile => {
+      this.gameState.avatarRival.set(profile.avatar || 1);
+      this.boardState.skinRival.set(profile.piece_skin || 1);
+      if (rivalUsername) this.gameState.nombreRival.set(rivalUsername);
+    });
+
+    this.userRepo.getOwnAccount().subscribe(profile => {
+      this.gameState.miAvatar.set(profile.avatar || 1);
+      this.boardState.skinUsario.set(profile.piece_skin || 1);
+      this.gameState.miNombre.set(profile.username);
+    });
+  }
+  
 
   closeRequest(){
     this.webSocket.close();

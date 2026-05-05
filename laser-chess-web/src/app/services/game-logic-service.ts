@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {  signal, inject} from '@angular/core';
 import { PiezaData } from '../model/game/PiezaData';
-import { Websocket } from '../model/remote/websocket'; // Ajusta la ruta
+import { Websocket } from '../model/remote/websocket';
 import { TipoPieza } from '../model/game/TipoPieza'
 import { MessageGame } from '../model/game/MessageGame'
 import { SendAction } from '../model/game/SendAction'
@@ -14,9 +14,10 @@ import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
 import { BoardState } from '../utils/board-state';
 import { NotificationService } from '../model/notifications/notification';
+import { ChallengeManager } from './challenge-manager';
 
 
-const LASER_DURATION_MS = 2000;
+const LASER_DURATION_MS = 1000;
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,8 @@ export class GameLogicService {
   private userRepo = inject(UserRespository);
   private boardState = inject(BoardState);
   private notificationService= inject(NotificationService)
+  private challengeManager = inject(ChallengeManager);
+
   
   TipoPieza = TipoPieza; 
 
@@ -103,6 +106,12 @@ export class GameLogicService {
 
 
     } else if (msg.Type === "InitialState" && this.aceptoInitial()){
+      const idIponente = localStorage.getItem('idOponente');
+      if (idIponente) {
+        this.challengeManager.setupPlayers(JSON.parse(idIponente), null);
+        localStorage.removeItem('pendingState');
+      }
+
       console.log("Procesando el estado inicial");
       const piezas = this.gameUtils.importarTablero(msg.Content);
       this.listaPiezas.set(piezas);
@@ -121,8 +130,13 @@ export class GameLogicService {
       }
       this.timerService.startTimer();
       this.aceptoInitial.set(false);
-      const request: SendAction = { Type: "GetState", Content: "" }; 
-      this.wsService.sendAction(request);
+
+
+      const pendingState = localStorage.getItem('pendingState');
+      if (pendingState) {
+        this.wsService.gameMessages$.next(JSON.parse(pendingState));
+        localStorage.removeItem('pendingState');
+      }
 
       
     } else if ( msg.Type === "Move"){
@@ -203,16 +217,16 @@ export class GameLogicService {
       
       if ((!this.soyAzul() && msg.Content === "P1_WINS" )|| (this.soyAzul() && msg.Content === "P2_WINS")) {
         console.log("¡Has ganado!");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has ganado!' + msg.Extra});
+        this.finPartida.set({ mostrar: true, mensaje: '¡Has ganado!'});
 
       }else{
         console.log("Has perdido, mejor suerte la próxima vez.");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' + msg.Extra});
+        this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!'});
       }
       this.timerService.stopTimer();
       localStorage.removeItem('gameState');
     }else if(msg.Type === "Rewards"){
-      const mensaje = `Has ganado ${msg.Content} XP y ${msg.Extra} monedas 💰`;
+      const mensaje = `Has ganado ${msg.Content} XP y ${msg.Extra} monedas`;
       this.notificationService.showWebNotification("Recompensas", mensaje);
 
     }else if (msg.Type === "EOC"){
@@ -453,6 +467,8 @@ export class GameLogicService {
     }, 400); // duración animación
   }
 
+
+  /*
   dispararLaser(path: {x: number, y: number}[]) {
     const color = this.waitingForConfirmation ? 'blue' : 'red';
     this.laserPath.set(path);
@@ -464,6 +480,34 @@ export class GameLogicService {
       }, LASER_DURATION_MS)
     );
   }
+
+  */
+
+  private laserQueue: {path: {x:number,y:number}[], color: boolean}[] = [];
+private laserRunning = false;
+
+dispararLaser(path: {x: number, y: number}[]) {
+  const color = this.waitingForConfirmation;
+  this.laserQueue.push({ path, color });
+  if (!this.laserRunning) {
+    this.processLaserQueue();
+  }
+}
+
+private processLaserQueue() {
+  if (this.laserQueue.length === 0) {
+    this.laserRunning = false;
+    return;
+  }
+  this.laserRunning = true;
+  const { path, color } = this.laserQueue.shift()!;
+  this.laserPath.set(path);
+  this.boardState.laserColor.set(color ? "blue" : "red");
+  setTimeout(() => {
+    this.laserPath.set([]);
+    this.processLaserQueue();
+  }, LASER_DURATION_MS);
+}
 
   ocupado(x: number, y: number): PiezaData | null {
     const pieza = this.listaPiezas().find(p => p.x === x && p.y === y);

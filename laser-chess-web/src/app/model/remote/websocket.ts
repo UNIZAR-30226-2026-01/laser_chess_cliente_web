@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject} from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ReplaySubject, Subject} from 'rxjs';
 import { Remote } from './remote'; // <--- Importa tu servicio
 import { API_URL_WS } from '../../constants/app.const';
 import {  Router } from '@angular/router';
+import { ChallengeManager } from '../../services/challenge-manager';
 
 
 
@@ -29,6 +30,7 @@ export class Websocket {
   public gameMessages$ = new ReplaySubject<any>(10);
   public lobbyEvents$ = new Subject<any>();
   public navigation$ = new Subject<string>();
+
 
   constructor(private remote: Remote, private router: Router) {}
 
@@ -82,6 +84,20 @@ export class Websocket {
         this.gameMessages$.next(msg);
         return;
       }
+
+      if (msg.Type === 'State') {
+        localStorage.removeItem('pendinState');
+        localStorage.setItem('pendingState', JSON.stringify(msg));
+        console.log("Me guardo el estado porque ha llegado antes");
+        return;
+      }
+
+      if (msg.Type === 'Reconnect') {
+        localStorage.removeItem('idOponente');
+        localStorage.setItem('idOponente', JSON.stringify(msg.Content));
+        return;
+      }
+
       if (msg.Type === 'InitialState') {
         console.log('Pasando a GAME');
 
