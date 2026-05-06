@@ -2,31 +2,85 @@
      [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
 </div>
 
+<div class="page">
+
 <app-top-row></app-top-row>
-<ul class="game-list">
-          @if (!infoCargada()){
-            <p>No hay historial de partidas</p>
-          } @else if (partidas().length === 0) {
-            <p>No hay historial de partidas</p>
-          } @else {
-            <!-- Aquí se listan las partidas pausadas -->
-            @for(game of partidas(); track game) {
-              <li class="game-item">
-                  <div class="player">
-                    <span class="name">Jugador 1: {{ users()[game.p1_id]?.username }} </span>
-                  </div>
-                  <div class="vs">VS</div>
-                  <div class="player">
-                    <span class="name"> Jugador 2: {{ users()[game.p2_id]?.username }}</span>
-                  </div>
-                  <div class="details">
-                    <span>Winner: {{ game.winner}}</span>
-                    <span>{{ game.board }}</span>
-                  </div>
-                  <button class="btn-play" (click)="visualidaPartida(game)">VISUALIZAR</button>
-              </li>
+  <div class="folder-container">
+    <div class="folder-body">
+    <div class="title">
+      historial
+    </div>
+    <table class="game-list">
+              @if (!infoCargada()){
+                <p>No hay historial de partidas</p>
+              } @else if (partidas().length === 0) {
+                <p>No hay historial de partidas</p>
+              } @else {
+                <thead>
+                  <tr>
+                    <th>Partida</th>
+                    <th>Jugadores</th>
+                    <th>Resultado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for(game of partidas(); track game) {
+                  <tr (click)="visualidaPartida(game)">
+                    <td>
+                      @if (game.match_type === "BOTS") {
+                        <mat-icon fontSet="material-symbols-outlined">smart_toy</mat-icon>
+                      }
+                      @if (game.match_type === "RANKED") {
+                        <mat-icon fontSet="material-symbols-outlined">swords</mat-icon>
+                      }
+                      @if (game.match_type === "PRIVATE") {
+                        <mat-icon fontSet="material-symbols-outlined">sword_rose</mat-icon>
+                      }
+                      @if (game.match_type === "CASUAL") {
+                        <mat-icon fontSet="material-symbols-outlined">handshake</mat-icon>
+                      }
+                      <div>
+                        <div>
+                        {{game.board}}
+                        {{game.time_base / 60000}}min + {{game.time_increment}}s
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div class="elo-content">
+                        <b> {{ users()[game.p1_id]?.username }} </b>
+                        ({{game.p1_elo}})
+                        <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+                      </div>
+                      <div class="elo-content">
+                        <b> {{ users()[game.p2_id]?.username }} </b>
+                        ({{game.p2_elo}})
+                        <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+                      </div>
+                    </td>
+
+                    <td>
+                    @if (game.termination === "UNFINISHED"){
+                      Partida pendiente...
+                    }@else{
+                      @if (game.winner === "P1_WINS"){
+                        Victoria de {{ users()[game.p1_id]?.username }}
+                      }@else{
+                        Victoria de {{ users()[game.p2_id]?.username }}
+                      }
+                    }
+                    <div>
+                    @if (game.termination === "OUT_OF_TIME"){por tiempo}
+                    @if (game.termination === "LASER"){por captura}
+                    </div>
+                    </td>
+                  </tr>
+                  }
+                  </tbody>
+                  
             }
-
-
-        }
-        </ul>
+      </table>
+    </div>
+  </div>
+</div>
