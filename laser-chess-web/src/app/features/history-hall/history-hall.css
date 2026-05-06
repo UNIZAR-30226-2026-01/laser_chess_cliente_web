@@ -77,22 +77,11 @@ width: 100%;
   border-bottom: 4px solid var(--active-color, var(--LCBlue));
 }
 
-/* Para los botones de iniciar amistosa y borrar */
-.user-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.ranking-table-wrapper {
+.game-table-wrapper {
   flex: 1;
   overflow-y: auto;
   overflow-x: auto;
   background: var(--S2);
-
 }
 
 .game-list {
