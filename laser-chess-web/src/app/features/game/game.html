@@ -49,9 +49,11 @@
   @if(finPartida().mostrar){
     <div class="popup-overlay">
       <div class="popup-content" (click)="$event.stopPropagation()">
-        <p>{{finPartida().mensaje}}</p>
+        @for (linea of finPartida().mensaje.split('\n'); track linea) {
+          <p>{{ linea }}</p>
+        }
         <div class="popup-buttons">
-          <button (click)="gameService.solicitarRevancha()">Revancha</button>
+          <button (click)="gameService.solicitarRevancha()">Jugar de nuevo</button>
           <button (click)="gameService.finPartidaHandler()">Cerrar</button>
         </div>
       </div>

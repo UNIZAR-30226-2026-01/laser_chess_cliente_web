@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject} from '@angular/core';
 import { TipoPieza } from '../model/game/TipoPieza';
 import { PiezaData } from '../model/game/PiezaData';
+
 
 const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
 const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
@@ -9,6 +10,8 @@ const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
   providedIn: 'root',
 })
 export class GameUtils {
+
+  
 
   cont = 0; // Contador para asignar ids únicos a las piezas
   /*
@@ -133,6 +136,9 @@ export class GameUtils {
   
   
     }
+
+
+  
 
     
 }

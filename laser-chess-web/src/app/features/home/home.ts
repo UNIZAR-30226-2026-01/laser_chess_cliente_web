@@ -111,6 +111,11 @@ export class Home {
     this.cargarTablero();
     this.friendRepo.getFriends().subscribe();
 
+    const board_skin = localStorage.getItem('board_skin');
+      if (board_skin) {
+        this.boardState.setBoardSkinFromItemId(Number(board_skin));
+      }
+
     
 
     // Inicializar opciones de incremento según el modo de tiempo seleccionado

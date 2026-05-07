@@ -24,10 +24,13 @@ export class BoardState {
 
   skinUsario = signal<number>(0);
   skinRival = signal<number>(1);
+  laserColor = signal<'blue' | 'red'>('red');
 
   boardBackgroundUrl = signal<string>(
     'assets/vector-art/Backgrounds/Classic/BG-classic.svg'
   );
+
+  avatarUsuario = signal<number>(0);
 
   // ======================
   // DEPENDENCIAS
@@ -98,6 +101,11 @@ export class BoardState {
 
   setBoard(board: string) {
     this.currentBoard.set(board);
+  }
+
+  setAvatarFromItemId(itemId: number) {
+    const avatarIndex = itemId - 9;
+    this.avatarUsuario.set(avatarIndex);
   }
 
   setBoardSkinFromItemId(itemId: number) {

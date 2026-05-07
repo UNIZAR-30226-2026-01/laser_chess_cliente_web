@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {  signal, inject} from '@angular/core';
 import { PiezaData } from '../model/game/PiezaData';
-import { Websocket } from '../model/remote/websocket'; // Ajusta la ruta
+import { Websocket } from '../model/remote/websocket';
 import { TipoPieza } from '../model/game/TipoPieza'
 import { MessageGame } from '../model/game/MessageGame'
 import { SendAction } from '../model/game/SendAction'
@@ -11,23 +11,31 @@ import { Subscription } from 'rxjs';
 import { GameState } from '../utils/game-state'
 import { TimerService } from './timer-service';
 import { GameUtils } from '../utils/game-utils';
+import { UserRespository } from '../repository/user-respository';
+import { BoardState } from '../utils/board-state';
+import { ChallengeManager } from './challenge-manager';
+import { BoardAction } from './board-action';
 
 
-
-const COL_LETTERS_AZUL = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
-const COL_LETTERS_ROJO = ['j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
+const LASER_DURATION_MS = 1000;
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameLogicService {
+  
   private wsService = inject(Websocket);
   private remoteService = inject(Remote);
   private timerService = inject(TimerService);
   private wsSubscription?: Subscription;
-  private waitingForConfirmation = false;
+  private waitingForConfirmation= signal(false);
   private router = inject(Router);
   private gameUtils = inject(GameUtils);
+  private userRepo = inject(UserRespository);
+  private boardState = inject(BoardState);
+  private challengeManager = inject(ChallengeManager);
+  private boardActions = inject(BoardAction);
+
   
   TipoPieza = TipoPieza; 
 
@@ -35,7 +43,7 @@ export class GameLogicService {
   
   columnas = 10;
   filas = 8;
-  id = this.remoteService.getAccountId();
+  
 
   mostrarAvisoSalida = signal(false);
   aceptoInitial = signal(true);
@@ -68,8 +76,9 @@ export class GameLogicService {
     const request: SendAction = { Type: "Move", Content: content}; 
     // Enviar y bloqueaconst timer = timerMatch ? +timerMatch[1] : null;r (NO movemos la pieza aún)
     this.wsService.sendAction(request);
-    this.esMiTurno.set(false);        // Bloquear turno local
-    this.waitingForConfirmation = true;
+    this.state.esMiTurno.set(false);        // Bloquear turno local
+    this.timerService.stopTimer();
+    this.waitingForConfirmation.set(true);
   }
 
   solicitarPausa(){
@@ -86,15 +95,32 @@ export class GameLogicService {
     console.log("Contenido:", msg.Content);
 
     if (msg.Type === "MatchStart"){
-      console.log("Tu oponenete es " + msg.Content);
+      console.log("Tu oponenete es " + Number(msg.Content));
+      if(Number(msg.Content) != 1){ // Excluimos el caso de la IA
+        const rivalProfile$ = this.userRepo.getAccount(Number(msg.Content));
+          rivalProfile$.subscribe(profile => {
+            this.state.avatarRival.set(profile.avatar || 1);
+            this.boardState.skinRival.set(profile.piece_skin || 1);
+            this.state.nombreRival.set(profile.username);
+          });
+      }
+
 
     } else if (msg.Type === "InitialState" && this.aceptoInitial()){
+      const idIponente = localStorage.getItem('idOponente');
+      if (idIponente) {
+        this.challengeManager.setupOponent(JSON.parse(idIponente), null);
+        localStorage.removeItem('idOponente');
+      }
+
       console.log("Procesando el estado inicial");
       const piezas = this.gameUtils.importarTablero(msg.Content);
       this.listaPiezas.set(piezas);
       this.state.cont.set(piezas.length);
+      const id = this.remoteService.getAccountId();
+      console.log(Number(msg.Extra) + "   mi id es: " + id);
       
-      if (Number(msg.Extra) !== this.id) {        
+      if (Number(msg.Extra) !== id) {        
         this.soyAzul.set(true);
         console.log("Soy el jugador azul");
         this.state.esMiTurno.set(false); // El jugador azul empieza segundo
@@ -105,8 +131,13 @@ export class GameLogicService {
       }
       this.timerService.startTimer();
       this.aceptoInitial.set(false);
-      const request: SendAction = { Type: "GetState", Content: "" }; 
-      this.wsService.sendAction(request);
+
+
+      const pendingState = localStorage.getItem('pendingState');
+      if (pendingState) {
+        this.wsService.gameMessages$.next(JSON.parse(pendingState));
+        localStorage.removeItem('pendingState');
+      }
 
       
     } else if ( msg.Type === "Move"){
@@ -116,12 +147,10 @@ export class GameLogicService {
       
 
       const tiempo = Number(timeRaw);
-      console.log("Justo antes de verificar patrón");
       const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;      
       const match = movePart.match(moveRegex);
 
       if (!match) return;
-      console.log("Después de verificar patrón");
 
       const tipo = match[1] || 'T';
       const desde = this.gameUtils.fromChess(match[2], this.soyAzul());
@@ -137,19 +166,20 @@ export class GameLogicService {
         console.log("Tipo:", tipo, "Desde:", desde, "Hasta:", hasta, "Captura:", captura, "Tiempo:", tiempo);
         if (tipo === 'T' && desde && hasta) {
           // "Te8:e7" -> de e8 a e7
-          console.log("me toca mover " + msg.Content);
-          
-          console.log("desde " + desde + " hasta " + hasta);
           this.moverPiezaEnTablero(desde, hasta);
 
         } else if ((tipo === 'L' || tipo === 'R') && desde) {
           // "La1"
-          console.log("me toca girar");
           this.rotarPiezaEnTablero(desde, tipo);
         }
 
-        // Disparo del láser
-        this.dispararLaser(path);
+        const esMiMovimiento = this.waitingForConfirmation();
+        if (esMiMovimiento) {
+          this.waitingForConfirmation.set(false);
+        }
+
+        this.dispararLaser(path, esMiMovimiento);
+        
         
         if (captura) {
           this.eliminarPiezaEnTablero(captura);
@@ -158,28 +188,26 @@ export class GameLogicService {
         this.piezaActiva()?.showSpots.set(false);
         this.piezaActiva.set(null);
 
-        // Cambio de turno
-        if (this.waitingForConfirmation) {
-          // Esto es confirmación de mi propio movimiento
-          this.waitingForConfirmation = false;
-          this.timerService.miTiempo.set(tiempo);
-          // El turno ya está en false (lo pusimos al enviar), no se cambia
-          console.log("Movimiento propio confirmado, turno para el rival");
-        } else {
-          // Esto es movimiento del rival
-          this.state.esMiTurno.set(true);
-          this.timerService.tiempoRival.set(tiempo);
-          console.log("Movimiento del rival recibido, ahora es mi turno");
-        }
-      
+        
+
+        setTimeout(() => {
+          if (esMiMovimiento) {
+            this.timerService.miTiempo.set(tiempo);
+          } else {
+            this.state.esMiTurno.set(true);
+            this.timerService.tiempoRival.set(tiempo);
+          }
+          this.timerService.startTimer();
+        }, LASER_DURATION_MS);
 
     }else if (msg.Type === "Error") {
       console.error("Error del servidor:", msg.Content);
       // Si estábamos esperando confirmación, algo salió mal
-      if (this.waitingForConfirmation) {
-        this.waitingForConfirmation = false;
+      if (this.waitingForConfirmation()) {
+        this.waitingForConfirmation.set(false);
         // Podrías recuperar el turno (depende de la política del juego)
         this.state.esMiTurno.set(true);
+        this.timerService.stopTimer(); // paro por tiempo de laser
       }
     
     }else if (msg.Type === "End"){
@@ -187,14 +215,20 @@ export class GameLogicService {
       
       if ((!this.soyAzul() && msg.Content === "P1_WINS" )|| (this.soyAzul() && msg.Content === "P2_WINS")) {
         console.log("¡Has ganado!");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has ganado!' });
+        this.finPartida.set({ mostrar: false, mensaje: '¡Has ganado!'});
 
       }else{
         console.log("Has perdido, mejor suerte la próxima vez.");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!' });
+        this.finPartida.set({ mostrar: false, mensaje: '¡Has perdido!'});
       }
       this.timerService.stopTimer();
       localStorage.removeItem('gameState');
+      
+    }else if(msg.Type === "Rewards"){
+      this.finPartida.set({ 
+        mostrar: true, 
+        mensaje: `${this.finPartida().mensaje}\nHas ganado ${msg.Content} XP y ${msg.Extra} monedas` 
+      });
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
@@ -215,7 +249,10 @@ export class GameLogicService {
     }else if (msg.Type === "Reconnection"){
       // El oponenete se ha reconectado
       // this.startTimer()
-      // this.timerService.miTiempo.set(Number(msg.Extra));
+      this.state.nombreRival.set(msg.Content);
+      const tiempos = msg.Extra.split('%')
+      this.timerService.miTiempo.set(Number(tiempos[0]));
+      this.timerService.tiempoRival.set(Number(tiempos[1]));
       this.estadoDesconexion.set({ mostrar: false });
 
       // Se oculta el pop-up de espera a reconexión
@@ -256,6 +293,7 @@ export class GameLogicService {
       // La petición de pausa ha sido rechazada
       this.estadoPausa.set({ mostrar: false });
     }
+    console.log(msg.Type);
     
   }
 
@@ -302,7 +340,7 @@ export class GameLogicService {
       
       this.state.finPartida.set({ mostrar: false, mensaje: '' });
 
-      this.waitingForConfirmation = false;
+      this.waitingForConfirmation.set(false);
       this.state.permitSalida.set(true);
       this.router.navigate(['/home']);
     }
@@ -379,53 +417,49 @@ export class GameLogicService {
   /*                     Tras confirmación del backend                         */
   /*****************************************************************************/
 
-  // Mueve la pieza al recibir confimariones del backend
-  moverPiezaEnTablero(desde: {x: number, y: number}, hasta: {x: number, y: number}) {
-    
-    this.state.listaPiezas.update(piezas => 
-      piezas.map(p => {
-        // Buscamos la pieza que coincide con la coordenada 'desde'
-        console.log("intentando mover desde "+ p.x + " " + p.y + " partiendo de " + desde.x + " " + desde.y );
-        if (p.x === desde.x && p.y === desde.y) {
-          console.log("Moviendo pieza");
-          return { ...p, x: hasta.x, y: hasta.y };
-        }
 
-        // Caso de permutaciones de piezas
-        if (p.x === hasta.x && p.y === hasta.y) {
-        console.log("Intercambiando pieza de destino a origen");
-        return { ...p, x: desde.x, y: desde.y };
-        }
-        return p;
-      })
-    );
+  moverPiezaEnTablero(desde: {x: number, y: number}, hasta: {x: number, y: number}) {
+    this.boardActions.moverPieza(this.listaPiezas, desde, hasta);
   }
 
-  // Rotar piezas al recibir confirmaciones del backend
   rotarPiezaEnTablero(pos: {x: number, y: number}, direccion: 'L' | 'R') {
-    this.state.listaPiezas.update(piezas => 
-      piezas.map(p => {
-        if (p.x === pos.x && p.y === pos.y) {
-          const angulo = (direccion === 'R') ? 90 : -90; 
-          return { ...p, rotation: (p.rotation + angulo) };
-        }
-        return p;
-      })
-    );
+    this.boardActions.rotarPieza(this.listaPiezas, pos, direccion);
   }
 
   eliminarPiezaEnTablero(pos: {x: number, y: number}) {
-    this.listaPiezas.update(piezas =>
-      piezas.filter(p => !(p.x === pos.x && p.y === pos.y))
-    );
-    console.log(`Pieza eliminada en ${pos.x}, ${pos.y}`);
+    this.boardActions.eliminarPieza(this.listaPiezas, pos, true); // true = animada en GameLogic
   }
+  
 
-  dispararLaser(path: {x: number, y: number}[]) {
-    this.laserPath.set(path);
-    // Limpiar el láser después de 2 segundos 
-    setTimeout(() => this.laserPath.set([]), 3000);
+  
+ 
+  
+private laserQueue: {path: {x:number,y:number}[], color: Boolean}[] = [];
+private laserRunning = false;
+
+dispararLaser(path: {x: number, y: number}[], color: Boolean) {
+  this.laserQueue.push({ path, color });
+  if (!this.laserRunning) {
+    this.processLaserQueue();
   }
+}
+
+private processLaserQueue() {
+  if (this.laserQueue.length === 0) {
+    this.laserRunning = false;
+    return;
+  }
+  this.laserRunning = true;
+  const { path, color } = this.laserQueue.shift()!;
+  this.laserPath.set(path);
+  this.boardState.laserColor.set(color ? "blue" : "red");
+  setTimeout(() => {
+    this.laserPath.set([]);
+    this.processLaserQueue();
+  }, LASER_DURATION_MS);
+}
+
+  
 
   ocupado(x: number, y: number): PiezaData | null {
     const pieza = this.listaPiezas().find(p => p.x === x && p.y === y);

@@ -1,105 +1,143 @@
-
 .main-settings-frame {
+  width: 90%;
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
+  margin: 0 auto 2rem auto;
+  padding: clamp(1rem, 2vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Título estilo historial */
+.title_settings {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: var(--S2);
+  border-bottom: 4px solid var(--LCWhite);
 }
 
 .title_settings h1 {
-  text-align: center;
-  margin-bottom: 2rem;
+  margin: 0;
+  font-size: var(--LCSmall);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--LCWhite);
 }
 
 .settings-content {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .card_datos, .card_settings {
-  background: #f9f9f9;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  background: var(--S1);
   flex: 1;
   min-width: 280px;
+  overflow: hidden;
 }
 
-.card_datos_header h2, .card_settings h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 0.5rem;
+.card_datos_header {
+  padding: 0.85rem 1rem;
+  background: var(--S2);
+  border-bottom: 3px solid var(--LCBG);
+}
+
+.card_datos_header h2 {
+  margin: 0;
+  font-size: var(--LCSmall);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--LCWhite);
+}
+
+.card_datos_body {
+  padding: 0 1rem;
 }
 
 .email-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 3px solid var(--LCBG);
   flex-wrap: wrap;
+  color: var(--LCWhite);
 }
 
 .email-box {
-  background: #e9ecef;
+  background: var(--S2);
   padding: 0.3rem 0.8rem;
-  border-radius: 1rem;
   font-family: monospace;
   word-break: break-all;
-}
-
-.link {
-  color: #4a6fff;
-  cursor: pointer;
-  margin: 0.5rem 0;
-  text-decoration: underline;
+  color: var(--LCWhite);
   font-size: 0.9rem;
 }
 
+.link {
+  color: var(--LCWhite);
+  cursor: pointer;
+  margin: 0;
+  font-size: var(--LCSmall);
+  padding: 0.85rem 0;
+  border-bottom: 3px solid var(--LCBG);
+  display: block;
+  transition: all 0.2s;
+  opacity: 0.8;
+}
+
 .link:hover {
-  color: #2c4bc2;
+  opacity: 1;
+  background: var(--S2);
+  padding-left: 0.5rem;
 }
 
 .setting-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #eee;
+  padding: 0.85rem 1rem;
+  border-bottom: 3px solid var(--LCBG);
+  color: var(--LCWhite);
 }
 
 .setting-label {
   font-weight: 500;
+  font-size: var(--LCSmall);
 }
 
 .checkbox-box input {
   width: 1.2rem;
   height: 1.2rem;
   cursor: pointer;
+  accent-color: var(--LCWhite);
 }
 
 .accessibility-section {
-  margin-top: 2rem;
-  padding: 1rem;
-  background: #f1f3f5;
-  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--S1);
+  border-bottom: 3px solid var(--LCBG);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: var(--LCWhite);
+  font-size: var(--LCSmall);
+  opacity: 0.7;
 }
 
 .access-icon {
-  font-size: 2rem;
+  font-size: 1.2rem;
 }
 
 /* Popups */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,51 +145,115 @@
 }
 
 .popup-card, .popup-message {
-  background: white;
-  padding: 2rem;
-  border-radius: 1rem;
+  background: var(--LCBG);
+  border: 1px solid var(--S3);
   min-width: 300px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  animation: popupAppear 0.2s ease;
+  overflow: hidden;
+}
+
+.popup-card h3 {
+  margin: 0;
+  padding: 1rem 1.5rem;
+  background: var(--S2);
+  border-bottom: 3px solid var(--LCBG);
+  font-size: var(--LCSmall);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--LCWhite);
+}
+
+.popup-card form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .popup-card input {
   width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.6rem;
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--S3);
+  background: var(--S2);
+  color: var(--LCWhite);
+  font-size: var(--LCSmall);
+  box-sizing: border-box;
 }
 
-.popup-card button {
-  background: #4a6fff;
-  color: white;
+.popup-card input:focus {
+  outline: none;
+  border-color: var(--LCWhite);
+}
+
+.popup-card button[type="submit"] {
+  background: var(--S2);
+  color: var(--LCWhite);
   border: none;
   padding: 0.6rem;
-  border-radius: 0.5rem;
   cursor: pointer;
-  width: 100%;
+  font-weight: bold;
+  font-size: var(--LCSmall);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.5rem;
+  transition: all 0.2s;
+}
+
+.popup-card button[type="submit"]:hover {
+  background: var(--S3);
 }
 
 .popup-message {
   text-align: center;
+  padding: 2rem;
+  color: var(--LCWhite);
 }
 
-.popup-message.error { border-top: 4px solid #e74c3c; }
-.popup-message.success { border-top: 4px solid #2ecc71; }
+.popup-message.error   { border-top: 4px solid var(--LCRed);   }
+.popup-message.success { border-top: 4px solid var(--LCGreen); }
+
+.popup-message button {
+  margin-top: 1rem;
+  background: var(--S2);
+  color: var(--LCWhite);
+  border: none;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: var(--LCSmall);
+  transition: all 0.2s;
+}
+
+.popup-message button:hover {
+  background: var(--S3);
+}
 
 .error {
-  color: #e74c3c;
+  color: var(--LCRed);
   font-size: 0.75rem;
   display: block;
-  margin-top: -0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: -0.3rem;
 }
 
 .icon-btn {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
-  padding: 0;
-  width: auto;
+  color: var(--LCWhite);
+  padding: 0.2rem 0.4rem;
+  transition: opacity 0.2s;
+}
+
+.icon-btn:hover {
+  opacity: 0.7;
+}
+
+@keyframes popupAppear {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }

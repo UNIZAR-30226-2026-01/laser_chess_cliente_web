@@ -3,10 +3,10 @@ import { signal, inject} from '@angular/core';
 import { PiezaData } from '../model/game/PiezaData';
 import { TipoPieza } from '../model/game/TipoPieza'
 import { GameResume } from '../model/game/GameResume';
-import { GameLogicService } from './game-logic-service';
-import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
 import { BoardState } from '../utils/board-state'
+import { BoardAction } from './board-action';
+import { GameUtils } from '../utils/game-utils';
 
 
 
@@ -20,7 +20,8 @@ export class HistoryService {
 
   TipoPieza = TipoPieza; 
 
-  private gameService = inject(GameLogicService);
+  private boardActions = inject(BoardAction);
+  
   private gameUtils = inject(GameUtils);
   private boardState = inject(BoardState);
 
@@ -115,7 +116,6 @@ export class HistoryService {
     const match = action.match(moveRegex);
 
     if (!match) {
-      console.log("esto no funca");
       return;
     }
 
@@ -154,13 +154,13 @@ export class HistoryService {
        }
       }
     }
-    /*
+    
     const path = laser
         .split(',')
         .filter(c => c.length > 0)
         .map(c => this.gameUtils.fromChess(c,this.soyAzul()));
     this.dispararLaser(path);
-    */
+    
 
     // CAPTURA
     if (captura) {
@@ -213,7 +213,7 @@ export class HistoryService {
       this.boardState.iniciarTablero(this.historySelectedGame()?.board)
     );
 
-    this.esMiTurno.set(true); // o como corresponda
+    this.esMiTurno.set(!this.soyAzul()); 
     this.capturas = [];
 
     for (let i = 0; i < this.indiceMovimiento; i++) {
@@ -226,6 +226,7 @@ export class HistoryService {
     if (this.indiceMovimiento >= this.movimientos.length) {
       this.popUpLimites.set(true);
       this.popUpMensaje.set('Se ha alcanzado el final de partida');
+      this.indiceMovimiento--;
       return;
     }
     
@@ -261,57 +262,21 @@ export class HistoryService {
   
 
 
-  /*****************************************************************************/
-  /*                     Tras confirmación del backend                         */
-  /*****************************************************************************/
-
-  // Mueve la pieza al recibir confimariones del backend
   moverPiezaEnTablero(desde: {x: number, y: number}, hasta: {x: number, y: number}) {
-    console.log(`Moviendo pieza de ${desde.x},${desde.y} a ${hasta.x},${hasta.y}`);
-    this.listaPiezas.update(piezas => 
-      piezas.map(p => {
-        // Buscamos la pieza que coincide con la coordenada 'desde'
-        console.log("intentando mover desde "+ p.x + " " + p.y + " partiendo de " + desde.x + " " + desde.y );
-        if (p.x === desde.x && p.y === desde.y) {
-          console.log("Moviendo pieza");
-          return { ...p, x: hasta.x, y: hasta.y };
-        }
-
-        // Caso de permutaciones de piezas
-        if (p.x === hasta.x && p.y === hasta.y) {
-        console.log("Intercambiando pieza de destino a origen");
-        return { ...p, x: desde.x, y: desde.y };
-        }
-        return p;
-      })
-    );
+    this.boardActions.moverPieza(this.listaPiezas, desde, hasta);
   }
 
-  // Rotar piezas al recibir confirmaciones del backend
   rotarPiezaEnTablero(pos: {x: number, y: number}, direccion: 'L' | 'R') {
-    console.log(`Rotando pieza en ${pos.x},${pos.y} hacia ${direccion}`);
-    this.listaPiezas.update(piezas => 
-      piezas.map(p => {
-        if (p.x === pos.x && p.y === pos.y) {
-          const angulo = (direccion === 'R') ? 90 : -90; 
-          return { ...p, rotation: (p.rotation + angulo) };
-        }
-        return p;
-      })
-    );
+    this.boardActions.rotarPieza(this.listaPiezas, pos, direccion);
   }
 
   eliminarPiezaEnTablero(pos: {x: number, y: number}) {
-    this.listaPiezas.update(piezas =>
-      piezas.filter(p => !(p.x === pos.x && p.y === pos.y))
-    );
-    console.log(`Pieza eliminada en ${pos.x}, ${pos.y}`);
+    this.boardActions.eliminarPieza(this.listaPiezas, pos, false); 
   }
 
   dispararLaser(path: {x: number, y: number}[]) {
+    this.boardState.laserColor.set(this.esMiTurno() ? 'blue' : 'red');
     this.laserPath.set(path);
-    // Limpiar el láser después de 2 segundos 
-    setTimeout(() => this.laserPath.set([]), 3000);
   }
 
   

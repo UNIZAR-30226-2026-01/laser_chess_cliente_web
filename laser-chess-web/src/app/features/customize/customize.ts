@@ -38,6 +38,9 @@ export class Customize implements OnInit {
   laserPath = this.boardState.laserPath;
   board = this.boardState.currentBoard;
 
+  currentIndices: WritableSignal<Map<string, number>> = signal(new Map());
+
+
   ngOnInit(): void {
     this.loadItems();
   }
@@ -47,8 +50,21 @@ export class Customize implements OnInit {
   private loadItems(): void {
     this.customizeRepo.getCustomizeItems().pipe(
       map(items => this.groupByType(items))
-    ).subscribe(groups => this.groups.set(groups));
+    ).subscribe(groups => {
+      this.groups.set(groups);
+      this.initializeIndices(groups);
+
+      const boardGroup = groups.find(g => g.type === 'board_skin');
+      const equippedBoard = boardGroup?.items.find(item => item.isEquipped);
+
+      if (equippedBoard) {
+        this.boardState.setBoardSkinFromItemId(equippedBoard.id);
+      }
+    });
   }
+
+
+
 
   private groupByType(items: CustomizeItemDisplay[]): CustomizeGroup[] {
     const map = new Map<string, CustomizeItemDisplay[]>();
@@ -92,9 +108,25 @@ export class Customize implements OnInit {
     // Llamada al backend, la real para q haga cosas
     this.customizeRepo.equipItem(item.id, item.type.toUpperCase()).subscribe({
       next: () => {
+
         // Recargar 
+
         this.loadItems();
-        this.boardState.skinUsario.set(item.id);
+
+        if (item.type === 'board_skin') {
+          this.boardState.setBoardSkinFromItemId(item.id);
+          localStorage.removeItem('board_skin');
+          localStorage.setItem('board_skin', JSON.stringify(item.id));
+        }
+
+        if (item.type === 'piece_skin') {
+          this.boardState.setPieceSkinFromItemId(item.id);
+        }
+
+        if (item.type === 'avatar') {
+          this.boardState.setAvatarFromItemId(item.id);
+        }
+
       },
       error: (err: any) => {
         // Revertir en caso de error
@@ -103,5 +135,44 @@ export class Customize implements OnInit {
       }
     });
   }
+
+
+  //Funciones para los carruseles para mover a la izquierda y a la derecha
+  private initializeIndices(groups: CustomizeGroup[]): void {
+    const newMap = new Map<string, number>();
+    for (const group of groups) {
+      const equippedIndex = group.items.findIndex(item => item.isEquipped);
+      newMap.set(group.type, equippedIndex !== -1 ? equippedIndex : 0);
+    }
+    this.currentIndices.set(newMap);
+  }
+
+  nextItem(groupType: string): void {
+    const group = this.groups().find(g => g.type === groupType);
+    if (!group || group.items.length <= 1) return;
+    const currentIdx = this.currentIndices().get(groupType) ?? 0;
+    const newIdx = (currentIdx + 1) % group.items.length;
+    this.updateCurrentIndex(groupType, newIdx);
+    const newItem = group.items[newIdx];
+    if (newItem) this.equip(newItem);
+  }
+
+
+  prevItem(groupType: string): void {
+    const group = this.groups().find(g => g.type === groupType);
+    if (!group || group.items.length <= 1) return;
+    const currentIdx = this.currentIndices().get(groupType) ?? 0;
+    const newIdx = (currentIdx - 1 + group.items.length) % group.items.length
+    this.updateCurrentIndex(groupType, newIdx);
+    const newItem = group.items[newIdx];
+    if (newItem) this.equip(newItem);
+  }
+
+  private updateCurrentIndex(groupType: string, newIndex: number): void {
+    const updatedMap = new Map(this.currentIndices());
+    updatedMap.set(groupType, newIndex);
+    this.currentIndices.set(updatedMap);
+  }
+
 
 }

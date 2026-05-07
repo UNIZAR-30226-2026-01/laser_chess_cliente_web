@@ -8,8 +8,10 @@ import { TopRow } from '../../shared/top-row/top-row';
 
 
 interface ShopSection {
+  type: string;
   title: string;
   items: ShopItemDisplay[];
+  level: number;
 }
 
 @Component({
@@ -28,17 +30,23 @@ export class Shop implements OnInit {
   userMoney = signal<number>(0);
   userLevel = signal<number>(0);
 
+  currentIndices = signal<Map<string, number>>(new Map());
+
   //señal computada, su valor se va recalculando
   sections = computed<ShopSection[]>(() => {
-    const items = this.items(); //valor actual
-    const groups = new Map<string, ShopItemDisplay[]>(); //agrupar ítems por tipo
-    items.forEach(item => { //todos los items al map
+    const items = this.items();
+    const groups = new Map<string, ShopItemDisplay[]>();
+
+    items.forEach(item => {
       if (!groups.has(item.itemType)) groups.set(item.itemType, []);
-      groups.get(item.itemType)!.push(item); //meter el actual
+      groups.get(item.itemType)!.push(item);
     });
+
     return Array.from(groups.entries()).map(([type, itemList]) => ({
+      type,
       title: this.getSectionTitle(type),
-      items: itemList
+      items: itemList,
+      level: Math.min(...itemList.map(item => item.levelRequisite))
     }));
   });
 
@@ -110,6 +118,48 @@ export class Shop implements OnInit {
       }
     });
   }
+
+
+
+
+  visibleItems(section: ShopSection): ShopItemDisplay[] {
+    const start = this.currentIndices().get(section.type) ?? 0;
+    const visibleCount = 4;
+
+    return section.items.slice(start, start + visibleCount);
+  }
+
+  nextSection(section: ShopSection): void {
+    const visibleCount = 4;
+    const current = this.currentIndices().get(section.type) ?? 0;
+
+    if (current + visibleCount >= section.items.length) {
+      this.updateSectionIndex(section.type, 0);
+    } else {
+      this.updateSectionIndex(section.type, current + visibleCount);
+    }
+  }
+
+  prevSection(section: ShopSection): void {
+    const visibleCount = 4;
+    const current = this.currentIndices().get(section.type) ?? 0;
+
+    if (current === 0) {
+      const lastPageStart = Math.max(0, section.items.length - visibleCount);
+      this.updateSectionIndex(section.type, lastPageStart);
+    } else {
+      this.updateSectionIndex(section.type, Math.max(0, current - visibleCount));
+    }
+  }
+
+  private updateSectionIndex(type: string, index: number): void {
+    const updatedMap = new Map(this.currentIndices());
+    updatedMap.set(type, index);
+    this.currentIndices.set(updatedMap);
+  }
+
+
+
 
 
 }

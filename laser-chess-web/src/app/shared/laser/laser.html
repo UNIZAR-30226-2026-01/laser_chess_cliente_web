@@ -1,11 +1,14 @@
-<div class="laser-container">
+<div class="laser-container" [class.static]="static">
   @for (seg of segments(); track $index) {
     <div class="laser-segment"
          [style.left.%]="seg.left"
          [style.top.%]="seg.top"
          [style.width.%]="seg.width"
-         [style.height.px]="4"
-         [style.transform]="'rotate(' + seg.angle + 'deg)'">
+         [style.transform]="'rotate(' + seg.angle + 'deg)'"
+         [style.--laser-color]="color === 'blue' ? '#3388ff' : '#ff3333'"
+         [style.--laser-glow-strong]="color === 'blue' ? 'rgba(50,130,255,0.8)' : 'rgba(255,60,60,0.8)'"
+         [style.--laser-glow-mid]="color === 'blue' ? 'rgba(30,100,255,0.5)' : 'rgba(255,30,30,0.5)'"
+         [style.--laser-glow-soft]="color === 'blue' ? 'rgba(0,60,200,0.25)' : 'rgba(200,0,0,0.25)'">
     </div>
   }
 </div>

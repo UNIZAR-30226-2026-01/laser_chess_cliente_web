@@ -109,7 +109,7 @@
 
       </div>
 
-        <ul class="user-list">
+        <div class="user-list">
             @if (!friendsInfo()) {
                 <p>No tienes amigos</p>
             } @else if (friends().length === 0) {
@@ -132,12 +132,12 @@
                     </li>
                 }
             }
-        </ul>
+          </div>
 
 
       }
       @else{
-        <ul class="game-list">
+        <div class="game-list">
           @if (!gameInfo()){
             <p>No tienes partidas en curso</p>
           } @else if (partidas().length === 0) {
@@ -162,7 +162,7 @@
                 </li>
             }
         }
-        </ul>
+      </div>
 
       }
     </div>

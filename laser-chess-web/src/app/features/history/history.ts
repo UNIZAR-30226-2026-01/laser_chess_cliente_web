@@ -46,6 +46,7 @@ export class History {
     if (saved) {
       this.historyState.historySelectedGame.set(JSON.parse(saved));
     }
+    this.historyState.laserPath.set([]);
 
     this.historyState.inicializarTablero();
   }
