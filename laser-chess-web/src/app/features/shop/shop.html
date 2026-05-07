@@ -1,34 +1,81 @@
-<app-top-row></app-top-row>
 <div class="animated-bg"
      [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
 </div>
 
-<div class="shop-container">
+<div class="page">
 
-  @for (section of sections(); track section.title) {
-    <div class="shop-section">
-      <h2>{{ section.title }}</h2>
-      <div class="items-grid">
-        @for (item of section.items; track item.id) {
-          <div class="shop-card" [class.owned]="item.owned">
+  <app-top-row></app-top-row>
 
-            <div class="icon">
-              <img [src]="item.icon" alt="{{ item.name }}">
-            </div>
+  <div class="folder-container">
+    <div class="folder-body">
 
-            <div class="name">{{ item.name }}</div>
-            <div class="price">{{ item.price }}</div>
-            <div class="requirement"> Nivel {{ item.levelRequisite }}</div>
-            @if (!item.owned) {
-              <button (click)="buyItem(item)" [disabled]="!canBuy(item)">
-                Comprar
+      <div class="shop-container">
+        @for (section of sections(); track section.type) {
+          <div class="shop-section">
+
+            <h2>
+              {{ section.title }}
+            </h2>
+
+            <div class="shop-carousel">
+
+              <button 
+                class="shop-arrow"
+                (click)="prevSection(section)"
+                [disabled]="section.items.length <= 4">
+                ❮
               </button>
-            } @else {
-              <span class="owned-badge"> Propio</span>
-            }
+
+              <div class="items-grid">
+                @for (item of visibleItems(section); track item.id) {
+                  
+                  <div class="shop-card"
+                    [class.owned]="item.owned"
+                    [class.can-buy]="canBuy(item)"
+                    [class.locked]="!item.owned && !canBuy(item)">
+              
+
+                    <div class="name">{{ item.name }}</div>
+
+                      <div class="icon">
+                        <img [src]="item.icon" alt="{{ item.name }}">
+                      </div>
+
+                      <div class="level-badge">
+                        Nivel {{ item.levelRequisite }}
+                      </div>
+
+                      @if (!item.owned) {
+                        <button 
+                          class="price buy-price"
+                          (click)="buyItem(item)"
+                          [disabled]="!canBuy(item)">
+                          {{ item.price }} 🪙
+                        </button>
+                      } @else {
+                        <div class="price owned-badge">
+                          Propio
+                        </div>
+                      }
+
+                    </div>
+
+                }
+              </div>
+
+              <button 
+                class="shop-arrow"
+                (click)="nextSection(section)"
+                [disabled]="section.items.length <= 4">
+                ❯
+              </button>
+
+            </div>
           </div>
         }
       </div>
+
     </div>
-  }
+  </div>
+
 </div>
