@@ -5,6 +5,7 @@ import { UserRespository } from '../../repository/user-respository';
 import { AuthRepository } from '../../repository/auth-repository';
 import { passwordMatchValidator } from '../signin/signin';
 import { BoardState } from '../../utils/board-state';
+import { NotificationService } from '../../model/notifications/notification';
 
 @Component({
   selector: 'app-settings',
@@ -54,6 +55,8 @@ export class Settings implements OnInit {
     this.changeEmailForm = new FormGroup({
       newEmail: new FormControl('', [Validators.required, Validators.email])
     });
+
+    
   }
 
 
@@ -121,5 +124,6 @@ export class Settings implements OnInit {
     const checked = (event.target as HTMLInputElement).checked;
     this.repo.setNotificationEnabled(checked);
     this.notificationsEnabled.set(checked);
+
   }
 }

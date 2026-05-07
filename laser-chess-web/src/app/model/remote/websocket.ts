@@ -24,12 +24,16 @@ export class Websocket {
   public connectionClosed$ = new Subject<void>();
   public connectionError$ = new Subject<void>();
 
+  private wakeGameSubject = new ReplaySubject<void>(1);
+  GameWake$ = this.wakeGameSubject.asObservable();
+
 
   private mode: 'lobby' | 'game' = 'lobby';
 
   public gameMessages$ = new ReplaySubject<any>(10);
   public lobbyEvents$ = new Subject<any>();
   public navigation$ = new Subject<string>();
+  
 
 
   constructor(private remote: Remote, private router: Router) {}
@@ -92,9 +96,8 @@ export class Websocket {
         return;
       }
 
-      if (msg.Type === 'Reconnect') {
-        localStorage.removeItem('idOponente');
-        localStorage.setItem('idOponente', JSON.stringify(msg.Content));
+      if (msg.Type === 'Reconnection') {
+        this.gameMessages$.next(msg);
         return;
       }
 
@@ -139,6 +142,9 @@ checkAndReconnect() {
     openObserver: {
       next: () => {
         console.log('¡Conexión establecida! Hay partida activa.');
+
+        this.wakeGameSubject.next();
+        console.log("Aviso a game de que voy");
         // Aquí es donde disparas la navegación
         this.router.navigate(['/game']);
       }

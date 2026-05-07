@@ -7,11 +7,12 @@ import { Router } from '@angular/router';
 import { UserRespository } from '../../repository/user-respository';
 import { BoardState } from '../../utils/board-state';
 import { MyProfile } from '../../model/user/MyProfile';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
   selector: 'app-history-hall',
-  imports: [TopRow],
+  imports: [TopRow, MatIconModule],
   templateUrl: './history-hall.html',
   styleUrl: './history-hall.css',
 })

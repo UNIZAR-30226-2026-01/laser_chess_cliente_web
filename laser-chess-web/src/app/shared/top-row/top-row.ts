@@ -27,7 +27,7 @@ export class TopRow implements OnInit {
   rankedPoints = signal(0);
   xpPercentage = signal(0);
   xpInfoDetail = signal({ current: 0, required: 100 });
-  avatar = signal(0);
+  avatar = this.boardState.avatarUsuario;
   userProfile$!: Observable<MyProfile>;
 
   // Popup de perfil
@@ -46,7 +46,7 @@ export class TopRow implements OnInit {
 
       this.userProfile$.subscribe(profile => {
         const cAvatar = profile.avatar - 9;
-        this.avatar.set(cAvatar);
+        this.boardState.avatarUsuario.set(cAvatar);
     });
 
   }

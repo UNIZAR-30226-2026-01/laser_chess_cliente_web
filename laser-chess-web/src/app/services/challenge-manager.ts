@@ -7,6 +7,7 @@ import { Websocket } from '../model/remote/websocket';
 import { FriendRespository } from '../repository/friend-respository';
 import { BOARD_TO_ID } from '../constants/boards'
 import { BoardState } from '../utils/board-state';
+import { GameUtils } from '../utils/game-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ export class ChallengeManager {
   userRepo = inject(UserRespository);
   webSocket = inject(Websocket);
   friendService = inject(FriendRespository);
+  gameUtils = inject(GameUtils);
 
   accept(reto: ChallengeResume) {
     const endpoint = 'challenge/accept';
@@ -34,6 +36,9 @@ export class ChallengeManager {
     this.gameState.miNombre.set(this.userRepo.getUsername() || '');
     this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
 
+    localStorage.setItem('gameState', JSON.stringify({
+      type: 'private',
+    }));
     this.gameState.tipoPartida.set('private');
     this.gameState.permitSalida.set(false);
 
@@ -129,13 +134,16 @@ export class ChallengeManager {
           };
         }
 
-        localStorage.setItem('gameState', JSON.stringify({
-          type: tipoPartida,
-        }));
-        this.gameState.tipoPartida.set(tipoPartida);
+        
 
 
     }
+
+    localStorage.setItem('gameState', JSON.stringify({
+      type: tipoPartida,
+    }));
+    this.gameState.tipoPartida.set(tipoPartida);
+
     const params = params_ini;
     this.timerService.miTiempo.set(timeBase * 1000);
     this.timerService.tiempoRival.set(timeBase * 1000);
@@ -164,10 +172,12 @@ export class ChallengeManager {
       if(friend){
         const rivalProfile$ = this.userRepo.getAccount(friend);
         rivalProfile$.subscribe(profile => {
-          this.setupPlayers(profile.userId, null);
+          this.setupOponent(profile.userId, null);
+          this.setUpUser();
           setTimeout(() => {
             this.webSocket.initConnection(endpoint, params);
           });
+          
           
         });
       }else{
@@ -187,11 +197,8 @@ export class ChallengeManager {
 
   }
 
-
-  setupPlayers(rivalId: number | null, rivalUsername: string | null): void {
-    this.gameState.miNombre.set(this.userRepo.getUsername() || '');
-    this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
-
+  setupOponent(rivalId: number | null, rivalUsername: string | null): void {
+    
     if (!rivalId) {
       this.gameState.avatarRival.set(10);
       this.boardState.skinRival.set(1);
@@ -200,18 +207,23 @@ export class ChallengeManager {
     }
 
     this.userRepo.getAccount(rivalId).subscribe(profile => {
-      this.gameState.avatarRival.set(profile.avatar || 1);
+      this.gameState.avatarRival.set(profile.avatar -9 || 1);
       this.boardState.skinRival.set(profile.piece_skin || 1);
       if (rivalUsername) this.gameState.nombreRival.set(rivalUsername);
     });
 
+    
+  }
+  
+  setUpUser(){
     this.userRepo.getOwnAccount().subscribe(profile => {
-      this.gameState.miAvatar.set(profile.avatar || 1);
+      this.gameState.miAvatar.set(profile.avatar - 9 || 1);
       this.boardState.skinUsario.set(profile.piece_skin || 1);
       this.gameState.miNombre.set(profile.username);
     });
   }
-  
+
+
 
   closeRequest(){
     this.webSocket.close();

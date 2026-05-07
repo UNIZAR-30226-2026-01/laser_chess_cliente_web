@@ -13,8 +13,8 @@ import { TimerService } from './timer-service';
 import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
 import { BoardState } from '../utils/board-state';
-import { NotificationService } from '../model/notifications/notification';
 import { ChallengeManager } from './challenge-manager';
+import { BoardAction } from './board-action';
 
 
 const LASER_DURATION_MS = 1000;
@@ -28,13 +28,13 @@ export class GameLogicService {
   private remoteService = inject(Remote);
   private timerService = inject(TimerService);
   private wsSubscription?: Subscription;
-  private waitingForConfirmation = false;
+  private waitingForConfirmation= signal(false);
   private router = inject(Router);
   private gameUtils = inject(GameUtils);
   private userRepo = inject(UserRespository);
   private boardState = inject(BoardState);
-  private notificationService= inject(NotificationService)
   private challengeManager = inject(ChallengeManager);
+  private boardActions = inject(BoardAction);
 
   
   TipoPieza = TipoPieza; 
@@ -76,8 +76,9 @@ export class GameLogicService {
     const request: SendAction = { Type: "Move", Content: content}; 
     // Enviar y bloqueaconst timer = timerMatch ? +timerMatch[1] : null;r (NO movemos la pieza aún)
     this.wsService.sendAction(request);
-    this.esMiTurno.set(false);        // Bloquear turno local
-    this.waitingForConfirmation = true;
+    this.state.esMiTurno.set(false);        // Bloquear turno local
+    this.timerService.stopTimer();
+    this.waitingForConfirmation.set(true);
   }
 
   solicitarPausa(){
@@ -108,8 +109,8 @@ export class GameLogicService {
     } else if (msg.Type === "InitialState" && this.aceptoInitial()){
       const idIponente = localStorage.getItem('idOponente');
       if (idIponente) {
-        this.challengeManager.setupPlayers(JSON.parse(idIponente), null);
-        localStorage.removeItem('pendingState');
+        this.challengeManager.setupOponent(JSON.parse(idIponente), null);
+        localStorage.removeItem('idOponente');
       }
 
       console.log("Procesando el estado inicial");
@@ -146,12 +147,10 @@ export class GameLogicService {
       
 
       const tiempo = Number(timeRaw);
-      console.log("Justo antes de verificar patrón");
       const moveRegex = /^(T|R|L)([a-j]\d)(?::([a-j]\d))?(?:x([a-j]\d))?$/;      
       const match = movePart.match(moveRegex);
 
       if (!match) return;
-      console.log("Después de verificar patrón");
 
       const tipo = match[1] || 'T';
       const desde = this.gameUtils.fromChess(match[2], this.soyAzul());
@@ -167,19 +166,20 @@ export class GameLogicService {
         console.log("Tipo:", tipo, "Desde:", desde, "Hasta:", hasta, "Captura:", captura, "Tiempo:", tiempo);
         if (tipo === 'T' && desde && hasta) {
           // "Te8:e7" -> de e8 a e7
-          console.log("me toca mover " + msg.Content);
-          
-          console.log("desde " + desde + " hasta " + hasta);
           this.moverPiezaEnTablero(desde, hasta);
 
         } else if ((tipo === 'L' || tipo === 'R') && desde) {
           // "La1"
-          console.log("me toca girar");
           this.rotarPiezaEnTablero(desde, tipo);
         }
 
-        // Disparo del láser
-        this.dispararLaser(path);
+        const esMiMovimiento = this.waitingForConfirmation();
+        if (esMiMovimiento) {
+          this.waitingForConfirmation.set(false);
+        }
+
+        this.dispararLaser(path, esMiMovimiento);
+        
         
         if (captura) {
           this.eliminarPiezaEnTablero(captura);
@@ -188,28 +188,26 @@ export class GameLogicService {
         this.piezaActiva()?.showSpots.set(false);
         this.piezaActiva.set(null);
 
-        // Cambio de turno
-        if (this.waitingForConfirmation) {
-          // Esto es confirmación de mi propio movimiento
-          this.waitingForConfirmation = false;
-          this.timerService.miTiempo.set(tiempo);
-          // El turno ya está en false (lo pusimos al enviar), no se cambia
-          console.log("Movimiento propio confirmado, turno para el rival");
-        } else {
-          // Esto es movimiento del rival
-          this.state.esMiTurno.set(true);
-          this.timerService.tiempoRival.set(tiempo);
-          console.log("Movimiento del rival recibido, ahora es mi turno");
-        }
-      
+        
+
+        setTimeout(() => {
+          if (esMiMovimiento) {
+            this.timerService.miTiempo.set(tiempo);
+          } else {
+            this.state.esMiTurno.set(true);
+            this.timerService.tiempoRival.set(tiempo);
+          }
+          this.timerService.startTimer();
+        }, LASER_DURATION_MS);
 
     }else if (msg.Type === "Error") {
       console.error("Error del servidor:", msg.Content);
       // Si estábamos esperando confirmación, algo salió mal
-      if (this.waitingForConfirmation) {
-        this.waitingForConfirmation = false;
+      if (this.waitingForConfirmation()) {
+        this.waitingForConfirmation.set(false);
         // Podrías recuperar el turno (depende de la política del juego)
         this.state.esMiTurno.set(true);
+        this.timerService.stopTimer(); // paro por tiempo de laser
       }
     
     }else if (msg.Type === "End"){
@@ -217,17 +215,20 @@ export class GameLogicService {
       
       if ((!this.soyAzul() && msg.Content === "P1_WINS" )|| (this.soyAzul() && msg.Content === "P2_WINS")) {
         console.log("¡Has ganado!");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has ganado!'});
+        this.finPartida.set({ mostrar: false, mensaje: '¡Has ganado!'});
 
       }else{
         console.log("Has perdido, mejor suerte la próxima vez.");
-        this.finPartida.set({ mostrar: true, mensaje: '¡Has perdido!'});
+        this.finPartida.set({ mostrar: false, mensaje: '¡Has perdido!'});
       }
       this.timerService.stopTimer();
       localStorage.removeItem('gameState');
+      
     }else if(msg.Type === "Rewards"){
-      const mensaje = `Has ganado ${msg.Content} XP y ${msg.Extra} monedas`;
-      this.notificationService.showWebNotification("Recompensas", mensaje);
+      this.finPartida.set({ 
+        mostrar: true, 
+        mensaje: `${this.finPartida().mensaje}\nHas ganado ${msg.Content} XP y ${msg.Extra} monedas` 
+      });
 
     }else if (msg.Type === "EOC"){
       console.log('Fin de comunicación con el servidor');
@@ -248,7 +249,10 @@ export class GameLogicService {
     }else if (msg.Type === "Reconnection"){
       // El oponenete se ha reconectado
       // this.startTimer()
-      // this.timerService.miTiempo.set(Number(msg.Extra));
+      this.state.nombreRival.set(msg.Content);
+      const tiempos = msg.Extra.split('%')
+      this.timerService.miTiempo.set(Number(tiempos[0]));
+      this.timerService.tiempoRival.set(Number(tiempos[1]));
       this.estadoDesconexion.set({ mostrar: false });
 
       // Se oculta el pop-up de espera a reconexión
@@ -336,7 +340,7 @@ export class GameLogicService {
       
       this.state.finPartida.set({ mostrar: false, mensaje: '' });
 
-      this.waitingForConfirmation = false;
+      this.waitingForConfirmation.set(false);
       this.state.permitSalida.set(true);
       this.router.navigate(['/home']);
     }
@@ -413,81 +417,27 @@ export class GameLogicService {
   /*                     Tras confirmación del backend                         */
   /*****************************************************************************/
 
-  // Mueve la pieza al recibir confimariones del backend
-  moverPiezaEnTablero(desde: {x: number, y: number}, hasta: {x: number, y: number}) {
-    
-    this.state.listaPiezas.update(piezas => 
-      piezas.map(p => {
-        // Buscamos la pieza que coincide con la coordenada 'desde'
-        console.log("intentando mover desde "+ p.x + " " + p.y + " partiendo de " + desde.x + " " + desde.y );
-        if (p.x === desde.x && p.y === desde.y) {
-          console.log("Moviendo pieza");
-          return { ...p, x: hasta.x, y: hasta.y };
-        }
 
-        // Caso de permutaciones de piezas
-        if (p.x === hasta.x && p.y === hasta.y) {
-        console.log("Intercambiando pieza de destino a origen");
-        return { ...p, x: desde.x, y: desde.y };
-        }
-        return p;
-      })
-    );
+  moverPiezaEnTablero(desde: {x: number, y: number}, hasta: {x: number, y: number}) {
+    this.boardActions.moverPieza(this.listaPiezas, desde, hasta);
   }
 
-  // Rotar piezas al recibir confirmaciones del backend
   rotarPiezaEnTablero(pos: {x: number, y: number}, direccion: 'L' | 'R') {
-    this.state.listaPiezas.update(piezas => 
-      piezas.map(p => {
-        if (p.x === pos.x && p.y === pos.y) {
-          const angulo = (direccion === 'R') ? 90 : -90; 
-          return { ...p, rotation: (p.rotation + angulo) };
-        }
-        return p;
-      })
-    );
+    this.boardActions.rotarPieza(this.listaPiezas, pos, direccion);
   }
 
   eliminarPiezaEnTablero(pos: {x: number, y: number}) {
-
-    // 1. marcar pieza como "capturada"
-    this.listaPiezas.update(piezas =>
-      piezas.map(p =>
-        (p.x === pos.x && p.y === pos.y)
-          ? { ...p, isBeingCaptured: true }
-          : p
-      )
-    );
-
-    // 2. eliminar después de animación
-    setTimeout(() => {
-      this.listaPiezas.update(piezas =>
-        piezas.filter(p => !(p.x === pos.x && p.y === pos.y))
-      );
-    }, 400); // duración animación
+    this.boardActions.eliminarPieza(this.listaPiezas, pos, true); // true = animada en GameLogic
   }
+  
 
-
-  /*
-  dispararLaser(path: {x: number, y: number}[]) {
-    const color = this.waitingForConfirmation ? 'blue' : 'red';
-    this.laserPath.set(path);
-    this.boardState.laserColor.set(color);
-    return new Promise<void>(resolve => 
-      setTimeout(() => {
-        this.laserPath.set([]);
-        resolve();
-      }, LASER_DURATION_MS)
-    );
-  }
-
-  */
-
-  private laserQueue: {path: {x:number,y:number}[], color: boolean}[] = [];
+  
+ 
+  
+private laserQueue: {path: {x:number,y:number}[], color: Boolean}[] = [];
 private laserRunning = false;
 
-dispararLaser(path: {x: number, y: number}[]) {
-  const color = this.waitingForConfirmation;
+dispararLaser(path: {x: number, y: number}[], color: Boolean) {
   this.laserQueue.push({ path, color });
   if (!this.laserRunning) {
     this.processLaserQueue();
@@ -508,6 +458,8 @@ private processLaserQueue() {
     this.processLaserQueue();
   }, LASER_DURATION_MS);
 }
+
+  
 
   ocupado(x: number, y: number): PiezaData | null {
     const pieza = this.listaPiezas().find(p => p.x === x && p.y === y);

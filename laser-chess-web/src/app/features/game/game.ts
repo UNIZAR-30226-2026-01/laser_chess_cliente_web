@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, inject, Input} from '@angular/core';
+import { Component, signal, OnInit, inject} from '@angular/core';
 import { Pieza } from '../../shared/pieza/pieza';
 import { Websocket } from '../../model/remote/websocket'; // Ajusta la ruta
 import { TipoPieza } from '../../model/game/TipoPieza'
@@ -12,7 +12,7 @@ import { TimerService } from '../../services/timer-service';
 import { GameLogicService } from '../../services/game-logic-service';
 import { GameUtils } from '../../utils/game-utils';
 import { BoardState } from '../../utils/board-state';
-
+import { ChallengeManager } from '../../services/challenge-manager';
 
 @Component({
   selector: 'app-game',
@@ -36,8 +36,9 @@ export class Game implements OnInit {
   gameService = inject(GameLogicService);
   gameUtils = inject(GameUtils);
   boardState = inject(BoardState);
+  challengeManage = inject(ChallengeManager);
 
-  TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
+  TipoPieza = TipoPieza; 
 
   gameState = inject(GameState);
   listaPiezas = this.gameState.listaPiezas;
@@ -96,8 +97,22 @@ export class Game implements OnInit {
       complete: () => console.log('WS COMPLETADO'),
     });
 
+    this.wsService.GameWake$.subscribe(() => {
+        const saved = localStorage.getItem('gameState');
+        this.challengeManage.setUpUser();
 
+        if (saved) {
+          const state = JSON.parse(saved);
+          this.gameState.tipoPartida.set(state.type);
+          
+          console.log('la partida es: ' + state.type);
+        }
+    });
+
+    
+       
   }
+
 
   ngOnDestroy(): void {
     console.log('Destruyendo Game, limpiando suscripción');

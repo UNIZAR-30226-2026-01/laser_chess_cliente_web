@@ -90,7 +90,7 @@ describe('GameLogicService', () => {
 
     it('debería mostrar el primer láser inmediatamente', () => {
       vi.useFakeTimers();
-      service.dispararLaser(path1);
+      service.dispararLaser(path1, true);
 
       expect(service.laserPath()).toEqual(path1);
 
@@ -99,7 +99,7 @@ describe('GameLogicService', () => {
 
     it('debería limpiar el láser después de LASER_DURATION_MS', () => {
       vi.useFakeTimers();
-      service.dispararLaser(path1);
+      service.dispararLaser(path1, true);
       vi.advanceTimersByTime(1000);
 
       expect(service.laserPath()).toEqual([]);
@@ -107,8 +107,8 @@ describe('GameLogicService', () => {
 
     it('el segundo láser espera a que termine el primero', () => {
       vi.useFakeTimers();
-      service.dispararLaser(path1);
-      service.dispararLaser(path2);
+      service.dispararLaser(path1, true);
+      service.dispararLaser(path2, false);
 
       expect(service.laserPath()).toEqual(path1);
 
@@ -122,9 +122,9 @@ describe('GameLogicService', () => {
     it('tres láseres se procesan en orden', () => {
       vi.useFakeTimers();
       const path3 = [{ x: 4, y: 0 }];
-      service.dispararLaser(path1);
-      service.dispararLaser(path2);
-      service.dispararLaser(path3);
+      service.dispararLaser(path1, true);
+      service.dispararLaser(path2, false);
+      service.dispararLaser(path3, true);
 
       expect(service.laserPath()).toEqual(path1);
       vi.advanceTimersByTime(1000);
@@ -137,8 +137,8 @@ describe('GameLogicService', () => {
 
     it('el color del láser propio es azul', () => {
       vi.useFakeTimers();
-      (service as any).waitingForConfirmation = true;
-      service.dispararLaser(path1);
+      (service as any).waitingForConfirmation.set(true);
+      service.dispararLaser(path1, true);
 
       expect(boardStateMock.laserColor()).toBe('blue');
       vi.advanceTimersByTime(1000);
@@ -146,8 +146,8 @@ describe('GameLogicService', () => {
 
     it('el color del láser rival es rojo', () => {
       vi.useFakeTimers();
-      (service as any).waitingForConfirmation = false;
-      service.dispararLaser(path1);
+      (service as any).waitingForConfirmation.set(false);
+      service.dispararLaser(path1, false);
 
       expect(boardStateMock.laserColor()).toBe('red');
       vi.advanceTimersByTime(1000);
@@ -239,41 +239,37 @@ describe('GameLogicService', () => {
     it('debería ser mi turno tras recibir movimiento del rival', () => {
       vi.useFakeTimers();
       gameStateMock.esMiTurno.set(false);
-      (service as any).waitingForConfirmation = false;
+      (service as any).waitingForConfirmation.set(false);
 
       service.procesarAccion(moveMsg('Te8:e7%a1,b1%300'));
-
-      expect(service.esMiTurno()).toBe(true);
-      vi.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);          // ← primero avanza
+      expect(service.esMiTurno()).toBe(true); // ← luego comprueba
     });
 
     it('no debería cambiar el turno al confirmar mi propio movimiento', () => {
       vi.useFakeTimers();
       gameStateMock.esMiTurno.set(false);
-      (service as any).waitingForConfirmation = true;
+      (service as any).waitingForConfirmation.set(true);
 
       service.procesarAccion(moveMsg('Te8:e7%a1,b1%300'));
-
-      expect(service.esMiTurno()).toBe(false);
       vi.advanceTimersByTime(1000);
+      expect(service.esMiTurno()).toBe(false);
     });
 
     it('debería actualizar miTiempo al confirmar mi movimiento', () => {
       vi.useFakeTimers();
-      (service as any).waitingForConfirmation = true;
+      (service as any).waitingForConfirmation.set(true);
       service.procesarAccion(moveMsg('Te8:e7%a1,b1%250'));
-
-      expect(timerMock.miTiempo()).toBe(250);
-      vi.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);           // ← primero avanza
+      expect(timerMock.miTiempo()).toBe(250); // ← luego comprueba
     });
 
     it('debería actualizar tiempoRival al recibir movimiento del rival', () => {
       vi.useFakeTimers();
-      (service as any).waitingForConfirmation = false;
+      (service as any).waitingForConfirmation.set(false);
       service.procesarAccion(moveMsg('Te8:e7%a1,b1%180'));
-
-      expect(timerMock.tiempoRival()).toBe(180);
-      vi.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);              // ← primero avanza
+      expect(timerMock.tiempoRival()).toBe(180); // ← luego comprueba
     });
   });
 });

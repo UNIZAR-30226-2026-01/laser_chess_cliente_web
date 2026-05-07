@@ -33,12 +33,6 @@
   border-radius: 999px;
 }
 
-.laser-container.static .laser-segment {
-  box-shadow: none;
-  opacity: 0.6;
-  background: var(--laser-color);
-}
-
 .laser-container.static .laser-segment::after {
   display: none;
 }
