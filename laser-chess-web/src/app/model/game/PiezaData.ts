@@ -7,4 +7,5 @@ export interface PiezaData {
   rotation: number;
   esMia: boolean;
   tipoPieza: TipoPieza;
+  isBeingCaptured?: boolean;
 }

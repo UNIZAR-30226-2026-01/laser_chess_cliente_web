@@ -30,6 +30,10 @@ export class Board {
   @Input() isCasillaRestringida!: (x: number, y: number) => 'azul' | 'rojo' | null;
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
 
+  @Input() laserStatic: boolean = false;
+
+
+
   
 
 

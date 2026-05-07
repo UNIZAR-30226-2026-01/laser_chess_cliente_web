@@ -15,8 +15,8 @@ describe('Settings', () => {
       getXpInfo: () => of({ level: 5, currentXp: 100, neededXp: 200 }),
       getAllRatings: () => of([]),
       getCurrentEmail: () => of(''),
-      getNotificationEnabled: vi.fn().mockReturnValue(of(true)),
-      setNotificationEnabled: vi.fn().mockReturnValue(of(true))
+      getNotificationEnabled: vi.fn().mockReturnValue(true),
+      setNotificationEnabled: vi.fn().mockReturnValue(undefined)
     };
     
     

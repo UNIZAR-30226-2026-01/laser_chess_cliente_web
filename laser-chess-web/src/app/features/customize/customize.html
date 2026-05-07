@@ -1,47 +1,81 @@
-<app-top-row></app-top-row>
 <div class="animated-bg"
      [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
 </div>
 
+<div class="page">
 
+  <app-top-row></app-top-row>
 
-<div class="customize-layout">
-  <!-- Tablero a la izquierda -->
-  <div class="board-preview">
-    <app-board
-      [piezas]="listaPiezas"
-      [laserPath]="laserPath"
-      [columnas]="columnas"
-      [filas]="filas"
-      [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)">
-    </app-board>
-  </div>
+  <div class="folder-container">
+    <div class="folder-body">
 
-  <!-- Personalización a la derecha -->
-  <div class="customize-panel">
-    <div class="customize-container">
-      @for (group of groups(); track group.type) {
-        <div class="customize-section">
-          <h2>{{ group.title }}</h2>
-          <div class="items-grid">
-            @for (item of group.items; track item.id) {
-              <div class="customize-card" [class.equipped]="item.isEquipped" (click)="equip(item)">
-                <div class="icon">
-                  <img [src]="item.icon" alt="{{ item.name }}">
-                </div>
-                <div class="name">{{ item.name }}</div>
-                <div class="equip-badge">
-                  @if (item.isEquipped) {
-                    Equipado
-                  } @else {
-                    Equipar
-                  }
+      <div class="customize-layout">
+        
+        <!-- Tablero a la izquierda -->
+        <div class="board-preview">
+          <app-board
+            [piezas]="listaPiezas"
+            [laserPath]="laserPath"
+            [columnas]="columnas"
+            [filas]="filas"
+            [isCasillaRestringida]="gameUtils.isCasillaRestringida.bind(this)">
+          </app-board>
+        </div>
+
+        <!-- Personalización a la derecha -->
+        <div class="customize-panel">
+          <div class="customize-container">
+            @for (group of groups(); track group.type) {
+              <div class="customize-section">
+                <h2>{{ group.title }}</h2>
+                
+                <div class="carousel-wrapper">
+                  <!-- Botón izquierdo -->
+                  <button 
+                    class="carousel-nav prev" 
+                    (click)="prevItem(group.type)"
+                    [disabled]="group.items.length <= 1"
+                    [class.disabled]="group.items.length <= 1">
+                    ❮
+                  </button>
+
+                  <!-- Ítem actual -->
+                  <div class="carousel-item">
+                    @let currentItem = group.items[currentIndices().get(group.type) ?? 0];
+                    @if (currentItem) {
+                      <div class="customize-card" [class.equipped]="currentItem.isEquipped">
+                        <div class="icon">
+                          <img [src]="currentItem.icon" [alt]="currentItem.name">
+                        </div>
+                        <div class="name">{{ currentItem.name }}</div>
+                        <div class="equip-badge">
+                          @if (currentItem.isEquipped) {
+                            Equipado
+                          }
+                        </div>
+                      </div>
+                      <div class="carousel-counter">
+                        {{ (currentIndices().get(group.type) ?? 0) + 1 }} / {{ group.items.length }}
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Botón derecho -->
+                  <button 
+                    class="carousel-nav next" 
+                    (click)="nextItem(group.type)"
+                    [disabled]="group.items.length <= 1"
+                    [class.disabled]="group.items.length <= 1">
+                    ❯
+                  </button>
                 </div>
               </div>
             }
           </div>
         </div>
-      }
-    </div>
-  </div>
-</div>
+      </div>
+
+    </div> 
+  </div> 
+
+</div> 

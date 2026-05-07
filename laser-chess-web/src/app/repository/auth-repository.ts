@@ -56,7 +56,6 @@ export class AuthRepository {
             console.log("Los datos son inválidos");
             return of(ResponseStatus.INVALID_DATA);
           }else{
-            console.log("Tas borrachito");
             return of(ResponseStatus.ERR_CONNECTION);
           }
         })

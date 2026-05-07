@@ -27,7 +27,7 @@
         [tipoPieza]="p.tipoPieza"
         [isCasillaRestringida]="isCasillaRestringida"
         [ocupado]="ocupado"
-
+        [isBeingCaptured]="p.isBeingCaptured ?? false"
         (selected)="piezaSeleccionada.emit(piezaRef)"
         (moveRequested)="movimientoSolicitado.emit($event)">
       </app-pieza>
@@ -37,13 +37,16 @@
         [x]="p.x"
         [y]="p.y"
         [tipoPieza]="p.tipoPieza"
+        [isBeingCaptured]="p.isBeingCaptured ?? false"
         [rotationInput]="p.rotation">
       </app-pieza-rival>
     }
   }
 
   @if (laserPath().length > 0) {
-    <app-laser [path]="laserPath()"></app-laser>
+    @if (laserPath().length > 0) {
+  <app-laser [path]="laserPath()" [color]="this.boardState.laserColor()" [static]="laserStatic"></app-laser>
+}
   }
 </div>
 

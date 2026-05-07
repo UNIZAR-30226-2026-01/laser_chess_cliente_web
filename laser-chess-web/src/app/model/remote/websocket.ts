@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject} from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ReplaySubject, Subject} from 'rxjs';
 import { Remote } from './remote'; // <--- Importa tu servicio
 import { API_URL_WS } from '../../constants/app.const';
 import {  Router } from '@angular/router';
+import { ChallengeManager } from '../../services/challenge-manager';
 
 
 
@@ -23,12 +24,17 @@ export class Websocket {
   public connectionClosed$ = new Subject<void>();
   public connectionError$ = new Subject<void>();
 
+  private wakeGameSubject = new ReplaySubject<void>(1);
+  GameWake$ = this.wakeGameSubject.asObservable();
+
 
   private mode: 'lobby' | 'game' = 'lobby';
 
-  public gameMessages$ = new ReplaySubject<any>(1);
+  public gameMessages$ = new ReplaySubject<any>(10);
   public lobbyEvents$ = new Subject<any>();
   public navigation$ = new Subject<string>();
+  
+
 
   constructor(private remote: Remote, private router: Router) {}
 
@@ -39,7 +45,7 @@ export class Websocket {
     }
 
     this.mode = 'lobby';
-    this.gameMessages$ = new ReplaySubject<any>(1);
+    this.gameMessages$ = new ReplaySubject<any>(10);
 
     const token = this.remote.getAccessToken();
     const searchParams = new URLSearchParams(params);
@@ -76,6 +82,24 @@ export class Websocket {
   private handleMessage(msg: any) {
 
     if (this.mode === 'lobby') {
+      console.log('LOBBY MSG:', msg.Type, msg.Content);
+       if (msg.Type === 'MatchStart') {
+        // Guardarlo en gameMessages$ para que game lo reciba al suscribirse
+        this.gameMessages$.next(msg);
+        return;
+      }
+
+      if (msg.Type === 'State') {
+        localStorage.removeItem('pendinState');
+        localStorage.setItem('pendingState', JSON.stringify(msg));
+        console.log("Me guardo el estado porque ha llegado antes");
+        return;
+      }
+
+      if (msg.Type === 'Reconnection') {
+        this.gameMessages$.next(msg);
+        return;
+      }
 
       if (msg.Type === 'InitialState') {
         console.log('Pasando a GAME');
@@ -118,6 +142,9 @@ checkAndReconnect() {
     openObserver: {
       next: () => {
         console.log('¡Conexión establecida! Hay partida activa.');
+
+        this.wakeGameSubject.next();
+        console.log("Aviso a game de que voy");
         // Aquí es donde disparas la navegación
         this.router.navigate(['/game']);
       }
