@@ -3,9 +3,13 @@ import { CommonModule } from '@angular/common';
 import { CustomizeRepository, CustomizeItemDisplay } from '../../repository/customize-repository';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Remote } from '../../model/remote/remote';
 import { Board } from '../../shared/board/board'
 import { GameUtils } from '../../utils/game-utils'
 import { BoardState } from '../../utils/board-state'
+import { TopRow } from '../../shared/top-row/top-row';
+import { UserRespository } from '../../repository/user-respository';
+
 
 interface CustomizeGroup {
   type: string;
@@ -16,7 +20,7 @@ interface CustomizeGroup {
 @Component({
   selector: 'app-customize',
   standalone: true,
-  imports: [CommonModule, Board],
+  imports: [CommonModule, Board, TopRow],
   templateUrl: './customize.html',
   styleUrls: ['./customize.css']
 })
@@ -25,6 +29,7 @@ export class Customize implements OnInit {
   private customizeRepo = inject(CustomizeRepository);
   gameUtils = inject(GameUtils);
   boardState = inject(BoardState);
+  private remote = inject(UserRespository);
   groups: WritableSignal<CustomizeGroup[]> = signal<CustomizeGroup[]>([]);
 
   columnas = 10;
@@ -35,8 +40,9 @@ export class Customize implements OnInit {
 
   ngOnInit(): void {
     this.loadItems();
-    this.boardState.listaPiezas.set(this.boardState.iniciarTablero(this.board()));
   }
+
+  
 
   private loadItems(): void {
     this.customizeRepo.getCustomizeItems().pipe(
@@ -62,6 +68,7 @@ export class Customize implements OnInit {
       case 'board_skin': return 'Tableros';
       case 'piece_skin': return 'Piezas';
       case 'win_animation': return 'Animaciones de victoria';
+      case 'avatar': return 'Avatar';
       default: return 'Otros';
     }
   }
@@ -87,6 +94,7 @@ export class Customize implements OnInit {
       next: () => {
         // Recargar 
         this.loadItems();
+        this.boardState.skinUsario.set(item.id);
       },
       error: (err: any) => {
         // Revertir en caso de error

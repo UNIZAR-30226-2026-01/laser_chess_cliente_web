@@ -27,7 +27,8 @@ export class CustomizeRepository {
             const equipped = {
             board_skin: account.board_skin,
             piece_skin: account.piece_skin,
-            win_animation: account.win_animation
+            win_animation: account.win_animation,
+            avatar: account.avatar 
             };
             return items.map(item => this.mapToDisplay(item, equipped));
         })
@@ -44,7 +45,8 @@ export class CustomizeRepository {
             mail: account.mail,
             board_skin: account.board_skin,
             piece_skin: account.piece_skin,
-            win_animation: account.win_animation
+            win_animation: account.win_animation,
+            avatar: account.avatar 
             };
             // cambiar campo
             switch (itemType) {
@@ -56,6 +58,9 @@ export class CustomizeRepository {
                 break;
             case 'WIN_ANIMATION':
                 updateRequest.win_animation = itemId;
+                break;
+            case 'AVATAR':                   
+                updateRequest.avatar = itemId;
                 break;
             default:
                 throw new Error('Tipo de ítem desconocido');
@@ -71,30 +76,66 @@ export class CustomizeRepository {
     private mapToDisplay(dto: ShopItemDTO, equipped: any): CustomizeItemDisplay {
     let name = '';
     let icon = '';
-    const type = dto.item_type;
+    const type = dto.item_type?.toLowerCase() || '';
 
     switch (type) {
-      case 'WIN_ANIMATION':
-        name = `Animación ${dto.item_id}`;
+
+      case 'win_animation':
+        name = `Animacion de victoria ${dto.item_id}`;
         icon = '';
         break;
-      case 'BOARD_SKIN':
-        name = `Tablero ${dto.item_id}`;
-        icon = '';
+
+      case 'board_skin':
+        switch (dto.item_id) {
+          case 4:
+            name = 'Classic';
+            icon = 'assets/vector-art/Backgrounds/Classic/BG-classic.svg';
+            break;
+          case 5:
+            name = 'Soretro';
+            icon = 'assets/vector-art/Backgrounds/Soretro/BG-soretro.svg';
+            break;
+          case 6:
+            name = 'Cats';
+            icon = 'assets/vector-art/Backgrounds/Cats/BG-cats.svg';
+            break;
+        }
         break;
-      case 'PIECE_SKIN':
-        name = `Pieza ${dto.item_id}`;
-        icon = '';
+
+      case 'piece_skin':
+        switch (dto.item_id) {
+          case 1:
+            name = 'Classic';
+            icon = 'assets/vector-art/PieceSets/Classic/KIN-B-Classic.svg';
+            break;
+          case 2:
+            name = 'Soretro';
+            icon = 'assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.png';
+            break;
+          case 3:
+            name = 'Cats';
+            icon = 'assets/vector-art/PieceSets/Cats/KIN-B-Cats.svg';
+            break;
+        }
         break;
+
+      case 'avatar':                 
+        const botNumber = dto.item_id - 9; // Formulita pues el id del primer avatar es 10, y el nombre de la imagen es bot1
+        name = `Avatar ${botNumber}`;  
+        icon = `assets/vector-art/ProfilePictures/bot${botNumber}.svg`;
+        break;
+
       default:
-        name = `Item ${dto.item_id}`;
+        name = `?? ${dto.item_id}`; //otra cosa
         icon = '';
+
     }
 
     let isEquipped = false;
-    if (type === 'BOARD_SKIN') isEquipped = (equipped.board_skin === dto.item_id);
-    else if (type === 'PIECE_SKIN') isEquipped = (equipped.piece_skin === dto.item_id);
-    else if (type === 'WIN_ANIMATION') isEquipped = (equipped.win_animation === dto.item_id);
+    if (type === 'board_skin') isEquipped = (equipped.board_skin === dto.item_id);
+    else if (type === 'piece_skin') isEquipped = (equipped.piece_skin === dto.item_id);
+    else if (type === 'win_animation') isEquipped = (equipped.win_animation === dto.item_id);
+    else if (type === 'avatar') isEquipped = (equipped.avatar === dto.item_id);
 
     return {
       id: dto.item_id,

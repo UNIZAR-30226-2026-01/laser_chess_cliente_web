@@ -180,6 +180,147 @@
     margin-top: 10vh;
 }
 
+  /* fila que contiene modo de tiempo + incremento */
+  .time-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Ratio 70/30 usando flex grow (7/3) */
+  .time-row .dropdown-wrapper:first-child {
+    flex: 7 1 0%;
+    min-width: 0; /* permitir que el contenido se reduzca correctamente */
+  }
+  .time-row .dropdown-wrapper:nth-child(2) {
+    flex: 3 1 0%;
+    min-width: 0;
+  }
+
+  /* Asegurar que el contenido del botón ocupe todo el ancho */
+  .time-row .dropdown-wrapper .setting-content {
+    width: 100%;
+  }
+
+  /* Centrar el texto del selector de incremento y mantener el icon a la izquierda */
+  .time-row .dropdown-wrapper:nth-child(2) {
+    position: relative; /* ya lo tenía pero aseguramos contexto para posicionamiento absoluto */
+  }
+  .time-row .dropdown-wrapper:nth-child(2) .setting-content {
+    justify-content: center;
+    padding-left: 44px; /* espacio para el icon situado a la izquierda */
+  }
+  .time-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon {
+    position: absolute;
+    left: 18px;
+  }
+
+  /* BOARD ROW: tablero + IA level (same ratio as time row: 7/3) */
+  .board-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+  }
+  .board-row .dropdown-wrapper:first-child {
+    flex: 7 1 0%;
+    min-width: 0;
+  }
+  .board-row .dropdown-wrapper:nth-child(2) {
+    flex: 3 1 0%;
+    min-width: 0;
+    position: relative;
+  }
+  .board-row .dropdown-wrapper:nth-child(2) .setting-content {
+    justify-content: center;
+    padding-left: 44px;
+  }
+  .board-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon {
+    position: absolute;
+    left: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .time-row { flex-direction: column; }
+    .time-row .dropdown-wrapper { flex: none; width: 100%; }
+    .time-row .dropdown-wrapper .setting-content { justify-content: flex-start; }
+  }
+
+  /* Mode selection modal */
+  .mode-modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    z-index: 1100;
+  }
+
+  .mode-modal {
+    background: var(--S1);
+    border: 2px solid var(--S2);
+    border-radius: var(--BorderNormal);
+    padding: 40px 48px;
+    display: flex;
+    gap: 56px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 520px;
+  }
+
+
+  .mode-option {
+    background: var(--S2);
+    border: 1px solid var(--S3);
+    color: var(--LCWhite);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    min-width: 120px;
+    padding: 12px 18px;
+    border-radius: 12px;
+  }
+
+  .mode-icon {
+    font-size: 96px;
+    width: 96px;
+    height: 96px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--LCWhite);
+    padding: 12px;
+    border-radius: 16px;
+    line-height: 1;
+  }
+
+
+  .mode-option:hover {
+    background: var(--S3);
+    transform: translateY(-4px);
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .mode-label {
+    font-weight: 800;
+    font-size: 1.15rem;
+  }
+
+  @media (max-width: 900px) {
+    .mode-modal { gap: 28px; padding: 24px; min-width: 420px; }
+    .mode-icon { font-size: 72px; }
+  }
+
+  @media (max-width: 480px) {
+    .mode-modal { gap: 16px; padding: 16px; min-width: 280px; flex-direction: column; }
+    .mode-icon { font-size: 56px; }
+    .mode-option { min-width: auto; }
+  }
+
 /* RANK CARD */
 .rank-card {
     flex: 1 1 min(200px, 100%);

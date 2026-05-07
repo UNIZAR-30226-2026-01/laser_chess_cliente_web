@@ -5,6 +5,8 @@ import { ResponseStatus } from '../model/auth/ResponseStatus';
 import { LoginRequest } from '../model/auth/LoginRequest';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { NotificationService } from '../model/notifications/notification';
+
 
 
 /*
@@ -23,6 +25,7 @@ import { map, catchError } from 'rxjs/operators';
 })
 export class AuthRepository {
   private remoteService = inject(Remote);
+  private notificationWebsocket = inject(NotificationService);
 
   // Gestión de proceso de login
   login(request: LoginRequest) : Observable<ResponseStatus>{
@@ -30,6 +33,7 @@ export class AuthRepository {
       map((httpResponse) => {
         if (httpResponse && httpResponse.body) {
             this.remoteService.setTokens(httpResponse.body.access_token);
+            this.notificationWebsocket.initIfLoggedIn();
             const id = this.remoteService.getAccountIdFromToken();
             if (id) this.remoteService.setAccountId(id);
             console.log('User logged in successfully', httpResponse.body);
@@ -94,7 +98,10 @@ export class AuthRepository {
   }
   
   // Gestión de proceso de cerrar sesión (borrado de tokens y datos relacionados con la autenticación)
-  logout() : void {
+  logout(): void {
+    this.notificationWebsocket.teardownOnLogout();
+    console.log('cierre de websocket de eventos');
+
     this.remoteService.logout();
   }
 

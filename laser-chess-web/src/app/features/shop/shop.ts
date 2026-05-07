@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ShopRepository, ShopItemDisplay } from '../../repository/shop-repository';
 import { Remote } from '../../model/remote/remote';
 import { AccountResponse } from '../../model/auth/AccountResponse';
+import { BoardState } from '../../utils/board-state';
+import { TopRow } from '../../shared/top-row/top-row';
+
 
 interface ShopSection {
   title: string;
@@ -11,13 +14,15 @@ interface ShopSection {
 
 @Component({
   selector: 'app-shop',
-  imports: [CommonModule],
+  imports: [CommonModule, TopRow],
   templateUrl: './shop.html',
   styleUrls: ['./shop.css']
 })
 export class Shop implements OnInit {
   private shopRepo = inject(ShopRepository);
   private remote = inject(Remote);
+
+  boardState = inject(BoardState);
 
   items = signal<ShopItemDisplay[]>([]);
   userMoney = signal<number>(0);
@@ -41,7 +46,7 @@ export class Shop implements OnInit {
     // Cargar datos del usuario, un dia mas
     this.loadUserData();
   }
-  
+
 
   private loadUserData(): void {
     // Cargar
@@ -64,6 +69,7 @@ export class Shop implements OnInit {
       case 'win_animation': return 'Wins';
       case 'board_skin': return 'Tableros';
       case 'piece_skin': return 'Piezas';
+      case 'avatar': return 'Avatares';
       default: return 'Otros';
     }
   }

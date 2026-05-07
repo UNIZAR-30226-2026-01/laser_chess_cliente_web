@@ -3,7 +3,7 @@ import { Customize } from './customize';
 import { UserRespository } from '../../repository/user-respository';
 import { CustomizeRepository, CustomizeItemDisplay } from '../../repository/customize-repository';
 import { of } from 'rxjs';
-
+import { Remote } from '../../model/remote/remote';
 
 // Datos falsos
 const mockItems: CustomizeItemDisplay[] = [
@@ -19,7 +19,13 @@ describe('Customize', () => {
   let fixture: ComponentFixture<Customize>;
 
   beforeEach(async () => {
-    
+
+    const mockRemote = {
+      getOwnAccountInfo: vi.fn().mockReturnValue(of({ id: '123', username: 'test' })),
+      getOwnAccount: vi.fn().mockReturnValue(of({ id: '123', username: 'test' })),
+    };
+
+
     const userRepoMock = {
       getOwnAccount: () => of({ id: '1', username: 'test' }),
       getXpInfo: () => of({ level: 5, currentXp: 100, neededXp: 200 }),
@@ -37,7 +43,8 @@ describe('Customize', () => {
       imports: [Customize],
       providers: [
         { provide: UserRespository, useValue: userRepoMock },
-        { provide: CustomizeRepository, useValue: customizeRepoMock }
+        { provide: CustomizeRepository, useValue: customizeRepoMock },
+        { provide: Remote, useValue: mockRemote }  
       ]
     })
     .compileComponents();

@@ -24,7 +24,6 @@ import { GameResume } from '../game/GameResume';
 
 import { ShopItemDTO } from '../shop/ShopItemDTO';
 
-import { SseService } from '../notifications/sse';
 
 
 @Injectable({
@@ -37,7 +36,6 @@ export class Remote {
   private accessToken: string = "";
   private accountId: number | null = null;
 
-  private sseService = inject(SseService);
 
 
   constructor() {
@@ -102,7 +100,7 @@ export class Remote {
   // Solicitud a la API para iniciar sesión
   login(loginRequest: LoginRequest): Observable<HttpResponse<LoginResponse> | null> {
     console.log('Login called', loginRequest);
-    return this.http.post<LoginResponse>(`http:${API_URL}/login`, loginRequest, { observe: 'response', withCredentials: true }).pipe(
+    return this.http.post<LoginResponse>(`${API_URL}/login`, loginRequest, { observe: 'response', withCredentials: true }).pipe(
       tap((response) => {
         console.log('Login response', response);
         if (response.body?.access_token) {
@@ -118,7 +116,7 @@ export class Remote {
 
   // Solicitud a la API para registrar un nuevo usuario
   register(registerRequest: RegisterRequest): Observable<HttpResponse<AccountResponse> | null> {
-    return this.http.post<AccountResponse>(`http:${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
+    return this.http.post<AccountResponse>(`${API_URL}/register`, registerRequest, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw err;
       })
@@ -127,7 +125,7 @@ export class Remote {
 
   // Solicitud a la API para obtener los detalles de una cuenta
   getAccount(id_account: number){
-    return this.http.get<AccountResponse>(`http:${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
+    return this.http.get<AccountResponse>(`${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
       catchError((err: Error) => {
         throw new Error('Error during getting info from de account with id_account');
       })
@@ -135,7 +133,7 @@ export class Remote {
   }
 
   getOwnAccount() {
-      return this.http.get<AccountResponse>(`http:${API_URL}/api/account/`).pipe(
+      return this.http.get<AccountResponse>(`${API_URL}/api/account/`).pipe(
         catchError((err: Error) => {
           throw new Error('Error during getting own account info');
         })
@@ -177,12 +175,12 @@ export class Remote {
 
   // Solicitud a la API para obtener la info de la barra de xp
   getXpInfo(): Observable<XpInfo> {
-    return this.http.get<XpInfo>(`http:${API_URL}/api/account/xp`, { observe: 'body' });
+    return this.http.get<XpInfo>(`${API_URL}/api/account/xp`, { observe: 'body' });
   }
 
   // Solicitud a la API para obtener listado de amigos
   getFriends() : Observable<FriendSummary[]>{
-    return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship`, {
+    return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship`, {
     //headers: { Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
@@ -193,7 +191,7 @@ export class Remote {
 
   // Solicitud a la API para obtener listado de solicitudes de amistad pendientes
   getRequestFriends() : Observable<FriendSummary[]>{
-    return this.http.get<FriendSummary[]>(`http:${API_URL}/api/friendship/pending`, {
+    return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship/pending`, {
     //headers: {Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
@@ -215,7 +213,7 @@ export class Remote {
 
   // Solicitud a la API para enviar una solicitud de amistad
   addFriend(request:FriendshipRequest) : Observable<void> {
-    return this.http.post<void>(`http:${API_URL}/api/friendship`, request , {
+    return this.http.post<void>(`${API_URL}/api/friendship`, request , {
     //headers: {Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
@@ -549,7 +547,6 @@ export class Remote {
     this.accountId = null;
     this.isAuthenticated$.next(false);
 
-    this.sseService.disconnect();
     this.router.navigate(['']);
   }
 

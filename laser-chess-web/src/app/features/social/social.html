@@ -1,3 +1,7 @@
+<div class="animated-bg"
+     [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
+</div>
+
 <div class="page">
 
   <app-top-row></app-top-row>
@@ -56,7 +60,7 @@
     [challengeCustomIncrementSec]="customIncrementSec()"
     (challengeConfigClose)="closeConfigPopup()"
     (challengeModeChange)="onModeChange($event)"
-    (challengeSelectedBoardChange)="selectedBoard.set(+$event)"
+    (challengeSelectedBoardChange)="selectedBoard.set($event)"
     (challengeSelectedIncrementChange)="selectedIncrement.set(+$event)"
     (challengeCustomMinutesChange)="customMinutes.set(+$event)"
     (challengeCustomIncrementSecChange)="customIncrementSec.set(+$event)"
@@ -75,11 +79,11 @@
     <div class="tabs-header">
       @if (state()){
       <div class="tab active">SOCIAL</div>
-      <div class="tab" (click)="state.set(false)">IN PROGRESS</div>
+      <div class="tab" (click)="state.set(false)">PARTIDAS PAUSADAS</div>
       }
       @else {
         <div class="tab" (click)="state.set(true)">SOCIAL</div>
-        <div class="tab active">IN PROGRESS</div>
+        <div class="tab active">PARTIDAS PAUSADAS</div>
       }
     </div>
 
@@ -88,7 +92,7 @@
       <div class="social-top-actions">
         <button class="friend-request-button" (click)="openRequestPopup()">
           <div class="left">
-            <mat-icon fontSet="material-symbols-outlined">all_inbox</mat-icon>
+            <mat-icon fontSet="material-symbols-outlined">mail</mat-icon>
             <span class="request-text">Solicitudes de amistad</span>
           </div>
           <div class="right">
@@ -115,7 +119,7 @@
                     <li class="user-item" (click)="openUserInfo(friend, 'friend')">
                         <div class="user-info">
                             <div class="left">
-                                <span class="avatar">👤</span>
+                                <img [src]="'assets/vector-art/ProfilePictures/bot' + friend.avatar + '.svg'" alt="Avatar">
                                 <span class="username">{{ friend.username }}</span>
                             </div>
                             <div class="user-stats">
@@ -140,26 +144,23 @@
             <p>No tienes partidas en curso</p>
           } @else {
             <!-- Aquí se listan las partidas pausadas -->
-            @for(game of partidas(); track game) {
-              <li class="game-item">
-                  <div class="player">
-                    <span class="name">Yo</span>
-                    <span class="time">10:50</span>
-                  </div>
-                  <div class="vs">VS</div>
-                  <div class="player">
-                    <span class="name">Usuario1</span>
-                    <span class="time">10:30</span>
-                  </div>
-                  <div class="details">
-                    <span>Modo_tiempo</span>
-                    <span>Tablero</span>
-                  </div>
-                  <button class="btn-play" (click)="resumeGame(game.id, game.p1_id, game.p2_id)">RETOMAR</button>
-              </li>
+            @for(game of partidas(); track game.match_id) {
+                <li class="game-item">
+                    <div class="player">
+                      <span class="name">{{ game.p1_username }}</span>
+                      <span class="time">{{ formatTime(game.time_base) }}</span>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="player">
+                      <span class="name">{{ game.p2_username }}</span>
+                      <span class="time">{{ formatTime(game.time_base) }}</span>
+                    </div>
+                    <div class="details">
+                      <span>{{ game.board }}</span>
+                    </div>
+                    <button class="btn-play" (click)="resumeGame(game.match_id, game.p1_id, game.p2_id)">RETOMAR</button>
+                </li>
             }
-
-
         }
         </ul>
 

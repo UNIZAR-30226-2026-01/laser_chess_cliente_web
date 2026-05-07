@@ -7,6 +7,7 @@ import { UserRespository } from '../../repository/user-respository';
 import { MyProfile } from '../../model/user/MyProfile';
 import { Observable } from 'rxjs';
 import { XpInfo } from '../../repository/user-respository';
+import { BoardState } from '../../utils/board-state';
 
 @Component({
   selector: 'app-top-row',
@@ -17,6 +18,7 @@ import { XpInfo } from '../../repository/user-respository';
 export class TopRow implements OnInit {
 
   private remote = inject(UserRespository);
+  private boardState = inject(BoardState)
 
   // Señales para la barra
   username = signal('Cargando...');
@@ -25,8 +27,7 @@ export class TopRow implements OnInit {
   rankedPoints = signal(0);
   xpPercentage = signal(0);
   xpInfoDetail = signal({ current: 0, required: 100 });
-  avatar?: 'red' | 'blue' | 'green' | 'yellow';
-  private iconService = inject(IconService);
+  avatar = signal(0);
   userProfile$!: Observable<MyProfile>;
 
   // Popup de perfil
@@ -42,9 +43,12 @@ export class TopRow implements OnInit {
     console.log("Get account");
 
       this.userProfile$ = this.remote.getOwnAccount();
+
       this.userProfile$.subscribe(profile => {
-        this.avatar = this.iconService.getAvatarColor(profile.avatar);
+        const cAvatar = profile.avatar - 9;
+        this.avatar.set(cAvatar);
     });
+
   }
 
   loadXpData() {

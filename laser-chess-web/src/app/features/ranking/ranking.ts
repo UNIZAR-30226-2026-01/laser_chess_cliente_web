@@ -15,11 +15,12 @@ import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { Remote } from '../../model/remote/remote';
 
+import { BoardState } from '../../utils/board-state';
 
 import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
 import { GameState } from '../../utils/game-state'
 
-import { Popup } from '../social-ranking-popups/popup'; //los pop-ups (que miedo cargarmea glo)
+import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo cargarmea glo)
 
 @Component({
   selector: 'app-ranking',
@@ -64,6 +65,7 @@ export class Ranking implements OnInit {
   public friends = signal<FriendSummary[]>([]);
   public sentRequests = signal<FriendSummary[]>([]);
 
+  boardState = inject(BoardState);
 
 
   //PARA LA CONFIGURACION DE LA PARTIDA
@@ -90,7 +92,7 @@ export class Ranking implements OnInit {
       { id: 4, name: 'MERCURY' },
       { id: 5, name: 'SOPHIE' }
     ];
-    public selectedBoard = signal<number>(1); // ACE por defecto
+    public selectedBoard = signal<string>('Ace'); // ACE por defecto
     public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
     public selectedIncrement = signal<number>(0); // incremento en segundos
 
@@ -331,7 +333,7 @@ export class Ranking implements OnInit {
   // Abre el popup al hacer clic en Retar
   openChallengeConfig(friend: FriendSummaryExtended): void {
     this.friendToChallenge = friend;
-    this.selectedBoard.set(1);
+    this.selectedBoard.set('ACE');
     this.selectedMode.set(this.timeModes[0]);
     this.selectedIncrement.set(0);
     this.customMinutes.set(5);

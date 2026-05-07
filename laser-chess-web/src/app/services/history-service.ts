@@ -6,7 +6,6 @@ import { GameResume } from '../model/game/GameResume';
 import { GameLogicService } from './game-logic-service';
 import { GameUtils } from '../utils/game-utils';
 import { UserRespository } from '../repository/user-respository';
-import { ACE, CURIOSITY, GRAIL, SOPHIE, MERCURY } from '../constants/boards';
 import { BoardState } from '../utils/board-state'
 
 
@@ -17,7 +16,7 @@ import { BoardState } from '../utils/board-state'
 })
 
 export class HistoryService {
-  private remoteService = inject(UserRespository);
+  private userRepo = inject(UserRespository);
 
   TipoPieza = TipoPieza; 
 
@@ -27,7 +26,7 @@ export class HistoryService {
 
   columnas = 10;
   filas = 8;
-  id = this.remoteService.getId();
+  id = this.userRepo.getId();
 
   popUpLimites = signal(false);
   popUpMensaje = signal('');  
@@ -50,7 +49,8 @@ export class HistoryService {
   movimientos : string[] = [];
   capturas: PiezaData[] = [];
 
-  
+  miAvatar = signal(1);
+  rivalAvatar = signal(1);
    
 
   historySelectedGame = signal<GameResume> (null as unknown as GameResume);
@@ -74,25 +74,27 @@ export class HistoryService {
     if(this.historySelectedGame()?.p1_id == this.id){
       this.soyAzul.set(false);
       this.esMiTurno.set(true);
-      const rivalProfile$ = this.remoteService.getAccount(this.historySelectedGame()?.p2_id);
+      const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p2_id);
       rivalProfile$.subscribe(profile => {
         this.nombreRival.set(profile.username);
+        this.rivalAvatar.set(profile.avatar);
       });
     }else{
       this.soyAzul.set(true);
       this.esMiTurno.set(false);
-      const rivalProfile$ = this.remoteService.getAccount(this.historySelectedGame()?.p1_id);
+      const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p1_id);
       rivalProfile$.subscribe(profile => {
         this.nombreRival.set(profile.username);
+        this.rivalAvatar.set(profile.avatar);
       });
     }
 
+    
+
     this.miTiempo.set(this.historySelectedGame()?.time_base || 0);
     this.tiempoRival.set(this.historySelectedGame()?.time_base || 0);
-    var userProfile$ = this.remoteService.getOwnAccount();
-    userProfile$.subscribe(profile => {
-      this.miNombre.set(profile.username);
-    });
+    this.miNombre.set(this.userRepo.getUsername() || 'Yo');
+    
   }
 
   
@@ -152,11 +154,13 @@ export class HistoryService {
        }
       }
     }
+    /*
     const path = laser
         .split(',')
         .filter(c => c.length > 0)
         .map(c => this.gameUtils.fromChess(c,this.soyAzul()));
-    this.gameService.dispararLaser(path);
+    this.dispararLaser(path);
+    */
 
     // CAPTURA
     if (captura) {
@@ -164,7 +168,7 @@ export class HistoryService {
             const pieza = this.listaPiezas().find(p => p.x === captura.x && p.y === captura.y);
   
             if (pieza) {
-              this.capturas.push(pieza); // guardar
+              this.capturas.push(structuredClone(pieza)); // guardar
               this.eliminarPiezaEnTablero(captura);
             }
           }else{
@@ -202,42 +206,52 @@ export class HistoryService {
   /*               Gestión y parseo de log tras reconexión                     */
   /*****************************************************************************/
 
-  avanzar(){
-    if (this.indiceMovimiento === this.movimientos.length - 1) {
+
+  reconstruirEstado() {
+    // estado inicial limpio
+    this.listaPiezas.set(
+      this.boardState.iniciarTablero(this.historySelectedGame()?.board)
+    );
+
+    this.esMiTurno.set(true); // o como corresponda
+    this.capturas = [];
+
+    for (let i = 0; i < this.indiceMovimiento; i++) {
+      this.applyAction(this.movimientos[i], true);
+    }
+  }
+
+  avanzar() {
+    this.indiceMovimiento++;
+    if (this.indiceMovimiento >= this.movimientos.length) {
       this.popUpLimites.set(true);
-      this.popUpMensaje.set('Se ha alcanzado el final de partida')
+      this.popUpMensaje.set('Se ha alcanzado el final de partida');
       return;
     }
-    console.log("avanzando con movimiento " + this.movimientos[this.indiceMovimiento]);
-    this.applyAction(this.movimientos[this.indiceMovimiento], true);
-    console.log("no me he muerto");
-    this.indiceMovimiento ++;
+    
+    this.reconstruirEstado();
     
   }
 
-  retroceder(){
+  retroceder() {
     if (this.indiceMovimiento <= 0) {
       this.popUpLimites.set(true);
-      this.popUpMensaje.set('Se ha alcanzo el inicio de partida, no es posible retroceder')
+      this.popUpMensaje.set('Inicio de partida');
       return;
     }
-    console.log("retrocediendo con movimiento " + this.movimientos[this.indiceMovimiento]);
-    this.indiceMovimiento --;
-    this.applyAction(this.movimientos[this.indiceMovimiento], false);
-    console.log("no me he muerto");
 
+    this.indiceMovimiento--;
+    this.reconstruirEstado();
   }
 
   irAlPrimero(){
-    while (this.indiceMovimiento > 0) {
-      this.retroceder();
-    }
+    this.indiceMovimiento = 0;
+    this.reconstruirEstado();
   }
 
   irAlUltimo(){
-    while(this.indiceMovimiento !== this.movimientos.length - 1){
-      this.avanzar();
-    }
+    this.indiceMovimiento = this.movimientos.length -1;
+    this.reconstruirEstado();
   }
 
   

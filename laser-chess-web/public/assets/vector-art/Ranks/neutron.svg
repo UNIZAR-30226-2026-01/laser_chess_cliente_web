@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="255mm"
+   height="255mm"
+   viewBox="0 0 255 255"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="SWI-B-Classic.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   sodipodi:docname="quark.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showguides="false"
+     inkscape:zoom="0.86949346"
+     inkscape:cx="253.02088"
+     inkscape:cy="327.77705"
+     inkscape:window-width="1920"
+     inkscape:window-height="1012"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid7705" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       id="path519"
+       style="fill:#3251b2;stroke:#8d002f;stroke-width:0.264583"
+       cx="105.11253"
+       cy="133.43611"
+       r="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;fill:#ff0000;fill-opacity:1;stroke:#ff0000;stroke-width:3.961;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+       x="39.694164"
+       y="86.142738"
+       id="text7882"><tspan
+         sodipodi:role="line"
+         id="tspan7880"
+         style="stroke-width:3.961" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-weight:bold;font-size:44.7492px;font-family:'DejaVu Serif';-inkscape-font-specification:'DejaVu Serif, Bold Italic';fill:#3251b2;fill-opacity:1;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke markers fill"
+       x="42.52924"
+       y="140.30203"
+       id="text1448"><tspan
+         sodipodi:role="line"
+         id="tspan1446"
+         style="stroke-width:10"
+         x="42.52924"
+         y="140.30203" /></text>
+    <path
+       id="path3334"
+       style="fill:#3251b2;fill-opacity:1;stroke-width:15.3789;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke markers fill"
+       d="M 126.6703 75.358708 A 50 50 0 0 0 76.670256 125.35876 A 50 50 0 0 0 126.6703 175.35881 A 50 50 0 0 0 176.67035 125.35876 A 50 50 0 0 0 126.6703 75.358708 z M 132.14387 102.21082 C 139.80172 102.21082 144.76687 108.4696 144.76687 118.08788 C 144.76687 128.43083 138.11893 140.35462 129.70371 145.29552 C 126.42178 147.20601 123.05526 148.12843 119.52087 148.12843 C 111.35811 148.12843 106.05658 142.39712 106.05658 133.63525 C 106.05658 123.88521 111.27407 113.27855 119.10022 106.9542 C 122.88707 103.92378 127.5155 102.21082 132.14387 102.21082 z M 131.97541 104.12129 C 128.86178 104.12129 126.50558 106.75667 123.39195 113.60805 C 119.4368 122.23816 114.72426 137.65366 114.72426 141.86989 C 114.72426 144.50504 116.40771 146.21795 118.93228 146.21795 C 122.38252 146.21795 124.82294 143.71442 127.59996 137.39006 C 129.45131 133.04207 133.65892 120.32782 135.17366 114.66225 C 135.76273 112.22474 136.09919 110.11637 136.09919 108.86467 C 136.09919 105.90013 134.58412 104.12129 131.97541 104.12129 z " />
+  </g>
+</svg>

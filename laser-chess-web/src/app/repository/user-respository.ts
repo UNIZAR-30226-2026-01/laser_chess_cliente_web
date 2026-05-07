@@ -9,6 +9,7 @@ import { catchError } from 'rxjs/operators';
 export type { XpInfo } from '../model/user/ProfileCardData';
 
 
+
 /*
  * UserRepository : El UserRepository agrupa toda la lógica asociada al dominio de los usuarios de la aplicación.
  * Dependencia: Remote
@@ -85,10 +86,7 @@ export class UserRespository {
     );
   }
 
-  // Cerrar sesión
-  logout(): void {
-    this.remoteService.logout();
-  }
+  
 
   // Eliminar cuenta
   deleteAccount(): Observable<void> {
@@ -156,7 +154,7 @@ export class UserRespository {
           avatar: acc.avatar ?? 0,
           money: acc.money ?? 0,
           board_skin: acc.board_skin ?? 0,
-          piece_skin: acc.piece_skin ?? 0,
+          piece_skin: acc.piece_skin ?? 1,
           win_animation: acc.win_animation ?? 0,
           rankedPoints: acc.rankedPoints ?? 0,
           blitzElo: undefined,
@@ -221,6 +219,10 @@ export class UserRespository {
     return this.userProfile?.piece_skin;
   }
 
+  getAvatar(): number | undefined {
+    return this.userProfile?.avatar;
+  }
+
 
   // Actualizar datos del perfil del usuario
   updateData(username: string , mail: String, board_skin: number, piece_skin: number, win_animation: number){
@@ -239,6 +241,7 @@ export class UserRespository {
       next: (httpResponse) => {
         if (httpResponse && httpResponse.body) {
           console.log('Perfil actualizado con éxito');
+          this.getOwnAccount();
 
         } else {
           console.log('Update failed: No response body');
@@ -249,6 +252,7 @@ export class UserRespository {
           console.log('Update failed: No response body');
       }
     });
+    console.log("mi skin es : " + this.userProfile?.board_skin);
 
 
   }

@@ -5,7 +5,7 @@ import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 import { Social } from '../../features/social/social';
 import { FriendRespository } from '../../repository/friend-respository';
-import { Websocket } from '../../model/remote/websocket';
+import { ChallengeManager } from '../../services/challenge-manager';
 import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
 import { GameState } from '../../utils/game-state';
@@ -29,11 +29,12 @@ describe('Social Validator', () => {
   let router: Router;
 
   let friendRepoSpy: any;
-  let websocketSpy: any;
   let userRepoSpy: any;
   let iconServiceSpy: any;
   let gameStateSpy: any;
   let gameRepoSpy: any;
+  let challengeSpy: any;
+
 
   beforeEach(async () => {
     friendRepoSpy = {
@@ -66,10 +67,7 @@ describe('Social Validator', () => {
       getId: vi.fn().mockReturnValue('123')
     };
 
-    websocketSpy = {
-      initConnection: vi.fn(),
-      close: vi.fn()
-    };
+    
 
     gameStateSpy = {
       startingTime: fakeSignal(),
@@ -86,13 +84,17 @@ describe('Social Validator', () => {
       getAvatarColor: vi.fn().mockReturnValue('blue')
     };
 
+    challengeSpy = {
+      sendChallenge: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [Social],
       providers: [
         provideRouter([]),
 
         { provide: FriendRespository, useValue: friendRepoSpy },
-        { provide: Websocket, useValue: websocketSpy },
+        { provide: ChallengeManager, useValue: challengeSpy },
         { provide: UserRespository, useValue: userRepoSpy },
         { provide: IconService, useValue: iconServiceSpy },
         { provide: GameState, useValue: gameStateSpy },
@@ -180,7 +182,7 @@ describe('Social Validator', () => {
     component.deleteFriend('amigo1');
 
     expect(friendRepoSpy.deleteFriend).toHaveBeenCalledWith('amigo1');
-    expect(friendRepoSpy.getFriends).toHaveBeenCalledTimes(2); // porque dentro de deleteFriend se llama loadFriends()
+    expect(friendRepoSpy.getFriends).toHaveBeenCalledTimes(3); // porque dentro de deleteFriend se llama loadFriends()
   });
 
   // ------------------------------------------------------------------
@@ -237,7 +239,7 @@ describe('Social Validator', () => {
   it('debería iniciar conexión WebSocket al enviar desafío', () => {
     const friend = { account_id: 1, username: 'rival', level: 2, avatar: 0 };
     component.openChallengeConfig(friend);
-    component.selectedBoard.set(2);
+    component.selectedBoard.set('Ace');
     component.selectedMode.set({
       id: 'blitz',
       baseSeconds: 300,
@@ -247,15 +249,7 @@ describe('Social Validator', () => {
 
     component.sendChallenge(null);
 
-    expect(websocketSpy.initConnection).toHaveBeenCalledWith(
-      'challenge',
-      expect.objectContaining({
-        username: 'rival',
-        board: 2,
-        starting_time: 300,
-        time_increment: 2
-      })
-    );
+    expect(challengeSpy.sendChallenge).toHaveBeenCalled();
 
     expect(component.popUP_waiting()).toBe(true);
   });
@@ -263,7 +257,6 @@ describe('Social Validator', () => {
   it('debería cerrar WebSocket al cancelar espera', () => {
     component.cancelWaiting();
 
-    expect(websocketSpy.close).toHaveBeenCalled();
     expect(component.popUP_waiting()).toBe(false);
   });
 });

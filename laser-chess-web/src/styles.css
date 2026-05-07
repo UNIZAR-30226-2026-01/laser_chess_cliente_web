@@ -39,3 +39,22 @@ body {
     color: var(--LCWhite);
     background-color: var(--LCBG);
 }
+
+
+.animated-bg {
+  position: fixed;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background-size: 960px;
+  background-repeat: repeat;
+  animation: moveBackground 30s linear infinite;
+  filter: blur(4px);
+  z-index: -1;
+}
+
+@keyframes moveBackground {
+  0% { background-position: 0 0; }
+  100% { background-position: 960px 540px; }
+}

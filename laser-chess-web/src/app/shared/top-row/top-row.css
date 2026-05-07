@@ -73,9 +73,12 @@
 }
 
 /* Para el avatar pequeño (arriba a la izquierda) */
-.profile-picture mat-icon {
+.profile-picture img {
     width: 100%;
-    height: 100%;
+    height: 70%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 0.01rem solid black;
 }
 
 .avatar-red { color: var(--LCRed); }
@@ -275,8 +278,13 @@
   flex-wrap: wrap;
 }
 
-.user-avatar-large {
+.user-avatar-large img{
   flex-shrink: 0;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 0.15rem solid black;
 }
 
 .avatar-placeholder-large {

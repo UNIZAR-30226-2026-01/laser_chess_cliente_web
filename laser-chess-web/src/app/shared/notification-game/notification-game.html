@@ -2,14 +2,14 @@
   <div class="toast-header">
     <div class="status-icon" [class.bg-red]="esDesconexion" [class.bg-blue]="esPausa"></div>
     <strong class="me-auto">
-      {{ esDesconexion ? 'Conexión' : 'Petición de Pausa' }}
+      {{ esDesconexion ? 'Desconexión' : 'Petición de Pausa' }}
     </strong>
     <button class="btn-close" (click)="alCerrar.emit()">&times;</button>
   </div>
-  
+
   <div class="toast-body">
     <p>{{ mensaje }}</p>
-    
+
     @if (esPausa) {
       <div class="toast-actions">
         <button class="btn-accept" (click)="alAceptar.emit()">Aceptar</button>

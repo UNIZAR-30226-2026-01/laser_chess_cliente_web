@@ -16,11 +16,12 @@ import { GameState } from '../../utils/game-state'
 import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
-import { TimerService } from '../../services/timer-service';
+import { ChallengeManager } from '../../services/challenge-manager';
+import { BoardState } from '../../utils/board-state';
 
 import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
 
-import { Popup } from '../social-ranking-popups/popup'; //los pop-ups (que miedo cargarmea glo)
+import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo cargarmea glo)
 
 @Component({
   selector: 'app-social',
@@ -31,6 +32,8 @@ import { Popup } from '../social-ranking-popups/popup'; //los pop-ups (que miedo
 
 
 export class Social  {
+  boardState = inject(BoardState);
+
   username = 'User';
   pictureURL = '/assets/picture.jpeg';
   timeModeLabel = 'Modo de tiempo';
@@ -55,8 +58,7 @@ export class Social  {
   private userService = inject(UserRespository);
   private gameState = inject(GameState);
   gameRepo = inject(GameRepository);
-  private timerService = inject(TimerService);
-  private router = inject(Router);
+
   public friendsInfo = signal(false);
   public gameInfo = signal(false);
   public requestInfo = signal(false);
@@ -81,6 +83,7 @@ export class Social  {
   public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
 
   id = this.userService.getId(); // Para guardar el ID de la partida a retomar si venimos de una partida pausada
+  challengeManager = inject(ChallengeManager);
 
 
 
@@ -102,7 +105,7 @@ export class Social  {
   ];
 
 
-  public selectedBoard = signal<number>(1);// ACE por defecto
+  public selectedBoard = signal<string>('ACE');// ACE por defecto
   public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
   public selectedIncrement = signal<number>(0); // incremento en segundos
 
@@ -128,12 +131,33 @@ export class Social  {
     this.loadSentRequests();
     this.loadGames();
     this.notificationService.wakeSocial$.subscribe(() => {
-    this.popUP_request.set(true);
-  });
+      
+      this.loadRequests();
+      this.loadSentRequests();
+      this.loadFriends();
+    });
+
+    this.websocket.connectionClosed$.subscribe(() => {
+      this.handleChallengeCancelled();
+    });
+
+    this.websocket.connectionError$.subscribe(() => {
+      this.handleChallengeCancelled();
+    });
   }
 
   ngOnDestroy(): void {
     this.wsSubscription?.unsubscribe();
+  }
+
+  handleChallengeCancelled(): void {
+    if (!this.popUP_waiting()) return;
+
+    this.popUP_waiting.set(false);
+
+    new Notification('Reto finalizado', {
+      body: 'El rival ha rechazado o la partida ha acabado',
+    });
   }
 
   //Metodo para recargar todo TODO el rato :D
@@ -247,7 +271,6 @@ export class Social  {
   //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
   resumeGame(gameId: number, p1: number, p2:number) {
     // Comprobar que jugador soy yo para darle valor al otro jugador
-    // this.friendToChallenge =
     console.log('Retomando partida...');
     var id_rival;
     if(this.id === p1){
@@ -259,16 +282,17 @@ export class Social  {
     }
 
     this.userService.getAccount(id_rival).subscribe({
-      next: (response) => {        
+      next: (response) => {
         const rivalUsername = response.username || 'Rival Desconocido';
         const rival: FriendSummary = {
           username: response.username || 'Rival Desconocido',
           account_id: response.userId || 0,
-          level: response.level || 0, 
-          avatar: response.avatar || 0 
+          level: response.level || 0,
+          avatar: response.avatar || 0
         };
         this.friendToChallenge = rival;
         console.log('Nombre del rival obtenido:', rivalUsername);
+        console.log(gameId);
         this.sendChallenge(gameId); // Iniciar la partida con el ID específico
       },
 
@@ -277,8 +301,8 @@ export class Social  {
         this.gameState.nombreRival.set('Rival Desconocido');
       }
     })
-    
-    
+
+
   }
 
   //Cargar lista de amigos
@@ -458,7 +482,7 @@ export class Social  {
   // Abre el popup al hacer clic en Retar
   openChallengeConfig(friend: FriendSummaryExtended): void {
     this.friendToChallenge = friend;
-    this.selectedBoard.set(1);
+    this.selectedBoard.set('ACE');
     this.selectedMode.set(this.timeModes[0]);
     this.selectedIncrement.set(0);
     this.customMinutes.set(5);
@@ -503,38 +527,9 @@ export class Social  {
   // Inciiar a una partida amistosa DESAFIAR
   sendChallenge( id: number | null): void {
     if (!this.friendToChallenge) return;
-
-    const board = this.selectedBoard();
     const { startingTime, timeIncrement } = this.getChallengeParams();
-
-    const endpoint = 'challenge';
-    var params
-    if (id) {
-      params = {
-        username: this.friendToChallenge.username,
-        board,
-        starting_time: startingTime,
-        time_increment: timeIncrement,
-        match_id: id
-      };
-    } else {
-      params = {
-        username: this.friendToChallenge.username,
-        board,
-        starting_time: startingTime,
-        time_increment: timeIncrement,
-      };
-    }
-
-    this.timerService.miTiempo.set(startingTime * 1000);
-    this.timerService.tiempoRival.set(startingTime * 1000);
-
-    console.log('Parámetros' + startingTime);
-    this.gameState.nombreRival.set(this.friendToChallenge.username);
-    this.gameState.miNombre.set(this.userService.getUsername() || '');
-    console.log("tiempo ini: " + startingTime + ", incremento:  " + timeIncrement );
-
-    this.websocket.initConnection(endpoint, params);
+    console.log('El id de la partida es ' + id);
+    this.challengeManager.sendChallenge(this.selectedBoard(), startingTime, timeIncrement, 'private', null, id, this.friendToChallenge.username);
 
 
     this.closeConfigPopup();
@@ -549,6 +544,13 @@ export class Social  {
     } else {
       console.error('Amigo no encontrado');
     }
+  }
+
+  // Formatea milisegundos a mm:ss
+  formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60000);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
   loadGames(){

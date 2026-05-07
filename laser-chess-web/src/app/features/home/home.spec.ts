@@ -10,6 +10,7 @@ import { GameState } from '../../utils/game-state';
 import { TimerService } from '../../services/timer-service';
 import { Websocket } from '../../model/remote/websocket';
 import { Remote } from '../../model/remote/remote';
+import { FriendRespository } from '../../repository/friend-respository';
 
 describe('Home', () => {
   let component: Home;
@@ -85,7 +86,8 @@ describe('Home', () => {
             miNombre: { set: vi.fn(), get: vi.fn() },
             nombreRival: { set: vi.fn(), get: vi.fn() }
           }
-        }
+        },
+        { provide: FriendRespository, useValue: {getFriends: vi.fn().mockReturnValue(of([]))}}
       ]
     }).compileComponents();
 

@@ -22,8 +22,8 @@
       </div>
     </div>
     <div class="profile-picture">
-      @if (avatar) {
-        <mat-icon svgIcon="avatar" [style.color]="avatar" class="avatar-large"></mat-icon>
+      @if (avatar()) {
+        <img [src]="'assets/vector-art/ProfilePictures/bot' + avatar() + '.svg'" alt="Avatar">
       } @else {
         <div class="avatar-placeholder-large">
           <span class="avatar-icon-large">👤</span>
@@ -51,17 +51,13 @@
       <div class="popup-content">
         <div class="user-info-detail">
           <div class="user-avatar-large">
-            <div class="user-avatar-large">
-              @if (avatar) {
-                <mat-icon svgIcon="avatar"
-                          [ngClass]="'avatar-' + avatar"
-                          class="avatar-large"></mat-icon>
+              @if (avatar()) {
+                <img [src]="'assets/vector-art/ProfilePictures/bot' + avatar() + '.svg'" alt="Avatar">
               } @else {
                 <div class="avatar-placeholder-large">
                   <span class="avatar-icon-large">👤</span>
                 </div>
               }
-            </div>
           </div>
           <div class="user-details">
             <div class="detail-row">

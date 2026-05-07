@@ -7,21 +7,16 @@
 }
 
 .board {
-  width: 95vmin; 
-  height: 76vmin; 
-  
+  width: 95vmin;
+  height: 76vmin;
+
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  
-  border: 1px solid #2c3e50; 
-  background-color: #fff;
-  
-  background-image: 
-    linear-gradient(to right, #f0f0f0 1.5px, transparent 1.5px),
-    linear-gradient(to bottom, #f0f0f0 1.5px, transparent 1.5px);
-  background-size: 10% 12.5%;
-  
+
+  border: 5px solid var(--S3);
+  background-color: var(--S3);
+
   position: relative;
   overflow: hidden;
 }
@@ -30,12 +25,49 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+  position: relative;
 }
 
-.cell.azul {
-  background-color: rgba(0, 0, 255, 0.2);
+/* Default light squares use S3 */
+.cell {
+  background-color: var(--S3);
 }
 
-.cell.rojo {
-  background-color: rgba(255, 0, 0, 0.2);
+/* Dark squares (S1) for a 10x8 board. Uses nth-child pattern to alternate cells. */
+.cell:nth-child(20n+1),
+.cell:nth-child(20n+3),
+.cell:nth-child(20n+5),
+.cell:nth-child(20n+7),
+.cell:nth-child(20n+9),
+.cell:nth-child(20n+12),
+.cell:nth-child(20n+14),
+.cell:nth-child(20n+16),
+.cell:nth-child(20n+18),
+.cell:nth-child(20n+20) {
+  background-color: var(--S1);
+}
+
+.cell.azul::after,
+.cell.rojo::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 80%;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  opacity: 0.3;
+
+  pointer-events: none;
+}
+
+.cell.azul::after {
+  background-image: var(--rune-azul);
+}
+
+.cell.rojo::after {
+  background-image: var(--rune-rojo);
 }

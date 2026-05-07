@@ -15,8 +15,12 @@ export class GameState {
   increment = signal<number>(0);
   nombreRival = signal<string>('');
   miNombre = signal<string>('');
-
+  miAvatar = signal(1);
+  avatarRival = signal(1);
   
+  tipoPartida = signal('');
+
+  permitSalida = signal(false);
 
   listaPiezas = signal<PiezaData[]>([]);
   esMiTurno = signal(true);

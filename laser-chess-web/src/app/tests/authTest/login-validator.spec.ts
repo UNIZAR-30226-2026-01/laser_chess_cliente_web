@@ -3,7 +3,7 @@ import { provideRouter, Router } from '@angular/router';  //simular el enrutador
 import { of, throwError } from 'rxjs';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 
-import { Login } from '../../auth/login/login';
+import { Login } from '../../features/login/login';
 import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
 

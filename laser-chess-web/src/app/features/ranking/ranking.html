@@ -1,3 +1,7 @@
+<div class="animated-bg"
+     [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
+</div>
+
 <div class="page">
 
   <app-top-row></app-top-row>
@@ -121,7 +125,7 @@
     [challengeCustomIncrementSec]="customIncrementSec()"
     (challengeConfigClose)="closeConfigPopup()"
     (challengeModeChange)="onModeChange($event)"
-    (challengeSelectedBoardChange)="selectedBoard.set(+$event)"
+    (challengeSelectedBoardChange)="selectedBoard.set($event)"
     (challengeSelectedIncrementChange)="selectedIncrement.set(+$event)"
     (challengeCustomMinutesChange)="customMinutes.set(+$event)"
     (challengeCustomIncrementSecChange)="customIncrementSec.set(+$event)"

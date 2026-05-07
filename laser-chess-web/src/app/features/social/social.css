@@ -115,6 +115,15 @@
   gap: 1rem;
 }
 
+.user-info img {
+    width: 10%;
+    height: 10%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 0.01rem solid black;
+}
+
+
 /* FIX SOLICITUDES LAYOUT */
 .request-info {
   display: grid;

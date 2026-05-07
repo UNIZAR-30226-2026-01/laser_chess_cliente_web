@@ -6,14 +6,14 @@ import { BoardState } from '../../utils/board-state'
 @Component({
   selector: 'app-pieza',
   standalone: true,
-  imports: [], 
+  imports: [],
   templateUrl: './pieza.html',
   styleUrls: ['./pieza.css'],
 })
 export class Pieza implements OnInit, OnChanges{
   boardState = inject(BoardState);
   TipoPieza = TipoPieza; // Hacer visible el template para toda la componente
-  
+
   // Recibimos la posición inicial y el tamaño desde el padre
   initialX = input.required<number>();
   initialY = input.required<number>();
@@ -40,12 +40,12 @@ export class Pieza implements OnInit, OnChanges{
   // Indica si los spots deben mostrarse
   showSpots = signal(false);
 
-  skin = signal (this.boardState.skinUsario());
+  skin = this.boardState.skinUsario; 
 
   isCasillaRestringida = input<(x:number,y:number)=>'azul'|'rojo'|null>();
   @Input() ocupado!: (x: number, y: number) => PiezaData | null;
 
-  
+
   puedeEntrar(nx: number, ny: number): boolean {
     const pieza = this.ocupado?.(nx, ny);
     const tipo = pieza?.tipoPieza;
@@ -86,7 +86,7 @@ export class Pieza implements OnInit, OnChanges{
     // Inicialización de la interfaz de la pieza, en función de tipoPieza
     this.actualizarInterfaz();
 
-    
+
 
   }
 
@@ -96,12 +96,12 @@ export class Pieza implements OnInit, OnChanges{
       this.position.set({ x: this.initialX(), y: this.initialY() });
       this.actualizarInterfaz();
     }
-  
+
   }
-  
+
   actualizarInterfaz() {
     switch(this.skin()){
-      case 0: 
+      case 1:
         switch(this.tipoPieza()) {
             case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Classic/DEF-B-Classic.svg"; break;
             case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Classic/ESC-B-Classic.svg";    break;
@@ -110,27 +110,29 @@ export class Pieza implements OnInit, OnChanges{
             case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Classic/SWI-B-Classic.svg";    break;
           }
         break;
-      case 1:
+      case 2:
+        switch(this.tipoPieza()) {
+            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Soretro/DEF-B-Soretro.png"; break;
+            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/ESC-B-Soretro.png";    break;
+            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Soretro/LAS-B-Soretro.png";    break;
+            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.png";      break;
+            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-B-Soretro.png";    break;
+            
+          }
+        break;
+      case 3:
         switch(this.tipoPieza()) {
             case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Cats/DEF-B-Cats.svg"; break;
             case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Cats/ESC-B-Cats.svg";    break;
             case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Cats/LAS-B-Cats.svg";    break;
             case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Cats/KIN-B-Cats.svg";      break;
             case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Cats/SWI-B-Cats.svg";    break;
+            
           }
         break;
-      case 2:
-        switch(this.tipoPieza()) {
-            case TipoPieza.DEFLECTOR: this.interfazPieza = "assets/vector-art/PieceSets/Soretro/DEF-B-Soretro.svg"; break;
-            case TipoPieza.ESCUDO:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/ESC-B-Soretro.svg";    break;
-            case TipoPieza.LASER:     this.interfazPieza = "assets/vector-art/PieceSets/Soretro/LAS-B-Soretro.svg";    break;
-            case TipoPieza.REY:       this.interfazPieza = "assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.svg";      break;
-            case TipoPieza.SWITCH:    this.interfazPieza = "assets/vector-art/PieceSets/Soretro/SWI-B-Soretro.svg";    break;
-          }
-        break;
-      
+
     }
-    
+
   }
 
   select() {
