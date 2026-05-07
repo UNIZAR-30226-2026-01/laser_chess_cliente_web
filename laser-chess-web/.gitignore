@@ -1,8 +1,7 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output
-# Comento dist para subir el despliegue a mi servidor ya compilado 
-#/dist
+/dist
 /tmp
 /out-tsc
 /bazel-out
