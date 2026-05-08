@@ -2,7 +2,7 @@ name: Test Frontend
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, juanjo, paula, mimi, ainhoa ]
   pull_request:
     branches: [ main ]
 
