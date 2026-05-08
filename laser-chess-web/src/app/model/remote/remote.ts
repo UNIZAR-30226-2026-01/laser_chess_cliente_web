@@ -572,4 +572,9 @@ export class Remote {
     );
   }
 
+  // Solicitud a la API de un ticket temporar para gestionar el acceso sin uso de token explicito
+  getWsTicket(): Observable<{ ticket: string }> {
+      return this.http.get<{ ticket: string }>(`${API_URL}/api/rt/ticket`);
+  }
+
 }

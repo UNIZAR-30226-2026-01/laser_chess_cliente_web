@@ -54,6 +54,16 @@ export class Websocket {
     const url = `${API_URL_WS}/api/rt/${endpoint}?${searchParams.toString()}`;
     console.log('Conectando WS a:', url);
 
+
+    /*
+      this.remote.getWsTicket().subscribe(({ ticket }) => {
+        const searchParams = new URLSearchParams(params);
+        searchParams.append('ticket', ticket); // ticket, no JWT
+        const url = `${API_URL_WS}/api/rt/${endpoint}?${searchParams.toString()}`;
+        this.connectSocket(url);
+    });
+    */
+
     this.socket$ = webSocket({
       url: url,
       deserializer: msg => JSON.parse(msg.data),
@@ -144,7 +154,6 @@ checkAndReconnect() {
         console.log('¡Conexión establecida! Hay partida activa.');
 
         this.wakeGameSubject.next();
-        console.log("Aviso a game de que voy");
         // Aquí es donde disparas la navegación
         this.router.navigate(['/game']);
       }

@@ -1,10 +1,11 @@
 
 
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FriendSummary } from '../../model/social/FriendSummary';
 import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended';
+import { UserRespository } from '../../repository/user-respository';
 
 export type PopupType = 'none' | 'newFriend' | 'requests' | 'userInfo' | 'challengeConfig' | 'waiting';
 
@@ -67,6 +68,7 @@ export class Popup {
   // popup waiting
   @Output() waitingCancel = new EventEmitter<void>();
 
+  userRepo = inject(UserRespository);
   // Helper para el popup de solicitudes
   onOpenUserInfo(user: FriendSummary, context: 'received_request' | 'sent_request') {
     this.requestOpenUserInfo.emit({ user, context });
@@ -88,9 +90,11 @@ export class Popup {
     }
   }
 
+  copied = signal(false);
   copyLink() {
-    const link = `http://localhost:4200/profile/${this.userInfoUser?.account_id || ''}`;
+    const link = `https://laserchess.elcangrejo.es/AñadirNuevoAmigo/${this.userRepo.getUsername() || ''}`;
     navigator.clipboard.writeText(link);
-    }
-
+    this.copied.set(true);
+    setTimeout(() => this.copied.set(false), 2000);
+  }
 }

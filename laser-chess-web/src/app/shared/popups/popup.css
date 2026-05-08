@@ -29,13 +29,38 @@
   box-sizing: border-box;
   overflow: hidden;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  border-radius: var(--BorderNormal);
 }
 
-.popup-amigo       { width: min(90%, 60rem); max-height: 90vh; overflow-y: auto; padding: 1.5rem; gap: 1rem; }
-.popup-solicitudes { width: min(90%, 45rem); max-height: 90vh; }
-.popup-userinfo    { width: min(90%, 35rem); max-height: 90vh; }
-.popup-challenge   { width: min(90%, 30rem); max-height: 90vh; }
-.popup-waiting     { width: min(90%, 30rem); max-height: 90vh; }
+/* POPUP AÑADIR AMIGO */
+.popup-amigo {
+  width: min(95%, 70rem);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+/* RESTO DE POPUPS */
+.popup-solicitudes {
+  width: min(90%, 45rem);
+  max-height: 90vh;
+}
+
+.popup-userinfo {
+  width: min(90%, 35rem);
+  max-height: 90vh;
+}
+
+.popup-challenge {
+  width: min(90%, 30rem);
+  max-height: 90vh;
+}
+
+.popup-waiting {
+  width: min(90%, 30rem);
+  max-height: 90vh;
+}
 
 /* HEADER */
 .popup-header {
@@ -59,11 +84,12 @@
 .close-button {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: var(--LCSmall);
   cursor: pointer;
   color: var(--LCWhite);
   padding: 0.3rem 0.6rem;
   transition: all 0.2s ease;
+  border-radius: var(--BorderSmall);
 }
 
 .close-button:hover {
@@ -105,7 +131,9 @@
   letter-spacing: 1px;
 }
 
-.popup-tab:last-child { border-right: none; }
+.popup-tab:last-child {
+  border-right: none;
+}
 
 .popup-tab.active {
   background: var(--S2);
@@ -120,7 +148,7 @@
 .tab-badge {
   background: var(--LCRed);
   color: var(--LCWhite);
-  border-radius: 50%;
+  border-radius: var(--BorderFull);
   width: 1.4rem;
   height: 1.4rem;
   display: inline-flex;
@@ -168,7 +196,7 @@
   width: 2.5rem;
   height: 2.5rem;
   background: var(--S3);
-  border-radius: 50%;
+  border-radius: var(--BorderFull);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -198,7 +226,7 @@
   font-weight: 600;
   background: rgba(255, 255, 255, 0.08);
   padding: 0.2rem 0.6rem;
-  border-radius: 1rem;
+  border-radius: var(--BorderFull);
   width: fit-content;
 }
 
@@ -215,7 +243,7 @@
   width: 5rem;
   height: 5rem;
   background: var(--S3);
-  border-radius: 50%;
+  border-radius: var(--BorderFull);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -224,7 +252,7 @@
 .user-avatar-large img {
   width: 5rem;
   height: 5rem;
-  border-radius: 50%;
+  border-radius: var(--BorderFull);
   object-fit: cover;
   border: 2px solid var(--S3);
 }
@@ -268,12 +296,20 @@
   flex-wrap: wrap;
 }
 
-.challenge-actions { justify-content: flex-end; margin-top: 1rem; }
+.challenge-actions {
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
 
 /* BOTONES */
-.btn-accept, .btn-reject, .btn-cancel,
-.btn-challenge-popup, .btn-delete-popup,
-.btn-cancel-waiting, .copy-button, .form-button,
+.btn-accept,
+.btn-reject,
+.btn-cancel,
+.btn-challenge-popup,
+.btn-delete-popup,
+.btn-cancel-waiting,
+.copy-button,
+.form-button,
 .challenge-actions button {
   padding: 0.5rem 1.2rem;
   border: none;
@@ -286,24 +322,69 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  border-radius: var(--BorderSmall);
 }
 
-.btn-accept, .btn-challenge-popup       { background: var(--LCGreen); color: var(--LCWhite); }
-.btn-reject, .btn-delete-popup,
-.btn-cancel-waiting                      { background: var(--LCRed);   color: var(--LCWhite); }
-.btn-cancel                              { background: var(--S3);      color: var(--LCWhite); }
-.copy-button, .form-button               { background: var(--S2);      color: var(--LCWhite); }
+.copy-button.copiado {
+  background-color: var(--LCGreen);
+  color: var(--LCWhite);
+}
 
-.btn-accept:hover, .btn-challenge-popup:hover { background: var(--S3); color: var(--LCGreen); }
-.btn-reject:hover, .btn-delete-popup:hover,
-.btn-cancel-waiting:hover                      { background: var(--S3); color: var(--LCRed);   }
-.btn-cancel:hover                              { background: var(--LCBG); }
-.copy-button:hover, .form-button:hover         { background: var(--S3); }
+.btn-accept,
+.btn-challenge-popup {
+  background: var(--LCGreen);
+  color: var(--LCWhite);
+}
 
-.btn-accept:active, .btn-reject:active,
-.btn-challenge-popup:active, .btn-delete-popup:active,
-.btn-cancel:active, .copy-button:active,
-.form-button:active { transform: scale(0.97); }
+.btn-reject,
+.btn-delete-popup,
+.btn-cancel-waiting {
+  background: var(--LCRed);
+  color: var(--LCWhite);
+}
+
+.btn-cancel {
+  background: var(--S3);
+  color: var(--LCWhite);
+}
+
+.copy-button,
+.form-button {
+  background: var(--S2);
+  color: var(--LCWhite);
+}
+
+.btn-accept:hover,
+.btn-challenge-popup:hover {
+  background: var(--S3);
+  color: var(--LCGreen);
+}
+
+.btn-reject:hover,
+.btn-delete-popup:hover,
+.btn-cancel-waiting:hover {
+  background: var(--S3);
+  color: var(--LCRed);
+}
+
+.btn-cancel:hover {
+  background: var(--LCBG);
+}
+
+.copy-button:hover,
+.form-button:hover {
+  background: var(--S3);
+}
+
+.btn-accept:active,
+.btn-reject:active,
+.btn-challenge-popup:active,
+.btn-delete-popup:active,
+.btn-cancel:active,
+.copy-button:active,
+.form-button:active {
+  transform: scale(0.97);
+}
 
 /* FORM */
 .form-control {
@@ -314,6 +395,7 @@
   font-size: var(--LCSmall);
   width: 100%;
   box-sizing: border-box;
+  border-radius: var(--BorderSmall);
 }
 
 .form-control:focus {
@@ -342,22 +424,29 @@
   padding: 0.5rem 0.9rem;
   border: 1px solid var(--S3);
   color: var(--LCWhite);
+  border-radius: var(--BorderSmall);
 }
 
-/* GRID */
+/* GRID PARA popup-amigo */
 .row-popup {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: clamp(0.5rem, 2vw, 2rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 3vw, 3rem);
+  align-items: start;
 }
 
 .col-popup {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+  background: var(--S1);
+  padding: 1.5rem;
+  border: 1px solid var(--S3);
+  border-radius: var(--BorderNormal);
 }
 
-.col-popup h2, .col-popup h3 {
+.col-popup h2,
+.col-popup h3 {
   color: var(--LCWhite);
   margin: 0;
 }
@@ -377,6 +466,7 @@
   font-size: var(--LCSmall);
   word-break: break-all;
   flex: 1;
+  border-radius: var(--BorderSmall);
 }
 
 /* SPINNER */
@@ -386,12 +476,13 @@
   height: 36px;
   border: 3px solid var(--S3);
   border-top: 3px solid var(--LCWhite);
-  border-radius: 50%;
+  border-radius: var(--BorderFull);
   animation: spin 1s linear infinite;
 }
 
 /* ESTADOS */
-.loading-state, .empty-state {
+.loading-state,
+.empty-state {
   text-align: center;
   padding: 2rem;
   color: var(--LCWhite);
@@ -405,20 +496,65 @@
 }
 
 /* RESPONSIVE */
+@media (max-width: 768px) {
+  .popup-amigo {
+    width: min(95%, 40rem);
+    padding: 1rem;
+  }
+
+  .row-popup {
+    grid-template-columns: 1fr;
+  }
+
+  .col-popup {
+    padding: 1rem;
+  }
+}
+
 @media (max-width: 480px) {
-  .user-info-detail { flex-direction: column; align-items: center; text-align: center; }
-  .detail-row { flex-direction: column; align-items: center; gap: 0.2rem; }
-  .user-actions-popup { flex-direction: column; align-items: center; }
-  .btn-challenge-popup, .btn-delete-popup { width: 100%; justify-content: center; }
+  .user-info-detail {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .user-actions-popup {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-challenge-popup,
+  .btn-delete-popup {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* ANIMACIONES */
 @keyframes popupAppear {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes spin {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

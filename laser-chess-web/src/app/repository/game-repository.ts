@@ -1,4 +1,4 @@
-import { inject, Injectable, signal} from '@angular/core';
+import { inject, Injectable} from '@angular/core';
 import { Observable , map, of} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { GameResume } from '../model/game/GameResume';

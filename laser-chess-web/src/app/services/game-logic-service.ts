@@ -66,6 +66,7 @@ export class GameLogicService {
   miNombre = this.state.miNombre;
 
   permitSalida = signal(false);
+  img_final = signal("");
 
 
   
@@ -74,9 +75,8 @@ export class GameLogicService {
   sendMovement(content:string){
     if (!this.esMiTurno()) return;
     const request: SendAction = { Type: "Move", Content: content}; 
-    // Enviar y bloqueaconst timer = timerMatch ? +timerMatch[1] : null;r (NO movemos la pieza aún)
     this.wsService.sendAction(request);
-    this.state.esMiTurno.set(false);        // Bloquear turno local
+    this.state.esMiTurno.set(false);        
     this.timerService.stopTimer();
     this.waitingForConfirmation.set(true);
   }
@@ -197,7 +197,9 @@ export class GameLogicService {
             this.state.esMiTurno.set(true);
             this.timerService.tiempoRival.set(tiempo);
           }
-          this.timerService.startTimer();
+          if (!this.finPartida().mostrar) {
+            this.timerService.startTimer();
+          }
         }, LASER_DURATION_MS);
 
     }else if (msg.Type === "Error") {
@@ -215,10 +217,12 @@ export class GameLogicService {
       
       if ((!this.soyAzul() && msg.Content === "P1_WINS" )|| (this.soyAzul() && msg.Content === "P2_WINS")) {
         console.log("¡Has ganado!");
+        this.img_final.set(this.boardState.winAnimationUrl());
         this.finPartida.set({ mostrar: false, mensaje: '¡Has ganado!'});
 
       }else{
         console.log("Has perdido, mejor suerte la próxima vez.");
+        this.img_final.set(this.boardState.looseAnimationUrl());
         this.finPartida.set({ mostrar: false, mensaje: '¡Has perdido!'});
       }
       this.timerService.stopTimer();
@@ -248,12 +252,14 @@ export class GameLogicService {
 
     }else if (msg.Type === "Reconnection"){
       // El oponenete se ha reconectado
-      // this.startTimer()
-      this.state.nombreRival.set(msg.Content);
+      this.estadoDesconexion.set({ mostrar: false });
+      this.userRepo.getUsernameById(Number(msg.Content)).subscribe (profile =>
+        this.state.nombreRival.set(profile) );
+      
       const tiempos = msg.Extra.split('%')
       this.timerService.miTiempo.set(Number(tiempos[0]));
       this.timerService.tiempoRival.set(Number(tiempos[1]));
-      this.estadoDesconexion.set({ mostrar: false });
+      
 
       // Se oculta el pop-up de espera a reconexión
     }else if (msg.Type === "PauseRequest"){
@@ -345,10 +351,7 @@ export class GameLogicService {
       this.router.navigate(['/home']);
     }
 
-    solicitarRevancha(){
-      // Enviar solicitud de revancha al backend
-    }
-
+  
   /*****************************************************************************/
   /*               Gestión y parseo de log tras reconexión                     */
   /*****************************************************************************/

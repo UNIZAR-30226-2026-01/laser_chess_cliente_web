@@ -78,7 +78,8 @@ export class HistoryService {
       const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p2_id);
       rivalProfile$.subscribe(profile => {
         this.nombreRival.set(profile.username);
-        this.rivalAvatar.set(profile.avatar);
+        this.rivalAvatar.set(profile.avatar - 9);
+        this.boardState.skinRival.set(profile.piece_skin);
       });
     }else{
       this.soyAzul.set(true);
@@ -86,7 +87,8 @@ export class HistoryService {
       const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p1_id);
       rivalProfile$.subscribe(profile => {
         this.nombreRival.set(profile.username);
-        this.rivalAvatar.set(profile.avatar);
+        this.rivalAvatar.set(profile.avatar - 9);
+        this.boardState.skinRival.set(profile.piece_skin);
       });
     }
 
@@ -94,7 +96,12 @@ export class HistoryService {
 
     this.miTiempo.set(this.historySelectedGame()?.time_base || 0);
     this.tiempoRival.set(this.historySelectedGame()?.time_base || 0);
-    this.miNombre.set(this.userRepo.getUsername() || 'Yo');
+
+    this.userRepo.getOwnAccount().subscribe(profile => {
+        this.miNombre.set(profile.username);
+        this.miAvatar.set(profile.avatar - 9);
+        this.boardState.skinUsario.set(profile.piece_skin);
+      });
     
   }
 

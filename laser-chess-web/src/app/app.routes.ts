@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 
 import { Home } from './features/home/home';
 import { Game } from './features/game/game';
-import { Profile } from './features/profile/profile';
 import { Shop } from './features/shop/shop';
 import { Customize } from './features/customize/customize';
 import { Social } from './features/social/social';
@@ -38,13 +37,12 @@ export const routes: Routes = [
       { path: 'home', component: Home },
       { path: 'settings', component: Settings },
       { path: 'history', component: History },
-      { path: 'profile', component: Profile },
-      { path: 'profile/:id', component: Profile },
       { path: 'shop', component: Shop },
       { path: 'customize', component: Customize },
       { path: 'social', component: Social },
       { path: 'ranking', component: Ranking },
       { path: 'history-hall', component: HistoryHall },
+      { path: 'AñadirNuevoAmigo/:username', component: Social }
     ]
   },
   { path: 'game', component: Game ,canDeactivate: [BlockReturn],

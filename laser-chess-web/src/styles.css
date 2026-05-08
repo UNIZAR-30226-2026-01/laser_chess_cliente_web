@@ -40,6 +40,12 @@ body {
     background-color: var(--LCBG);
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
 
 .animated-bg {
   position: fixed;

@@ -115,8 +115,6 @@ export class Customize implements OnInit {
 
         if (item.type === 'board_skin') {
           this.boardState.setBoardSkinFromItemId(item.id);
-          localStorage.removeItem('board_skin');
-          localStorage.setItem('board_skin', JSON.stringify(item.id));
         }
 
         if (item.type === 'piece_skin') {
@@ -125,6 +123,10 @@ export class Customize implements OnInit {
 
         if (item.type === 'avatar') {
           this.boardState.setAvatarFromItemId(item.id);
+        }
+
+        if(item.type === 'win_animation'){
+          this.boardState.setWinAnimatioFromItemId(item.id);
         }
 
       },

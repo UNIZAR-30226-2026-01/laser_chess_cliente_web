@@ -30,12 +30,16 @@ describe('HistoryService', () => {
     getAccount: vi.fn().mockReturnValue({
       subscribe: (cb: any) => cb({ username: 'Rival', avatar: 2 }),
     }),
+    getOwnAccount: vi.fn().mockReturnValue({
+    subscribe: (cb: any) => cb({ username: 'YoMismo', avatar: 1, piece_skin: 1 }),
+  }),
   };
 
   const boardStateMock = {
     iniciarTablero: vi.fn().mockReturnValue([...mockPiezas]),
     laserColor: signal('red'),
     skinRival: signal(1),
+    skinUsario: signal(1), 
   };
 
   const gameUtilsMock = {

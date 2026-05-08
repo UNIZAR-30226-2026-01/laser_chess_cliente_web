@@ -19,8 +19,10 @@
           <div class="col-popup">
             <h3>Envíale el siguiente enlace:</h3>
             <div class="link-container">
-              <span class="link">{{ 'http://localhost:4200/profile/' + (userInfoUser?.account_id || '') }}</span>
-              <button class="copy-button" (click)="copyLink()">COPIAR</button>
+              <span class="link">{{ `https://laserchess.elcangrejo.es/AñadirNuevoAmigo/${this.userRepo.getUsername() || ''}` }}</span>
+              <button class="copy-button" [class.copiado]="copied()" (click)="copyLink()">
+                {{ copied() ? 'COPIADO' : 'COPIAR' }}
+              </button>
             </div>
           </div>
         </div>
@@ -101,7 +103,7 @@
         <div class="user-info-detail">
           <div class="user-avatar-large">
             @if (userInfoUser.avatar) {
-              <img [src]="'assets/vector-art/ProfilePictures/bot' + userInfoUser.avatar + '.svg'" alt="Avatar">
+              <img [src]="'assets/vector-art/ProfilePictures/bot' + (userInfoUser.avatar-9) + '.svg'" alt="Avatar">
             } @else {
               <div class="avatar-placeholder-large"><span class="avatar-icon-large">👤</span></div>
             }

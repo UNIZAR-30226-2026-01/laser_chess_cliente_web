@@ -30,6 +30,9 @@ export class BoardState {
     'assets/vector-art/Backgrounds/Classic/BG-classic.svg'
   );
 
+  winAnimationUrl = signal<string>('assets/vector-art/DeathAnimations/Classic/Classic-Win.gif');
+  looseAnimationUrl = signal<string>('assets/vector-art/DeathAnimations/Classic/Classic-Loose.gif');
+
   avatarUsuario = signal<number>(0);
 
   // ======================
@@ -118,6 +121,28 @@ export class BoardState {
     const url = map[itemId];
     if (url) {
       this.boardBackgroundUrl.set(url);
+    }
+  }
+
+  setWinAnimatioFromItemId(itemId: number) {
+    const map_win: Record<number, string> = {
+      7: 'assets/vector-art/DeathAnimations/Classic/Classic-Win.gif',
+      8: 'assets/vector-art/DeathAnimations/Soretro/Soretro-win.gif',
+      9: 'assets/vector-art/DeathAnimations/Classic/Classic-Win.gif'
+    };
+    const map_loose: Record<number, string> = {
+      7: 'assets/vector-art/DeathAnimations/Classic/Classic-Loose.gif',
+      8: 'assets/vector-art/DeathAnimations/Soretro/Soretro-loose.gif',
+      9: 'assets/vector-art/DeathAnimations/Cats/Cats-Loose.gif'
+    };
+
+    const url_win = map_win[itemId];
+    if (url_win) {
+      this.winAnimationUrl.set(url_win);
+    }
+    const url_loose = map_loose[itemId];
+    if (url_loose) {
+      this.looseAnimationUrl.set(url_loose);
     }
   }
 }

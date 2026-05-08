@@ -8,6 +8,7 @@ import { AuthRepository } from '../../repository/auth-repository';
 import { ResponseStatus } from '../../model/auth/ResponseStatus';
 import { Remote } from '../../model/remote/remote';
 import { RouterLink } from '@angular/router';
+import { Websocket } from '../../model/remote/websocket'; 
 import { ActivatedRoute } from '@angular/router';
 
 
@@ -31,6 +32,7 @@ export class Login implements OnInit {
   public errorMessage = signal('');
   private route = inject(ActivatedRoute);
   returnUrl: string = '/home';  
+  private ws = inject(Websocket);
 
   ngOnInit() {
     // access_token valido, vamos directo al home
@@ -86,7 +88,7 @@ export class Login implements OnInit {
       this.authService.login(request).subscribe((status) => {
       switch(status){  
         case ResponseStatus.SUCCESS:
-          
+          this.ws.checkAndReconnect();
           this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
           this.router.navigateByUrl(this.returnUrl);
           this.showError.set(false);

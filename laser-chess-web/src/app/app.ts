@@ -32,10 +32,14 @@ export class App {
   ngOnInit() {
   const token = this.remote.getAccessToken();
   
-  this.ws.checkAndReconnect();
+  
   if (token && !this.remote.isTokenExpired(token)) {
+    this.ws.checkAndReconnect();
     this.notificationService.initIfLoggedIn();
-    this.router.navigate(['/']);
+    const currentPath = window.location.pathname;
+    if (currentPath === '/' || currentPath === '') {
+      this.router.navigate(['/home']);
+    }
     
   }
 }

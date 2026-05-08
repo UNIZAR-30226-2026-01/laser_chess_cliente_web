@@ -107,15 +107,13 @@ export class Home {
     this.boardState.skinRival.set(1);
     this.userRepo.getOwnAccount().subscribe(profile => {
       this.boardState.skinUsario.set(profile.piece_skin);
+      this.boardState.setBoardSkinFromItemId(profile.board_skin);
+      this.boardState.setWinAnimatioFromItemId(profile.win_animation);
     });
     this.cargarTablero();
     this.friendRepo.getFriends().subscribe();
 
-    const board_skin = localStorage.getItem('board_skin');
-      if (board_skin) {
-        this.boardState.setBoardSkinFromItemId(Number(board_skin));
-      }
-
+    
     
 
     // Inicializar opciones de incremento según el modo de tiempo seleccionado

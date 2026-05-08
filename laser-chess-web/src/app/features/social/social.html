@@ -119,7 +119,7 @@
                     <li class="user-item" (click)="openUserInfo(friend, 'friend')">
                         <div class="user-info">
                             <div class="left">
-                                <img [src]="'assets/vector-art/ProfilePictures/bot' + friend.avatar + '.svg'" alt="Avatar">
+                                <img [src]="'assets/vector-art/ProfilePictures/bot' + (friend.avatar-9) + '.svg'" alt="Avatar">
                                 <span class="username">{{ friend.username }}</span>
                             </div>
                             <div class="user-stats">

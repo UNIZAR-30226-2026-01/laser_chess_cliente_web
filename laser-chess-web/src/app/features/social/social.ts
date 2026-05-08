@@ -1,7 +1,7 @@
-import { Component, inject, ElementRef, ViewChild} from '@angular/core';
+import { Component, inject} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { signal } from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
-import { Router } from '@angular/router';
 import { FriendSummary } from '../../model/social/FriendSummary'
 import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended'
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
@@ -23,6 +23,9 @@ import { NotificationService } from '../../model/notifications/notification'; //
 
 import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo cargarmea glo)
 
+
+
+
 @Component({
   selector: 'app-social',
   imports: [TopRow, FormsModule, MatIconModule, Popup],
@@ -31,7 +34,9 @@ import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo carg
 })
 
 
+
 export class Social  {
+  
   boardState = inject(BoardState);
 
   username = 'User';
@@ -40,6 +45,10 @@ export class Social  {
   boardPreviewUrl = '/assets/picture.jpeg';
   coins = 1234;
   rankedPoints = 1234;
+
+  
+
+
 
   public newFriendUsername = signal<string>('');
 
@@ -120,8 +129,10 @@ export class Social  {
   private wsSubscription: any;//Para limpiar la sub del socket despues
 
 
-  constructor(private notificationService: NotificationService) {}
-
+  constructor(
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
+  ) {}
 
 
 
@@ -137,6 +148,7 @@ export class Social  {
       this.loadFriends();
     });
 
+
     this.websocket.connectionClosed$.subscribe(() => {
       this.handleChallengeCancelled();
     });
@@ -144,6 +156,29 @@ export class Social  {
     this.websocket.connectionError$.subscribe(() => {
       this.handleChallengeCancelled();
     });
+
+    const username = this.route.snapshot.params['username'];
+    window.history.replaceState({}, '', '/social');
+    if (username) {
+      // Mandar solicitud de amistad
+      const request: FriendshipRequest = {
+            receiver_username: username,
+      };
+      this.friendService.addFriend(request).subscribe({
+        next: () => {
+          // Abrir popup de solicitudes enviadas
+          this.openRequestPopup();
+          this.requestTabState.set('sent'); 
+
+        },
+        error: (err) => {
+          // Si ya son amigos o ya existe solicitud, abrir el popup igualmente
+          this.openRequestPopup();
+          this.requestTabState.set('sent'); 
+
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -183,7 +218,7 @@ export class Social  {
   openRequestPopup() {
     this.loadRequests();
     this.loadSentRequests();
-    this.requestTabState.set('received'); //?
+    this.requestTabState.set('received'); 
     this.popUP_request.set(true);
   }
 
