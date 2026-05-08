@@ -2,12 +2,12 @@ name: Test Frontend
 
 on:
   push:
-    branches: [ juanjo, main ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build-and-test-and-packet:
     runs-on: ubuntu-latest
     permissions:
       contents: read
