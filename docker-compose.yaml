@@ -1,0 +1,7 @@
+services:
+  frontend:
+    build: .
+    container_name: laserchess_frontend
+    ports:
+      - "8082:80" 
+    restart: always
