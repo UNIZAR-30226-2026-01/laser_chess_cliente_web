@@ -47,22 +47,17 @@ export class Websocket {
     this.mode = 'lobby';
     this.gameMessages$ = new ReplaySubject<any>(10);
 
-    const token = this.remote.getAccessToken();
-    const searchParams = new URLSearchParams(params);
-    if (token) searchParams.append('token', token);
-
-    const url = `${API_URL_WS}/api/rt/${endpoint}?${searchParams.toString()}`;
+    var searchParams = new URLSearchParams(params);
+    
+     this.remote.getWsTicket().subscribe(({ ticket }) => {
+        searchParams.append('ticket', ticket);
+        const url = `${API_URL_WS}/api/rt/${endpoint}?${searchParams.toString()}`;
     console.log('Conectando WS a:', url);
 
 
-    /*
-      this.remote.getWsTicket().subscribe(({ ticket }) => {
-        const searchParams = new URLSearchParams(params);
-        searchParams.append('ticket', ticket); // ticket, no JWT
-        const url = `${API_URL_WS}/api/rt/${endpoint}?${searchParams.toString()}`;
-        this.connectSocket(url);
-    });
-    */
+    
+     
+    
 
     this.socket$ = webSocket({
       url: url,
@@ -87,6 +82,9 @@ export class Websocket {
         this.socket$ = undefined;
       }
     });
+    });
+
+    
   }
 
   private handleMessage(msg: any) {
@@ -142,9 +140,10 @@ export class Websocket {
 
   // websocket.service.ts
 checkAndReconnect() {
-  const token = this.remote.getAccessToken();
-  // Usamos la URL que confirmaste
-  const url = `${API_URL_WS}/api/rt/reconnect?token=${token}`; 
+  this.remote.getWsTicket().subscribe(({ ticket }) => {
+     
+      // Usamos la URL que confirmaste
+  const url = `${API_URL_WS}/api/rt/reconnect?ticket=${ticket}`; 
 
   this.socket$ = webSocket({
     url: url,
@@ -179,6 +178,8 @@ checkAndReconnect() {
         this.socket$ = undefined;
       }
     });
+  });
+  
 
   
 

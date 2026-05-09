@@ -27,7 +27,6 @@ export class HistoryService {
 
   columnas = 10;
   filas = 8;
-  id = this.userRepo.getId();
 
   popUpLimites = signal(false);
   popUpMensaje = signal('');  
@@ -72,7 +71,9 @@ export class HistoryService {
 
   
   iniciarJugadores(){
-    if(this.historySelectedGame()?.p1_id == this.id){
+    const   id = this.userRepo.getId();
+    if(this.historySelectedGame()?.p1_id == id){
+     
       this.soyAzul.set(false);
       this.esMiTurno.set(true);
       const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p2_id);
@@ -82,6 +83,7 @@ export class HistoryService {
         this.boardState.skinRival.set(profile.piece_skin);
       });
     }else{
+     
       this.soyAzul.set(true);
       this.esMiTurno.set(false);
       const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p1_id);

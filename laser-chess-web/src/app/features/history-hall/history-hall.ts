@@ -71,23 +71,8 @@ export class HistoryHall {
   visualidaPartida(partida: GameResume) {
 
     this.historyService.historySelectedGame.set(partida);
-    const myId = this.userRepo.getId();
-    var oponente = partida.p1_id;
-    if(myId === partida.p1_id){
-      oponente = partida.p2_id;
-    }
-    this.userRepo.getAccount(oponente).subscribe(profile => {
-      this.historyService.rivalAvatar.set(profile.avatar || 1);
-      this.boardState.skinRival.set(profile.piece_skin || 1);
-    });
-
-    this.userRepo.getOwnAccount().subscribe(profile => {
-      this.historyService.miAvatar.set(profile.avatar || 1);
-    });
-
-
     
-   
+
     localStorage.setItem('historyGame', JSON.stringify(partida));
     
     this.router.navigate(['/history']);

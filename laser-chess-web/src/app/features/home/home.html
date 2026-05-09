@@ -39,6 +39,27 @@
             </div>
     }
 
+    @if (modeDropdownOpen()) {
+                        <div class="mode-modal-overlay" (click)="modeDropdownOpen.set(false)">
+                            <div class="mode-modal" (click)="$event.stopPropagation()">
+                                <button class="mode-option" type="button" (click)="tipoPartida.set('ranked'); modeDropdownOpen.set(false)">
+                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">emoji_events</mat-icon>
+                                    <span class="mode-label">Competitiva</span>
+                                </button>
+
+                                <button class="mode-option" type="button" (click)="tipoPartida.set('ia'); modeDropdownOpen.set(false)">
+                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">smart_toy</mat-icon>
+                                    <span class="mode-label">IA</span>
+                                </button>
+
+                                <button class="mode-option" type="button" (click)="tipoPartida.set('public'); modeDropdownOpen.set(false)">
+                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">handshake</mat-icon>
+                                    <span class="mode-label">Casual</span>
+                                </button>
+                            </div>
+                        </div>
+                    }
+
     <div class="main-section">
         <div class="tablero-placeholder">
             <app-board
@@ -186,7 +207,6 @@
                 JUGAR
                 </a>
 
-
                 <div class="dropdown-wrapper play-dropdown">
                     <button class="trophy-btn"
                                 (click)="modeDropdownOpen.set(!modeDropdownOpen())"
@@ -196,26 +216,7 @@
                             </mat-icon>
                         </button>
 
-                    @if (modeDropdownOpen()) {
-                        <div class="mode-modal-overlay" (click)="modeDropdownOpen.set(false)">
-                            <div class="mode-modal" (click)="$event.stopPropagation()">
-                                <button class="mode-option" type="button" (click)="tipoPartida.set('ranked'); modeDropdownOpen.set(false)">
-                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">emoji_events</mat-icon>
-                                    <span class="mode-label">Competitiva</span>
-                                </button>
-
-                                <button class="mode-option" type="button" (click)="tipoPartida.set('ia'); modeDropdownOpen.set(false)">
-                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">smart_toy</mat-icon>
-                                    <span class="mode-label">IA</span>
-                                </button>
-
-                                <button class="mode-option" type="button" (click)="tipoPartida.set('public'); modeDropdownOpen.set(false)">
-                                    <mat-icon fontSet="material-symbols-outlined" class="mode-icon">handshake</mat-icon>
-                                    <span class="mode-label">Casual</span>
-                                </button>
-                            </div>
-                        </div>
-                    }
+                    
                 </div>
 
 

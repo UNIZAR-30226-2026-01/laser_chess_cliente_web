@@ -1,39 +1,44 @@
-/* --------- HOME ----- */
+/* =========================================
+   HOME
+========================================= */
+
 .home {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 }
 
+/* =========================================
+   ICON BUTTONS
+========================================= */
 
-
-/* ---------------- BOTONES ICONOS ---------------- */
 .icon-btn {
-    width: clamp(50px, 6vw, 70px);
-    height: clamp(50px, 6vw, 70px);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--S2);
-    background: var(--S1);
-    cursor: pointer;
-    padding: 0;
-    line-height: 0;
-    flex-shrink: 0;
-    border-radius: var(--BorderSmall);
+  width: clamp(50px, 6vw, 70px);
+  height: clamp(50px, 6vw, 70px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--S2);
+  background: var(--S1);
+  cursor: pointer;
+  padding: 0;
+  line-height: 0;
+  flex-shrink: 0;
+  border-radius: var(--BorderSmall);
+  box-sizing: border-box;
 }
 
 .icon-btn:hover {
-    background: var(--S2);
-    transition: 0.2s;
+  background: var(--S2);
+  transition: 0.2s;
 }
 
 .icon {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .icon-notif {
@@ -45,546 +50,359 @@
   color: var(--LCWhite);
 }
 
-.icon-history { transform: translateX(-4px) translateY(-2px); }
-.icon-mode { transform: translateX(2px) translateY(2px); }
+.icon-history {
+  transform: translateX(-4px) translateY(-2px);
+}
 
+.icon-mode {
+  transform: translateX(2px) translateY(2px);
+}
 
+/* =========================================
+   MAIN SECTION
+========================================= */
 
-/* ---------------- MAIN SECTION ---------------- */
 .main-section {
-    display: flex;
-    flex: 1;
-
-    align-items: stretch;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  gap: clamp(24px, 4vw, 64px);
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
-
-.game-selection {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: clamp(12px, 2vh, 20px);
-    margin-left: 0px;
-    margin-right: 5vw;
-}
-
 
 .tablero-placeholder {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 60%;
+  flex: 1 1 55%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+  padding-left: 16px;
 }
 
 .tablero-placeholder img {
-    width: 80%;
+  width: 80%;
+  max-width: 100%;
+  height: auto;
 }
 
-/* selectores */
+.game-selection {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(10px, 1.2vh, 16px);
+  margin-right: 2.5vw;
+  min-width: 0;
+  transform: translateY(-30px);
+}
+
+/* =========================================
+   SETTINGS
+========================================= */
+
 .setting-selector {
-    width: 100%;
-    background: var(--S1);
-    border: 2px solid var(--S2);
-    border-radius: var(--BorderFull);
-    padding: 12px 20px;
-
-    margin: 0;
-
-    color: var(--LCWhite);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    transition: 0.2s;
-    box-sizing: border-box;
+  width: 100%;
+  background: var(--S1);
+  border: 2px solid var(--S2);
+  border-radius: var(--BorderFull);
+  padding: 12px 20px;
+  margin: 0;
+  color: var(--LCWhite);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: 0.2s;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .setting-selector:hover {
-    background: var(--S2);
+  background: var(--S2);
 }
 
 .setting-content {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  overflow: hidden;
 }
+
 .setting-content mat-icon {
   color: var(--icon-color);
   font-size: var(--LCMedium);
   width: var(--LCMedium);
   height: var(--LCMedium);
+  flex-shrink: 0;
 }
+
 .setting-label {
-    font-weight: 600;
-    font-size: var(--LCSmall);
+  font-size: var(--LCSmall);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .setting-icon {
-    width: clamp(36px, 5vw, 50px);
-    height: clamp(36px, 5vw, 50px);
-    object-fit: contain;
-}
-
-.setting-label {
-    font-size: var(--LCSmall);
+  width: clamp(36px, 5vw, 50px);
+  height: clamp(36px, 5vw, 50px);
+  object-fit: contain;
 }
 
 .dropdown-wrapper {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
+  min-width: 0;
 }
 
+
 .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--S1);
-    border: 2px solid var(--S2);
-    /* Usamos el mismo borde redondeado que el resto de tu interfaz */
-    border-radius: var(--BorderNormal);
-    margin-top: 8px;
-    padding: 8px 0;
-    list-style: none;
-    z-index: 10;
-    animation: popupAppear 0.2s ease;
-    box-sizing: border-box;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--S1);
+  border: 2px solid var(--S2);
+  border-radius: var(--BorderNormal);
+  margin-top: 8px;
+  padding: 8px 0;
+  list-style: none;
+  z-index: 10;
+  animation: popupAppear 0.2s ease;
+  box-sizing: border-box;
 }
 
 .dropdown-item {
-    padding: 12px 20px;
-    color: var(--LCWhite);
-    cursor: pointer;
-    transition: background 0.2s;
-    font-size: var(--LCSmall);
+  padding: 12px 20px;
+  color: var(--LCWhite);
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: var(--LCSmall);
 }
 
-.dropdown-item:hover {
-    background: var(--S2);
-}
-
+.dropdown-item:hover,
 .dropdown-item.selected {
-    background: var(--S2);
+  background: var(--S2);
 }
 
-/* ---------------- BOTTOM ROW ---------------- */
+/* =========================================
+   BOTTOM ROW
+========================================= */
+
 .bottom-row {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    justify-content: center;
-
-    margin-top: 10vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 1.5rem;
+  min-width: 0;
 }
 
-  /* fila que contiene modo de tiempo + incremento */
-  .time-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    width: 100%;
-  }
+/* =========================================
+   TIME ROW
+========================================= */
 
-  /* Ratio 70/30 usando flex grow (7/3) */
-  .time-row .dropdown-wrapper:first-child {
-    flex: 7 1 0%;
-    min-width: 0; /* permitir que el contenido se reduzca correctamente */
-  }
-  .time-row .dropdown-wrapper:nth-child(2) {
-    flex: 3 1 0%;
-    min-width: 0;
-  }
-
-  /* Asegurar que el contenido del botón ocupe todo el ancho */
-  .time-row .dropdown-wrapper .setting-content {
-    width: 100%;
-  }
-
-  /* Centrar el texto del selector de incremento y mantener el icon a la izquierda */
-  .time-row .dropdown-wrapper:nth-child(2) {
-    position: relative; /* ya lo tenía pero aseguramos contexto para posicionamiento absoluto */
-  }
-  .time-row .dropdown-wrapper:nth-child(2) .setting-content {
-    justify-content: center;
-    padding-left: 44px; /* espacio para el icon situado a la izquierda */
-  }
-  .time-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon {
-    position: absolute;
-    left: 18px;
-  }
-
-  /* BOARD ROW: tablero + IA level (same ratio as time row: 7/3) */
-  .board-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    width: 100%;
-  }
-  .board-row .dropdown-wrapper:first-child {
-    flex: 7 1 0%;
-    min-width: 0;
-  }
-  .board-row .dropdown-wrapper:nth-child(2) {
-    flex: 3 1 0%;
-    min-width: 0;
-    position: relative;
-  }
-  .board-row .dropdown-wrapper:nth-child(2) .setting-content {
-    justify-content: center;
-    padding-left: 44px;
-  }
-  .board-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon {
-    position: absolute;
-    left: 18px;
-  }
-
-  @media (max-width: 768px) {
-    .time-row { flex-direction: column; }
-    .time-row .dropdown-wrapper { flex: none; width: 100%; }
-    .time-row .dropdown-wrapper .setting-content { justify-content: flex-start; }
-  }
-
-  /* Mode selection modal */
-  .mode-modal-overlay {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.5);
-    z-index: 1100;
-  }
-
-  .mode-modal {
-    background: var(--S1);
-    border: 2px solid var(--S2);
-    border-radius: var(--BorderNormal);
-    padding: 40px 48px;
-    display: flex;
-    gap: 56px;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    min-width: 520px;
-  }
-
-
-  .mode-option {
-    background: var(--S2);
-    border: 1px solid var(--S3);
-    color: var(--LCWhite);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    min-width: 120px;
-    padding: 12px 18px;
-    border-radius: 12px;
-  }
-
-  .mode-icon {
-    font-size: 96px;
-    width: 96px;
-    height: 96px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--LCWhite);
-    padding: 12px;
-    border-radius: 16px;
-    line-height: 1;
-  }
-
-
-  .mode-option:hover {
-    background: var(--S3);
-    transform: translateY(-4px);
-    transition: background 0.18s ease, transform 0.18s ease;
-  }
-  .mode-label {
-    font-weight: 800;
-    font-size: 1.15rem;
-  }
-
-  @media (max-width: 900px) {
-    .mode-modal { gap: 28px; padding: 24px; min-width: 420px; }
-    .mode-icon { font-size: 72px; }
-  }
-
-  @media (max-width: 480px) {
-    .mode-modal { gap: 16px; padding: 16px; min-width: 280px; flex-direction: column; }
-    .mode-icon { font-size: 56px; }
-    .mode-option { min-width: auto; }
-  }
-
-/* RANK CARD */
-.rank-card {
-    flex: 1 1 min(200px, 100%);
-    max-width: 600px;
-    background: var(--S1);
-    padding: clamp(12px, 2vw, 18px) clamp(16px, 2.5vw, 24px);
-    display: flex;
-    align-items: center;
-    gap: clamp(8px, 1.5vw, 14px);
-    box-sizing: border-box;
-    border-radius: var(--BorderNormal);
+.time-row,
+.board-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  min-width: 0;
 }
 
-.rank-badge {
-    border: 2px solid var(--LCBlue);
-    color: var(--LCBlue);
-    padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 12px);
-    font-weight: 700;
-    background: var(--S1);
-    flex-shrink: 0;
+.time-row .dropdown-wrapper:first-child,
+.board-row .dropdown-wrapper:first-child {
+  flex: 7 1 0%;
+  min-width: 0;
 }
 
-.rank-progress {
-    color: var(--LCBlue);
-    display: flex;
-    align-items: center;
-    gap: clamp(6px, 1vw, 12px);
-    flex: 1;
-    min-width: 0;
+.time-row .dropdown-wrapper:nth-child(2),
+.board-row .dropdown-wrapper:nth-child(2) {
+  flex: 3 1 0%;
+  min-width: 0;
+  position: relative;
 }
 
-.rank-points {
-    display: flex;
-    display: flex;
-    align-items: center;
-    gap: clamp(4px, 1vw, 6px);
-    font-weight: 700;
-    font-size: clamp(16px, 1.5vw, 20px);
-    white-space: nowrap;
+.time-row .dropdown-wrapper .setting-content,
+.board-row .dropdown-wrapper .setting-content {
+  width: 100%;
 }
 
-.elo-icon {
-    width: clamp(24px, 3vw, 30px);
-    height: clamp(24px, 3vw, 30px);
-    object-fit: contain;
+.time-row .dropdown-wrapper:nth-child(2) .setting-content,
+.board-row .dropdown-wrapper:nth-child(2) .setting-content {
+  justify-content: center;
+  padding-left: 44px;
 }
 
-/* ---------------- PLAY BUTTON ---------------- */
+.time-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon,
+.board-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon {
+  position: absolute;
+  left: 18px;
+}
+
+/* =========================================
+   PLAY
+========================================= */
+
 .play-group {
-    display: flex;
-    margin-right: 0;
-    width: 100%;
-    gap: 0;
-    height: clamp(65px, 10vw, 95px);
+  display: flex;
+  width: 100%;
+  height: clamp(68px, 9vw, 90px);
+  margin: 0 auto;
+  
 }
 
 .play-btn {
-    flex: 1;
-    width: auto;
-    background: var(--LCPurple);
-    color: var(--LCWhite);
-    cursor: pointer;
-    font-weight: 900;
-    font-size: clamp(20px, 2.5vw, 32px);
-    letter-spacing: 3px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-
-    margin-right: 5px;
-
-    border: none;
-
-    border-radius: var(--BorderNormal) 0 0 var(--BorderNormal);
-    box-sizing: border-box;
+  flex: 5;
+  background: var(--LCPurple);
+  color: var(--LCWhite);
+  cursor: pointer;
+  font-weight: 900;
+  font-size: clamp(20px, 2.5vw, 32px);
+  letter-spacing: 3px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  margin-right: 5px;
+  border: none;
+  border-radius: var(--BorderNormal) 0 0 var(--BorderNormal);
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .play-btn:hover {
   background: var(--LCWhite);
   color: var(--LCPurple);
-  transition: 0.2s;
 }
 
 .play-dropdown {
-    width: 72px;
-    height: 100%;
-    position: relative;
-    flex-shrink: 0;
-    
+  flex: 1; 
+  height: 100%;
+  display: flex;
 }
-
 
 .trophy-btn {
-    background: var(--S1);
-    color: var(--LCWhite);
-    height: 100%;
-
-
-    border: 2px solid var(--S2);
-
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-
-    border-radius: 0 var(--BorderNormal) var(--BorderNormal) 0;
-    box-sizing: border-box;
-}
-
-.trophy-btn:hover{
-    background-color: var(--S2);
-}
-
-.trophy-btn mat-icon {
-  font-size: 70px;
-  width: 70px;
-  height: 70px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ---------------- MEDIA QUERIES ---------------- */
-@media (max-width: 1366px) { /* laptops 14” */
-    .top-row, .bottom-row {
-        gap: clamp(8px, 2vw, 24px);
-    }
-    .main-section { gap: clamp(8px, 2vh, 16px); margin: 16px 0; }
-    .profile-card { max-width: 400px; padding: clamp(8px, 1.5vh, 14px); gap: clamp(8px, 1vw, 12px); }
-    .profile-picture { width: 45px; height: 45px; }
-    .coin-counter { font-size: clamp(16px, 2vw, 20px); gap: clamp(4px, 1vw, 6px); }
-    .board-preview { max-width: 250px; }
-    .rank-card { max-width: 500px; padding: clamp(8px, 1.5vh, 14px); gap: clamp(6px, 1vw, 10px); }
-    .rank-points { font-size: clamp(14px, 1.2vw, 18px); }
-    .play-btn { height: 45px; font-size: 18px; padding: 0 16px; }
-}
-
-@media (max-width: 1024px) {
-    .top-row, .bottom-row { gap: clamp(8px, 2vw, 20px); }
-    .main-section { gap: clamp(8px, 2vh, 16px); }
-}
-
-@media (max-width: 768px) {
-    .top-row, .bottom-row { flex-direction: column; align-items: stretch; gap: clamp(8px, 2vw, 16px); }
-    .coin-counter { margin-left: 0; margin-right: 0; justify-content: flex-start; }
-    .profile-card { justify-content: flex-start; }
-    .bottom-row { justify-content: center; }
-}
-
-/* POPUP - Overlay */
-.overlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  z-index: 1000;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
-
-/* POPUP NOTIFICACIONES */
-.popup-solicitudes {
+  width: 100%;
+  height: 100%;
   background: var(--S1);
   border: 2px solid var(--S2);
-  border-radius: var(--BorderNormal);
-  width: min(90%, 45rem);
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px;
-  animation: popupAppear 0.2s ease;
-  position: relative;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.card-reto {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--S1);
-  border: 2px solid var(--S2);
-  border-radius: var(--BorderSmall);
-  padding: 12px 20px;
   color: var(--LCWhite);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 var(--BorderNormal) var(--BorderNormal) 0;
   transition: 0.2s;
+  box-sizing: border-box;
+
 }
 
-.card-reto:hover {
+.trophy-btn:hover {
   background: var(--S2);
 }
 
-.card-reto .info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.trophy-btn mat-icon {
+  font-size: 55px;
+  width: 55px;
+  height: 55px;
 }
 
-.card-reto .info strong {
-  color: var(--LCWhite);
-  font-size: var(--LCSmall);
-}
+/* =========================================
+   MODE MODAL
+========================================= */
 
-.card-reto .info span {
-  font-size: 0.85em;
-  opacity: 0.8;
-}
-
-.card-reto .tiempo {
+.mode-modal-overlay {
+  position: fixed;
+  inset: 0;
   display: flex;
   align-items: center;
-  font-size: 0.9em;
-  font-weight: 600;
-  opacity: 0.9;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  z-index: 1100;
 }
 
-/* Botón de aceptar reto */
-.card-reto button {
-  background: var(--LCPurple);
+.mode-modal {
+  background: var(--S1);
+  border: 2px solid var(--S2);
+  border-radius: var(--BorderNormal);
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  box-sizing: border-box;
+  min-width: 520px;
+  max-width: 95vw;
+}
+
+.mode-option {
+  background: var(--S2);
+  border: 1px solid var(--S3);
   color: var(--LCWhite);
-  border: none;
-  border-radius: var(--BorderSmall);
-  padding: 10px 24px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.2s;
-  font-size: 1rem;
-}
-
-.card-reto button:hover {
-  background: var(--LCWhite);
-  color: var(--LCPurple);
-}
-
-/* Estado cuando no hay notificaciones */
-.no-data {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  min-width: 120px;
+  padding: 12px 18px;
+  border-radius: 12px;
+}
+
+.mode-option:hover {
+  background: var(--S3);
+  transform: translateY(-4px);
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.mode-icon {
+  font-size: 96px;
+  width: 96px;
+  height: 96px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--LCWhite);
-  opacity: 0.6;
-  font-weight: 600;
+  padding: 12px;
+  border-radius: 16px;
 }
 
-/* puntico rojo */
+.mode-label {
+  font-weight: 800;
+  font-size: 1.15rem;
+}
+
+/* =========================================
+   NOTIFICATIONS + ELO
+========================================= */
+
+.notif-elo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 0;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
 .notification-badge {
   position: absolute;
   top: -5px;
   right: -5px;
   z-index: 5;
-
-  background-color: var(--LCRed);
+  background: var(--LCRed);
   color: var(--LCWhite);
   border-radius: 50%;
   width: 24px;
@@ -594,22 +412,15 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: bold;
-  animation: badgePulse 0.3s ease;
 }
 
-.notif-elo-container {
-  display:flex;
-  align-items: center;
-  margin-top: 5vh;
-}
-
-/*  barra de elo  */
 .elo-badge-container {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: clamp(14px, 1.5vw, 20px);
-  margin-left: 0.5em;
+  flex: 1;
+  min-width: 0;
 }
 
 .elo-circle-wrapper {
@@ -628,11 +439,13 @@
 
 .elo-text-wrapper {
   background: var(--S1);
-  padding: 1.2em 3em 1.2em 1.5em;
+  padding: 1.2em 2.5em 1.2em 1.5em;
   border-radius: 2em 0 0 2em;
   margin-right: -2em;
   z-index: 1;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .elo-rank-name {
@@ -640,14 +453,13 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  flex-wrap: wrap;
 }
 
 .elo-rank-name mat-icon {
-
   color: var(--LCYellow);
   font-size: var(--LCMedium);
   width: var(--LCMedium);
@@ -687,4 +499,261 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* =========================================
+   POPUP
+========================================= */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.popup-solicitudes {
+  background: var(--S1);
+  border: 2px solid var(--S2);
+  border-radius: var(--BorderNormal);
+  width: min(90%, 45rem);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.card-reto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--S1);
+  border: 2px solid var(--S2);
+  border-radius: var(--BorderSmall);
+  padding: 12px 20px;
+  color: var(--LCWhite);
+}
+
+.card-reto:hover {
+  background: var(--S2);
+}
+
+.card-reto .info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-reto .info strong {
+  font-size: var(--LCSmall);
+}
+
+.card-reto .info span {
+  font-size: 0.85em;
+  opacity: 0.8;
+}
+
+.card-reto .tiempo {
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.card-reto button {
+  background: var(--LCPurple);
+  color: var(--LCWhite);
+  border: none;
+  border-radius: var(--BorderSmall);
+  padding: 10px 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 1rem;
+}
+
+.card-reto button:hover {
+  background: var(--LCWhite);
+  color: var(--LCPurple);
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--LCWhite);
+  opacity: 0.6;
+  font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+
+  .main-section {
+    gap: 16px;
+    align-items: center;
+  }
+
+  .tablero-placeholder {
+    flex: 1 1 50%;
+  }
+
+  .game-selection {
+    flex: 1 1 50%;
+    margin-right: 0;
+    transform: translateY(-10px);
+  }
+
+  .tablero-placeholder app-board {
+    transform: scale(0.82);
+    transform-origin: center;
+  }
+
+  .setting-selector {
+    padding: 10px 14px;
+  }
+
+  .play-group {
+    height: 72px;
+  }
+
+  .trophy-btn mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .main-section {
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px;
+  }
+
+
+  .tablero-placeholder {
+    width: 100%;
+    padding: 0 4px; 
+  }
+
+  .game-selection {
+    width: 100%;
+    transform: none;
+  }
+
+  .tablero-placeholder app-board {
+    transform: scale(0.75);
+    transform-origin: center;
+  }
+
+  .time-row,
+  .board-row {
+    flex-direction: column;
+  }
+
+  .time-row .dropdown-wrapper,
+  .board-row .dropdown-wrapper {
+    width: 100%;
+  }
+
+  .time-row .dropdown-wrapper:nth-child(2) .setting-content,
+  .board-row .dropdown-wrapper:nth-child(2) .setting-content {
+    justify-content: flex-start;
+    padding-left: 0;
+  }
+
+  .time-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon,
+  .board-row .dropdown-wrapper:nth-child(2) .setting-content mat-icon {
+    position: static;
+  }
+
+  .elo-badge-container {
+    width: 100%;
+  }
+
+  .elo-text-wrapper {
+    margin-right: 0;
+    border-radius: 2em;
+    text-align: center;
+    padding: 1rem 1.25rem;
+  }
+
+  .elo-rank-name {
+    justify-content: center;
+  }
+
+  .play-group {
+    height: 72px;
+  }
+
+  .trophy-btn {
+    width: 72px;
+  }
+
+  .trophy-btn mat-icon {
+    font-size: 42px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .mode-modal {
+    gap: 16px;
+    padding: 16px;
+    min-width: 280px;
+    flex-direction: column;
+  }
+
+  .mode-icon {
+    font-size: 56px;
+  }
+
+  .mode-option {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  .tablero-placeholder app-board {
+    transform: scale(0.62);
+  }
+
+  .setting-selector {
+    padding: 10px 14px;
+  }
+
+  .setting-label {
+    font-size: 0.9rem;
+  }
+
+  .play-btn {
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+
+  .elo-circle-wrapper {
+    width: 5.5em;
+    height: 5.5em;
+  }
 }

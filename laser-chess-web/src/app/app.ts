@@ -30,17 +30,18 @@ export class App {
   }
 
   ngOnInit() {
-  const token = this.remote.getAccessToken();
-  
-  
-  if (token && !this.remote.isTokenExpired(token)) {
-    this.ws.checkAndReconnect();
-    this.notificationService.initIfLoggedIn();
-    const currentPath = window.location.pathname;
-    if (currentPath === '/' || currentPath === '') {
-      this.router.navigate(['/home']);
+    const token = this.remote.getAccessToken();
+
+    if (token && !this.remote.isTokenExpired(token)) {
+      this.ws.checkAndReconnect();
+      this.notificationService.initIfLoggedIn();
+
+      const currentPath = window.location.pathname;
+      const isAddFriendRoute = currentPath.startsWith('/AñadirNuevoAmigo/');
+
+      if (!isAddFriendRoute) {
+        this.router.navigate(['/home']);
+      }
     }
-    
   }
-}
 }

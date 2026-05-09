@@ -99,7 +99,7 @@ export class GameLogicService {
       if(Number(msg.Content) != 1){ // Excluimos el caso de la IA
         const rivalProfile$ = this.userRepo.getAccount(Number(msg.Content));
           rivalProfile$.subscribe(profile => {
-            this.state.avatarRival.set(profile.avatar || 1);
+            this.state.avatarRival.set(profile.avatar -9 || 1);
             this.boardState.skinRival.set(profile.piece_skin || 1);
             this.state.nombreRival.set(profile.username);
           });
