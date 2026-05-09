@@ -32,6 +32,10 @@
 }
 
 * { box-sizing: border-box; }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--S3) var(--S1);
+}
 
 body {
     margin: 0;
