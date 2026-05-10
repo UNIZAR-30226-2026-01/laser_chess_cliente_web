@@ -37,9 +37,9 @@ export class Home {
   incrementDropdownOpen = signal(false);
   modeDropdownOpen = signal(false);
 
-  eloDashOffset: number = 276.46;
-  eloRankName: string = 'PROTON · II';
-  rankedPoints: number = 1234;
+  eloDashOffset= signal(276.46);
+  eloRankName= signal('PROTON · II');
+  rankedPoints= signal(1234);
 
   popUPNotis = signal(false);
   // valores internos: 'ranked', 'ia', 'public'
@@ -65,6 +65,33 @@ export class Home {
     'Extended': { starting: 3600, increments: [0, 15, 20] },
   };
 
+  private rankTable = [
+  { min: 0,    max: 999,  name: 'Fotón I' },
+  { min: 1000, max: 1049, name: 'Fotón II' },
+  { min: 1050, max: 1099, name: 'Quark I' },
+  { min: 1100, max: 1149, name: 'Quark II' },
+  { min: 1150, max: 1199, name: 'Quark III' },
+  { min: 1200, max: 1249, name: 'Electron I' },
+  { min: 1250, max: 1299, name: 'Electron II' },
+  { min: 1300, max: 1349, name: 'Electron III' },
+  { min: 1350, max: 1399, name: 'Electron IV' },
+  { min: 1400, max: 1449, name: 'Protón I' },
+  { min: 1450, max: 1499, name: 'Protón II' },
+  { min: 1500, max: 1549, name: 'Protón III' },
+  { min: 1550, max: 1599, name: 'Protón IV' },
+  { min: 1600, max: 1649, name: 'Neutrón I' },
+  { min: 1650, max: 1699, name: 'Neutrón II' },
+  { min: 1700, max: 1749, name: 'Neutrón III' },
+  { min: 1750, max: 1799, name: 'Neutrón IV' },
+  { min: 1800, max: 1849, name: 'Átomo I' },
+  { min: 1850, max: 1899, name: 'Átomo II' },
+  { min: 1900, max: 1949, name: 'Átomo III' },
+  { min: 1950, max: 1999, name: 'Átomo IV' },
+  { min: 2000, max: Infinity, name: 'Átomo V' },
+];
+
+
+
   incrementOptions: number[] = [];
 
 
@@ -79,6 +106,7 @@ export class Home {
   gameUtils = inject(GameUtils);
 
   popUP_waiting = signal(false);
+  private eloByMode: { [key: string]: number } = {};
 
   cancelWaiting(){
     this.popUP_waiting.set(false);
@@ -100,7 +128,6 @@ export class Home {
     // Aquí podrías cargar las solicitudes iniciales si quieres
     
     this.loadRequest();
-    this.getEloProgress();
     this.notificationService.wakeHome$.subscribe(() => {
         this.loadRequest();
     });
@@ -109,6 +136,14 @@ export class Home {
       this.boardState.skinUsario.set(profile.piece_skin);
       this.boardState.setBoardSkinFromItemId(profile.board_skin);
       this.boardState.setWinAnimatioFromItemId(profile.win_animation);
+      this.eloByMode = {
+        'Blitz':    profile.blitzElo || 0,    
+        'Rapid':    profile.rapidElo || 0,    
+        'Classic':  profile.classicElo || 0,  
+        'Extended': profile.extendedElo || 0,
+      };
+
+      this.getEloProgress(this.eloByMode[this.selectedTime()]);
     });
     this.cargarTablero();
     this.friendRepo.getFriends().subscribe();
@@ -151,17 +186,18 @@ export class Home {
     this.timeDropdownOpen.set(false);
 
     const mode = this.timeModes[option];
+    
     if (mode) {
       this.startingTime.set(mode.starting);
+      this.getEloProgress(this.eloByMode[this.selectedTime()]);
       this.incrementOptions = mode.increments;
-      // escoger primer incremento por defecto
       this.timeIncrement.set(mode.increments.length > 0 ? mode.increments[0] : 0);
     }
   }
 
   toggleIncrementDropdown(event: Event) {
     event.stopPropagation();
-    this.closeDropdowns(); // Cierra otros desplegables abiertos
+    this.closeDropdowns(); 
     this.incrementDropdownOpen.set(!this.incrementDropdownOpen());
   }
 
@@ -191,11 +227,22 @@ export class Home {
     this.boardDropdownOpen.set(false);
   }
 
-  getEloProgress() {
-    // Por ahora se pone un placeholder, pero habrá que calcularlo
-    const porcentaje = 65;
+  
+
+  getEloProgress(elo: number) {
+    this.rankedPoints.set(elo);
+    console.log(this.rankedPoints());
+
+    const rank = this.rankTable.find(r => elo >= r.min && elo <= r.max)
+      ?? this.rankTable[this.rankTable.length - 1];
+
+    this.eloRankName.set(rank.name.toUpperCase());
+
+    const isMax = rank.max === Infinity;
+    const porcentaje = isMax ? 100 : ((elo - rank.min) / (rank.max - rank.min + 1)) * 100;
+
     const circunferencia = 289.02;
-    this.eloDashOffset = circunferencia - (porcentaje / 100) * circunferencia;
+    this.eloDashOffset.set(circunferencia - (porcentaje / 100) * circunferencia);
   }
 
   openNotifications() {

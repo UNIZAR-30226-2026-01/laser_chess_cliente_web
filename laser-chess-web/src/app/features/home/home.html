@@ -85,7 +85,7 @@
           <div class="elo-badge-container">
             <div class="elo-text-wrapper">
               <span class="elo-rank-name">
-                {{ eloRankName }}
+                {{ eloRankName() }}
                 <!-- place holder, habrá que leer el valor que sea -->
                 · 1256 / 1500
                 <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
@@ -96,7 +96,7 @@
               <svg class="progress-ring" viewBox="0 0 120 120">
                 <circle class="progress-ring-track" cx="60" cy="60" r="46" stroke-width="12"/>
                 <circle class="progress-ring-value" cx="60" cy="60" r="46" stroke-width="12"
-                        [attr.stroke-dashoffset]="eloDashOffset"/>
+                        [attr.stroke-dashoffset]="eloDashOffset()"/>
               </svg>
               <mat-icon class="elo-icon-inner" fontSet="material-symbols-outlined">
                 masked_transitions_add

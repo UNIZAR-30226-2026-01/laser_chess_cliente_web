@@ -104,6 +104,7 @@ export class GameLogicService {
 
     } else if (msg.Type === "InitialState"){
       const idIponente = localStorage.getItem('idOponente');
+      console.log(idIponente);
       if (idIponente) {
         console.log("Mi oponentes tras reconexión es " + JSON.parse(idIponente));
         this.challengeManager.setupOponent(Number(JSON.parse(idIponente)), null);
@@ -234,6 +235,9 @@ export class GameLogicService {
       this.wsSubscription?.unsubscribe();
       this.wsSubscription = undefined;
       this.timerService.stopTimer();
+      if(!this.finPartida().mostrar){
+        this.finPartidaHandler();
+      }
 
       
       
@@ -247,8 +251,7 @@ export class GameLogicService {
     }else if (msg.Type === "Reconnection"){
       // El oponenete se ha reconectado
       this.estadoDesconexion.set({ mostrar: false });
-      this.userRepo.getUsernameById(Number(msg.Content)).subscribe (profile =>
-        this.state.nombreRival.set(profile) );
+      this.challengeManager.setupOponent(Number(JSON.parse(msg.Content)), null);
       
       const tiempos = msg.Extra.split('%')
       this.timerService.miTiempo.set(Number(tiempos[0]));
