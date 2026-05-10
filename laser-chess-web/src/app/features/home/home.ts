@@ -37,9 +37,11 @@ export class Home {
   incrementDropdownOpen = signal(false);
   modeDropdownOpen = signal(false);
 
-  eloDashOffset= signal(276.46);
-  eloRankName= signal('PROTON · II');
-  rankedPoints= signal(1234);
+  eloDashOffset = signal(276.46);
+  eloRankName = signal('PROTON II');
+  rankedPoints = signal(0);
+  nextRankLimit = signal(0);
+  eloRankIcon = signal('assets/vector-art/Ranks/proton.svg');
 
   popUPNotis = signal(false);
   // valores internos: 'ranked', 'ia', 'public'
@@ -229,21 +231,65 @@ export class Home {
 
   
 
-  getEloProgress(elo: number) {
+  getEloProgress(elo: number | undefined) {
+    elo = elo ?? 0;
+
     this.rankedPoints.set(elo);
-    console.log(this.rankedPoints());
 
     const rank = this.rankTable.find(r => elo >= r.min && elo <= r.max)
       ?? this.rankTable[this.rankTable.length - 1];
 
     this.eloRankName.set(rank.name.toUpperCase());
 
+    const nextRank = this.rankTable.find(r => r.min > elo);
+    this.nextRankLimit.set(nextRank ? nextRank.min : rank.min);
+
+    this.eloRankIcon.set(this.getRankIcon(rank.name));
+
     const isMax = rank.max === Infinity;
-    const porcentaje = isMax ? 100 : ((elo - rank.min) / (rank.max - rank.min + 1)) * 100;
+
+    const porcentaje = isMax
+      ? 100
+      : ((elo - rank.min) / (nextRank!.min - rank.min)) * 100;
 
     const circunferencia = 289.02;
     this.eloDashOffset.set(circunferencia - (porcentaje / 100) * circunferencia);
   }
+
+  private getRankIcon(rankName: string): string {
+
+    const normalized = rankName
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    if (normalized.includes('foton')) {
+      return 'assets/vector-art/Ranks/foton.svg';
+    }
+
+    if (normalized.includes('quark')) {
+      return 'assets/vector-art/Ranks/quark.svg';
+    }
+
+    if (normalized.includes('electron')) {
+      return 'assets/vector-art/Ranks/electron.svg';
+    }
+
+    if (normalized.includes('proton')) {
+      return 'assets/vector-art/Ranks/proton.svg';
+    }
+
+    if (normalized.includes('neutron')) {
+      return 'assets/vector-art/Ranks/neutron.svg';
+    }
+
+    if (normalized.includes('atomo')) {
+      return 'assets/vector-art/Ranks/atom.svg';
+    }
+
+    return 'assets/vector-art/Ranks/foton.svg';
+  }
+
 
   openNotifications() {
     this.loadRequest();

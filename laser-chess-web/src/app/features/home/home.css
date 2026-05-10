@@ -386,6 +386,12 @@
    NOTIFICATIONS + ELO
 ========================================= */
 
+.elo-rank-img {
+  width: var(--LCMedium);
+  height: var(--LCMedium);
+  object-fit: contain;
+}
+
 .notif-elo-container {
   display: flex;
   align-items: center;
@@ -453,18 +459,31 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  display: flex;
+
+  display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  flex-wrap: wrap;
+  gap: 0.35rem;
+
+  max-width: 100%;
+  white-space: nowrap;
 }
 
-.elo-rank-name mat-icon {
+.elo-rank-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.elo-crown {
+  flex-shrink: 0;
   color: var(--LCYellow);
   font-size: var(--LCMedium);
   width: var(--LCMedium);
   height: var(--LCMedium);
 }
+
+
 
 .progress-ring {
   position: absolute;
@@ -493,12 +512,10 @@
 .elo-icon-inner {
   color: var(--LCBlue);
   z-index: 2;
-  font-size: 2.5em;
-  width: 1em;
-  height: 1em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 6m;
+  height: 6em;
+  object-fit: contain;
+  display: block;
 }
 
 /* =========================================

@@ -86,9 +86,10 @@
             <div class="elo-text-wrapper">
               <span class="elo-rank-name">
                 {{ eloRankName() }}
-                <!-- place holder, habrá que leer el valor que sea -->
-                · 1256 / 1500
-                <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+                    · {{ rankedPoints() }} / {{ nextRankLimit() }}
+                <mat-icon class="elo-crown" fontSet="material-symbols-outlined">
+                    crown
+                </mat-icon>
               </span>
             </div>
 
@@ -98,9 +99,11 @@
                 <circle class="progress-ring-value" cx="60" cy="60" r="46" stroke-width="12"
                         [attr.stroke-dashoffset]="eloDashOffset()"/>
               </svg>
-              <mat-icon class="elo-icon-inner" fontSet="material-symbols-outlined">
-                masked_transitions_add
-              </mat-icon>
+              <img
+                    class="elo-icon-inner"
+                    [src]="eloRankIcon()"
+                    [alt]="eloRankName()"
+                 />
             </div>
           </div>
         </div>
