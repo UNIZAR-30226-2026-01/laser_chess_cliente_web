@@ -512,7 +512,7 @@
 .elo-icon-inner {
   color: var(--LCBlue);
   z-index: 2;
-  width: 6m;
+  width: 6em;
   height: 6em;
   object-fit: contain;
   display: block;
