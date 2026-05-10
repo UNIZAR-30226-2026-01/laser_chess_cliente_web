@@ -125,6 +125,10 @@ export class NotificationService {
           this.router.navigate(['/social']);
         }
 
+        if (data?.type === 'friend_send') {
+          this.router.navigate(['/social']);
+        }
+
         notification.close();
       };
 

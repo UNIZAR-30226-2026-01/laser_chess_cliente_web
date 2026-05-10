@@ -11,7 +11,7 @@
             <h3>Escribe su nombre de usuario</h3>
             <input #usernameInput type="text" class="form-control" placeholder="username" (keyup.enter)="newFriendAdd.emit(usernameInput.value)">
             @if (newFriendError) {
-              <span class="error_message_form">Por favor, ingresa un nombre de usuario válido.</span>
+              <span class="error_message_form">El nombre introducido no existe o no es válido.</span>
             }
             <button class="form-button" (click)="newFriendAdd.emit(usernameInput.value)">ENVIAR SOLICITUD</button>
             <h3>O espera a ser aceptad@</h3>

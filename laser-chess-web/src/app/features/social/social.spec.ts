@@ -151,7 +151,8 @@ describe('Social Angular', () => {
         {
           provide: NotificationService,
           useValue: {
-            wakeSocial$: of(null)
+            wakeSocial$: of(null),
+            showWebNotification: vi.fn()
           }
         }
       ]

@@ -213,10 +213,16 @@ export class Social implements OnInit, OnDestroy {
       next: (result) => {
         if (result) {
           this.popUP_newFriend.set(false);
+           this.notificationService.showWebNotification('Solicitud enviada', `Has enviado una soliitud de amistad a${username}`, { type: 'friend_send', username })
           this.refreshSocialState();
+        }else{
+          this.errorAmigoNombreNoValido.set(true);
         }
       },
-      error: (err: any) => console.error(err)
+      error: (err: any) => {
+        
+        console.error(err);
+      }
     });
   }
 

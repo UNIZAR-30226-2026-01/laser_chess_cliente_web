@@ -75,7 +75,7 @@
             </div>
           </button>
 
-          <button class="add-friend-button" (click)="popUP_newFriend.set(true)">
+          <button class="add-friend-button" (click)="this.errorAmigoNombreNoValido.set(false);popUP_newFriend.set(true)">
             <mat-icon fontSet="material-symbols-outlined">add_circle</mat-icon>
             <span>Agregar amigo</span>
           </button>
