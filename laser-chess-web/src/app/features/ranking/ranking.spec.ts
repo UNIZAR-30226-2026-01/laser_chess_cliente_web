@@ -6,7 +6,6 @@ import { RankingRepository } from '../../repository/ranking-repository';
 import { FriendRespository } from '../../repository/friend-respository';
 import { Remote } from '../../model/remote/remote';
 import { UserRespository } from '../../repository/user-respository';
-import { IconService } from '../../model/user/icon';
 
 import { Websocket } from '../../model/remote/websocket';
 import { GameState } from '../../utils/game-state';
@@ -118,7 +117,6 @@ describe('Ranking', () => {
         { provide: FriendRespository, useValue: friendRepoMock },
         { provide: Remote, useValue: remoteMock },
         { provide: UserRespository, useValue: userRepoMock },
-        { provide: IconService, useValue: iconServiceMock },
         { provide: Websocket, useValue: websocketMock },
         { provide: GameState, useValue: gameStateMock },
         { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) } },

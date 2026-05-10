@@ -1,6 +1,5 @@
-// board-actions.ts
-import { Injectable, inject } from '@angular/core';
-import { Signal, WritableSignal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { WritableSignal } from '@angular/core';
 import { PiezaData } from '../model/game/PiezaData';
 
 @Injectable({ providedIn: 'root' })

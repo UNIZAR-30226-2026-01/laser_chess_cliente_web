@@ -5,7 +5,6 @@ import { UserRespository } from '../../repository/user-respository';
 import { AuthRepository } from '../../repository/auth-repository';
 import { passwordMatchValidator } from '../signin/signin';
 import { BoardState } from '../../utils/board-state';
-import { NotificationService } from '../../model/notifications/notification';
 
 @Component({
   selector: 'app-settings',

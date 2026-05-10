@@ -133,13 +133,13 @@ export class CustomizeRepository {
         break;
 
       case 'avatar':                 
-        const botNumber = dto.item_id - 9; // Formulita pues el id del primer avatar es 10, y el nombre de la imagen es bot1
+        const botNumber = dto.item_id - 9; 
         name = `Avatar ${botNumber}`;  
         icon = `assets/vector-art/ProfilePictures/bot${botNumber}.svg`;
         break;
 
       default:
-        name = `?? ${dto.item_id}`; //otra cosa
+        name = `?? ${dto.item_id}`; 
         icon = '';
 
     }

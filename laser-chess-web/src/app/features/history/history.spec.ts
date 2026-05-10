@@ -79,6 +79,7 @@ describe('History', () => {
       historySelectedGame: fakeSignal(null),
       perfilRival: fakeSignal(null),
       perfilRivalSummary: signal(null),
+      turnoVisual:signal(true),
     };
 
     const remoteMock = {

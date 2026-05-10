@@ -1,6 +1,4 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
-import { IconService } from '../../model/user/icon'
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { UserRespository } from '../../repository/user-respository';

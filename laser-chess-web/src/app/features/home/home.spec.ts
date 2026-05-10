@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { UserRespository } from '../../repository/user-respository';
-import { IconService } from '../../model/user/icon';
 
 import { Home } from './home';
 import { NotificationService } from '../../model/notifications/notification';
@@ -52,7 +51,6 @@ describe('Home', () => {
           }
         },
         { provide: UserRespository, useValue: userRepoMock },
-        { provide: IconService, useValue: iconServiceMock },
         {
           provide: NotificationService,
           useValue: {

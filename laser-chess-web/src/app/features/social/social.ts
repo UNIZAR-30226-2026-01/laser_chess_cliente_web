@@ -106,7 +106,6 @@ export class Social implements OnInit, OnDestroy {
     this.wsSubscription?.unsubscribe();
   }
 
-  // ─── Carga de datos ────────────────────────────────────────────────────────
 
   refreshSocialState(): void {
     this.loadFriends();

@@ -1,4 +1,3 @@
-// como el del backend
 export interface ShopItemDTO {
   item_id: number;
   price: number;

@@ -42,7 +42,6 @@ export class Board {
     // Obtenemos la ruta del background activo
     const bgUrl = this.boardState.boardBackgroundUrl() || '';
 
-    // NOTA: Ajusta el prefijo 'assets/' si tu carpeta de assets está estructurada distinto.
     const basePath = 'assets/vector-art/Backgrounds';
 
     if (bgUrl.includes('Cats')) {

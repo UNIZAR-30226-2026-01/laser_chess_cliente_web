@@ -1,10 +1,9 @@
 import { Injectable, inject} from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ReplaySubject, Subject} from 'rxjs';
-import { Remote } from './remote'; // <--- Importa tu servicio
+import { Remote } from './remote'; 
 import { API_URL_WS } from '../../constants/app.const';
 import {  Router } from '@angular/router';
-import { ChallengeManager } from '../../services/challenge-manager';
 
 
 
@@ -138,22 +137,19 @@ export class Websocket {
     this.socket$ = undefined;
   }
 
-  // websocket.service.ts
 checkAndReconnect() {
   this.remote.getWsTicket().subscribe(({ ticket }) => {
      
-      // Usamos la URL que confirmaste
+  // Usamos la URL que confirmaste
   const url = `${API_URL_WS}/api/rt/reconnect?ticket=${ticket}`; 
 
   this.socket$ = webSocket({
     url: url,
-    // RxJS no tiene 'onopen' como propiedad, se usa el openObserver
     openObserver: {
       next: () => {
         console.log('¡Conexión establecida! Hay partida activa.');
 
         this.wakeGameSubject.next();
-        // Aquí es donde disparas la navegación
         this.router.navigate(['/game']);
       }
     },

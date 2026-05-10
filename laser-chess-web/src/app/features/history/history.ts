@@ -10,7 +10,7 @@ import { Popup } from '../../shared/popups/popup';
 import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended'
 import { ChallengeFlow } from '../../shared/challenge-flow/challenge-flow';
 import { ChallengeFlowService } from '../../services/challenge-flow';
-import { RankingRepository, RankingPlayer, UserRankingInfo, EloType } from '../../repository/ranking-repository';
+import { UserRankingInfo, EloType } from '../../repository/ranking-repository';
 import { FriendRespository } from '../../repository/friend-respository';
 import { FriendSummary } from '../../model/social/FriendSummary';
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
@@ -55,33 +55,6 @@ export class History {
 
 
 
-  ngOnInit(){
-    const saved = localStorage.getItem('historyGame');
-    if (saved) {
-      this.historyState.historySelectedGame.set(JSON.parse(saved));
-    }
-    this.historyState.laserPath.set([]);
-
-    this.historyState.inicializarTablero();
-    this.loadFriends();
-    this.loadSentRequests();
-  }
-
-  siguiente(){
-    this.historyState.avanzar();
-  }
-  anterior(){
-    this.historyState.retroceder();
-  }
-
-  primero(){
-    this.historyState.irAlPrimero();
-  }
-  ultimo(){
-    this.historyState.irAlUltimo();
-  }
-
-  private rankingRepo = inject(RankingRepository);
     private friendRepo  = inject(FriendRespository);
     private remote      = inject(Remote);
     flow                = inject(ChallengeFlowService);  // ← toda la lógica del reto vive aquí
@@ -112,7 +85,31 @@ export class History {
     private friends      = signal<FriendSummary[]>([]);
     private sentRequests = signal<FriendSummary[]>([]);
   
-  
+    ngOnInit(){
+      const saved = localStorage.getItem('historyGame');
+      if (saved) {
+        this.historyState.historySelectedGame.set(JSON.parse(saved));
+      }
+      this.historyState.laserPath.set([]);
+
+      this.historyState.inicializarTablero();
+      this.loadFriends();
+      this.loadSentRequests();
+    }
+
+    siguiente(){
+      this.historyState.avanzar();
+    }
+    anterior(){
+      this.historyState.retroceder();
+    }
+
+    primero(){
+      this.historyState.irAlPrimero();
+    }
+    ultimo(){
+      this.historyState.irAlUltimo();
+    }
   
   
     loadFriends(): void {

@@ -7,7 +7,6 @@ import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Social } from '../../features/social/social';
 import { FriendRespository } from '../../repository/friend-respository';
 import { UserRespository } from '../../repository/user-respository';
-import { IconService } from '../../model/user/icon';
 import { GameRepository } from '../../repository/game-repository';
 
 import { MatIconTestingModule } from '@angular/material/icon/testing';
@@ -111,7 +110,6 @@ describe('Social Angular', () => {
         { provide: FriendRespository, useValue: friendRepoSpy },
         { provide: ChallengeFlowService, useValue: challengeFlowSpy },
         { provide: UserRespository, useValue: userRepoSpy },
-        { provide: IconService, useValue: iconServiceSpy },
         { provide: GameRepository, useValue: gameRepoSpy },
 
         {

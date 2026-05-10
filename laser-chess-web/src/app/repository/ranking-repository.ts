@@ -1,4 +1,3 @@
-// src/app/ranking/ranking.repository.ts
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, switchMap, of } from 'rxjs';
 import { Remote } from '../model/remote/remote';

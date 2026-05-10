@@ -55,6 +55,8 @@ export class HistoryService {
   miAvatar = signal(1);
   rivalAvatar = signal(1);
 
+  turnoVisual = signal(true);
+
   perfilRival = signal<MyProfile>({
     userId: 0,
     username: "",
@@ -229,16 +231,10 @@ export class HistoryService {
     }else{
       this.tiempoRival.set(Number(tiempo));
     }
+    
     this.esMiTurno.set(!this.esMiTurno());
-
     
   }
-
-  
-  
-
-
-      
 
   
 
@@ -256,9 +252,11 @@ export class HistoryService {
     );
 
     this.esMiTurno.set(!this.soyAzul()); 
+    this.turnoVisual.set(!this.soyAzul());
     this.capturas = [];
 
     for (let i = 0; i < this.indiceMovimiento; i++) {
+      this.turnoVisual.set(!this.turnoVisual());
       this.applyAction(this.movimientos[i], true);
     }
   }
@@ -289,6 +287,7 @@ export class HistoryService {
 
   irAlPrimero(){
     this.indiceMovimiento = 0;
+    this.laserPath.set([]);
     this.reconstruirEstado();
   }
 

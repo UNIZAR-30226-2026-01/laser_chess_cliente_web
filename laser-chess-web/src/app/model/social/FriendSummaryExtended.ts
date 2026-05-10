@@ -4,7 +4,6 @@ export interface FriendSummaryExtended {
     level: number;
     avatar: number;
     xp?: number;
-    //se rellenas despues
     blitzElo?: number;
     rapidElo?: number;
     classicElo?: number;

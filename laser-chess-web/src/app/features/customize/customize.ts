@@ -1,9 +1,7 @@
 import { Component, inject, OnInit, WritableSignal, signal  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CustomizeRepository, CustomizeItemDisplay } from '../../repository/customize-repository';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Remote } from '../../model/remote/remote';
 import { Board } from '../../shared/board/board'
 import { GameUtils } from '../../utils/game-utils'
 import { BoardState } from '../../utils/board-state'
@@ -29,7 +27,6 @@ export class Customize implements OnInit {
   private customizeRepo = inject(CustomizeRepository);
   gameUtils = inject(GameUtils);
   boardState = inject(BoardState);
-  private remote = inject(UserRespository);
   groups: WritableSignal<CustomizeGroup[]> = signal<CustomizeGroup[]>([]);
 
   columnas = 10;

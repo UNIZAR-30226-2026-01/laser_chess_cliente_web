@@ -16,9 +16,6 @@ export class TimerService {
 
   private timerInterval: any = null;
   
-   /*
-     * Cositas de timers
-     */
     startTimer() {
       this.stopTimer(); // evitar duplicados
   

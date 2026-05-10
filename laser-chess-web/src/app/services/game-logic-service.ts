@@ -199,10 +199,8 @@ export class GameLogicService {
 
     }else if (msg.Type === "Error") {
       console.error("Error del servidor:", msg.Content);
-      // Si estábamos esperando confirmación, algo salió mal
       if (this.waitingForConfirmation()) {
         this.waitingForConfirmation.set(false);
-        // Podrías recuperar el turno (depende de la política del juego)
         this.state.esMiTurno.set(true);
         this.timerService.stopTimer(); // paro por tiempo de laser
       }

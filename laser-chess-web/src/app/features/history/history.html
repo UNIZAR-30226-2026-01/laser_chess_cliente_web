@@ -39,7 +39,7 @@
 
       <!-- JUGADOR IZQUIERDA -->
       <aside class="side-panel">
-        <div class="player_card my-user">
+        <div class="player_card my-user" [class.active-turn]="!this.historyState.turnoVisual()">
           <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
           <img [src]="'assets/vector-art/ProfilePictures/bot' + miAvatar() + '.svg'" alt="Avatar" class="avatar-circle blue">
           <span class="player-name">{{ miNombre() }}</span>
@@ -67,7 +67,7 @@
 
       <!-- JUGADOR DERECHA -->
       <aside class="side-panel">
-        <div class="player_card rival" (click)="openUserInfo(historyState.perfilRival())">
+        <div class="player_card rival" (click)="openUserInfo(historyState.perfilRival())" [class.active-turn]="this.historyState.turnoVisual()">
           <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
           <img [src]="'assets/vector-art/ProfilePictures/bot' + rivalAvatar() + '.svg'" alt="Avatar" class="avatar-circle red">
           <span class="player-name">{{ nombreRival() }}</span>
