@@ -119,7 +119,8 @@ describe('Social Validator', () => {
         },
         {
           provide: NotificationService,
-          useValue: { wakeSocial$: of(null) }
+          useValue: { wakeSocial$: of(null), showWebNotification: vi.fn()
+          }
         }
       ]
     }).compileComponents();
