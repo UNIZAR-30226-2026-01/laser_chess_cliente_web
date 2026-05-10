@@ -9,7 +9,7 @@
   <div class="folder-container">
     <div class="folder-body">
 
-      <!-- Botones para seleccionar elo -->
+      <!-- Selector de tipo de ELO -->
       <div class="elo-buttons-container">
         @for (type of eloTypes; track type.id) {
           <button class="elo-tab"
@@ -22,82 +22,79 @@
       </div>
 
       <div class="ranking-content">
-      <!-- Estado de carga -->
-      @if (loading()) {
-        <div class="loading-state">
-          <p>Cargando ranking...</p>
-        </div>
-      }
 
-      <!-- Mensaje de error -->
-      @if (error()) {
-        <div class="empty-state error-message">
-          <p>{{ error() }}</p>
-        </div>
-      }
+        @if (loading()) {
+          <div class="loading-state">
+            <p>Cargando ranking...</p>
+          </div>
+        }
 
-      <!-- Tabla del top 100 -->
-      @if (!loading() && !error()) {
-        <div class="ranking-table-wrapper">
-          <table class="ranking-table">
-            <thead>
-              <tr>
-                <th>Posición</th>
-                <th>Jugador</th>
-                <th>ELO</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (player of topPlayers(); track player.userId; let i = $index) {
-                <tr (click)="openUserInfo(player)"
-                    [class.sticky-user-row]="userInfo()?.position === (i + 1)">
-                  <td class="rank">
-                    <div class="medal"
-                        [class.gold]="i === 0"
-                        [class.silver]="i === 1"
-                        [class.bronze]="i === 2">
-                      {{ i + 1 }}
-                    </div>
-                  </td>
-                  <td class="username">{{ player.username }}</td>
-                  <td class="elo">
-                    <div class="elo-content">
-                    {{ player.elo }}
-                    <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
-                    </div>
-                  </td>
-                </tr>
-              }
+        @if (error()) {
+          <div class="empty-state error-message">
+            <p>{{ error() }}</p>
+          </div>
+        }
 
-              @if (userInfo() && userInfo()!.position > topPlayers().length) {
-                <tr class="sticky-user-row">
-                  <td class="rank">{{ userInfo()!.position }}</td>
-                  <td class="username">Tú</td>
-                  <td class="elo">
-                    <div class="elo-content">
-                    {{ userInfo()!.elo }}
-                    <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
-                    </div>
-                  </td>
-                </tr>
-              }
-
-              @if (topPlayers().length === 0) {
+        @if (!loading() && !error()) {
+          <div class="ranking-table-wrapper">
+            <table class="ranking-table">
+              <thead>
                 <tr>
-                  <td colspan="3" class="empty-table">No hay jugadores en el ranking</td>
+                  <th>Posición</th>
+                  <th>Jugador</th>
+                  <th>ELO</th>
                 </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
+              </thead>
+              <tbody>
+                @for (player of topPlayers(); track player.userId; let i = $index) {
+                  <tr (click)="openUserInfo(player)"
+                      [class.sticky-user-row]="userInfo()?.position === (i + 1)">
+                    <td class="rank">
+                      <div class="medal"
+                           [class.gold]="i === 0"
+                           [class.silver]="i === 1"
+                           [class.bronze]="i === 2">
+                        {{ i + 1 }}
+                      </div>
+                    </td>
+                    <td class="username">{{ player.username }}</td>
+                    <td class="elo">
+                      <div class="elo-content">
+                        {{ player.elo }}
+                        <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+                      </div>
+                    </td>
+                  </tr>
+                }
+
+                @if (userInfo() && userInfo()!.position > topPlayers().length) {
+                  <tr class="sticky-user-row">
+                    <td class="rank">{{ userInfo()!.position }}</td>
+                    <td class="username">Tú</td>
+                    <td class="elo">
+                      <div class="elo-content">
+                        {{ userInfo()!.elo }}
+                        <mat-icon fontSet="material-symbols-outlined">crown</mat-icon>
+                      </div>
+                    </td>
+                  </tr>
+                }
+
+                @if (topPlayers().length === 0) {
+                  <tr>
+                    <td colspan="3" class="empty-table">No hay jugadores en el ranking</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+      </div>
     </div>
   </div>
 
-  <!-- Esto es lo que habia antes (para recordarlo si hiciera falta)-->
-  <!-- Popup para configurar el reto @if(showConfigPopup()) { -->
-  <!-- Popup de espera @if(popUP_waiting()) {-->
-  <!-- Pop-up de info @if (popUP_userInfo() && selectedUser()) {-->
+  <!-- Popup: información de usuario -->
   <app-popup
     [type]="popUP_userInfo() ? 'userInfo' : 'none'"
     [userInfoUser]="selectedUser()"
@@ -113,30 +110,7 @@
     (userInfoSendFriendRequest)="sendFriendRequest()">
   </app-popup>
 
-  <app-popup
-    [type]="showConfigPopup() ? 'challengeConfig' : 'none'"
-    [challengeFriendUsername]="friendToChallenge?.username || null"
-    [challengeBoards]="boards"
-    [challengeSelectedBoard]="selectedBoard()"
-    [challengeTimeModes]="timeModes"
-    [challengeSelectedMode]="selectedMode()"
-    [challengeSelectedIncrement]="selectedIncrement()"
-    [challengeCustomMinutes]="customMinutes()"
-    [challengeCustomIncrementSec]="customIncrementSec()"
-    (challengeConfigClose)="closeConfigPopup()"
-    (challengeModeChange)="onModeChange($event)"
-    (challengeSelectedBoardChange)="selectedBoard.set($event)"
-    (challengeSelectedIncrementChange)="selectedIncrement.set(+$event)"
-    (challengeCustomMinutesChange)="customMinutes.set(+$event)"
-    (challengeCustomIncrementSecChange)="customIncrementSec.set(+$event)"
-    (challengeSend)="sendChallenge()">
-  </app-popup>
-
-  <app-popup
-    [type]="popUP_waiting() ? 'waiting' : 'none'"
-    (waitingCancel)="cancelWaiting()">
-  </app-popup>
-
-
+  <!-- Popups de reto (challengeConfig + waiting) -->
+  <app-challenge-flow></app-challenge-flow>
 
 </div>

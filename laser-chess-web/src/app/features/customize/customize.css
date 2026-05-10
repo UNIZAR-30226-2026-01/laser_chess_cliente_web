@@ -6,7 +6,7 @@
   padding: 1.5rem;
   align-items: stretch;
   flex-wrap: wrap;
-  flex: 1; 
+  flex: 1;
   min-height: 0;
 }
 
@@ -40,13 +40,12 @@
   gap: 2rem;
 }
 
-
 /* Secciones */
 .customize-section {
   background: #24163d;
   padding: 1rem;
   border-radius: 18px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
 }
 
 .customize-section h2 {
@@ -56,12 +55,6 @@
   border-bottom: 2px solid #4b2f78;
   padding-bottom: 0.5rem;
   font-weight: 700;
-}
-
-@media (max-width: 900px) {
-  .customize-container {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Cartas */
@@ -76,11 +69,9 @@
   color: #f5f0ff;
 }
 
-
-
 .customize-card.equipped {
-  border: 2px solid var(--S1);;
-  background: var(--S2);;
+  border: 2px solid var(--S1);
+  background: var(--S2);
 }
 
 /* Iconos */
@@ -111,20 +102,6 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
-
-/* Responsive */
-@media (max-width: 900px) {
-  .customize-layout {
-    flex-direction: column;
-  }
-
-  .board-preview,
-  .customize-panel {
-    width: 100%;
-  }
-}
-
 
 /* Carrusel */
 .carousel-wrapper {
@@ -159,6 +136,7 @@
   justify-content: center;
   transition: 0.2s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
 }
 
 .carousel-nav:hover:not(:disabled) {
@@ -179,4 +157,101 @@
   color: #b8a6d9;
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+
+@media (max-width: 900px) {
+  .customize-layout {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .board-preview {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: unset;
+    padding: 0.4rem;
+    height: 42dvh;         /* altura fija */
+    max-height: 42dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* Contenemos app-board para que no se estire */
+  .board-preview > * {
+    height: 100% !important;
+    width: auto !important;
+    aspect-ratio: 10 / 8 !important;
+    max-width: 100%;
+  }
+
+
+  /* NO tocar app-board, que se adapte solo con width/height 100% */
+
+  .customize-panel {
+    width: 100%;
+    min-width: unset;
+    flex: 0 0 auto;
+    padding: 0.5rem;
+  }
+
+  .customize-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #4b2f78 #1b102d;
+  }
+
+  .customize-container::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .customize-container::-webkit-scrollbar-track {
+    background: #1b102d;
+    border-radius: 10px;
+  }
+
+  .customize-container::-webkit-scrollbar-thumb {
+    background: #4b2f78;
+    border-radius: 10px;
+  }
+
+  .customize-section {
+    flex: 0 0 200px;
+    min-width: 200px;
+  }
+
+  .customize-card {
+    min-height: 100px;
+    padding: 0.6rem;
+  }
+
+  .icon img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .customize-section h2 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .carousel-wrapper {
+    padding: 0.5rem;
+    gap: 0.4rem;
+  }
+
+  .carousel-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+  }
 }

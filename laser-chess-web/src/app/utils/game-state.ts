@@ -15,8 +15,8 @@ export class GameState {
   increment = signal<number>(0);
   nombreRival = signal<string>('');
   miNombre = signal<string>('');
-  miAvatar = signal(1);
-  avatarRival = signal(1);
+  miAvatar = signal('public/assets/vector-art/ProfilePictures/bot1.svg');
+  avatarRival = signal('public/assets/vector-art/ProfilePictures/bot1.svg');
   
   tipoPartida = signal('');
 

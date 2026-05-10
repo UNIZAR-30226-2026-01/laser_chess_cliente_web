@@ -5,6 +5,26 @@
 <div class="page">
   <app-top-row></app-top-row>
 
+  <!-- Popup: información de usuario -->
+  <!-- Popup: información de usuario -->
+  <app-popup
+    [type]="popUP_userInfo() ? 'userInfo' : 'none'"
+    [userInfoUser]="historyState.perfilRivalSummary()"
+    [userInfoContext]="selectedUserContext()"
+    [userInfoEloBlitz]="selectedUserEloBlitz()"
+    [userInfoEloRapid]="selectedUserEloRapid()"
+    [userInfoEloClassic]="selectedUserEloClassic()"
+    [userInfoEloExtended]="selectedUserEloExtended()"
+    (userInfoClose)="closeUserInfo()"
+    (userInfoChallenge)="challengeFromPopup()"
+    (userInfoDeleteFriend)="deleteFriend()"
+    (userInfoCancelSent)="cancelFriendRequest()"
+    (userInfoSendFriendRequest)="sendFriendRequest()">
+  </app-popup>
+
+  <!-- Popups de reto (challengeConfig + waiting) -->
+  <app-challenge-flow></app-challenge-flow>
+
   @if(historyState.popUpLimites()) {
   <div id="overlay" class="overlay" (click)="historyState.popUpLimites.set(false)">
     <div class="popup-error" (click)="$event.stopPropagation()">
@@ -47,7 +67,7 @@
 
       <!-- JUGADOR DERECHA -->
       <aside class="side-panel">
-        <div class="player_card rival">
+        <div class="player_card rival" (click)="openUserInfo(historyState.perfilRival())">
           <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
           <img [src]="'assets/vector-art/ProfilePictures/bot' + rivalAvatar() + '.svg'" alt="Avatar" class="avatar-circle red">
           <span class="player-name">{{ nombreRival() }}</span>

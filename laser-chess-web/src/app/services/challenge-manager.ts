@@ -33,8 +33,7 @@ export class ChallengeManager {
     this.timerService.miTiempo.set(reto.starting_time);
     this.timerService.tiempoRival.set(reto.starting_time);
 
-    this.gameState.miNombre.set(this.userRepo.getUsername() || '');
-    this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
+    
 
     localStorage.setItem('gameState', JSON.stringify({
       type: 'private',
@@ -45,19 +44,17 @@ export class ChallengeManager {
     this.gameState.nombreRival.set(reto.challenger_username);
     const friend = this.friendService.getInfoFriend(reto.challenger_username)?.account_id;
     if (!friend) {
-      this.gameState.avatarRival.set(10);
+      this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot1.svg');
       this.boardState.skinRival.set(1);
 
       this.webSocket.initConnection(endpoint, params);
       return;
     }
 
-  this.userRepo.getAccount(friend).subscribe(profile => {
-    this.gameState.avatarRival.set(profile.avatar || 1);
-    this.boardState.skinRival.set(profile.piece_skin || 1);
-
+    this.setupOponent(friend, null);
+    this.setUpUser();
     this.webSocket.initConnection(endpoint, params);
-  });
+  
     
     
 
@@ -151,13 +148,12 @@ export class ChallengeManager {
 
 
 
-    this.gameState.miNombre.set(this.userRepo.getUsername() || '');
-    this.gameState.miAvatar.set(this.userRepo.getAvatar() || 10);
+    this.setUpUser();
 
     if(oponente === "IA"){
       const rivalProfile$ = this.userRepo.getOwnAccount();
         rivalProfile$.subscribe(profile => {
-          this.gameState.avatarRival.set(profile.avatar || 1);
+          this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot1.svg');
           this.boardState.skinRival.set(profile.piece_skin || 1);
           this.gameState.nombreRival.set('IA');
           setTimeout(() => {
@@ -181,13 +177,13 @@ export class ChallengeManager {
           
         });
       }else{
-        this.gameState.avatarRival.set(10); //Aplicamos skin por defecto
+        this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot1.svg'); //Aplicamos skin por defecto
         this.boardState.skinRival.set(1);
         this.webSocket.initConnection(endpoint, params);
       }
       
     }else{
-        this.gameState.avatarRival.set(10); //Aplicamos skin por defecto
+        this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot1.svg'); //Aplicamos skin por defecto
         this.boardState.skinRival.set(1);
         this.webSocket.initConnection(endpoint, params);
       }
@@ -200,14 +196,14 @@ export class ChallengeManager {
   setupOponent(rivalId: number | null, rivalUsername: string | null): void {
     
     if (!rivalId) {
-      this.gameState.avatarRival.set(10);
+      this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot1.svg');
       this.boardState.skinRival.set(1);
       if (rivalUsername) this.gameState.nombreRival.set(rivalUsername);
       return;
     }
 
     this.userRepo.getAccount(rivalId).subscribe(profile => {
-      this.gameState.avatarRival.set(profile.avatar -9 || 1);
+      this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot' + (profile.avatar -9) +'.svg' || 'assets/vector-art/ProfilePictures/bot1.svg');
       this.boardState.skinRival.set(profile.piece_skin || 1);
       if (rivalUsername) this.gameState.nombreRival.set(rivalUsername);
     });
@@ -217,7 +213,7 @@ export class ChallengeManager {
   
   setUpUser(){
     this.userRepo.getOwnAccount().subscribe(profile => {
-      this.gameState.miAvatar.set(profile.avatar - 9 || 1);
+      this.gameState.miAvatar.set('assets/vector-art/ProfilePictures/bot' + (profile.avatar -9) +'.svg' || 'assets/vector-art/ProfilePictures/bot1.svg');
       this.boardState.skinUsario.set(profile.piece_skin || 1);
       this.gameState.miNombre.set(profile.username);
     });

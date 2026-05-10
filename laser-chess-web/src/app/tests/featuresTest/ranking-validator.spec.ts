@@ -8,13 +8,21 @@ import { Ranking } from '../../features/ranking/ranking';
 import { RankingRepository, RankingPlayer, UserRankingInfo, EloType } from '../../repository/ranking-repository';
 import { FriendRespository } from '../../repository/friend-respository';
 import { Remote } from '../../model/remote/remote';
+import { UserRespository } from '../../repository/user-respository';
 import { FriendSummary } from '../../model/social/FriendSummary';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
-import { UserRespository } from '../../repository/user-respository';
-import { IconService } from '../../model/user/icon';
+import { BoardState } from '../../utils/board-state';
+import { ChallengeFlowService } from '../../services/challenge-flow';
+import { TimerService } from '../../services/timer-service';
+import { GameState } from '../../utils/game-state';
+import { Websocket } from '../../model/remote/websocket';
 
-import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
-import { GameState } from '../../utils/game-state'
+const fakeSignal = (initial?: any) => {
+  let value = initial;
+  const fn: any = () => value;
+  fn.set = vi.fn((v: any) => (value = v));
+  return fn;
+};
 
 describe('Ranking', () => {
   let component: Ranking;
@@ -32,17 +40,8 @@ describe('Ranking', () => {
   };
   let remoteSpy: {
     getAccountId: ReturnType<typeof vi.fn>;
-    getAccount: ReturnType<typeof vi.fn>;
-  };
-  let userRepoSpy: {
-    getOwnAccount: ReturnType<typeof vi.fn>;
-    getXpInfo: ReturnType<typeof vi.fn>;
-  };
-  let iconServiceSpy: {
-    getAvatarColor: ReturnType<typeof vi.fn>;
   };
 
-  // Datos de ejemplo 
   const mockTopPlayers: RankingPlayer[] = [
     { userId: 1, username: 'player1', elo: 2000 },
     { userId: 2, username: 'player2', elo: 1900 },
@@ -63,7 +62,6 @@ describe('Ranking', () => {
   };
 
   beforeEach(async () => {
-
     rankingRepoSpy = {
       getTop100: vi.fn().mockReturnValue(of(mockTopPlayers)),
       getCurrentUserPosition: vi.fn().mockReturnValue(of(mockUserInfo)),
@@ -77,42 +75,8 @@ describe('Ranking', () => {
       deleteFriend: vi.fn().mockReturnValue(of(true)),
     };
 
-    // olo getAccountId
     remoteSpy = {
       getAccountId: vi.fn().mockReturnValue(5),
-      getAccount: vi.fn().mockReturnValue(of({ id: 5, username: 'currentUser' })),
-    };
-
-    userRepoSpy = {
-      getOwnAccount: vi.fn().mockReturnValue(
-        of({
-          account_id: '5',
-          username: 'currentUser',
-          level: 1,
-          avatar: 0
-        })
-      ),
-      getXpInfo: vi.fn().mockReturnValue(
-        of({
-          xp: 50,
-          required_xp: 100
-        })
-      ),
-    };
-
-    iconServiceSpy = {
-      getAvatarColor: vi.fn().mockReturnValue('blue'),
-    };
-
-    const websocketMock = {
-      initConnection: vi.fn(),
-      close: vi.fn(),
-    };
-
-    const gameStateMock = {
-      startingTime: { set: vi.fn() },
-      increment: { set: vi.fn() },
-      nombreRival: { set: vi.fn() },
     };
 
     await TestBed.configureTestingModule({
@@ -122,16 +86,80 @@ describe('Ranking', () => {
         { provide: RankingRepository, useValue: rankingRepoSpy },
         { provide: FriendRespository, useValue: friendRepoSpy },
         { provide: Remote, useValue: remoteSpy },
-        { provide: UserRespository, useValue: userRepoSpy },
-        { provide: IconService, useValue: iconServiceSpy },
-        { provide: Websocket, useValue: websocketMock }, 
-        { provide: GameState, useValue: gameStateMock },
+        {
+          provide: UserRespository,
+          useValue: {
+            getOwnAccount: vi.fn().mockReturnValue(of({
+              userId: 1,
+              username: 'test',
+              level: 1,
+              avatar: 0,
+        piece_skin: 0,
+            })),
+            getXpInfo: vi.fn().mockReturnValue(of({ xp: 50, required_xp: 100 })),
+            getAccount: vi.fn().mockReturnValue(of({
+              userId: 1,
+              username: 'test',
+              level: 1,
+              avatar: 0,
+        piece_skin: 0,
+            })),
+            getId: vi.fn().mockReturnValue('1'),
+            getUsername: vi.fn().mockReturnValue('test'),
+          }
+        },
+        {
+          provide: BoardState,
+          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) }
+        },
+        {
+          provide: ChallengeFlowService,
+          useValue: {
+            openChallengeConfig: vi.fn(),
+            sendChallenge: vi.fn(),
+            handleChallengeCancelled: vi.fn(),
+            friendToChallenge: null,
+            popUP_challengeConfig: fakeSignal(false),
+            popUP_waiting: fakeSignal(false),
+            selectedBoard: fakeSignal('Ace'),
+            selectedMode: fakeSignal(null),
+            selectedIncrement: fakeSignal(0),
+            showConfigPopup: fakeSignal(false),
+            customMinutes: fakeSignal(0),
+            customIncrementSec: fakeSignal(0),
+          }
+        },
+        {
+          provide: GameState,
+          useValue: {
+            startingTime: fakeSignal(0),
+            increment: fakeSignal(0),
+            nombreRival: fakeSignal(''),
+            miNombre: fakeSignal(''),
+          }
+        },
+        {
+          provide: TimerService,
+          useValue: {
+            miTiempo: fakeSignal(0),
+            tiempoRival: fakeSignal(0),
+          }
+        },
+        {
+          provide: Websocket,
+          useValue: {
+            initConnection: vi.fn(),
+            close: vi.fn(),
+            connectionClosed$: of(null),
+            connectionError$: of(null),
+          }
+        },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Ranking);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // ejecuta ngOnInit()
+    fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -159,7 +187,7 @@ describe('Ranking', () => {
 
   it('debería manejar error al cargar el top 100', () => {
     rankingRepoSpy.getTop100.mockReturnValue(throwError(() => new Error('Network error')));
-    component.loadRanking(); 
+    component.loadRanking();
     expect(component.error()).toBe('No se pudo cargar el ranking. Inténtalo más tarde.');
     expect(component.loading()).toBe(false);
     expect(component.topPlayers()).toEqual([]);
@@ -193,7 +221,7 @@ describe('Ranking', () => {
   });
 
   // ------------------------------------------------------------------
-  // nformación de usuario
+  // información de usuario
   // ------------------------------------------------------------------
   describe('openUserInfo', () => {
     it('debería abrir popup para el usuario actual (contexto self)', () => {

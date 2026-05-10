@@ -46,7 +46,6 @@ export class GameLogicService {
   
 
   mostrarAvisoSalida = signal(false);
-  aceptoInitial = signal(true);
 
 
   listaPiezas = this.state.listaPiezas;
@@ -97,28 +96,25 @@ export class GameLogicService {
     if (msg.Type === "MatchStart"){
       console.log("Tu oponenete es " + Number(msg.Content));
       if(Number(msg.Content) != 1){ // Excluimos el caso de la IA
-        const rivalProfile$ = this.userRepo.getAccount(Number(msg.Content));
-          rivalProfile$.subscribe(profile => {
-            this.state.avatarRival.set(profile.avatar -9 || 1);
-            this.boardState.skinRival.set(profile.piece_skin || 1);
-            this.state.nombreRival.set(profile.username);
-          });
+        this.challengeManager.setupOponent(Number(msg.Content), null);
+        localStorage.setItem('idOponente', msg.Content);
+        this.challengeManager.setUpUser();
       }
 
 
-    } else if (msg.Type === "InitialState" && this.aceptoInitial()){
+    } else if (msg.Type === "InitialState"){
       const idIponente = localStorage.getItem('idOponente');
       if (idIponente) {
-        this.challengeManager.setupOponent(JSON.parse(idIponente), null);
-        localStorage.removeItem('idOponente');
+        console.log("Mi oponentes tras reconexión es " + JSON.parse(idIponente));
+        this.challengeManager.setupOponent(Number(JSON.parse(idIponente)), null);
       }
+      this.challengeManager.setUpUser();
 
       console.log("Procesando el estado inicial");
       const piezas = this.gameUtils.importarTablero(msg.Content);
       this.listaPiezas.set(piezas);
       this.state.cont.set(piezas.length);
       const id = this.remoteService.getAccountId();
-      console.log(Number(msg.Extra) + "   mi id es: " + id);
       
       if (Number(msg.Extra) !== id) {        
         this.soyAzul.set(true);
@@ -130,7 +126,6 @@ export class GameLogicService {
         this.state.esMiTurno.set(true); // El jugador rojo empieza primero
       }
       this.timerService.startTimer();
-      this.aceptoInitial.set(false);
 
 
       const pendingState = localStorage.getItem('pendingState');
@@ -227,6 +222,7 @@ export class GameLogicService {
       }
       this.timerService.stopTimer();
       localStorage.removeItem('gameState');
+      localStorage.removeItem('idOponente');
       
     }else if(msg.Type === "Rewards"){
       this.finPartida.set({ 
@@ -321,16 +317,15 @@ export class GameLogicService {
 
   logicRechazarPausa() {
     console.log("Rechazando pausa...");
-    // const request: SendAction = { Type: "Pause", Content: "REJECT" }; 
-    // this.wsService.sendAction(request);
+    const request: SendAction = { Type: "PauseReject", Content: "" }; 
+    this.wsService.sendAction(request);
     this.estadoPausa.set({ mostrar: false });
     // this.startTimer(); 
   }
 
   cerrarToastPausa() {
     this.estadoPausa.set({ mostrar: false });
-    const request: SendAction = { Type: "PauseReject", Content: "" }; 
-    this.wsService.sendAction(request);
+    
   }
 
     finPartidaHandler(){
@@ -341,7 +336,6 @@ export class GameLogicService {
       this.state.esMiTurno.set(false);
       this.state.soyAzul.set(true);
 
-      this.aceptoInitial.set(true);
       
       
       this.state.finPartida.set({ mostrar: false, mensaje: '' });

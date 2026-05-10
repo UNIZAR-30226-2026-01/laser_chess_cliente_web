@@ -71,7 +71,18 @@ export class HistoryHall {
   visualidaPartida(partida: GameResume) {
 
     this.historyService.historySelectedGame.set(partida);
-    
+
+    const myId = this.userRepo.getId();
+    var oponente = partida.p1_id;
+    if(myId === partida.p1_id){
+      oponente = partida.p2_id;
+    }
+    this.userRepo.getAccount(oponente).subscribe(profile => {
+      this.historyService.perfilRival.set(profile);
+    });
+
+   
+
 
     localStorage.setItem('historyGame', JSON.stringify(partida));
     

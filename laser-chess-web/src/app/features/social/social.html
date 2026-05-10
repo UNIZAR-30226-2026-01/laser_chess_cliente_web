@@ -6,21 +6,15 @@
 
   <app-top-row></app-top-row>
 
-
-  <!-- Esto es lo que habia antes (para recordarlo si hiciera falta)-->
-  <!-- @if(popUP_newFriend()) { -->
-  <!-- Popup para configurar el reto @if(showConfigPopup()) {-->
-  <!-- @if(popUP_request()) { -->
-  <!-- Pop-up de la info del user @if(popUP_userInfo() && selectedUser()) { -->
-  <!-- Popup de espera @if(popUP_waiting()) { -->
+  <!-- Popup: añadir amigo -->
   <app-popup
     [type]="popUP_newFriend() ? 'newFriend' : 'none'"
     [newFriendError]="errorAmigoNombreNoValido()"
-    [userInfoUser]="{ username: '', account_id: id ? id : 0, level: 0, avatar: 0 }"
     (newFriendAdd)="addFriendFromPopup($event)"
     (newFriendClose)="popUP_newFriend.set(false)">
   </app-popup>
 
+  <!-- Popup: solicitudes de amistad -->
   <app-popup
     [type]="popUP_request() ? 'requests' : 'none'"
     [requestsReceived]="request()"
@@ -32,6 +26,7 @@
     (requestOpenUserInfo)="openUserInfo($event.user, $event.context)">
   </app-popup>
 
+  <!-- Popup: información de usuario -->
   <app-popup
     [type]="popUP_userInfo() ? 'userInfo' : 'none'"
     [userInfoUser]="selectedUser()"
@@ -48,127 +43,89 @@
     (userInfoCancelSent)="cancelSentFromPopup()">
   </app-popup>
 
-  <app-popup
-    [type]="showConfigPopup() ? 'challengeConfig' : 'none'"
-    [challengeFriendUsername]="friendToChallenge?.username || null"
-    [challengeBoards]="boards"
-    [challengeSelectedBoard]="selectedBoard()"
-    [challengeTimeModes]="timeModes"
-    [challengeSelectedMode]="selectedMode()"
-    [challengeSelectedIncrement]="selectedIncrement()"
-    [challengeCustomMinutes]="customMinutes()"
-    [challengeCustomIncrementSec]="customIncrementSec()"
-    (challengeConfigClose)="closeConfigPopup()"
-    (challengeModeChange)="onModeChange($event)"
-    (challengeSelectedBoardChange)="selectedBoard.set($event)"
-    (challengeSelectedIncrementChange)="selectedIncrement.set(+$event)"
-    (challengeCustomMinutesChange)="customMinutes.set(+$event)"
-    (challengeCustomIncrementSecChange)="customIncrementSec.set(+$event)"
-    (challengeSend)="sendChallenge(null)">
-  </app-popup>
-
-  <app-popup
-    [type]="popUP_waiting() ? 'waiting' : 'none'"
-    (waitingCancel)="cancelWaiting()">
-  </app-popup>
-
+  <!-- Popups de reto (challengeConfig + waiting) -->
+  <app-challenge-flow></app-challenge-flow>
 
 
   <div class="folder-container">
 
     <div class="tabs-header">
-      @if (state()){
-      <div class="tab active">SOCIAL</div>
-      <div class="tab" (click)="state.set(false)">PARTIDAS PAUSADAS</div>
-      }
-      @else {
+      @if (state()) {
+        <div class="tab active">SOCIAL</div>
+        <div class="tab" (click)="state.set(false)">PARTIDAS PAUSADAS</div>
+      } @else {
         <div class="tab" (click)="state.set(true)">SOCIAL</div>
         <div class="tab active">PARTIDAS PAUSADAS</div>
       }
     </div>
 
     <div class="folder-body">
-      @if (state()){
-      <div class="social-top-actions">
-        <button class="friend-request-button" (click)="openRequestPopup()">
-          <div class="left">
-            <mat-icon fontSet="material-symbols-outlined">mail</mat-icon>
-            <span class="request-text">Solicitudes de amistad</span>
-          </div>
-          <div class="right">
-            @if (request().length > 0) {
-              <span class="notification-badge">{{ request().length }}</span>
-            }
-          </div>
-        </button>
 
-        <button class="add-friend-button" (click)="popUP_newFriend.set(true)">
-          <mat-icon fontSet="material-symbols-outlined">add_circle</mat-icon>
-          <span>Agregar amigo</span>
-        </button>
+      @if (state()) {
+        <div class="social-top-actions">
+          <button class="friend-request-button" (click)="openRequestPopup()">
+            <div class="left">
+              <mat-icon fontSet="material-symbols-outlined">mail</mat-icon>
+              <span class="request-text">Solicitudes de amistad</span>
+            </div>
+            <div class="right">
+              @if (request().length > 0) {
+                <span class="notification-badge">{{ request().length }}</span>
+              }
+            </div>
+          </button>
 
-      </div>
+          <button class="add-friend-button" (click)="popUP_newFriend.set(true)">
+            <mat-icon fontSet="material-symbols-outlined">add_circle</mat-icon>
+            <span>Agregar amigo</span>
+          </button>
+        </div>
 
         <div class="user-list">
-            @if (!friendsInfo()) {
-                <li class="empty-item">
-                  No tienes amigos
-                </li>
-            } @else if (friends().length === 0) {
-                <li class="empty-item">
-                  No tienes amigos
-                </li>
-            } @else {
-                @for (friend of friends(); track friend.username) {
-                    <li class="user-item" (click)="openUserInfo(friend, 'friend')">
-                        <div class="user-info">
-                            <div class="left">
-                                <img [src]="'assets/vector-art/ProfilePictures/bot' + (friend.avatar-9) + '.svg'" alt="Avatar">
-                                <span class="username">{{ friend.username }}</span>
-                            </div>
-                            <div class="user-stats">
-                                <span class="friend-xp">Nivel {{ friend.level }}</span>
-                                <div class="friend-actions" (click)="$event.stopPropagation()">
-                                  <!-- Los botones de aceptar y rechazar estaban aqui antes -->
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                }
-            }
-          </div>
-
-
-      }
-      @else{
-        <div class="game-list">
-          @if (!gameInfo()){
-            <li class="empty-item">
-              No tienes partidas en curso</li>
-          } @else if (partidas().length === 0) {
-            <li class="empty-item">
-              No tienes partidas en curso</li>
+          @if (!friendsInfo() || friends().length === 0) {
+            <li class="empty-item">No tienes amigos</li>
           } @else {
-            <!-- Aquí se listan las partidas pausadas -->
-            @for(game of partidas(); track game.match_id) {
-                <li class="game-item">
-                    <div class="player">
-                      <span class="name">{{ game.p1_username }}</span>
-                      <span class="time">{{ formatTime(game.time_base) }}</span>
-                    </div>
-                    <div class="vs">VS</div>
-                    <div class="player">
-                      <span class="name">{{ game.p2_username }}</span>
-                      <span class="time">{{ formatTime(game.time_base) }}</span>
-                    </div>
-                    <div class="details">
-                      <span>{{ game.board }}</span>
-                    </div>
-                    <button class="btn-play" (click)="resumeGame(game.match_id, game.p1_id, game.p2_id)">RETOMAR</button>
-                </li>
+            @for (friend of friends(); track friend.username) {
+              <li class="user-item" (click)="openUserInfo(friend, 'friend')">
+                <div class="user-info">
+                  <div class="left">
+                    <img [src]="'assets/vector-art/ProfilePictures/bot' + (friend.avatar - 9) + '.svg'" alt="Avatar">
+                    <span class="username">{{ friend.username }}</span>
+                  </div>
+                  <div class="user-stats">
+                    <span class="friend-xp">Nivel {{ friend.level }}</span>
+                  </div>
+                </div>
+              </li>
             }
-        }
-      </div>
+          }
+        </div>
+
+      } @else {
+
+        <div class="game-list">
+          @if (!gameInfo() || partidas().length === 0) {
+            <li class="empty-item">No tienes partidas en curso</li>
+          } @else {
+            @for (game of partidas(); track game.match_id) {
+              <li class="game-item">
+                <div class="player">
+                  <span class="name">{{ game.p1_username }}</span>
+                  <span class="time">{{ formatTime(game.time_base) }}</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="player">
+                  <span class="name">{{ game.p2_username }}</span>
+                  <span class="time">{{ formatTime(game.time_base) }}</span>
+                </div>
+                <div class="details">
+                  <span>{{ game.board }}</span>
+                </div>
+                <button class="btn-play" (click)="resumeGame(game.match_id, game.p1_id, game.p2_id)">RETOMAR</button>
+              </li>
+            }
+          }
+        </div>
 
       }
     </div>

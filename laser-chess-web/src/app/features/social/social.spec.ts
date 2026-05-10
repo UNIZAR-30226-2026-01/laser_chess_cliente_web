@@ -13,19 +13,28 @@ import { GameRepository } from '../../repository/game-repository';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NotificationService } from '../../model/notifications/notification';
-import { ChallengeManager } from '../../services/challenge-manager';
+import { ChallengeFlowService } from '../../services/challenge-flow';
+import { GameState } from '../../utils/game-state';
+import { BoardState } from '../../utils/board-state';
+import { TimerService } from '../../services/timer-service';
+import { Websocket } from '../../model/remote/websocket';
+
+const fakeSignal = (initial?: any) => {
+  let value = initial;
+  const fn: any = () => value;
+  fn.set = vi.fn((v: any) => (value = v));
+  return fn;
+};
 
 describe('Social Angular', () => {
   let component: Social;
   let fixture: ComponentFixture<Social>;
 
   let friendRepoSpy: any;
-  let websocketSpy: any;
   let userRepoSpy: any;
   let iconServiceSpy: any;
-  let gameStateSpy: any;
   let gameRepoSpy: any;
-  let challengeSpy: any;
+  let challengeFlowSpy: any;
 
   beforeEach(async () => {
     friendRepoSpy = {
@@ -45,32 +54,25 @@ describe('Social Angular', () => {
 
     userRepoSpy = {
       getOwnAccount: vi.fn().mockReturnValue(of({
-        account_id: '1',
+        userId: 1,
         username: 'test',
         level: 1,
-        avatar: 0
+        avatar: 0,
+        piece_skin: 0,
       })),
       getXpInfo: vi.fn().mockReturnValue(of({
         xp: 50,
         required_xp: 100
       })),
+      getAccount: vi.fn().mockReturnValue(of({
+        userId: 1,
+        username: 'test',
+        level: 1,
+        avatar: 0,
+        piece_skin: 0,
+      })),
       getUsername: vi.fn().mockReturnValue('testUser'),
       getId: vi.fn().mockReturnValue('123')
-    };
-
-    websocketSpy = {
-      initConnection: vi.fn(),
-      close: vi.fn()
-    };
-
-    const startingTime = Object.assign(vi.fn(), { set: vi.fn() });
-    const increment = Object.assign(vi.fn(), { set: vi.fn() });
-    const nombreRival = Object.assign(vi.fn(), { set: vi.fn() });
-
-    gameStateSpy = {
-      startingTime,
-      increment,
-      nombreRival
     };
 
     gameRepoSpy = {
@@ -81,27 +83,66 @@ describe('Social Angular', () => {
       getAvatarColor: vi.fn().mockReturnValue('blue')
     };
 
-    challengeSpy = {
+    challengeFlowSpy = {
+      friendToChallenge: null,
+      openChallengeConfig: vi.fn(),
       sendChallenge: vi.fn(),
+      handleChallengeCancelled: vi.fn(),
+      popUP_challengeConfig: fakeSignal(false),
+      popUP_waiting: fakeSignal(false),
+      selectedBoard: fakeSignal('Ace'),
+      selectedMode: fakeSignal(null),
+      selectedIncrement: fakeSignal(0),
+      customMinutes: fakeSignal(5),
+      customIncrementSec: fakeSignal(0),
+      showConfigPopup: fakeSignal(false),
+      boards: [],
+      timeModes: [],
     };
 
     await TestBed.configureTestingModule({
       imports: [
         Social,
-        MatIconTestingModule   
+        MatIconTestingModule
       ],
-
-
       providers: [
         provideRouter([]),
 
         { provide: FriendRespository, useValue: friendRepoSpy },
-        { provide: ChallengeManager, useValue: challengeSpy },
+        { provide: ChallengeFlowService, useValue: challengeFlowSpy },
         { provide: UserRespository, useValue: userRepoSpy },
         { provide: IconService, useValue: iconServiceSpy },
         { provide: GameRepository, useValue: gameRepoSpy },
-        
 
+        {
+          provide: GameState,
+          useValue: {
+            startingTime: fakeSignal(0),
+            increment: fakeSignal(0),
+            nombreRival: fakeSignal(''),
+            miNombre: fakeSignal(''),
+          }
+        },
+        {
+          provide: BoardState,
+          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) }
+        },
+        {
+          provide: Websocket,
+          useValue: {
+            initConnection: vi.fn(),
+            close: vi.fn(),
+            connectionClosed$: of(null),
+            connectionError$: of(null),
+          }
+        },
+        {
+          provide: TimerService,
+          useValue: {
+            miTiempo: fakeSignal(0),
+            tiempoRival: fakeSignal(0),
+          }
+        },
         {
           provide: DomSanitizer,
           useValue: {

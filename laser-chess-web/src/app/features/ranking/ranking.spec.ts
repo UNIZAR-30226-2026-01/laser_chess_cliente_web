@@ -8,8 +8,18 @@ import { Remote } from '../../model/remote/remote';
 import { UserRespository } from '../../repository/user-respository';
 import { IconService } from '../../model/user/icon';
 
-import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
-import { GameState } from '../../utils/game-state'
+import { Websocket } from '../../model/remote/websocket';
+import { GameState } from '../../utils/game-state';
+import { BoardState } from '../../utils/board-state';
+import { ChallengeFlowService } from '../../services/challenge-flow';
+import { TimerService } from '../../services/timer-service';
+
+const fakeSignal = (initial?: any) => {
+  let value = initial;
+  const fn: any = () => value;
+  fn.set = (v: any) => { value = v; };
+  return fn;
+};
 
 describe('Ranking', () => {
   let component: Ranking;
@@ -37,34 +47,68 @@ describe('Ranking', () => {
 
     const remoteMock = {
       getAccountId: () => '1',
-      getUsername: () => 'testuser' 
+      getUsername: () => 'testuser'
     };
 
     const websocketMock = {
       initConnection: () => {},
-      close: () => {}
+      close: () => {},
+      connectionClosed$: of(null),
+      connectionError$: of(null),
     };
 
     const userRepoMock = {
       getOwnAccount: () => of({
-        account_id: '1',
+        userId: 1,
         username: 'test',
-        avatar: 1
+        level: 1,
+        avatar: 0,
+        piece_skin: 0,
       }),
       getXpInfo: () => of({
         xp: 100,
         required_xp: 200
-      })
+      }),
+      getAccount: () => of({
+        userId: 1,
+        username: 'test',
+        level: 1,
+        avatar: 0,
+        piece_skin: 0,
+      }),
+      getId: () => '1',
+      getUsername: () => 'test'
     };
 
     const gameStateMock = {
-      startingTime: { set: () => {} },
-      increment: { set: () => {} },
-      nombreRival: { set: () => {} }
+      startingTime: fakeSignal(0),
+      increment: fakeSignal(0),
+      nombreRival: fakeSignal(''),
+      miNombre: fakeSignal(''),
     };
 
     const iconServiceMock = {
       getAvatarColor: () => 'blue'
+    };
+
+    const challengeFlowMock = {
+      friendToChallenge: null,
+      openChallengeConfig: () => {},
+      sendChallenge: () => {},
+      handleChallengeCancelled: () => {},
+      popUP_challengeConfig: fakeSignal(false),
+      popUP_waiting: fakeSignal(false),
+      selectedBoard: fakeSignal('Ace'),
+      selectedMode: fakeSignal(null),
+      selectedIncrement: fakeSignal(0),
+      showConfigPopup: fakeSignal(false),
+      customMinutes: fakeSignal(0),
+      customIncrementSec: fakeSignal(0),
+    };
+
+    const timerServiceMock = {
+      miTiempo: fakeSignal(0),
+      tiempoRival: fakeSignal(0),
     };
     
     await TestBed.configureTestingModule({
@@ -76,13 +120,17 @@ describe('Ranking', () => {
         { provide: UserRespository, useValue: userRepoMock },
         { provide: IconService, useValue: iconServiceMock },
         { provide: Websocket, useValue: websocketMock },
-        { provide: GameState, useValue: gameStateMock } 
+        { provide: GameState, useValue: gameStateMock },
+        { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) } },
+        { provide: ChallengeFlowService, useValue: challengeFlowMock },
+        { provide: TimerService, useValue: timerServiceMock },
       ]
     })
     .compileComponents();
 
     fixture = TestBed.createComponent(Ranking);
     component = fixture.componentInstance;
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

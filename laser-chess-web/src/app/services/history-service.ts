@@ -7,6 +7,9 @@ import { UserRespository } from '../repository/user-respository';
 import { BoardState } from '../utils/board-state'
 import { BoardAction } from './board-action';
 import { GameUtils } from '../utils/game-utils';
+import { computed } from '@angular/core';
+import { FriendSummaryExtended } from '../model/social/FriendSummaryExtended';
+import { MyProfile } from '../model/user/MyProfile';
 
 
 
@@ -51,7 +54,37 @@ export class HistoryService {
 
   miAvatar = signal(1);
   rivalAvatar = signal(1);
-   
+
+  perfilRival = signal<MyProfile>({
+    userId: 0,
+    username: "",
+    mail: "",
+    xp: 0,
+    level: 0,
+    avatar: 0,
+    money: 0,
+    board_skin: 0,
+    piece_skin: 0,
+    win_animation: 0,
+    rankedPoints: 0
+  });
+
+  perfilRivalSummary = computed<FriendSummaryExtended>(() => {
+    const perfil = this.perfilRival();
+
+    return {
+      account_id: perfil.userId,
+      username: perfil.username,
+      level: perfil.level,
+      avatar: perfil.avatar,
+      xp: perfil.xp,
+
+      blitzElo: perfil.blitzElo,
+      rapidElo: perfil.rapidElo,
+      classicElo: perfil.classicElo,
+      extendedElo: perfil.extendedElo
+    };
+  });
 
   historySelectedGame = signal<GameResume> (null as unknown as GameResume);
 	

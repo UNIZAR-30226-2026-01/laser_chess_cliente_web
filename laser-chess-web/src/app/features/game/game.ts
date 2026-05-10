@@ -58,6 +58,7 @@ export class Game implements OnInit {
   miNombre = this.gameState.miNombre;
   miAvatar = this.gameState.miAvatar;
   avatarRival = this.gameState.avatarRival;
+  
 
   permitSalida = this.gameState.permitSalida;
   tipoPartida = this.gameState.tipoPartida;
@@ -108,6 +109,7 @@ export class Game implements OnInit {
           console.log('la partida es: ' + state.type);
         }
     });
+
 
     
        

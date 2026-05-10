@@ -1,4 +1,3 @@
-import {UserRatings} from './UserRatings';
 
 export interface MyProfile {
   userId: number;

@@ -1,182 +1,103 @@
-import { Component, inject} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { signal } from '@angular/core';
 import { TopRow } from '../../shared/top-row/top-row';
-import { FriendSummary } from '../../model/social/FriendSummary'
-import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended'
+import { FriendSummary } from '../../model/social/FriendSummary';
+import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended';
 import { FriendshipRequest } from '../../model/social/FriendshipRequest';
-import { Websocket } from '../../model/remote/websocket';          // para lo nuevo del weboscket
+import { Websocket } from '../../model/remote/websocket';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-
-
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { FriendRespository } from '../../repository/friend-respository';
-import { GameState } from '../../utils/game-state'
+import { GameState } from '../../utils/game-state';
 import { GameResume } from '../../model/game/GameResume';
 import { GameRepository } from '../../repository/game-repository';
 import { UserRespository } from '../../repository/user-respository';
-import { ChallengeManager } from '../../services/challenge-manager';
 import { BoardState } from '../../utils/board-state';
-
-import { NotificationService } from '../../model/notifications/notification'; // Para lo nuevo de las notificaciones
-
-import { Popup } from '../../shared/popups/popup'; //los pop-ups (que miedo cargarmea glo)
-
-
-
+import { NotificationService } from '../../model/notifications/notification';
+import { Popup } from '../../shared/popups/popup';
+import { ChallengeFlow } from '../../shared/challenge-flow/challenge-flow';
+import { ChallengeFlowService } from '../../services/challenge-flow';
 
 @Component({
   selector: 'app-social',
-  imports: [TopRow, FormsModule, MatIconModule, Popup],
+  imports: [TopRow, FormsModule, MatIconModule, Popup, ChallengeFlow],
   templateUrl: './social.html',
   styleUrl: './social.css',
 })
+export class Social implements OnInit, OnDestroy {
 
-
-
-export class Social  {
-  
-  boardState = inject(BoardState);
-
-  username = 'User';
-  pictureURL = '/assets/picture.jpeg';
-  timeModeLabel = 'Modo de tiempo';
-  boardPreviewUrl = '/assets/picture.jpeg';
-  coins = 1234;
-  rankedPoints = 1234;
-
-  
-
-
-
-  public newFriendUsername = signal<string>('');
-
-  // Llamada a remote para obtener datos
-
-  public popUP_newFriend = signal(false);
-  public popUP_request = signal(false);
-  public state = signal(true); // State == true -> Social, State == false -> In Progress
-
-  friends = signal<FriendSummaryExtended[]>([]); // Lista de amigos del usuario
-  request = signal<FriendSummary[]>([]);
-  sentRequests = signal<FriendSummary[]>([]);  // Lista solicitudes enviadas pendientes
-  partidas= signal<GameResume[]>([]); // Lista de partidas pausadas
+  boardState  = inject(BoardState);
+  flow        = inject(ChallengeFlowService);   // ← toda la lógica del reto vive aquí
 
   private friendService = inject(FriendRespository);
-  private userService = inject(UserRespository);
-  private gameState = inject(GameState);
-  gameRepo = inject(GameRepository);
+  private userService   = inject(UserRespository);
+  private gameState     = inject(GameState);
+  private websocket     = inject(Websocket);
+  private gameRepo      = inject(GameRepository);
 
-  public friendsInfo = signal(false);
-  public gameInfo = signal(false);
-  public requestInfo = signal(false);
-  public popUP_userInfo = signal(false);
-  public selectedUser = signal<FriendSummaryExtended | null> (null);
+  id = this.userService.getId();
 
-  public selectedUserLevel = signal<number | undefined>(undefined);
-  public selectedUserEloBlitz = signal<number>(0);
-  public selectedUserEloRapid = signal<number>(0);
-  public selectedUserEloClassic = signal<number>(0);
-  public selectedUserEloExtended = signal<number>(0);
+  // Estado de la vista
+  public state        = signal(true);  // true → Social, false → Partidas pausadas
+  public popUP_newFriend = signal(false);
+  public popUP_request   = signal(false);
 
-  public requestTabState = signal<'received' | 'sent'>('received'); //Para diferenciar entre enviadas y recibidas
+  // Listas
+  friends      = signal<FriendSummaryExtended[]>([]);
+  request      = signal<FriendSummary[]>([]);
+  sentRequests = signal<FriendSummary[]>([]);
+  partidas     = signal<GameResume[]>([]);
+
+  // Flags de carga
+  public friendsInfo      = signal(false);
+  public gameInfo         = signal(false);
+  public requestInfo      = signal(false);
   public sentRequestsInfo = signal(false);
 
-  public selectedUserContext = signal<'friend' | 'received_request' | 'sent_request'>('friend'); //Para diferenciar q informacion mostrar
+  // Popup userInfo
+  public popUP_userInfo      = signal(false);
+  public selectedUser        = signal<FriendSummaryExtended | null>(null);
+  public selectedUserContext = signal<'friend' | 'received_request' | 'sent_request'>('friend');
+  public selectedUserEloBlitz    = signal(0);
+  public selectedUserEloRapid    = signal(0);
+  public selectedUserEloClassic  = signal(0);
+  public selectedUserEloExtended = signal(0);
 
-  //PARA LA CONFIGURACION DE LA PARTIDA
-  // Popup de configuración de las partidas
-  public showConfigPopup = signal(false);
-  public friendToChallenge: FriendSummary | null = null;
-  public errorAmigoNombreNoValido = signal(false); // Para mostrar mensaje de error si el input de nuevo amigo esta vacio
+  public requestTabState = signal<'received' | 'sent'>('received');
 
-  id = this.userService.getId(); // Para guardar el ID de la partida a retomar si venimos de una partida pausada
-  challengeManager = inject(ChallengeManager);
+  public errorAmigoNombreNoValido = signal(false);
 
-
-
-
-  // Modos de tiempo disponibles (es lo que pone en la documentacion de los elegido)
-  public timeModes = [
-    { id: 'blitz', label: 'Blitz', baseSeconds: 300, increments: [0, 2, 5] },
-    { id: 'rapid', label: 'Rapid', baseSeconds: 900, increments: [0, 5, 10] },
-    { id: 'classic', label: 'Classic', baseSeconds: 1800, increments: [0, 10, 15] },
-    { id: 'extended', label: 'Extended', baseSeconds: 3600, increments: [0, 15, 20] },
-    { id: 'custom', label: 'Personalizado', baseSeconds: null, increments: null }
-  ];
-  public boards = [
-    { id: 1, name: 'ACE' },
-    { id: 2, name: 'CURIOSITY' },
-    { id: 3, name: 'SOPHIE' },
-    { id: 4, name: 'GRAIL' },
-    { id: 5, name: 'MERCURY' }
-  ];
-
-
-  public selectedBoard = signal<string>('ACE');// ACE por defecto
-  public selectedMode = signal<any>(this.timeModes[0]); // Blitz por defecto
-  public selectedIncrement = signal<number>(0); // incremento en segundos
-
-
-  // Solo para modo personalizado
-  public customMinutes = signal<number>(5);
-  public customIncrementSec = signal<number>(0);
-
-  //WEBSOCKET
-  public popUP_waiting = signal(false);// Para el nuevo pop-up del ESPERANDO
-  private websocket = inject(Websocket);// Para meter el websocket en social
-  private wsSubscription: any;//Para limpiar la sub del socket despues
-
+  private wsSubscription: any;
 
   constructor(
     private notificationService: NotificationService,
     private route: ActivatedRoute
   ) {}
 
-
-
   ngOnInit(): void {
     this.loadFriends();
-    this.loadRequests(); // Claro, sin esto no iba a ir de primeras ver las pendientes. Solo se veian despues de hacer click en el botn
+    this.loadRequests();
     this.loadSentRequests();
     this.loadGames();
+
     this.notificationService.wakeSocial$.subscribe(() => {
-      
       this.loadRequests();
       this.loadSentRequests();
       this.loadFriends();
     });
 
-
-    this.websocket.connectionClosed$.subscribe(() => {
-      this.handleChallengeCancelled();
-    });
-
-    this.websocket.connectionError$.subscribe(() => {
-      this.handleChallengeCancelled();
-    });
+    this.websocket.connectionClosed$.subscribe(() => this.flow.handleChallengeCancelled());
+    this.websocket.connectionError$.subscribe(()  => this.flow.handleChallengeCancelled());
 
     const username = this.route.snapshot.params['username'];
     window.history.replaceState({}, '', '/social');
     if (username) {
-      // Mandar solicitud de amistad
-      const request: FriendshipRequest = {
-            receiver_username: username,
-      };
-      this.friendService.addFriend(request).subscribe({
-        next: () => {
-          // Abrir popup de solicitudes enviadas
-          this.openRequestPopup();
-          this.requestTabState.set('sent'); 
-
-        },
-        error: (err) => {
-          // Si ya son amigos o ya existe solicitud, abrir el popup igualmente
-          this.openRequestPopup();
-          this.requestTabState.set('sent'); 
-
-        }
+      const req: FriendshipRequest = { receiver_username: username };
+      this.friendService.addFriend(req).subscribe({
+        next:  () => { this.openRequestPopup(); this.requestTabState.set('sent'); },
+        error: () => { this.openRequestPopup(); this.requestTabState.set('sent'); }
       });
     }
   }
@@ -185,450 +106,191 @@ export class Social  {
     this.wsSubscription?.unsubscribe();
   }
 
-  handleChallengeCancelled(): void {
-    if (!this.popUP_waiting()) return;
+  // ─── Carga de datos ────────────────────────────────────────────────────────
 
-    this.popUP_waiting.set(false);
-
-    new Notification('Reto finalizado', {
-      body: 'El rival ha rechazado o la partida ha acabado',
-    });
-  }
-
-  //Metodo para recargar todo TODO el rato :D
   refreshSocialState(): void {
     this.loadFriends();
     this.loadRequests();
     this.loadSentRequests();
   }
 
-  // Cancelar la espera y cerrar WebSocket
-  cancelWaiting(): void {
-    this.websocket.close();
-    this.popUP_waiting.set(false);
+  loadFriends(): void {
+    this.friendService.getFriends().subscribe({
+      next:  (data: FriendSummary[]) => { this.friends.set(data || []); this.friendsInfo.set(true); },
+      error: (err: any) => console.error('Error al cargar amigos:', err)
+    });
   }
 
-
-  nuevoAmigo(){
-    console.log('Abrir pop-up para introducir datos de nuevo amigo');
-    this.popUP_newFriend.set(true);
+  loadRequests(): void {
+    this.requestInfo.set(false);
+    this.friendService.getRequestFriends().subscribe({
+      next:  (data: FriendSummary[]) => { this.request.set(data || []); this.requestInfo.set(true); },
+      error: (err: any) => { console.error('Error al cargar solicitudes:', err); this.requestInfo.set(true); }
+    });
   }
 
-  // Abrir pop-up de solicitudes
-  openRequestPopup() {
+  loadSentRequests(): void {
+    this.sentRequestsInfo.set(false);
+    this.friendService.getSentRequests().subscribe({
+      next:  (data: FriendSummary[]) => { this.sentRequests.set(data || []); this.sentRequestsInfo.set(true); },
+      error: (err: any) => { console.error('Error al cargar solicitudes enviadas:', err); this.sentRequestsInfo.set(true); }
+    });
+  }
+
+  loadGames(): void {
+    this.gameRepo.getPausedGame().subscribe({
+      next:  (data: GameResume[]) => { this.partidas.set(data); this.gameInfo.set(true); },
+      error: (err: any) => console.error('Error al cargar partidas:', err)
+    });
+  }
+
+ 
+
+  openRequestPopup(): void {
     this.loadRequests();
     this.loadSentRequests();
-    this.requestTabState.set('received'); 
+    this.requestTabState.set('received');
     this.popUP_request.set(true);
   }
 
-  // abrir pop-up con información del usuario
-  openUserInfo(user: FriendSummaryExtended, context: 'friend' | 'received_request' | 'sent_request' = 'friend') {
-    this.selectedUser.set(user);
-    this.popUP_userInfo.set(true);
-    this.selectedUserContext.set(context);  //Para saber q pop-up mostrar
-      if (user.account_id) {
-        const userIdNumber = Number(user.account_id);
-        console.log('Obteniendo ELOs para usuario ID:', userIdNumber);
-        this.friendService.getAllRatings(userIdNumber).subscribe({
-          next: (ratings: AllRatingsDTO) => {
-            if (this.selectedUser()) {
-              console.log('ELOs obtenidos:', ratings);
-              this.selectedUserEloBlitz.set(ratings.blitz);
-              this.selectedUserEloRapid.set(ratings.rapid);
-              this.selectedUserEloClassic.set(ratings.classic);
-              this.selectedUserEloExtended.set(ratings.extended);
-            }
-        },
-        error: (err) => {
-          console.error('Error al obtener ELOs:', err);
-        }
-      });
-    } else {
-      console.warn('El usuario no tiene ID, no se pueden obtener ELOs');
-    }
+  setRequestTab(tab: 'received' | 'sent'): void {
+    this.requestTabState.set(tab);
   }
 
-  // Cerrar pop-up de información
-  closeUserInfo() {
+  
+
+  openUserInfo(user: FriendSummaryExtended, context: 'friend' | 'received_request' | 'sent_request' = 'friend'): void {
+    this.selectedUser.set(user);
+    this.selectedUserContext.set(context);
+    this.popUP_userInfo.set(true);
+
+    if (!user.account_id) return;
+
+    this.friendService.getAllRatings(Number(user.account_id)).subscribe({
+      next: (ratings: AllRatingsDTO) => {
+        this.selectedUserEloBlitz.set(ratings.blitz);
+        this.selectedUserEloRapid.set(ratings.rapid);
+        this.selectedUserEloClassic.set(ratings.classic);
+        this.selectedUserEloExtended.set(ratings.extended);
+      },
+      error: (err: any) => console.error('Error al obtener ELOs:', err)
+    });
+  }
+
+  closeUserInfo(): void {
     this.popUP_userInfo.set(false);
     this.selectedUser.set(null);
   }
 
 
-
-  acceptFromPopup() {
-    if (this.selectedUser()) {
-      this.acceptRequest(this.selectedUser()!.username);
-      this.closeUserInfo();
-    }
+  acceptFromPopup(): void {
+    if (this.selectedUser()) { this.acceptRequest(this.selectedUser()!.username); this.closeUserInfo(); }
   }
 
-  rejectFromPopup() {
-    if (this.selectedUser()) {
-      this.rejectRequest(this.selectedUser()!.username);
-      this.closeUserInfo();
-    }
+  rejectFromPopup(): void {
+    if (this.selectedUser()) { this.rejectRequest(this.selectedUser()!.username); this.closeUserInfo(); }
   }
 
-  cancelSentFromPopup() {
-    if (this.selectedUser()) {
-      this.cancelSentRequest(this.selectedUser()!.username);
-      this.closeUserInfo();
-    }
+  cancelSentFromPopup(): void {
+    if (this.selectedUser()) { this.cancelSentRequest(this.selectedUser()!.username); this.closeUserInfo(); }
   }
 
-  deleteFriendFromPopup() {
-    if (this.selectedUser()) {
-      this.deleteFriend(this.selectedUser()!.username);
-      this.closeUserInfo();
-    }
+  deleteFriendFromPopup(): void {
+    if (this.selectedUser()) { this.deleteFriend(this.selectedUser()!.username); this.closeUserInfo(); }
   }
 
-  challengeFromPopup() {
-    const user = this.selectedUser();  // Guardar ANTES MUY IMPORTANTE SIN esto no van las privadas
-    if (user) {
-      this.closeUserInfo();          // Se borra igualmente pero como esta guardado da igual
-      this.openChallengeConfig(user);
-    }
+  challengeFromPopup(): void {
+    const user = this.selectedUser();
+    if (user) { this.closeUserInfo(); this.flow.openChallengeConfig(user); }
   }
 
 
-  // Cambiar en el popup de solicitudes
-  setRequestTab(tab: 'received' | 'sent') {
-    this.requestTabState.set(tab);
-  }
+  addFriendFromPopup(username: string): void {
+    username = username.trim();
+    if (!username) { this.errorAmigoNombreNoValido.set(true); return; }
 
-  copyLink() {
-    console.log('Copiar enlace');
-  }
-
-  //Volver a la partida si hay un ID de partida específico lo usaremos mas adelante pero de momento con navegar sirve
-  resumeGame(gameId: number, p1: number, p2:number) {
-    // Comprobar que jugador soy yo para darle valor al otro jugador
-    console.log('Retomando partida...');
-    var id_rival;
-    if(this.id === p1){
-      id_rival = p2;
-
-    }else{
-      id_rival = p1;
-
-    }
-
-    this.userService.getAccount(id_rival).subscribe({
-      next: (response) => {
-        const rivalUsername = response.username || 'Rival Desconocido';
-        const rival: FriendSummary = {
-          username: response.username || 'Rival Desconocido',
-          account_id: response.userId || 0,
-          level: response.level || 0,
-          avatar: response.avatar || 0
-        };
-        this.friendToChallenge = rival;
-        console.log('Nombre del rival obtenido:', rivalUsername);
-        console.log(gameId);
-        this.sendChallenge(gameId); // Iniciar la partida con el ID específico
+    this.errorAmigoNombreNoValido.set(false);
+    this.friendService.addFriend({ receiver_username: username }).subscribe({
+      next: (result) => {
+        if (result) {
+          this.popUP_newFriend.set(false);
+          this.refreshSocialState();
+        }
       },
+      error: (err: any) => console.error(err)
+    });
+  }
 
-      error: (err) => {
+
+  acceptRequest(requestUsername: string): void {
+    if (!requestUsername) return;
+    this.request.set(this.request().filter(r => r.username !== requestUsername)); // optimista
+    this.friendService.acceptRequest(requestUsername).subscribe({
+      next: (result) => {
+        if (result) { this.refreshSocialState(); this.popUP_request.set(false); }
+      },
+      error: (err: any) => console.error('Error al aceptar solicitud:', err)
+    });
+  }
+
+  rejectRequest(requestUsername: string): void {
+    if (!requestUsername) return;
+    this.friendService.deleteFriend(requestUsername).subscribe({
+      next: (result) => {
+        if (result) {
+          this.request.set(this.request().filter(r => r.username !== requestUsername));
+          this.refreshSocialState();
+          if (this.request().length === 0) this.popUP_request.set(false);
+        }
+      },
+      error: (err: any) => console.error('Error al rechazar solicitud:', err)
+    });
+  }
+
+  cancelSentRequest(requestUsername: string): void {
+    if (!requestUsername) return;
+    this.friendService.deleteFriend(requestUsername).subscribe({
+      next: (result) => {
+        if (result) {
+          this.sentRequests.set(this.sentRequests().filter(r => r.username !== requestUsername));
+          this.refreshSocialState();
+        }
+      },
+      error: (err: any) => console.error('Error al cancelar solicitud:', err)
+    });
+  }
+
+  deleteFriend(friendUsername: string): void {
+    if (!friendUsername) return;
+    this.friendService.deleteFriend(friendUsername).subscribe({
+      next: (result) => { if (result) this.refreshSocialState(); },
+      error: (err: any) => console.error('Error al eliminar amigo:', err)
+    });
+  }
+
+
+  resumeGame(gameId: number, p1: number, p2: number): void {
+    const rivalId = this.id === p1 ? p2 : p1;
+    this.userService.getAccount(rivalId).subscribe({
+      next: (response) => {
+        this.flow.friendToChallenge = {
+          username:   response.username   || 'Rival Desconocido',
+          account_id: response.userId     || 0,
+          level:      response.level      || 0,
+          avatar:     response.avatar     || 0,
+        };
+        this.flow.sendChallenge(gameId);
+      },
+      error: (err: any) => {
         console.error('Error al obtener el nombre del rival:', err);
         this.gameState.nombreRival.set('Rival Desconocido');
       }
-    })
-
-
-  }
-
-  //Cargar lista de amigos
-  loadFriends(): void {
-    this.friendService.getFriends().subscribe({
-      next: (data : FriendSummary[]) => {
-        this.friends.set(data || []);
-        console.log('Amigos cargados:', this.friends);
-        this.friendsInfo.set(true);
-      },
-      error: (err : any) => {
-        console.error('Error al cargar amigos:', err);
-      }
     });
   }
 
-  //Cargar solicitudes de amistad recibidas
-  loadRequests(): void {
-    this.requestInfo.set(false);
-    this.friendService.getRequestFriends().subscribe({
-      next: (data:FriendSummary[]) => {
-        console.log('Solicitudes de amistad disponibles:', data);
-        this.request.set(data || []);
-        this.requestInfo.set(true);
-      },
-      error: (err:any) => {
-        console.error('Error al cargar solicitudes:', err);
-        this.requestInfo.set(true);
-      }
-    });
-  }
-
-  //Load sentRequest
-  loadSentRequests(): void {
-    this.sentRequestsInfo.set(false);
-    this.friendService.getSentRequests().subscribe({
-      next: (data: FriendSummary[]) => {
-        console.log('Solicitudes de amistad enviadas:', data);
-        this.sentRequests.set(data || []);
-        this.sentRequestsInfo.set(true);
-      },
-      error: (err: any) => {
-        console.error('Error al cargar solicitudes enviadas:', err);
-        this.sentRequestsInfo.set(true);
-      }
-    });
-  }
-
-  // Cancelar una solicitud de amistad enviada
-  cancelSentRequest(requestUsername: string) {
-    if (!requestUsername) return;
-    console.log('Cancelando solicitud de amistad enviada a:', requestUsername);
-    this.friendService.deleteFriend(requestUsername).subscribe({
-        next: (result) => {
-          if (result) {
-            console.log('Solicitud de amistad cancelada correctamente');
-            // Elimnar la solicitud de la lista local de enviadas
-            this.sentRequests.set(this.sentRequests().filter(req => req.username !== requestUsername));
-            this.refreshSocialState();
-            // Si no quedan solicitudes enviadas, actualizar la vista
-            if (this.sentRequests().length === 0 && this.requestTabState() === 'sent') {
-              // Opcional: mantener el popup abierto si hay solicitudes recibidas
-            }
-          }
-        },
-        error: (err: any) => {
-          console.error('Error al cancelar solicitud:', err);
-        }
-    });
-  }
-
-  //Añadir amigo
-  addFriend() {
-    const username = this.newFriendUsername().trim();
-
-    if (!username) {
-      this.errorAmigoNombreNoValido.set(true);
-      return;
-    } else {
-      this.errorAmigoNombreNoValido.set(false);
-    }
-
-    const request: FriendshipRequest = {
-          receiver_username: username,
-    };
-
-    this.friendService.addFriend(request).subscribe({
-      next: (result) => {
-        if (result) {
-          console.log('Solicitud de amistad enviada');
-          this.popUP_newFriend.set(false);
-          this.newFriendUsername.set(''); // Limpiamos el input
-          this.refreshSocialState();
-        }
-      },
-      error: (err:any) => {
-        console.error(err);
-      }
-    });
-  }
-
-  // Eliminar amigo
-  deleteFriend(friendUsername: string): void {
-    if (!friendUsername) return;
-      this.friendService.deleteFriend(friendUsername).subscribe({
-        next: (result) => {
-          if (!result) {
-            console.warn('No se pudo eliminar al amigo:', friendUsername);
-          }else{
-            console.log('Amigo eliminado:', friendUsername);
-            // Recargar la lista de amigos
-            this.refreshSocialState();
-          }
-        },
-        error: (err: any) => {
-            console.error('Error al eliminar amigo:', err);
-        }
-    });
-}
-
-  // Aceptar solicitud de amistad
-  acceptRequest(requestUsername: string) {
-    if (!requestUsername) return;
-
-    //Actualizacion Optimista (Hace lo mismo que el codigo de dentro del else pero aqui funciona y ahi no)
-    const currentRequests = this.request();
-    const updatedRequests = currentRequests.filter(req => req.username !== requestUsername);
-    this.request.set(updatedRequests);
-
-    this.friendService.acceptRequest(requestUsername).subscribe({
-        next: (result) => {
-          if (!result) {
-            console.warn('Error al aceptar solicitud');
-          }else{
-            console.log('Solicitud de amistad aceptada:', requestUsername);
-            this.request.set(this.request().filter(req => req.username !== requestUsername)); //Actualizacion Optimista (Arquitectura Software :3)
-            // Recargar la lista de amigos
-            this.refreshSocialState();
-            this.popUP_request.set(false);
-          }
-        },
-        error: (err: any) => {
-            console.error('Error al eliminar amigo:', err);
-        }
-    });
-  }
-
-  rejectRequest(requestUsername: string) {
-    if (!requestUsername) return;
-    console.log('Solicitud de amistad rechazada:', requestUsername);
-
-    // DeleteFriend porq tmb sirve y hayy q avanzar
-    this.friendService.deleteFriend(requestUsername).subscribe({
-      next: (result) => {
-        if (result) {
-          console.log('Solicitud de amistad rechazada correctamente');
-          // Eliminar la solicitud de la lista local
-          this.request.set(this.request().filter(req => req.username !== requestUsername)); //Actualizacion Optimista (Arquitectura Software :3)
-          this.refreshSocialState();
-
-          // Si no quedan solicitudes, cerrar el pop-up
-          if (this.request().length === 0) {
-            this.popUP_request.set(false);
-          }
-        }
-
-      },
-      error: (err: any) => {
-        console.error('Error al rechazar solicitud:', err);
-      }
-    });
-  }
-
-
-
-
-  // Abre el popup al hacer clic en Retar
-  openChallengeConfig(friend: FriendSummaryExtended): void {
-    this.friendToChallenge = friend;
-    this.selectedBoard.set('ACE');
-    this.selectedMode.set(this.timeModes[0]);
-    this.selectedIncrement.set(0);
-    this.customMinutes.set(5);
-    this.customIncrementSec.set(0);
-    this.showConfigPopup.set(true);
-  }
-
-
-  // Cierra el popup
-  closeConfigPopup(): void {
-    this.showConfigPopup.set(false);
-    this.friendToChallenge = null;
-  }
-
-  // Para cambair el modo de tiempo y ajustar el incremento de tempo
-  onModeChange(mode: any): void {
-    this.selectedMode.set(mode);
-    if (mode.id !== 'custom') {
-      // Restablecer a primer incremento disponible
-      this.selectedIncrement.set(mode.increments[0]);
-    }
-  }
-
-  // Parámetros finales según el modo seleccionado
-  getChallengeParams(): { startingTime: number, timeIncrement: number } {
-    const mode = this.selectedMode();
-    if (mode.id === 'custom') {
-      let minutes = this.customMinutes();
-      if (minutes > 180) minutes = 180;
-      if (minutes < 1) minutes = 1;
-      let inc = this.customIncrementSec();
-      if (inc > 60) inc = 60;
-      if (inc < 0) inc = 0;
-      return { startingTime: minutes * 60, timeIncrement: inc };
-    } else {
-      return { startingTime: mode.baseSeconds, timeIncrement: this.selectedIncrement() };
-    }
-  }
-
-
-
-  // Inciiar a una partida amistosa DESAFIAR
-  sendChallenge( id: number | null): void {
-    if (!this.friendToChallenge) return;
-    const { startingTime, timeIncrement } = this.getChallengeParams();
-    console.log('El id de la partida es ' + id);
-    this.challengeManager.sendChallenge(this.selectedBoard(), startingTime, timeIncrement, 'private', null, id, this.friendToChallenge.username);
-
-
-    this.closeConfigPopup();
-    this.popUP_waiting.set(true);
-  }
-
-  // Esto es para mostrar el pop-up
-  challengeFriend(friendUsername: string): void {
-    const friend = this.friends().find(f => f.username === friendUsername);
-    if (friend) {
-      this.openChallengeConfig(friend);
-    } else {
-      console.error('Amigo no encontrado');
-    }
-  }
-
-  // Formatea milisegundos a mm:ss
   formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60000);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
-
-  loadGames(){
-      this.gameRepo.getPausedGame().subscribe({
-        next: (data: GameResume[]) => {
-          console.log('Partidas cargadas:', data);
-          this.partidas.set(data);
-          this.gameInfo.set(true);
-        },
-        error: (error:any) => {
-          console.error('Error al cargar partidas:', error);
-        }
-    });
-  }
-
-
-  //Nuevo metodo pues ahora como el popup esta en otro sitio se necesita para leer el nombre del amigo al que se le envia solicutd de amistad
-  addFriendFromPopup(username: string) {
-    username = username.trim();
-    if (!username) {
-      this.errorAmigoNombreNoValido.set(true);
-      return;
-    }
-
-    this.errorAmigoNombreNoValido.set(false);
-    const request: FriendshipRequest = {
-      receiver_username: username,
-    };
-
-    this.friendService.addFriend(request).subscribe({
-      next: (result) => {
-        if (result) {
-          console.log('Solicitud de amistad enviada');
-          this.popUP_newFriend.set(false);
-          this.refreshSocialState();
-        }
-      },
-      error: (err: any) => {
-        console.error(err);
-      }
-    });
-  }
-
-
-
 }

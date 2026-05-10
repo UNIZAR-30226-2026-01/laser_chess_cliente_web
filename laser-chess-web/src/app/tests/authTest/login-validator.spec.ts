@@ -36,7 +36,8 @@ describe('Login', () => {
       getAccessToken: vi.fn().mockReturnValue(null),
       isTokenExpired: vi.fn().mockReturnValue(true),
       getAccountId: vi.fn().mockReturnValue(null),
-      autoLogin: vi.fn().mockReturnValue(of(false))
+      autoLogin: vi.fn().mockReturnValue(of(false)),
+      getWsTicket: vi.fn().mockReturnValue(of('fake-ticket'))
     };
 
     await TestBed.configureTestingModule({

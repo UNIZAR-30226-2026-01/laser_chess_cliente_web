@@ -69,7 +69,7 @@
     }
     <div class="player_card my-user" [class.active-turn]="esMiTurno()">
       <div class="timer">{{ timerService.formatTime(miTiempo()) }}</div>
-      <img [src]="'assets/vector-art/ProfilePictures/bot' + miAvatar() + '.svg'" alt="Avatar" class="avatar">
+      <img [src]="miAvatar()" alt="Avatar" class="avatar">
       <span>{{ miNombre() }}</span>
     </div>
 
@@ -116,7 +116,7 @@
   <aside class="side-panel">
     <div class="player_card" [class.active-turn]="!esMiTurno()">
       <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
-      <img [src]="'assets/vector-art/ProfilePictures/bot' + avatarRival() + '.svg'" alt="Avatar" class="avatar">
+      <img [src]="avatarRival()" alt="Avatar" class="avatar">
       <span>{{ nombreRival() }}</span>
     </div>
 
