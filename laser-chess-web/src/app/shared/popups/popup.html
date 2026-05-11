@@ -62,6 +62,18 @@
                       <span class="request-xp">Nivel {{ req.level }}</span>
                     </div>
                   </div>
+
+                  <div class="request-actions">
+                    <button class="btn-accept" (click)="$event.stopPropagation(); onOpenUserInfo(req, 'received_request'); userInfoAcceptRequest.emit()">
+                      Aceptar
+                    </button>
+
+                    <button class="btn-reject" (click)="$event.stopPropagation(); onOpenUserInfo(req, 'received_request'); userInfoRejectRequest.emit()">
+                      Rechazar
+                    </button>
+                  </div>
+
+
                 </li>
               }
             </ul>
@@ -81,6 +93,13 @@
                       <span class="request-status">Pendiente</span>
                     </div>
                   </div>
+
+                  <div class="request-actions">
+                    <button class="btn-cancel" (click)="$event.stopPropagation(); onOpenUserInfo(req, 'sent_request'); userInfoCancelSent.emit()">
+                      Cancelar
+                    </button>
+                  </div>
+
                 </li>
               }
             </ul>
