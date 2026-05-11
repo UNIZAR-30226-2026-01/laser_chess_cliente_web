@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { FriendSummary } from '../../model/social/FriendSummary';
 import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended';
 import { UserRespository } from '../../repository/user-respository';
+import { Router } from '@angular/router';
 
 export type PopupType = 'none' | 'newFriend' | 'requests' | 'userInfo' | 'challengeConfig' | 'waiting';
 
@@ -18,6 +19,7 @@ export type PopupType = 'none' | 'newFriend' | 'requests' | 'userInfo' | 'challe
 })
 export class Popup {
   @Input() type: PopupType = 'none';
+  private router = inject(Router);
 
   // popup newFriend
   @Input() newFriendError = false;
@@ -157,6 +159,11 @@ export class Popup {
           default: return '';
         }
     }
+  }
+
+  goToCustomize(): void {
+    this.userInfoClose.emit();
+    this.router.navigate(['/customize']);
   }
 
 }

@@ -120,7 +120,7 @@
 
               <div class="user-main-data">
                 <div class="user-popup-name">{{ userInfoUser.username }}</div>
-                <div class="user-popup-level">Nivel {{ userInfoUser.level || 'N/A' }}</div>
+                <div class="user-popup-level">Nivel {{ userInfoUser.level ?? 'N/A' }}</div>
               </div>
 
               <div class="user-actions-popup">
@@ -137,7 +137,7 @@
                     <button class="btn-cancel" (click)="userInfoCancelSent.emit()">Cancelar solicitud</button>
                   }
                   @case ('self') {
-                    <span class="detail-value" style="font-weight: bold;">Este eres tú</span>
+                    <button class="btn-challenge-popup" (click)="goToCustomize()"> Editar items activos</button>
                   }
                   @default {
                     <button class="btn-challenge-popup" (click)="userInfoSendFriendRequest.emit()">Enviar solicitud</button>

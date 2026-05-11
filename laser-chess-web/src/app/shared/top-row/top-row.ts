@@ -6,10 +6,12 @@ import { MyProfile } from '../../model/user/MyProfile';
 import { Observable } from 'rxjs';
 import { XpInfo } from '../../repository/user-respository';
 import { BoardState } from '../../utils/board-state';
+import { Popup } from '../popups/popup';
+import { FriendSummaryExtended } from '../../model/social/FriendSummaryExtended';
 
 @Component({
   selector: 'app-top-row',
-  imports: [MatIconModule, CommonModule],
+  imports: [MatIconModule, CommonModule, Popup],
   templateUrl: './top-row.html',
   styleUrl: './top-row.css',
 })
@@ -17,6 +19,7 @@ export class TopRow implements OnInit {
 
   private remote = inject(UserRespository);
   private boardState = inject(BoardState)
+  public selectedUser = signal<FriendSummaryExtended | null>(null);
 
   // Señales para la barra
   username = signal('Cargando...');
@@ -66,7 +69,22 @@ export class TopRow implements OnInit {
   }
 
   openProfile() {
-    this.showProfilePopup.set(true);
+    this.userProfile$.subscribe(profile => {
+      if (!profile) return;
+
+      this.selectedUser.set({
+        username: profile.username,
+        account_id: profile.userId,
+        level: profile.level,
+        avatar: profile.avatar,
+
+        board_skin: profile.board_skin,
+        piece_skin: profile.piece_skin,
+        win_animation: profile.win_animation,
+      });
+
+      this.showProfilePopup.set(true);
+    });
   }
 
   closeProfile() {
