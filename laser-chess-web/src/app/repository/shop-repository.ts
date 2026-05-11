@@ -58,7 +58,20 @@ export class ShopRepository {
 
       case 'win_animation':
         name = `Animacion de victoria ${dto.item_id}`;
-        icon = '';
+        switch (dto.item_id) {
+          case 7:
+            name = 'Classic';
+            icon = 'assets/vector-art/DeathAnimations/Classic/Classic-Win.gif';
+            break;
+          case 8:
+            name = 'Soretro';
+            icon = 'assets/vector-art/DeathAnimations/Soretro/Soretro-win.gif';
+            break;
+          case 9:
+            name = 'Cats';
+            icon = 'assets/vector-art/DeathAnimations/Cats/Cats-Win.gif';
+            break;
+        }
         break;
 
       case 'board_skin':
