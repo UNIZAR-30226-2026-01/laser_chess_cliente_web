@@ -658,6 +658,9 @@
 ========================================= */
 
 @media (max-width: 768px) {
+  .home{
+    overflow: scroll;
+  }
   .main-section {
     flex-direction: column;
     gap: 8px;

@@ -88,7 +88,7 @@ export class Signin {
       switch (status) {
         case ResponseStatus.SUCCESS:
           console.log('Registration successful');
-          localStorage.setItem('lastCredential', request.mail);
+          localStorage.setItem('lastCredential', request.username);
           this.router.navigate(['']);
           break;
 

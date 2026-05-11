@@ -1,11 +1,11 @@
 <div class="animated-bg"
      [style.backgroundImage]="'url(' + boardState.boardBackgroundUrl() + ')'">
 </div>
-
+<app-top-row></app-top-row>
 <section class="home">
 
 
-    <app-top-row></app-top-row>
+    
 
     <app-popup
         [type]="popUP_waiting() ? 'waiting' : 'none'"

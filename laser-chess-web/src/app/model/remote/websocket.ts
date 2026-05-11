@@ -1,9 +1,10 @@
-import { Injectable, inject} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { ReplaySubject, Subject} from 'rxjs';
 import { Remote } from './remote'; 
 import { API_URL_WS } from '../../constants/app.const';
 import {  Router } from '@angular/router';
+import { NotificationService } from '../notifications/notification';
 
 
 
@@ -25,6 +26,7 @@ export class Websocket {
 
   private wakeGameSubject = new ReplaySubject<void>(1);
   GameWake$ = this.wakeGameSubject.asObservable();
+  private notificationService = inject(NotificationService);
 
 
   private mode: 'lobby' | 'game' = 'lobby';
@@ -63,7 +65,7 @@ export class Websocket {
       deserializer: msg => JSON.parse(msg.data),
       openObserver: { next: () => console.log('WS conectado') },
       closeObserver: { next: () => {
-        console.log('WS cerrado');
+        
         this.connectionClosed$.next();
         }
        }
@@ -89,9 +91,14 @@ export class Websocket {
   private handleMessage(msg: any) {
 
     if (this.mode === 'lobby') {
-      console.log('LOBBY MSG:', msg.Type, msg.Content);
+      console.log('LOBBY MSG: [' + msg.Type + ']'+'['+msg.Content+']');
        if (msg.Type === 'MatchStart') {
         // Guardarlo en gameMessages$ para que game lo reciba al suscribirse
+        this.gameMessages$.next(msg);
+        return;
+      }
+
+       if (msg.Type === 'MatchType') {
         this.gameMessages$.next(msg);
         return;
       }
@@ -105,6 +112,13 @@ export class Websocket {
 
       if (msg.Type === 'Reconnection') {
         this.gameMessages$.next(msg);
+        return;
+      }
+
+      if (msg.Type === 'EOC') {
+        if(msg.Content === 'Challenge rejected'){
+          this.notificationService.showWebNotification('Solicitud de partida rechazada', '', { type: 'challenge' });
+        }
         return;
       }
 
@@ -164,7 +178,7 @@ checkAndReconnect() {
     this.socket$.subscribe({
       next: msg => this.handleMessage(msg),   
       error: err => {
-        if (err?.code === 1006) return; // cierre normal en muchos backends
+        if (err?.code === 1006) return; 
         console.error('Error WS:', err);
         this.socket$ = undefined;
         this.connectionError$.next();

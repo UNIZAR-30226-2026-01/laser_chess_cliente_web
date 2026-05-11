@@ -107,7 +107,9 @@ export class NotificationService {
     if (Notification.permission === 'granted') {
       const notification = new Notification(title, {
         body,
-        icon: '/assets/icon.png'
+        icon: '/logolasserchess.ico',
+        badge: '/logolasserchess.ico'
+
       });
 
       notification.onclick = () => {

@@ -11,10 +11,10 @@ import { Subscription } from 'rxjs';
 import { GameState } from '../utils/game-state'
 import { TimerService } from './timer-service';
 import { GameUtils } from '../utils/game-utils';
-import { UserRespository } from '../repository/user-respository';
 import { BoardState } from '../utils/board-state';
 import { ChallengeManager } from './challenge-manager';
 import { BoardAction } from './board-action';
+import { NotificationService } from '../model/notifications/notification';
 
 
 const LASER_DURATION_MS = 1000;
@@ -31,7 +31,7 @@ export class GameLogicService {
   private waitingForConfirmation= signal(false);
   private router = inject(Router);
   private gameUtils = inject(GameUtils);
-  private userRepo = inject(UserRespository);
+  private notifiService = inject(NotificationService);
   private boardState = inject(BoardState);
   private challengeManager = inject(ChallengeManager);
   private boardActions = inject(BoardAction);
@@ -46,6 +46,8 @@ export class GameLogicService {
   
 
   mostrarAvisoSalida = signal(false);
+  initialProcesado = signal(false);
+
 
 
   listaPiezas = this.state.listaPiezas;
@@ -100,9 +102,35 @@ export class GameLogicService {
         localStorage.setItem('idOponente', msg.Content);
         this.challengeManager.setUpUser();
       }
+    } else if (msg.Type === "MatchType"){
+      var saved = localStorage.getItem('gameState');
+        this.challengeManager.setUpUser();
 
-
+        if (!saved) {
+          switch(msg.Content){
+            case 'Public':
+              saved = 'public';
+              break;
+            case 'Bot':
+              saved = 'ia';
+              break;
+            case 'Private':
+              saved = 'private';
+              break;
+            case 'Raked':
+              saved = 'ranked';
+              break;
+            default:
+              saved = '';
+              break;
+          }
+          this.state.tipoPartida.set(saved);
+          
+          console.log('la partida es: ' + saved);
+        }
     } else if (msg.Type === "InitialState"){
+      if(this.initialProcesado()){ return;}
+      this.initialProcesado.set(true);
       const idIponente = localStorage.getItem('idOponente');
       console.log(idIponente);
       if (idIponente) {
@@ -235,9 +263,12 @@ export class GameLogicService {
       this.wsSubscription?.unsubscribe();
       this.wsSubscription = undefined;
       this.timerService.stopTimer();
+      this.initialProcesado.set(false);
       if(!this.finPartida().mostrar){
         this.finPartidaHandler();
       }
+
+      
 
       
       

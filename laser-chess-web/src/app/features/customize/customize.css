@@ -161,6 +161,9 @@
 
 
 @media (max-width: 900px) {
+  .folder-container{
+    overflow: auto;
+  }
   .customize-layout {
     flex-direction: column;
     gap: 0.75rem;

@@ -22,6 +22,7 @@ export class ChallengeManager {
   friendService = inject(FriendRespository);
   gameUtils = inject(GameUtils);
 
+
   accept(reto: ChallengeResume) {
     const endpoint = 'challenge/accept';
     const params = {
@@ -205,7 +206,7 @@ export class ChallengeManager {
     this.userRepo.getAccount(rivalId).subscribe(profile => {
       this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot' + (profile.avatar -9) +'.svg' || 'assets/vector-art/ProfilePictures/bot1.svg');
       this.boardState.skinRival.set(profile.piece_skin || 1);
-      if (rivalUsername) this.gameState.nombreRival.set(rivalUsername);
+      this.gameState.nombreRival.set(profile.username);
     });
 
     
