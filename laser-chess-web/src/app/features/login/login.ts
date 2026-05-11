@@ -55,9 +55,11 @@ export class Login implements OnInit {
       });
     }
 
+    const lastCredential = localStorage.getItem('lastCredential');
+
     // Configuación del formulario de login con validaciones
     this.loginForm = new FormGroup({
-      credential: new FormControl('', [
+      credential: new FormControl( lastCredential  || '', [
         Validators.required,
         Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$|^\w+$/) // email o username
       ]),
