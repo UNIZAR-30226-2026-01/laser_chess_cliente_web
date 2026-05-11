@@ -97,4 +97,66 @@ export class Popup {
     this.copied.set(true);
     setTimeout(() => this.copied.set(false), 2000);
   }
+
+
+  getItemName(type: 'board_skin' | 'piece_skin' | 'win_animation', id?: number | null): string {
+    if (id === null || id === undefined) return 'N/A';
+
+    switch (type) {
+      case 'board_skin':
+        switch (id) {
+          case 4: return 'Classic';
+          case 5: return 'Soretro';
+          case 6: return 'Cats';
+          default: return `Tablero ${id}`;
+        }
+
+      case 'piece_skin':
+        switch (id) {
+          case 1: return 'Classic';
+          case 2: return 'Soretro';
+          case 3: return 'Cats';
+          default: return `Piezas ${id}`;
+        }
+
+      case 'win_animation':
+        switch (id) {
+          case 7: return 'Classic';
+          case 8: return 'Soretro';
+          case 9: return 'Cats';
+          default: return `Animación ${id}`;
+        }
+    }
+  }
+
+  getItemIcon(type: 'board_skin' | 'piece_skin' | 'win_animation', id?: number | null): string {
+    if (id === null || id === undefined) return '';
+
+    switch (type) {
+      case 'board_skin':
+        switch (id) {
+          case 4: return 'assets/vector-art/Backgrounds/Classic/BG-classic.svg';
+          case 5: return 'assets/vector-art/Backgrounds/Soretro/BG-soretro.svg';
+          case 6: return 'assets/vector-art/Backgrounds/Cats/BG-cats.svg';
+          default: return '';
+        }
+
+      case 'piece_skin':
+        switch (id) {
+          case 1: return 'assets/vector-art/PieceSets/Classic/KIN-B-Classic.svg';
+          case 2: return 'assets/vector-art/PieceSets/Soretro/KIN-B-Soretro.png';
+          case 3: return 'assets/vector-art/PieceSets/Cats/KIN-B-Cats.svg';
+          default: return '';
+        }
+
+      case 'win_animation':
+        switch (id) {
+          case 7: return 'assets/vector-art/DeathAnimations/Classic/Classic-Win.gif';
+          case 8: return 'assets/vector-art/DeathAnimations/Soretro/Soretro-win.gif';
+          case 9: return 'assets/vector-art/DeathAnimations/Cats/Cats-Win.gif';
+          default: return '';
+        }
+    }
+  }
+
 }

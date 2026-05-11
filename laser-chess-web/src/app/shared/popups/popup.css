@@ -642,6 +642,10 @@
     align-items: center;
     text-align: center;
   }
+  
+  .equipment-grid {
+    grid-template-columns: 1fr;
+  }
 
   .user-profile-side {
     justify-content: center;
@@ -686,4 +690,46 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 0.4rem;
+}
+
+.equipment-card {
+  background: var(--S2);
+  border: 1px solid var(--S3);
+  border-radius: var(--BorderNormal);
+  padding: 0.8rem;
+  min-height: 8rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  text-align: center;
+}
+
+.equipment-card img {
+  width: 4rem;
+  height: 4rem;
+  object-fit: contain;
+}
+
+.equipment-label {
+  font-size: 0.75rem;
+  color: var(--LCGray);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.equipment-name {
+  font-size: 0.9rem;
+  color: var(--LCWhite);
+  font-weight: 800;
 }

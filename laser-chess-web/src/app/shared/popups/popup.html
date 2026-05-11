@@ -177,20 +177,34 @@
               <div class="info-section equipment-section">
                 <h3>Equipamiento</h3>
 
-                <div class="detail-row">
-                  <span class="detail-label">Tablero:</span>
-                  <span class="detail-value">{{ userInfoUser.board_skin ?? 'N/A' }}</span>
+                <div class="equipment-grid">
+
+                  <div class="equipment-card">
+                    @if (getItemIcon('board_skin', userInfoUser.board_skin)) {
+                      <img [src]="getItemIcon('board_skin', userInfoUser.board_skin)" [alt]="getItemName('board_skin', userInfoUser.board_skin)">
+                    }
+                    <span class="equipment-label">Tablero</span>
+                    <span class="equipment-name">{{ getItemName('board_skin', userInfoUser.board_skin) }}</span>
+                  </div>
+
+                  <div class="equipment-card">
+                    @if (getItemIcon('piece_skin', userInfoUser.piece_skin)) {
+                      <img [src]="getItemIcon('piece_skin', userInfoUser.piece_skin)" [alt]="getItemName('piece_skin', userInfoUser.piece_skin)">
+                    }
+                    <span class="equipment-label">Piezas</span>
+                    <span class="equipment-name">{{ getItemName('piece_skin', userInfoUser.piece_skin) }}</span>
+                  </div>
+
+                  <div class="equipment-card">
+                    @if (getItemIcon('win_animation', userInfoUser.win_animation)) {
+                      <img [src]="getItemIcon('win_animation', userInfoUser.win_animation)" [alt]="getItemName('win_animation', userInfoUser.win_animation)">
+                    }
+                    <span class="equipment-label">Victoria</span>
+                    <span class="equipment-name">{{ getItemName('win_animation', userInfoUser.win_animation) }}</span>
+                  </div>
+
                 </div>
 
-                <div class="detail-row">
-                  <span class="detail-label">Piezas:</span>
-                  <span class="detail-value">{{ userInfoUser.piece_skin ?? 'N/A' }}</span>
-                </div>
-
-                <div class="detail-row">
-                  <span class="detail-label">Animación victoria:</span>
-                  <span class="detail-value">{{ userInfoUser.win_animation ?? 'N/A' }}</span>
-                </div>
               </div>
 
             </div>
