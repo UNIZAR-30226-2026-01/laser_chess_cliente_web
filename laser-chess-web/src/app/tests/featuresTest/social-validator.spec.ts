@@ -40,6 +40,15 @@ describe('Social Validator', () => {
       addFriend: vi.fn().mockReturnValue(of(true)),
       deleteFriend: vi.fn().mockReturnValue(of(true)),
       acceptRequest: vi.fn().mockReturnValue(of(true)),
+      getAccount: vi.fn().mockReturnValue(of({
+        username: 'test',
+        account_id: 123,
+        level: 5,
+        avatar: 10,
+        board_skin: 4,
+        piece_skin: 1,
+        win_animation: 7
+      })),
       getAllRatings: vi.fn().mockReturnValue(of({
         blitz: 1200,
         rapid: 1300,
@@ -237,7 +246,13 @@ describe('Social Validator', () => {
     fixture.detectChanges();
 
     expect(component.popUP_userInfo()).toBe(true);
-    expect(component.selectedUser()).toEqual(user);
+    expect(component.selectedUser()).toEqual({
+      ...user,
+      avatar: 10,
+      board_skin: 4,
+      piece_skin: 1,
+      win_animation: 7,
+    });
     expect(component.selectedUserContext()).toBe('friend');
     expect(friendRepoSpy.getAllRatings).toHaveBeenCalledWith(123);
     expect(component.selectedUserEloBlitz()).toBe(1200);
