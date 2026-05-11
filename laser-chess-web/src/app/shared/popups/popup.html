@@ -95,49 +95,108 @@
 @if (type === 'userInfo' && userInfoUser) {
   <div id="overlay" class="overlay" (click)="userInfoClose.emit()">
     <div class="popup-userinfo" (click)="$event.stopPropagation()">
+
       <div class="popup-header">
         <h2>Información de usuario</h2>
         <button class="close-button" (click)="userInfoClose.emit()">✕</button>
       </div>
-      <div class="popup-content">
-        <div class="user-info-detail">
-          <div class="user-avatar-large">
-            @if (userInfoUser.avatar) {
-              <img [src]="'assets/vector-art/ProfilePictures/bot' + (userInfoUser.avatar-9) + '.svg'" alt="Avatar">
-            } @else {
-              <div class="avatar-placeholder-large"><span class="avatar-icon-large">👤</span></div>
-            }
+
+        <div class="popup-content user-info-popup-content">
+
+          <div class="user-info-layout">
+
+            <!-- IZQUIERDA -->
+            <div class="user-info-left">
+
+              <div class="user-avatar-large">
+                @if (userInfoUser.avatar) {
+                  <img [src]="'assets/vector-art/ProfilePictures/bot' + (userInfoUser.avatar - 9) + '.svg'" alt="Avatar">
+                } @else {
+                  <div class="avatar-placeholder-large">
+                    <span class="avatar-icon-large">👤</span>
+                  </div>
+                }
+              </div>
+
+              <div class="user-main-data">
+                <div class="user-popup-name">{{ userInfoUser.username }}</div>
+                <div class="user-popup-level">Nivel {{ userInfoUser.level || 'N/A' }}</div>
+              </div>
+
+              <div class="user-actions-popup">
+                @switch (userInfoContext) {
+                  @case ('friend') {
+                    <button class="btn-challenge-popup" (click)="userInfoChallenge.emit()">Retar</button>
+                    <button class="btn-delete-popup" (click)="userInfoDeleteFriend.emit()">Eliminar amigo</button>
+                  }
+                  @case ('received_request') {
+                    <button class="btn-accept" (click)="userInfoAcceptRequest.emit()">Aceptar</button>
+                    <button class="btn-reject" (click)="userInfoRejectRequest.emit()">Rechazar</button>
+                  }
+                  @case ('sent_request') {
+                    <button class="btn-cancel" (click)="userInfoCancelSent.emit()">Cancelar solicitud</button>
+                  }
+                  @case ('self') {
+                    <span class="detail-value" style="font-weight: bold;">Este eres tú</span>
+                  }
+                  @default {
+                    <button class="btn-challenge-popup" (click)="userInfoSendFriendRequest.emit()">Enviar solicitud</button>
+                  }
+                }
+              </div>
+
+            </div>
+
+            <!-- DERECHA -->
+            <div class="user-info-right">
+
+              <div class="info-section">
+                <h3>ELO</h3>
+
+                <div class="detail-row">
+                  <span class="detail-label">Blitz:</span>
+                  <span class="detail-value">{{ userInfoEloBlitz }}</span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Rapid:</span>
+                  <span class="detail-value">{{ userInfoEloRapid }}</span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Classic:</span>
+                  <span class="detail-value">{{ userInfoEloClassic }}</span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Extended:</span>
+                  <span class="detail-value">{{ userInfoEloExtended }}</span>
+                </div>
+              </div>
+
+              <div class="info-section equipment-section">
+                <h3>Equipamiento</h3>
+
+                <div class="detail-row">
+                  <span class="detail-label">Tablero:</span>
+                  <span class="detail-value">{{ userInfoUser.board_skin ?? 'N/A' }}</span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Piezas:</span>
+                  <span class="detail-value">{{ userInfoUser.piece_skin ?? 'N/A' }}</span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Animación victoria:</span>
+                  <span class="detail-value">{{ userInfoUser.win_animation ?? 'N/A' }}</span>
+                </div>
+              </div>
+
+            </div>
+
           </div>
-          <div class="user-details">
-            <div class="detail-row"><span class="detail-label">Nombre:</span><span class="detail-value">{{ userInfoUser.username }}</span></div>
-            <div class="detail-row"><span class="detail-label">Nivel:</span><span class="detail-value">{{ userInfoUser.level || 'N/A' }}</span></div>
-            <div class="detail-row"><span class="detail-label">ELO Blitz:</span><span class="detail-value">{{ userInfoEloBlitz }}</span></div>
-            <div class="detail-row"><span class="detail-label">ELO Rápido:</span><span class="detail-value">{{ userInfoEloRapid }}</span></div>
-            <div class="detail-row"><span class="detail-label">ELO Clásico:</span><span class="detail-value">{{ userInfoEloClassic }}</span></div>
-            <div class="detail-row"><span class="detail-label">ELO Extendido:</span><span class="detail-value">{{ userInfoEloExtended }}</span></div>
-          </div>
-        </div>
-        <div class="user-actions-popup">
-          @switch (userInfoContext) {
-            @case ('friend') {
-              <button class="btn-challenge-popup" (click)="userInfoChallenge.emit()">Retar</button>
-              <button class="btn-delete-popup" (click)="userInfoDeleteFriend.emit()">Eliminar amigo</button>
-            }
-            @case ('received_request') {
-              <button class="btn-accept" (click)="userInfoAcceptRequest.emit()">Aceptar</button>
-              <button class="btn-reject" (click)="userInfoRejectRequest.emit()">Rechazar</button>
-            }
-            @case ('sent_request') {
-              <button class="btn-cancel" (click)="userInfoCancelSent.emit()">Cancelar solicitud</button>
-            }
-            @case ('self') {
-              <span class="detail-value" style="font-weight: bold;">Este eres tú</span>
-            }
-            @default {
-              <button class="btn-challenge-popup" (click)="userInfoSendFriendRequest.emit()">Enviar solicitud</button>
-            }
-          }
-        </div>
+
       </div>
     </div>
   </div>

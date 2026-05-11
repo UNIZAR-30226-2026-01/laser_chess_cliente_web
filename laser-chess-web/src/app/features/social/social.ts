@@ -174,6 +174,20 @@ export class Social implements OnInit, OnDestroy {
       },
       error: (err: any) => console.error('Error al obtener ELOs:', err)
     });
+
+    this.friendService.getAccount(Number(user.account_id)).subscribe({
+      next: (account) => {
+        if (!account) return;
+        this.selectedUser.set({
+          ...user,
+          avatar: account.avatar,
+          board_skin: account.board_skin,
+          piece_skin: account.piece_skin,
+          win_animation: account.win_animation
+        });
+      },
+      error: (err: any) => console.error('Error al obtener cuenta completa:', err)
+    });
   }
 
   closeUserInfo(): void {

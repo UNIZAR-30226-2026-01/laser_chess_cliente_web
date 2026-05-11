@@ -8,4 +8,7 @@ export interface FriendSummaryExtended {
     rapidElo?: number;
     classicElo?: number;
     extendedElo?: number;
+    board_skin?: number;
+    piece_skin?: number;
+    win_animation?: number;
 }

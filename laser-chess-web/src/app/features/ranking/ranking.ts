@@ -156,6 +156,10 @@ export class Ranking implements OnInit {
         account_id: player.userId,
         level:      profile.level,
         avatar:     profile.avatar,
+
+        board_skin:    profile.board_skin,
+        piece_skin:    profile.piece_skin,
+        win_animation: profile.win_animation,
       };
 
       this.selectedUser.set(userSummary);

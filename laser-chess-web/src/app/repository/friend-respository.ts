@@ -5,6 +5,7 @@ import { tap, catchError, map} from 'rxjs/operators';
 import { FriendshipRequest } from '../model/social/FriendshipRequest';
 import { FriendSummary } from '../model/social/FriendSummary'
 import { AllRatingsDTO } from '../model/rating/AllRatingsDTO';
+import { AccountResponse } from '../model/auth/AccountResponse';
 
 
 /*
@@ -123,5 +124,15 @@ export class FriendRespository {
       })
     );
   }
+  
+  getAccount(userId: number): Observable<AccountResponse | null> {
+  return this.remoteService.getAccount(userId).pipe(
+    map(response => response.body ?? null),
+    catchError((err: any) => {
+      console.error('Error al cargar cuenta del usuario:', err);
+      return of(null);
+    })
+  );
+}
 
 }
