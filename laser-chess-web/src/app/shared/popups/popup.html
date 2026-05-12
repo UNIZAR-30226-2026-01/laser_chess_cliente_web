@@ -60,7 +60,14 @@
               @for (req of requestsReceived; track req.username) {
                 <li class="request-item" (click)="onOpenUserInfo(req, 'received_request')">
                   <div class="request-info">
-                    <div class="avatar-placeholder"><span class="avatar-icon">👤</span></div>
+                    
+                    <div class="avatar-placeholder">
+                      <img [src]="'assets/vector-art/ProfilePictures/bot' + (req.avatar - 9) + '.svg'"
+                          alt="Avatar"
+                          class="request-avatar">
+                    </div>
+
+
                     <div class="request-details">
                       <span class="request-username">{{ req.username }}</span>
                       <span class="request-xp">Nivel {{ req.level }}</span>
@@ -90,7 +97,14 @@
               @for (req of requestsSent; track req.username) {
                 <li class="request-item" (click)="onOpenUserInfo(req, 'sent_request')">
                   <div class="request-info">
-                    <div class="avatar-placeholder"><span class="avatar-icon">👤</span></div>
+                    
+                    <div class="avatar-placeholder">
+                      <img [src]="'assets/vector-art/ProfilePictures/bot' + (req.avatar - 9) + '.svg'"
+                          alt="Avatar"
+                          class="request-avatar">
+                    </div>
+
+
                     <div class="request-details">
                       <span class="request-username">{{ req.username }}</span>
                       <span class="request-xp">Nivel {{ req.level }}</span>
