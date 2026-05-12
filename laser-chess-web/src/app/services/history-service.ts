@@ -252,9 +252,10 @@ export class HistoryService {
     this.esMiTurno.set(!this.soyAzul()); 
     this.turnoVisual.set(!this.soyAzul());
     this.capturas = [];
+    this.laserPath.set([]);
 
     for (let i = 0; i < this.indiceMovimiento; i++) {
-      this.turnoVisual.set(!this.turnoVisual());
+      if(i !== 0){this.turnoVisual.set(!this.turnoVisual());};
       this.applyAction(this.movimientos[i], true);
     }
   }
