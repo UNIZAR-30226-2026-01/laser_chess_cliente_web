@@ -72,8 +72,8 @@
       <aside class="side-panel">
         <div class="player_card rival" (click)="openUserInfo(historyState.perfilRival())" [class.active-turn]="this.historyState.turnoVisual()">
           <div class="timer">{{ timerService.formatTime(tiempoRival()) }}</div>
-          <img [src]="'assets/vector-art/ProfilePictures/bot' + rivalAvatar() + '.svg'" alt="Avatar" class="avatar-circle red">
-          <span class="player-name">{{ nombreRival() }}</span>
+          <img [src]="'assets/vector-art/ProfilePictures/bot' + (historyState.perfilRival().avatar - 9) + '.svg'" alt="Avatar" class="avatar-circle red">
+          <span class="player-name">{{ historyState.perfilRival().username }}</span>
         </div>
       </aside>
 

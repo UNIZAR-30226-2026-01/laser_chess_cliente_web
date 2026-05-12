@@ -18,6 +18,8 @@ import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { Remote } from '../../model/remote/remote';
 import { MyProfile } from '../../model/user/MyProfile';
 import { UserRespository } from '../../repository/user-respository';
+import { XpInfo } from '../../repository/user-respository';
+
 
 
 
@@ -48,11 +50,9 @@ export class History {
   miTiempo = this.historyState.miTiempo;
   tiempoRival = this.historyState.tiempoRival;
 
-  nombreRival = this.historyState.nombreRival;
   miNombre = this.historyState.miNombre;
 
   miAvatar = this.historyState.miAvatar;
-  rivalAvatar = this.historyState.rivalAvatar;
 
 
 
@@ -82,6 +82,10 @@ export class History {
     public selectedUserEloRapid    = signal(0);
     public selectedUserEloClassic  = signal(0);
     public selectedUserEloExtended = signal(0);
+
+    public selectedUserXpPercentage = signal(0);
+    public selectedUserXpRequired  = signal(0);
+    public selectedUserXpCurrent  = signal(0);
   
     // Relaciones (para determinar contexto en el popup)
     private friends      = signal<FriendSummary[]>([]);
@@ -157,6 +161,19 @@ export class History {
           this.selectedUserEloExtended.set(0);
         }
       });
+
+      this.userRepo.getXpInfoFriend(player.userId).subscribe({
+              next: (data: XpInfo) => {
+                if (data.required_xp > 0) {
+                  const percentage = (data.xp / data.required_xp) * 100;
+                  this.selectedUserXpPercentage.set(percentage);
+                  this.selectedUserXpCurrent.set(data.xp);
+                  this.selectedUserXpRequired.set(data.required_xp);
+                  
+                }
+              },
+              error: (err) => console.error('Error cargando XP', err)
+            });
   
       if (isSelf) {
         this.selectedUserContext.set('self');

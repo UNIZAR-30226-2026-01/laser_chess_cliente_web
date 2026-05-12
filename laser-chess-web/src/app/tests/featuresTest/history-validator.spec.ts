@@ -30,8 +30,10 @@ describe('HistoryService', () => {
     getAccount: vi.fn().mockReturnValue({
       subscribe: (cb: any) => cb({ username: 'Rival', avatar: 2 }),
     }),
+    getXpInfoFriend: vi.fn(),
     getOwnAccount: vi.fn().mockReturnValue({
     subscribe: (cb: any) => cb({ username: 'YoMismo', avatar: 1, piece_skin: 1 }),
+    
   }),
   };
 
@@ -117,7 +119,7 @@ describe('HistoryService', () => {
 
     it('debería asignar el nombre del rival', () => {
       service.inicializarTablero();
-      expect(service.nombreRival()).toBe('Rival');
+      expect(service.perfilRival().username).toBe('Rival');
     });
   });
 

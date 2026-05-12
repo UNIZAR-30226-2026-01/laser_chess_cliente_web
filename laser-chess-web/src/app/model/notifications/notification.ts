@@ -79,6 +79,9 @@ export class NotificationService {
       this.showWebNotification('Nueva invitación de partida', `Has recibido una invitación de ${challenger}`, { type: 'challenge', challenger });
       this.wakeHomeSubject.next();
       break;
+    case 'ChallengesUpdated':
+      this.wakeHomeSubject.next();
+      break;
     case 'NewFriend': 
       const friendName = typeof event.data === 'string' ? event.data : event.data?.username || 'alguien';
       this.showWebNotification('Nueva amistad', `Tu amistad con ${friendName} ha comenzado`, { type: 'friend_accepted', username: friendName });

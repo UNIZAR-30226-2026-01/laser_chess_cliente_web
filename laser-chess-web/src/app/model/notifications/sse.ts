@@ -39,7 +39,7 @@ export class SseService implements OnDestroy {
     };
 
     // Eventos que conozco
-    const knownEvents = ['Init', 'Notification', 'FriendRequest', 'Challenge', 'FriendAccepted', 'NewFriend'];
+    const knownEvents = ['Init', 'Notification', 'FriendRequest', 'Challenge', 'FriendAccepted', 'NewFriend', 'ChallengesUpdated'];
 
     knownEvents.forEach(type => {
       this.eventSource!.addEventListener(type, (event: any) => {

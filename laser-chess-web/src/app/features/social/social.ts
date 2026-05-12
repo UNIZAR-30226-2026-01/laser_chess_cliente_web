@@ -19,6 +19,7 @@ import { NotificationService } from '../../model/notifications/notification';
 import { Popup } from '../../shared/popups/popup';
 import { ChallengeFlow } from '../../shared/challenge-flow/challenge-flow';
 import { ChallengeFlowService } from '../../services/challenge-flow';
+import { XpInfo } from '../../repository/user-respository';
 
 @Component({
   selector: 'app-social',
@@ -64,6 +65,10 @@ export class Social implements OnInit, OnDestroy {
   public selectedUserEloRapid    = signal(0);
   public selectedUserEloClassic  = signal(0);
   public selectedUserEloExtended = signal(0);
+
+  public selectedUserXpPercentage = signal(0);
+  public selectedUserXpRequired  = signal(0);
+  public selectedUserXpCurrent  = signal(0);
 
   public requestTabState = signal<'received' | 'sent'>('received');
 
@@ -179,6 +184,19 @@ export class Social implements OnInit, OnDestroy {
       error: (err: any) => console.error('Error al obtener ELOs:', err)
     });
 
+    this.userService.getXpInfoFriend(user.account_id).subscribe({
+          next: (data: XpInfo) => {
+            if (data.required_xp > 0) {
+              const percentage = (data.xp / data.required_xp) * 100;
+              this.selectedUserXpPercentage.set(percentage);
+              this.selectedUserXpCurrent.set(data.xp);
+              this.selectedUserXpRequired.set(data.required_xp);
+              
+            }
+          },
+          error: (err) => console.error('Error cargando XP', err)
+        });
+
     this.friendService.getAccount(Number(user.account_id)).subscribe({
       next: (account) => {
         if (!account) return;
@@ -227,6 +245,7 @@ export class Social implements OnInit, OnDestroy {
  addFriendFromPopup(username: string): void {
   username = username.trim();
   if (!username) { this.errorAmigoNombreNoValido.set('Introduce un nombre de usuario'); return; }
+  if (username === 'Hopper') { this.errorAmigoNombreNoValido.set('No le puedes enviar solicitud de amistad a Hopper'); return;}
 
   this.errorAmigoNombreNoValido.set(null);
   this.friendService.addFriend({ receiver_username: username }).subscribe({

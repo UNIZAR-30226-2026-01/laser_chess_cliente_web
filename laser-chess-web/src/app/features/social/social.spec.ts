@@ -71,7 +71,10 @@ describe('Social Angular', () => {
         piece_skin: 0,
       })),
       getUsername: vi.fn().mockReturnValue('testUser'),
-      getId: vi.fn().mockReturnValue('123')
+      getId: vi.fn().mockReturnValue('123'),
+      getXpInfoFriend: vi.fn().mockReturnValue(
+        of({ xp: 100, required_xp: 200 })
+      ),
     };
 
     gameRepoSpy = {

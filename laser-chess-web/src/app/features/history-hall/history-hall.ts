@@ -77,9 +77,19 @@ export class HistoryHall {
     if(myId === partida.p1_id){
       oponente = partida.p2_id;
     }
-    this.userRepo.getAccount(oponente).subscribe(profile => {
-      this.historyService.perfilRival.set(profile);
-    });
+    console.log(oponente);
+    if(oponente === 1){
+      this.userRepo.getOwnAccount().subscribe(profile => {
+        this.historyService.perfilRival().avatar = 10;
+        this.historyService.perfilRival().userId = 1;
+        this.historyService.perfilRival().piece_skin = profile.piece_skin;
+        this.historyService.perfilRival().username = "Hopper";
+      });
+    }else{
+      this.userRepo.getAccount(oponente).subscribe(profile => {
+        this.historyService.perfilRival.set(profile);
+      });
+    }
 
    
 

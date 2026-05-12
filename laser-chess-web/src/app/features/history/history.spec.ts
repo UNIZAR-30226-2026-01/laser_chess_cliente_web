@@ -48,6 +48,9 @@ describe('History', () => {
       })),
       getId: vi.fn().mockReturnValue('1'),
       getUsername: vi.fn().mockReturnValue('testUser'),
+      getXpInfoFriend: vi.fn().mockReturnValue(
+        of({ xp: 100, required_xp: 200 })
+      ),
     };
 
     const timerMock = {
@@ -77,7 +80,19 @@ describe('History', () => {
       popUpLimites: signal(false),
       popUpMensaje: signal(''),
       historySelectedGame: fakeSignal(null),
-      perfilRival: fakeSignal(null),
+      perfilRival: fakeSignal({
+        userId: 0,
+        username: '',
+        mail: '',
+        xp: 0,
+        level: 0,
+        avatar: 10,
+        money: 0,
+        board_skin: 0,
+        piece_skin: 0,
+        win_animation: 0,
+        rankedPoints: 0
+      }),
       perfilRivalSummary: signal(null),
       turnoVisual:signal(true),
     };

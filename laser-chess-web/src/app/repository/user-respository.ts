@@ -260,4 +260,8 @@ export class UserRespository {
   getXpInfo(): Observable<XpInfo> {
     return this.remoteService.getXpInfo();
   }
+
+  getXpInfoFriend(userId: number): Observable<XpInfo> {
+    return this.remoteService.getXpInfoFriend(userId);
+  }
 }

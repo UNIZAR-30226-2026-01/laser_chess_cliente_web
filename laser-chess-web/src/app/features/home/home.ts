@@ -131,7 +131,8 @@ export class Home {
     
     this.loadRequest();
     this.notificationService.wakeHome$.subscribe(() => {
-        this.loadRequest();
+        console.log('Me ha llegado el wake');
+        setTimeout(() => this.loadRequest(), 500);
     });
     this.boardState.skinRival.set(1);
     this.userRepo.getOwnAccount().subscribe(profile => {

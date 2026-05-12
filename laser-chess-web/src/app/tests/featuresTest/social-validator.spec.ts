@@ -66,6 +66,7 @@ describe('Social Validator', () => {
         piece_skin: 0,
       })),
       getXpInfo: vi.fn().mockReturnValue(of({ xp: 50, required_xp: 100 })),
+      getXpInfoFriend: vi.fn().mockReturnValue(of({ xp: 50, required_xp: 100 })), 
       getUsername: vi.fn().mockReturnValue('testUser'),
       getId: vi.fn().mockReturnValue('123'),
       getAccount: vi.fn().mockReturnValue(of({ username: 'rival', userId: 1, level: 1, avatar: 0, piece_skin: 0 }))

@@ -35,8 +35,8 @@ export class HistoryService {
   popUpMensaje = signal('');  
 
   
-  nombreRival = signal<string>('');
   miNombre = signal<string>('');
+
   
   miTiempo = signal<number>(0);
   tiempoRival = signal<number>(0);
@@ -53,7 +53,6 @@ export class HistoryService {
   capturas: PiezaData[] = [];
 
   miAvatar = signal(1);
-  rivalAvatar = signal(1);
 
   turnoVisual = signal(true);
 
@@ -107,29 +106,28 @@ export class HistoryService {
   
   iniciarJugadores(){
     const   id = this.userRepo.getId();
-    if(this.historySelectedGame()?.p1_id == id){
-     
-      this.soyAzul.set(false);
-      this.esMiTurno.set(true);
-      const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p2_id);
-      rivalProfile$.subscribe(profile => {
-        this.nombreRival.set(profile.username);
-        this.rivalAvatar.set(profile.avatar - 9);
-        this.boardState.skinRival.set(profile.piece_skin);
+    var oponente = this.historySelectedGame()?.p1_id;
+    if(id === this.historySelectedGame()?.p1_id){
+      oponente = this.historySelectedGame()?.p2_id;
+    }
+    if(oponente === 1){
+      this.userRepo.getOwnAccount().subscribe(profile => {
+        this.boardState.skinUsario.set(profile.piece_skin);
       });
+
     }else{
-     
-      this.soyAzul.set(true);
-      this.esMiTurno.set(false);
-      const rivalProfile$ = this.userRepo.getAccount(this.historySelectedGame()?.p1_id);
+      const rivalProfile$ = this.userRepo.getAccount(oponente);
       rivalProfile$.subscribe(profile => {
-        this.nombreRival.set(profile.username);
-        this.rivalAvatar.set(profile.avatar - 9);
         this.boardState.skinRival.set(profile.piece_skin);
+        this.perfilRival.set(profile); 
       });
     }
 
-    
+    const soyP1 = id === this.historySelectedGame()?.p1_id;
+    this.soyAzul.set(!soyP1);
+    this.esMiTurno.set(soyP1);
+
+     
 
     this.miTiempo.set(this.historySelectedGame()?.time_base || 0);
     this.tiempoRival.set(this.historySelectedGame()?.time_base || 0);

@@ -106,16 +106,16 @@ export class GameLogicService {
 
         
           switch(msg.Content){
-            case 'Public':
+            case 'PUBLIC':
               saved = 'public';
               break;
             case 'BOTS':
               saved = 'ia';
               break;
-            case 'Private':
+            case 'PRIVATE':
               saved = 'private';
               break;
-            case 'Raked':
+            case 'RANKED':
               saved = 'ranked';
               break;
             default:

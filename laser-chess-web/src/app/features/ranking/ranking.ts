@@ -16,6 +16,7 @@ import { Popup } from '../../shared/popups/popup';
 import { ChallengeFlow } from '../../shared/challenge-flow/challenge-flow';
 import { ChallengeFlowService } from '../../services/challenge-flow';
 import { UserRespository } from '../../repository/user-respository';
+import { XpInfo } from '../../repository/user-respository';
 
 @Component({
   selector: 'app-ranking',
@@ -54,6 +55,10 @@ export class Ranking implements OnInit {
   public selectedUserEloRapid    = signal(0);
   public selectedUserEloClassic  = signal(0);
   public selectedUserEloExtended = signal(0);
+
+  public selectedUserXpPercentage = signal(0);
+  public selectedUserXpRequired  = signal(0);
+  public selectedUserXpCurrent  = signal(0);
 
   // Relaciones (para determinar contexto en el popup)
   public friends      = signal<FriendSummary[]>([]);
@@ -133,6 +138,19 @@ export class Ranking implements OnInit {
         this.selectedUserEloExtended.set(0);
       }
     });
+
+    this.userRepo.getXpInfoFriend(player.userId).subscribe({
+              next: (data: XpInfo) => {
+                if (data.required_xp > 0) {
+                  const percentage = (data.xp / data.required_xp) * 100;
+                  this.selectedUserXpPercentage.set(percentage);
+                  this.selectedUserXpCurrent.set(data.xp);
+                  this.selectedUserXpRequired.set(data.required_xp);
+                  
+                }
+              },
+              error: (err) => console.error('Error cargando XP', err)
+            });
 
     if (isSelf) {
       this.selectedUserContext.set('self');

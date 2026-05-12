@@ -97,6 +97,7 @@ describe('Ranking', () => {
         piece_skin: 0,
             })),
             getXpInfo: vi.fn().mockReturnValue(of({ xp: 50, required_xp: 100 })),
+            getXpInfoFriend: vi.fn().mockReturnValue(of({ xp: 50, required_xp: 100 })), 
             getAccount: vi.fn().mockReturnValue(of({
               userId: 1,
               username: 'test',

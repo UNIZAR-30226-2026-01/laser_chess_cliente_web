@@ -180,6 +180,10 @@ export class Remote {
     return this.http.get<XpInfo>(`${API_URL}/api/account/xp`, { observe: 'body' });
   }
 
+  getXpInfoFriend(userId: number): Observable<XpInfo> {
+    return this.http.get<XpInfo>(`${API_URL}/api/account/xp/${userId}`, { observe: 'body' });
+  }
+
   // Solicitud a la API para obtener listado de amigos
   getFriends() : Observable<FriendSummary[]>{
     return this.http.get<FriendSummary[]>(`${API_URL}/api/friendship`, {

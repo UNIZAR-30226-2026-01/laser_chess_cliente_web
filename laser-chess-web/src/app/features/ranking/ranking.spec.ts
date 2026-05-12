@@ -76,7 +76,10 @@ describe('Ranking', () => {
         piece_skin: 0,
       }),
       getId: () => '1',
-      getUsername: () => 'test'
+      getUsername: () => 'test',
+      getXpInfoFriend: vi.fn().mockReturnValue(
+        of({ xp: 100, required_xp: 200 })
+      ),
     };
 
     const gameStateMock = {
