@@ -268,3 +268,9 @@
     height: 60px;
   }
 }
+
+.coin-icon {
+  color: var(--LCYellow);
+  font-size: 1.2rem;
+  vertical-align: middle;
+}

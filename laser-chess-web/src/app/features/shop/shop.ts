@@ -5,7 +5,7 @@ import { Remote } from '../../model/remote/remote';
 import { AccountResponse } from '../../model/auth/AccountResponse';
 import { BoardState } from '../../utils/board-state';
 import { TopRow } from '../../shared/top-row/top-row';
-
+import { MatIconModule } from '@angular/material/icon';
 
 interface ShopSection {
   type: string;
@@ -16,7 +16,7 @@ interface ShopSection {
 
 @Component({
   selector: 'app-shop',
-  imports: [CommonModule, TopRow],
+  imports: [CommonModule, TopRow, MatIconModule],
   templateUrl: './shop.html',
   styleUrls: ['./shop.css']
 })
@@ -74,8 +74,8 @@ export class Shop implements OnInit {
 
   getSectionTitle(type: string): string {
     switch (type) {
-      case 'win_animation': return 'Wins';
-      case 'board_skin': return 'Tableros';
+      case 'win_animation': return 'Animación';
+      case 'board_skin': return 'Tablero';
       case 'piece_skin': return 'Piezas';
       case 'avatar': return 'Avatares';
       default: return 'Otros';

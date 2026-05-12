@@ -50,7 +50,7 @@
                           class="price buy-price"
                           (click)="buyItem(item)"
                           [disabled]="!canBuy(item)">
-                          {{ item.price }} 🪙
+                          {{ item.price }} <mat-icon fontSet="material-symbols-outlined" class="coin-icon">paid</mat-icon>
                         </button>
                       } @else {
                         <div class="price owned-badge">
