@@ -144,6 +144,13 @@
               <div class="user-main-data">
                 <div class="user-popup-name">{{ userInfoUser.username }}</div>
                 <div class="user-popup-level">Nivel {{ userInfoUser.level }}</div>
+                <div class="popup-xp-detail">
+                  {{ userInfoXpCurrent }} / {{ userInfoXpRequired }} <span>XP</span>
+                </div>
+
+                <div class="popup-xp-container">
+                  <div class="popup-xp-bar" [style.width.%]="userInfoXpPercentage"></div>
+                </div>
               </div>
 
               <div class="user-actions-popup">
@@ -177,24 +184,46 @@
                 <h3>ELO</h3>
 
                 <div class="detail-row">
+                  
                   <span class="detail-label">Blitz:</span>
-                  <span class="detail-value">{{ userInfoEloBlitz }}</span>
+                  <span class="detail-value">
+                    {{ userInfoEloBlitz }}
+                    <img [src]="getRankIconFromElo(userInfoEloBlitz)"
+                        [alt]="getRankNameFromElo(userInfoEloBlitz)"
+                        class="elo-rank-icon-small">
+                  </span>
                 </div>
 
                 <div class="detail-row">
                   <span class="detail-label">Rapid:</span>
-                  <span class="detail-value">{{ userInfoEloRapid }}</span>
+                  <span class="detail-value">
+                    {{ userInfoEloRapid }}
+                    <img [src]="getRankIconFromElo(userInfoEloRapid)"
+                        [alt]="getRankNameFromElo(userInfoEloRapid)"
+                        class="elo-rank-icon-small">
+                  </span>
                 </div>
 
                 <div class="detail-row">
                   <span class="detail-label">Classic:</span>
-                  <span class="detail-value">{{ userInfoEloClassic }}</span>
+                  <span class="detail-value">
+                    {{ userInfoEloClassic }}
+                    <img [src]="getRankIconFromElo(userInfoEloClassic)"
+                        [alt]="getRankNameFromElo(userInfoEloClassic)"
+                        class="elo-rank-icon-small">
+                  </span>
                 </div>
 
                 <div class="detail-row">
                   <span class="detail-label">Extended:</span>
-                  <span class="detail-value">{{ userInfoEloExtended }}</span>
+                  <span class="detail-value">
+                    {{ userInfoEloExtended }}
+                    <img [src]="getRankIconFromElo(userInfoEloExtended)"
+                        [alt]="getRankNameFromElo(userInfoEloExtended)"
+                        class="elo-rank-icon-small">
+                  </span>
                 </div>
+
               </div>
 
               <div class="info-section equipment-section">

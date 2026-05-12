@@ -172,7 +172,19 @@ export class History {
         this.historyState.perfilRivalSummary().board_skin = profile.board_skin;
         this.historyState.perfilRivalSummary().piece_skin = profile.piece_skin;
         this.historyState.perfilRivalSummary().win_animation = profile.win_animation;
-        this.selectedUser.set(userSummary);
+        this.userRepo.getAccount(player.userId).subscribe(profile => {
+          this.selectedUser.set({
+            ...userSummary,
+            level: profile.level,
+            xp: profile.xp,
+            avatar: profile.avatar,
+            board_skin: profile.board_skin,
+            piece_skin: profile.piece_skin,
+            win_animation: profile.win_animation,
+          });
+
+          this.popUP_userInfo.set(true);
+        });
         this.popUP_userInfo.set(true);
       });
     }

@@ -42,6 +42,9 @@ export class Popup {
   @Input() userInfoEloRapid = 0;
   @Input() userInfoEloClassic = 0;
   @Input() userInfoEloExtended = 0;
+  @Input() userInfoXpCurrent = 0;
+  @Input() userInfoXpRequired = 100;
+  @Input() userInfoXpPercentage = 0;
   @Output() userInfoClose = new EventEmitter<void>();
   @Output() userInfoChallenge = new EventEmitter<void>();
   @Output() userInfoDeleteFriend = new EventEmitter<void>();
@@ -164,6 +167,41 @@ export class Popup {
   goToCustomize(): void {
     this.userInfoClose.emit();
     this.router.navigate(['/customize']);
+  }
+
+  private rankTable = [
+    { min: 0,    max: 999,  name: 'Fotón I', icon: 'foton.svg' },
+    { min: 1000, max: 1049, name: 'Fotón II', icon: 'foton.svg' },
+    { min: 1050, max: 1099, name: 'Quark I', icon: 'quark.svg' },
+    { min: 1100, max: 1149, name: 'Quark II', icon: 'quark.svg' },
+    { min: 1150, max: 1199, name: 'Quark III', icon: 'quark.svg' },
+    { min: 1200, max: 1249, name: 'Electron I', icon: 'electron.svg' },
+    { min: 1250, max: 1299, name: 'Electron II', icon: 'electron.svg' },
+    { min: 1300, max: 1349, name: 'Electron III', icon: 'electron.svg' },
+    { min: 1350, max: 1399, name: 'Electron IV', icon: 'electron.svg' },
+    { min: 1400, max: 1449, name: 'Protón I', icon: 'proton.svg' },
+    { min: 1450, max: 1499, name: 'Protón II', icon: 'proton.svg' },
+    { min: 1500, max: 1549, name: 'Protón III', icon: 'proton.svg' },
+    { min: 1550, max: 1599, name: 'Protón IV', icon: 'proton.svg' },
+    { min: 1600, max: 1649, name: 'Neutrón I', icon: 'neutron.svg' },
+    { min: 1650, max: 1699, name: 'Neutrón II', icon: 'neutron.svg' },
+    { min: 1700, max: 1749, name: 'Neutrón III', icon: 'neutron.svg' },
+    { min: 1750, max: 1799, name: 'Neutrón IV', icon: 'neutron.svg' },
+    { min: 1800, max: 1849, name: 'Átomo I', icon: 'atom.svg' },
+    { min: 1850, max: 1899, name: 'Átomo II', icon: 'atom.svg' },
+    { min: 1900, max: 1949, name: 'Átomo III', icon: 'atom.svg' },
+    { min: 1950, max: 1999, name: 'Átomo IV', icon: 'atom.svg' },
+    { min: 2000, max: Infinity, name: 'Átomo V', icon: 'atom.svg' },
+  ];
+
+  getRankIconFromElo(elo: number): string {
+    const rank = this.rankTable.find(r => elo >= r.min && elo <= r.max) ?? this.rankTable[0];
+    return `assets/vector-art/Ranks/${rank.icon}`;
+  }
+
+  getRankNameFromElo(elo: number): string {
+    const rank = this.rankTable.find(r => elo >= r.min && elo <= r.max) ?? this.rankTable[0];
+    return rank.name;
   }
 
 }

@@ -184,6 +184,8 @@ export class Social implements OnInit, OnDestroy {
         if (!account) return;
         this.selectedUser.set({
           ...user,
+          level: account.level,
+          xp: account.xp,
           avatar: account.avatar,
           board_skin: account.board_skin,
           piece_skin: account.piece_skin,

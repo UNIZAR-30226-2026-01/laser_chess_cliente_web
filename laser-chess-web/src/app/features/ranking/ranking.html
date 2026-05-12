@@ -98,6 +98,9 @@
   <app-popup
     [type]="popUP_userInfo() ? 'userInfo' : 'none'"
     [userInfoUser]="selectedUser()"
+    [userInfoXpCurrent]="selectedUserXpCurrent()"
+    [userInfoXpRequired]="selectedUserXpRequired()"
+    [userInfoXpPercentage]="selectedUserXpPercentage()"
     [userInfoContext]="selectedUserContext()"
     [userInfoEloBlitz]="selectedUserEloBlitz()"
     [userInfoEloRapid]="selectedUserEloRapid()"

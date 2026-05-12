@@ -48,5 +48,8 @@
   [userInfoEloRapid]="(userProfile$ | async)?.rapidElo ?? 0"
   [userInfoEloClassic]="(userProfile$ | async)?.classicElo ?? 0"
   [userInfoEloExtended]="(userProfile$ | async)?.extendedElo ?? 0"
+  [userInfoXpCurrent]="xpInfoDetail().current"
+  [userInfoXpRequired]="xpInfoDetail().required"
+  [userInfoXpPercentage]="xpPercentage()"
   (userInfoClose)="closeProfile()">
 </app-popup>
