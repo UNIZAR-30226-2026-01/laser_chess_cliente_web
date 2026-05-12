@@ -254,3 +254,35 @@ width: 100%;
     font-size: 1.3rem;
   }
 }
+
+.avatar-cell {
+  width: 50px;
+  text-align: center;
+}
+
+.ranking-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--S3);
+  background: var(--S2);
+}
+
+.ranking-avatar-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--S2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--S3);
+}
+
+.ranking-avatar-placeholder mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--LCGray);
+}

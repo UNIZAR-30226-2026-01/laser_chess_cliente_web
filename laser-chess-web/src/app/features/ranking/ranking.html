@@ -41,6 +41,7 @@
               <thead>
                 <tr>
                   <th>Posición</th>
+                  <th>Avatar</th>
                   <th>Jugador</th>
                   <th>ELO</th>
                 </tr>
@@ -57,6 +58,13 @@
                         {{ i + 1 }}
                       </div>
                     </td>
+
+                    <td class="avatar-cell">
+                      <img [src]="'assets/vector-art/ProfilePictures/bot' + (player.avatar - 9) + '.svg'"
+                          alt="Avatar"
+                          class="ranking-avatar">
+                    </td>
+
                     <td class="username">{{ player.username }}</td>
                     <td class="elo">
                       <div class="elo-content">
@@ -70,6 +78,13 @@
                 @if (userInfo() && userInfo()!.position > topPlayers().length) {
                   <tr class="sticky-user-row">
                     <td class="rank">{{ userInfo()!.position }}</td>
+                    
+                    <td class="avatar-cell">
+                      <img [src]="'assets/vector-art/ProfilePictures/bot' + boardState.avatarUsuario() + '.svg'"
+                          alt="Tu avatar"
+                          class="ranking-avatar">
+                    </td>
+                    
                     <td class="username">Tú</td>
                     <td class="elo">
                       <div class="elo-content">

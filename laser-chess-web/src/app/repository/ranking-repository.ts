@@ -7,6 +7,7 @@ export interface RankingPlayer {
   userId: number;
   username: string;
   elo: number;
+  avatar: number;
 }
 
 export interface UserRankingInfo {
@@ -41,6 +42,7 @@ export class RankingRepository {
         userId: item.user_id ?? item.userId,
         username: item.username,
         elo: item.value ?? item.elo_rating ?? item.elo ?? item.rating ?? item.blitz ?? item.rapid ?? item.classic ?? item.extended,
+        avatar: item.avatar ?? 0
       }));
       })
     );
