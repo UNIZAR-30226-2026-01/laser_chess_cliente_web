@@ -38,6 +38,10 @@ export class TopRow implements OnInit {
   ngOnInit() {
     this.loadMyData();
     this.loadXpData();
+    this.boardState.refreshUser$.subscribe(() => {
+      this.loadMyData(); 
+      this.loadXpData();   
+    });
   }
 
   loadMyData() {

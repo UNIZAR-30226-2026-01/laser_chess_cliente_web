@@ -1,6 +1,7 @@
 import { Injectable, signal, inject, effect } from '@angular/core';
 import { PiezaData } from '../model/game/PiezaData';
 import { GameUtils } from '../utils/game-utils';
+import { Subject } from 'rxjs';
 import {
   TABLERO_ACE,
   TABLERO_CURIOSITY,
@@ -144,5 +145,12 @@ export class BoardState {
     if (url_loose) {
       this.looseAnimationUrl.set(url_loose);
     }
+  }
+
+  private refreshUserSubject = new Subject<void>();
+  public refreshUser$ = this.refreshUserSubject.asObservable();
+
+  public refreshUser(): void {
+    this.refreshUserSubject.next();
   }
 }

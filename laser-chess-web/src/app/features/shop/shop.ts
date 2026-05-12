@@ -108,6 +108,7 @@ export class Shop implements OnInit {
       next: () => {
         console.log(`Compra exitosa: ${item.name}`);
         // recargar
+        this.boardState.refreshUser();
         this.loadUserData();
       },
       error: (err) => {
