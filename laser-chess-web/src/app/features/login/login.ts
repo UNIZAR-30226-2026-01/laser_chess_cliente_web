@@ -56,6 +56,7 @@ export class Login implements OnInit {
     }
 
     const lastCredential = localStorage.getItem('lastCredential');
+    localStorage.removeItem('lastCredential');
 
     // Configuación del formulario de login con validaciones
     this.loginForm = new FormGroup({
