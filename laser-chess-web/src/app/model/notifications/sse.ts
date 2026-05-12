@@ -1,6 +1,7 @@
-import { Injectable, NgZone, OnDestroy } from '@angular/core';
+import { Injectable, NgZone, OnDestroy, inject} from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { API_URL} from '../../constants/app.const';
+import { Remote } from '../remote/remote'
 
 export interface SseMessage {
   eventType: string;   // 'Init', 'Notification', 'GameUpdate', etc.

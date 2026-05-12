@@ -19,7 +19,7 @@
           <div class="col-popup">
             <h3>Envíale el siguiente enlace:</h3>
             <div class="link-container">
-              <span class="link">{{ `https://laserchess.elcangrejo.es/AñadirNuevoAmigo/${this.userRepo.getUsername() || ''}` }}</span>
+              <span class="link">{{ `https://laserchess.elcangrejo.es/add-friend/${this.userRepo.getUsername() || ''}` }}</span>
               <button class="copy-button" [class.copiado]="copied()" (click)="copyLink()">
                 {{ copied() ? 'COPIADO' : 'COPIAR' }}
               </button>

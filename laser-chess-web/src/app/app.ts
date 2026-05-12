@@ -3,6 +3,9 @@ import { Router, RouterOutlet } from '@angular/router';
 import { Websocket } from './model/remote/websocket';
 import { NotificationService } from './model/notifications/notification';
 import { Remote } from './model/remote/remote';
+import { NavigationEnd } from '@angular/router';
+import { filter, take } from 'rxjs/operators';
+import { API_URL } from './constants/app.const';
 
 @Component({
   selector: 'app-root',
@@ -30,18 +33,31 @@ export class App {
   }
 
   ngOnInit() {
-    const token = this.remote.getAccessToken();
+  const token = this.remote.getAccessToken();
+  console.log('APP ngOnInit - pathname:', window.location.pathname);
+  console.log('APP ngOnInit - token válido:', token && !this.remote.isTokenExpired(token));
 
-    if (token && !this.remote.isTokenExpired(token)) {
-      this.ws.checkAndReconnect();
-      this.notificationService.initIfLoggedIn();
+  if (token && !this.remote.isTokenExpired(token)) {
+    this.ws.checkAndReconnect();
+    this.notificationService.initIfLoggedIn();
+    this.remote.markOnline().subscribe(); 
 
-      const currentPath = window.location.pathname;
-      const isAddFriendRoute = currentPath.startsWith('/AñadirNuevoAmigo/');
+    window.addEventListener('beforeunload', () => {
+      navigator.sendBeacon(`${API_URL}/api/events/offline`);
+    });
 
-      if (!isAddFriendRoute) {
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      take(1)
+    ).subscribe((e: NavigationEnd) => {
+      console.log('APP NavigationEnd - url:', e.url);
+      console.log('APP NavigationEnd - urlAfterRedirects:', e.urlAfterRedirects);
+      console.log('APP - ¿navega a home?', !e.urlAfterRedirects.includes('/add-friend/'));
+      
+      if (!e.urlAfterRedirects.includes('/add-friend/')) {
         this.router.navigate(['/home']);
       }
-    }
+    });
   }
+}
 }

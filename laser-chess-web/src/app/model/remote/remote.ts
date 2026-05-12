@@ -127,6 +127,7 @@ export class Remote {
   getAccount(id_account: number){
     return this.http.get<AccountResponse>(`${API_URL}/api/account/${id_account}`, { observe: 'response' }).pipe(
       catchError((err: Error) => {
+        this.logout()
         throw new Error('Error during getting info from de account with id_account');
       })
     );
@@ -135,6 +136,7 @@ export class Remote {
   getOwnAccount() {
       return this.http.get<AccountResponse>(`${API_URL}/api/account/`).pipe(
         catchError((err: Error) => {
+          this.logout();
           throw new Error('Error during getting own account info');
         })
       );
@@ -217,7 +219,9 @@ export class Remote {
     //headers: {Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
+        this.logout();
         throw new Error('Error during adding friend' + err);
+        
       })
     );
   }
@@ -546,6 +550,7 @@ export class Remote {
     this.accessToken = "";
     this.accountId = null;
     this.isAuthenticated$.next(false);
+    this.markOffline().subscribe();
 
     this.router.navigate(['']);
   }
@@ -576,5 +581,23 @@ export class Remote {
   getWsTicket(): Observable<{ ticket: string }> {
       return this.http.get<{ ticket: string }>(`${API_URL}/api/rt/ticket`);
   }
+
+  markOnline(): Observable<void> {
+  return this.http.post<void>(`${API_URL}/api/events/online`, {}).pipe(
+    catchError((err) => {
+      console.error('Error marking online', err);
+      return of(undefined);
+    })
+  );
+}
+
+markOffline(): Observable<void> {
+  return this.http.post<void>(`${API_URL}/api/events/offline`, {}).pipe(
+    catchError((err) => {
+      console.error('Error marking offline', err);
+      return of(undefined);
+    })
+  );
+}
 
 }

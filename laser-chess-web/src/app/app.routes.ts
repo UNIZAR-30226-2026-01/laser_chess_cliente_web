@@ -22,7 +22,7 @@ import { HistoryHall } from './features/history-hall/history-hall';
 export const routes: Routes = [
 
   // Pantalla inicial
-  { path: '', component: Login },
+  { path: '', component: Login, pathMatch: 'full' },
 
   // Rutas públicas
   { path: 'signin', component: Signin },
@@ -42,7 +42,7 @@ export const routes: Routes = [
       { path: 'social', component: Social },
       { path: 'ranking', component: Ranking },
       { path: 'history-hall', component: HistoryHall },
-      { path: 'AñadirNuevoAmigo/:username', component: Social }
+      { path: 'add-friend/:username', component: Social }
     ]
   },
   { path: 'game', component: Game ,canDeactivate: [BlockReturn],

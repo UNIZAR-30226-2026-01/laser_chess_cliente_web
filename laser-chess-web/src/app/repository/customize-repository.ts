@@ -13,6 +13,8 @@ export interface CustomizeItemDisplay {
   isEquipped: boolean;
 }
 
+
+
 @Injectable({ providedIn: 'root' })
 export class CustomizeRepository {
     private remote = inject(Remote);
@@ -77,6 +79,20 @@ export class CustomizeRepository {
     let name = '';
     let icon = '';
     const type = dto.item_type?.toLowerCase() || '';
+    const nombre: Record<number, string> = {
+      1: 'grace',
+      2: 'mimi',
+      3: 'bob',
+      4: 'malamar',
+      5: 'sónar',
+      6: 'bibble',
+      7: 'euridice',
+      8: 'davíh',
+      9: 'mia',
+      10: 'polix',
+      11: 'mudkip',
+      12: 'carolai'
+    };
 
     switch (type) {
 
@@ -134,7 +150,7 @@ export class CustomizeRepository {
 
       case 'avatar':                 
         const botNumber = dto.item_id - 9; 
-        name = `Avatar ${botNumber}`;  
+        name = nombre[botNumber];  
         icon = `assets/vector-art/ProfilePictures/bot${botNumber}.svg`;
         break;
 

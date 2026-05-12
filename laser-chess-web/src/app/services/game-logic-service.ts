@@ -97,11 +97,11 @@ export class GameLogicService {
 
     if (msg.Type === "MatchStart"){
       console.log("Tu oponenete es " + Number(msg.Content));
-      if(Number(msg.Content) != 1){ // Excluimos el caso de la IA
-        this.challengeManager.setupOponent(Number(msg.Content), null);
-        localStorage.setItem('idOponente', msg.Content);
-        this.challengeManager.setUpUser();
-      }
+      this.challengeManager.setupOponent(Number(msg.Content), null);
+      localStorage.removeItem('idOponente');
+      localStorage.setItem('idOponente', msg.Content);
+      this.challengeManager.setUpUser();
+      
     } else if (msg.Type === "MatchType"){
       var saved = localStorage.getItem('gameState');
         this.challengeManager.setUpUser();

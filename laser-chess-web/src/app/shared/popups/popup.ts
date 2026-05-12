@@ -94,7 +94,7 @@ export class Popup {
 
   copied = signal(false);
   copyLink() {
-    const link = `https://laserchess.elcangrejo.es/AñadirNuevoAmigo/${this.userRepo.getUsername() || ''}`;
+    const link = `https://laserchess.elcangrejo.es/add-friend/${this.userRepo.getUsername() || ''}`;
     navigator.clipboard.writeText(link);
     this.copied.set(true);
     setTimeout(() => this.copied.set(false), 2000);

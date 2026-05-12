@@ -84,6 +84,7 @@ export class ChallengeManager {
     console.log('mi id es : ' +  this.userRepo.getId())
     var endpoint = '';
     var params_ini;
+    console.log(tipoPartida);
     switch(tipoPartida){
       case 'ranked':
         endpoint = 'matchmaking'
@@ -102,7 +103,7 @@ export class ChallengeManager {
             board,
             level: iaLevel 
           };
-          oponente = "IA";
+          oponente = 'Hopper';
         break;
       case 'public':
         endpoint = 'matchmaking'
@@ -151,17 +152,14 @@ export class ChallengeManager {
 
     this.setUpUser();
 
-    if(oponente === "IA"){
-      const rivalProfile$ = this.userRepo.getOwnAccount();
-        rivalProfile$.subscribe(profile => {
-          this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot1.svg');
-          this.boardState.skinRival.set(profile.piece_skin || 1);
-          this.gameState.nombreRival.set('IA');
-          setTimeout(() => {
-            this.webSocket.initConnection(endpoint, params);
-          });
+    if(tipoPartida === 'ia'){
+      this.setupOponent(1, null);
+      this.setUpUser();
+      setTimeout(() => {
+        this.webSocket.initConnection(endpoint, params);
+      });
           
-        });
+        
     }
     else if(username){
       this.gameState.nombreRival.set(username);
@@ -203,11 +201,20 @@ export class ChallengeManager {
       return;
     }
 
-    this.userRepo.getAccount(rivalId).subscribe(profile => {
-      this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot' + (profile.avatar -9) +'.svg' || 'assets/vector-art/ProfilePictures/bot1.svg');
-      this.boardState.skinRival.set(profile.piece_skin || 1);
-      this.gameState.nombreRival.set(profile.username);
-    });
+    if(rivalId === 1){
+      this.userRepo.getOwnAccount().subscribe(profile => {
+        this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot1.svg');
+        this.boardState.skinRival.set(profile.piece_skin || 1);
+        this.gameState.nombreRival.set("Hopper");
+      });
+    }else{
+
+      this.userRepo.getAccount(rivalId).subscribe(profile => {
+        this.gameState.avatarRival.set('assets/vector-art/ProfilePictures/bot' + (profile.avatar -9) +'.svg' || 'assets/vector-art/ProfilePictures/bot1.svg');
+        this.boardState.skinRival.set(profile.piece_skin || 1);
+        this.gameState.nombreRival.set(profile.username);
+      });
+    }
 
     
   }

@@ -17,6 +17,7 @@ import { FriendshipRequest } from '../../model/social/FriendshipRequest';
 import { AllRatingsDTO } from '../../model/rating/AllRatingsDTO';
 import { Remote } from '../../model/remote/remote';
 import { MyProfile } from '../../model/user/MyProfile';
+import { UserRespository } from '../../repository/user-respository';
 
 
 
@@ -56,8 +57,9 @@ export class History {
 
 
     private friendRepo  = inject(FriendRespository);
+    private userRepo = inject(UserRespository)
     private remote      = inject(Remote);
-    flow                = inject(ChallengeFlowService);  // ← toda la lógica del reto vive aquí
+    flow                = inject(ChallengeFlowService);  
   
     // Ranking
     public loading         = signal(true);
@@ -130,10 +132,11 @@ export class History {
   
   
     openUserInfo(player: MyProfile): void {
+      if(player.userId === 1){ return; };
       const currentUserId = this.remote.getAccountId();
       const isSelf        = currentUserId === player.userId;
   
-      const userSummary: FriendSummaryExtended = {
+      var userSummary: FriendSummaryExtended = {
         username:   player.username,
         account_id: player.userId,
         level:      0,
@@ -165,8 +168,13 @@ export class History {
         this.selectedUserContext.set('none');
       }
   
-      this.selectedUser.set(userSummary);
-      this.popUP_userInfo.set(true);
+      this.userRepo.getAccount(player.userId).subscribe(profile => {
+        this.historyState.perfilRivalSummary().board_skin = profile.board_skin;
+        this.historyState.perfilRivalSummary().piece_skin = profile.piece_skin;
+        this.historyState.perfilRivalSummary().win_animation = profile.win_animation;
+        this.selectedUser.set(userSummary);
+        this.popUP_userInfo.set(true);
+      });
     }
   
     closeUserInfo(): void {
