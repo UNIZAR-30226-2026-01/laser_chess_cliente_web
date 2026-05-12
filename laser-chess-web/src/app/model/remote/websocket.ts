@@ -50,40 +50,40 @@ export class Websocket {
 
     var searchParams = new URLSearchParams(params);
     
-     this.remote.getWsTicket().subscribe(({ ticket }) => {
+     this.remote.getWsTicket().subscribe({
+      next: ({ ticket }) => {
         searchParams.append('ticket', ticket);
         const url = `${API_URL_WS}/api/rt/${endpoint}?${searchParams.toString()}`;
-    console.log('Conectando WS a:', url);
+        console.log('Conectando WS a:', url);
+        this.socket$ = webSocket({
+          url: url,
+          deserializer: msg => JSON.parse(msg.data),
+          openObserver: { next: () => console.log('WS conectado') },
+          closeObserver: { next: () => {
+            
+            this.connectionClosed$.next();
+            }
+          }
+        });
 
-
-    
-     
-    
-
-    this.socket$ = webSocket({
-      url: url,
-      deserializer: msg => JSON.parse(msg.data),
-      openObserver: { next: () => console.log('WS conectado') },
-      closeObserver: { next: () => {
-        
-        this.connectionClosed$.next();
-        }
-       }
-    });
-
-    this.socket$.subscribe({
-      next: msg => this.handleMessage(msg),   
-      error: err => {
-        if (err?.code === 1006) return; // cierre normal en muchos backends
-        console.error('Error WS:', err);
-        this.socket$ = undefined;
+        this.socket$.subscribe({
+          next: msg => this.handleMessage(msg),   
+          error: err => {
+            if (err?.code === 1006) return; // cierre normal en muchos backends
+            console.error('Error WS:', err);
+            this.socket$ = undefined;
+          },
+          complete: () => {
+            console.log('WS COMPLETADO');
+            this.socket$ = undefined;
+          }
+        });
       },
-      complete: () => {
-        console.log('WS COMPLETADO');
-        this.socket$ = undefined;
+      error: (err) => {
+        console.error('No se pudo obtener ticket WS:', err);
+        this.remote.logout();
       }
-    });
-    });
+  });
 
     
   }
@@ -152,47 +152,46 @@ export class Websocket {
   }
 
 checkAndReconnect() {
-  this.remote.getWsTicket().subscribe(({ ticket }) => {
-     
-  // Usamos la URL que confirmaste
-  const url = `${API_URL_WS}/api/rt/reconnect?ticket=${ticket}`; 
+  this.remote.getWsTicket().subscribe({
+    next: ({ ticket }) => {
+      const url = `${API_URL_WS}/api/rt/reconnect?ticket=${ticket}`;
 
-  this.socket$ = webSocket({
-    url: url,
-    openObserver: {
-      next: () => {
-        console.log('¡Conexión establecida! Hay partida activa.');
+      this.socket$ = webSocket({
+        url: url,
+        openObserver: {
+          next: () => {
+            console.log('¡Conexión establecida! Hay partida activa.');
+            this.wakeGameSubject.next();
+            this.router.navigate(['/game']);
+          }
+        },
+        closeObserver: {
+          next: (e) => {
+            console.log('WS cerrado', e);
+            this.connectionClosed$.next();
+          }
+        }
+      });
 
-        this.wakeGameSubject.next();
-        this.router.navigate(['/game']);
-      }
+      this.socket$.subscribe({
+        next: msg => this.handleMessage(msg),
+        error: err => {
+          if (err?.code === 1006) return;
+          console.error('Error WS:', err);
+          this.socket$ = undefined;
+          this.connectionError$.next();
+        },
+        complete: () => {
+          console.log('WS COMPLETADO');
+          this.socket$ = undefined;
+        }
+      });
     },
-    closeObserver: {
-      next: (e) => {
-        console.log('WS cerrado', e);
-        this.connectionClosed$.next();
-      }
+    error: (err) => {
+      console.error('No se pudo obtener ticket WS (reconnect):', err);
+      localStorage.setItem('permitSalida', 'true'); 
+      this.remote.logout();
     }
   });
-
-    this.socket$.subscribe({
-      next: msg => this.handleMessage(msg),   
-      error: err => {
-        if (err?.code === 1006) return; 
-        console.error('Error WS:', err);
-        this.socket$ = undefined;
-        this.connectionError$.next();
-      },
-      complete: () => {
-        console.log('WS COMPLETADO');
-        this.socket$ = undefined;
-      }
-    });
-  });
-  
-
-  
-
-  
 }
 }

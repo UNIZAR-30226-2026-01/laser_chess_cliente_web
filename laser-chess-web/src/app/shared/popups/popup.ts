@@ -22,7 +22,7 @@ export class Popup {
   private router = inject(Router);
 
   // popup newFriend
-  @Input() newFriendError = false;
+  @Input() newFriendError: string | null = null;
   @Output() newFriendAdd = new EventEmitter<string>();
   @Output() newFriendClose = new EventEmitter<void>();
 

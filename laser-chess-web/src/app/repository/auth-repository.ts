@@ -56,7 +56,9 @@ export class AuthRepository {
             console.log("Los datos son inválidos");
             return of(ResponseStatus.INVALID_DATA);
           }else{
+            this.remoteService.logout();
             return of(ResponseStatus.ERR_CONNECTION);
+
           }
         })
       );
@@ -66,7 +68,9 @@ export class AuthRepository {
   register(request: RegisterRequest): Observable<ResponseStatus> {
     return this.remoteService.register(request).pipe(
       map((httpResponse) => {
-        if(httpResponse === null){ return ResponseStatus.ERR_CONNECTION;}
+        if(httpResponse === null){ 
+          this.remoteService.logout();
+          return ResponseStatus.ERR_CONNECTION;}
         
         if (httpResponse && httpResponse.body) {
           this.remoteService.setAccountId(httpResponse.body.account_id);
@@ -89,7 +93,7 @@ export class AuthRepository {
           console.log("Los datos son inválidos");
           return of(ResponseStatus.INVALID_DATA);
         }else{
-          console.log("Tas borrachito");
+          this.remoteService.logout();
           return of(ResponseStatus.ERR_CONNECTION);
         }
       })

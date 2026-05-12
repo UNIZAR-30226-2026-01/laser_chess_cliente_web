@@ -31,7 +31,6 @@ export class GameLogicService {
   private waitingForConfirmation= signal(false);
   private router = inject(Router);
   private gameUtils = inject(GameUtils);
-  private notifiService = inject(NotificationService);
   private boardState = inject(BoardState);
   private challengeManager = inject(ChallengeManager);
   private boardActions = inject(BoardAction);
@@ -45,7 +44,6 @@ export class GameLogicService {
   filas = 8;
   
 
-  mostrarAvisoSalida = signal(false);
   initialProcesado = signal(false);
 
 
@@ -106,12 +104,12 @@ export class GameLogicService {
       var saved = localStorage.getItem('gameState');
         this.challengeManager.setUpUser();
 
-        if (!saved) {
+        
           switch(msg.Content){
             case 'Public':
               saved = 'public';
               break;
-            case 'Bot':
+            case 'BOTS':
               saved = 'ia';
               break;
             case 'Private':
@@ -124,10 +122,11 @@ export class GameLogicService {
               saved = '';
               break;
           }
-          this.state.tipoPartida.set(saved);
+        this.state.tipoPartida.set(saved);
           
-          console.log('la partida es: ' + saved);
-        }
+        console.log('la partida es: ' + saved);
+        
+        localStorage.setItem('gameState', saved);
     } else if (msg.Type === "InitialState"){
       if(this.initialProcesado()){ return;}
       this.initialProcesado.set(true);
@@ -373,7 +372,7 @@ export class GameLogicService {
       this.state.finPartida.set({ mostrar: false, mensaje: '' });
 
       this.waitingForConfirmation.set(false);
-      this.state.permitSalida.set(true);
+      localStorage.setItem('permitSalida', 'true'); 
       this.router.navigate(['/home']);
     }
 

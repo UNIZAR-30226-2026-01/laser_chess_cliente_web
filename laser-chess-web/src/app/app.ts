@@ -42,9 +42,7 @@ export class App {
     this.notificationService.initIfLoggedIn();
     this.remote.markOnline().subscribe(); 
 
-    window.addEventListener('beforeunload', () => {
-      navigator.sendBeacon(`${API_URL}/api/events/offline`);
-    });
+  
 
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),

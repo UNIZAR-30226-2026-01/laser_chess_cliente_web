@@ -19,6 +19,8 @@ import { AccountResponse } from '../model/auth/AccountResponse';
  * 
 */
 
+export type AddFriendResult = 'ok' | 'not_found' | 'already_friends' | 'error';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -59,15 +61,13 @@ export class FriendRespository {
   }
 
   // Gestión de proceso de envio de solicitud de amistad
-  addFriend(request: FriendshipRequest ) : Observable<boolean | void> {
+  addFriend(request: FriendshipRequest): Observable<AddFriendResult> {
     return this.remoteService.addFriend(request).pipe(
-      tap(() => {
-        console.log('Solicitud de amistad enviada');
-      }),
-      map(() => true),
+      map(() => 'ok' as AddFriendResult),
       catchError((err: any) => {
-        console.error(err);
-        return of(false);
+        if (err?.status === 404) return of('not_found' as AddFriendResult);
+        if (err?.status === 409) return of('already_friends' as AddFriendResult);
+        return of('error' as AddFriendResult);
       })
     );
   }

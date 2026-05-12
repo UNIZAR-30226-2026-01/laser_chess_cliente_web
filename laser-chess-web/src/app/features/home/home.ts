@@ -330,10 +330,10 @@ export class Home {
   }
 
   reject(reto: ChallengeResume) {
+    
+    this.solicitudes.set(this.solicitudes().filter(s => s.challenger_id !== reto.challenger_id));
     this.challengeManager.reject(reto);
-    this.loadRequest();
 
-    this.popUPNotis.set(false);
 
   }
 

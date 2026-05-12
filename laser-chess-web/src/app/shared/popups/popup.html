@@ -11,7 +11,7 @@
             <h3>Escribe su nombre de usuario</h3>
             <input #usernameInput type="text" class="form-control" placeholder="username" (keyup.enter)="newFriendAdd.emit(usernameInput.value)">
             @if (newFriendError) {
-              <span class="error_message_form">El nombre introducido no existe o no es válido.</span>
+              <span class="error_message_form">{{ newFriendError }}</span>
             }
             <button class="form-button" (click)="newFriendAdd.emit(usernameInput.value)">ENVIAR SOLICITUD</button>
             <h3>O espera a ser aceptad@</h3>
@@ -21,7 +21,7 @@
             <div class="link-container">
               <span class="link">{{ `https://laserchess.elcangrejo.es/add-friend/${this.userRepo.getUsername() || ''}` }}</span>
               <button class="copy-button" [class.copiado]="copied()" (click)="copyLink()">
-                {{ copied() ? 'COPIADO' : 'COPIAR' }}
+                COPIAR
               </button>
             </div>
           </div>
@@ -29,6 +29,10 @@
       </div>
     </div>
   </div>
+
+  <div class="toast-copiado" [class.visible]="copied()">
+  ¡Enlace copiado!
+</div>
 }
 
 <!-- Popup SOLICITUDES DE AMISTAD -->

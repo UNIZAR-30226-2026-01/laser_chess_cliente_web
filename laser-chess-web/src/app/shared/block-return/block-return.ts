@@ -2,7 +2,9 @@ import { CanDeactivateFn } from '@angular/router';
 import { Game } from '../../features/game/game'; // Ajusta la ruta a tu componente
 
 export const BlockReturn: CanDeactivateFn<Game> = (component: Game) => {
-  if (component.permitSalida()) {
+  const permitSalida = localStorage.getItem('permitSalida') === 'true';
+  if (permitSalida) {
+    localStorage.setItem('permitSalida', 'false');
     return true;
   }
 

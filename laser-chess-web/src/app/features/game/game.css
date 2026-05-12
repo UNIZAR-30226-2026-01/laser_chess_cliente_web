@@ -242,6 +242,41 @@
     opacity: 0.8;
 }
 
+.modal-aviso {
+  background: var(--S1);
+  border: 2px solid var(--S3);
+  border-radius: var(--BorderNormal);
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 420px;
+  width: 90vw;
+  text-align: center;
+  animation: popIn 0.2s ease-out forwards;
+}
+
+.modal-aviso-icon {
+  font-size: 2rem;
+}
+
+.modal-aviso-titulo {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--LCWhite);
+}
+
+.modal-aviso-texto {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--LCWhite);
+  opacity: 0.8;
+  line-height: 1.5;
+}
 /* ==========================================================================
    GIF FIN
    ========================================================================== */
@@ -249,7 +284,6 @@
 .gif-fin {
     width: clamp(180px, 25vw, 300px);
     display: block;
-    filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
     margin: 0 auto;
 }
 

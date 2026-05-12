@@ -5,22 +5,20 @@
 <div class="game-screen">
 
   @if (mostrarAvisoSalida()) {
-    <div class="popup-overlay">
-      <div class="popup-content warning">
-        <div class="modal-icon">🚫</div>
-        <h2>Acción Bloqueada</h2>
-        <p>No puedes abandonar la partida mientras está en curso.</p>
-        @if(tipoPartida() === 'private'){
-          <p>Si necesitas salir, solicita <strong>pausar la partida</strong> o termina el juego.</p>
-        }
-        <div class="popup-buttons">
-          <button class="btn-entendido" (click)="mostrarAvisoSalida.set(false)">
-            Entendido, volver al juego
-          </button>
-        </div>
+  <div class="popup-overlay">
+    <div class="modal-aviso" (click)="$event.stopPropagation()">
+      <div class="modal-aviso-icon">🚫</div>
+      <h2 class="modal-aviso-titulo">Acción bloqueada</h2>
+      <p class="modal-aviso-texto">No puedes abandonar la partida mientras está en curso.</p>
+      @if(tipoPartida() === 'private'){
+        <p class="modal-aviso-texto">Si necesitas salir, solicita <strong>pausar la partida</strong> o termina el juego.</p>
+      }
+      <div class="popup-buttons">
+        <button (click)="mostrarAvisoSalida.set(false)">Entendido, volver al juego</button>
       </div>
     </div>
-  }
+  </div>
+}
 
   <!-- TOASTS -->
   <div class="toast-container">

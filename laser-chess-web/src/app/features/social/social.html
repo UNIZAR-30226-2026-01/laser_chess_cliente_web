@@ -75,7 +75,7 @@
             </div>
           </button>
 
-          <button class="add-friend-button" (click)="this.errorAmigoNombreNoValido.set(false);popUP_newFriend.set(true)">
+          <button class="add-friend-button" (click)="this.errorAmigoNombreNoValido.set('');popUP_newFriend.set(true)">
             <mat-icon fontSet="material-symbols-outlined">add_circle</mat-icon>
             <span>Agregar amigo</span>
           </button>
@@ -99,6 +99,10 @@
               </li>
             }
           }
+        </div>
+
+        <div class="toast-nuevo" [class.visible]="nuevoAmigo()">
+          ¡Solicitud enviada!
         </div>
 
       } @else {
@@ -130,5 +134,6 @@
       }
     </div>
   </div>
+  
 
 </div>

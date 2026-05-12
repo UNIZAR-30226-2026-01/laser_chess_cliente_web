@@ -219,8 +219,7 @@ export class Remote {
     //headers: {Authorization: `Bearer ${this.accessToken}`}
     }).pipe(
       catchError((err: Error) => {
-        this.logout();
-        throw new Error('Error during adding friend' + err);
+        throw err;
         
       })
     );

@@ -155,13 +155,13 @@ describe('Social Validator', () => {
   // ------------------------------------------------------------------
   it('debería mostrar error si el nombre de usuario está vacío al añadir amigo', () => {
     component.addFriendFromPopup('');
-    expect(component.errorAmigoNombreNoValido()).toBe(true);
+    expect(component.errorAmigoNombreNoValido()).toBe('Introduce un nombre de usuario');
     expect(friendRepoSpy.addFriend).not.toHaveBeenCalled();
   });
 
   it('debería mostrar error si el nombre es solo espacios', () => {
     component.addFriendFromPopup('   ');
-    expect(component.errorAmigoNombreNoValido()).toBe(true);
+    expect(component.errorAmigoNombreNoValido()).toBe('Introduce un nombre de usuario');
     expect(friendRepoSpy.addFriend).not.toHaveBeenCalled();
   });
 
@@ -173,8 +173,8 @@ describe('Social Validator', () => {
     fixture.detectChanges();
 
     expect(friendRepoSpy.addFriend).toHaveBeenCalledWith({ receiver_username: 'nuevo_usuario' });
-    expect(component.popUP_newFriend()).toBe(false);
-    expect(component.errorAmigoNombreNoValido()).toBe(false);
+    expect(component.popUP_newFriend()).toBe(true);
+    expect(component.errorAmigoNombreNoValido()).toBe(null);
   });
 
   it('no debería cerrar popup si addFriend devuelve false', () => {

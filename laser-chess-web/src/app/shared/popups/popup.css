@@ -450,10 +450,6 @@
   border-radius: var(--BorderSmall);
 }
 
-.copy-button.copiado {
-  background-color: var(--LCGreen);
-  color: var(--LCWhite);
-}
 
 .btn-accept,
 .btn-challenge-popup {
@@ -592,6 +588,36 @@
   word-break: break-all;
   flex: 1;
   border-radius: var(--BorderSmall);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.toast-copiado {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(1rem);
+  background: var(--S1);
+  color: var(--LCWhite);
+  padding: 0.55rem 1.2rem;
+  border-radius: var(--BorderFull);
+  font-size: var(--LCSmall);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  z-index: 9999;
+}
+
+.toast-copiado.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* SPINNER */
@@ -617,7 +643,7 @@
 .error_message_form {
   color: var(--LCRed);
   font-size: var(--LCSmall);
-  margin-top: 0.5rem;
+  margin-top: -0.5rem;
 }
 
 /* RESPONSIVE */

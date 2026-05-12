@@ -67,9 +67,13 @@ export class Social implements OnInit, OnDestroy {
 
   public requestTabState = signal<'received' | 'sent'>('received');
 
-  public errorAmigoNombreNoValido = signal(false);
+  public errorAmigoNombreNoValido = signal<string | null>(null);
 
   private wsSubscription: any;
+
+  nuevoAmigo = signal(false);
+
+  
 
   constructor(
     private notificationService: NotificationService,
@@ -218,27 +222,33 @@ export class Social implements OnInit, OnDestroy {
   }
 
 
-  addFriendFromPopup(username: string): void {
-    username = username.trim();
-    if (!username) { this.errorAmigoNombreNoValido.set(true); return; }
+ addFriendFromPopup(username: string): void {
+  username = username.trim();
+  if (!username) { this.errorAmigoNombreNoValido.set('Introduce un nombre de usuario'); return; }
 
-    this.errorAmigoNombreNoValido.set(false);
-    this.friendService.addFriend({ receiver_username: username }).subscribe({
-      next: (result) => {
-        if (result) {
+  this.errorAmigoNombreNoValido.set(null);
+  this.friendService.addFriend({ receiver_username: username }).subscribe({
+    next: (result) => {
+      switch (result) {
+        case 'ok':
           this.popUP_newFriend.set(false);
-           this.notificationService.showWebNotification('Solicitud enviada', `Has enviado una solicitud de amistad a${username}`, { type: 'friend_send', username })
+          this.nuevoAmigo.set(true);
+          setTimeout(() => this.nuevoAmigo.set(false), 2000);
           this.refreshSocialState();
-        }else{
-          this.errorAmigoNombreNoValido.set(true);
-        }
-      },
-      error: (err: any) => {
-        
-        console.error(err);
+          break;
+        case 'not_found':
+          this.errorAmigoNombreNoValido.set('Este usuario no existe');
+          break;
+        case 'already_friends':
+          this.errorAmigoNombreNoValido.set('Ya sois amigos o tienes una solicitud pendiente con este usuario');
+          break;
+        case 'error':
+          this.errorAmigoNombreNoValido.set('Ha ocurrido un error, inténtalo de nuevo');
+          break;
       }
-    });
-  }
+    }
+  });
+}
 
 
   acceptRequest(requestUsername: string): void {
