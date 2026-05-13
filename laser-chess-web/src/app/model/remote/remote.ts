@@ -545,17 +545,28 @@ export class Remote {
   }
 
 
-  logout(): void {
-    localStorage.removeItem(ACCESS_TOKEN);
-    localStorage.removeItem(ACCOUNT_ID);
-    localStorage.removeItem('has_session_hint');
+  private isLoggingOut = false;
 
-    this.accessToken = "";
-    this.accountId = null;
-    this.isAuthenticated$.next(false);
-    this.markOffline().subscribe();
+  logout() {
+    if (this.isLoggingOut) return;
+    this.isLoggingOut = true;
 
-    this.router.navigate(['']);
+    this.http.post<void>(`${API_URL}/logout`, {}, { withCredentials: true }).pipe(
+      catchError(() => of(undefined))
+    ).subscribe(() => {
+      this.http.post<void>(`${API_URL}/api/events/offline`, {}).pipe(
+        catchError(() => of(undefined))
+      ).subscribe(() => {
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(ACCOUNT_ID);
+        localStorage.removeItem('has_session_hint');
+        this.accessToken = "";
+        this.accountId = null;
+        this.isLoggingOut = false;
+        this.isAuthenticated$.next(false);
+        this.router.navigate(['']);
+      });
+    });
   }
 
 

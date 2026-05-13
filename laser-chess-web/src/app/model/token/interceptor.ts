@@ -49,7 +49,8 @@ export class AuthInterceptor implements HttpInterceptor {
   //Para ver si una url necesita endpoint publico o no
   private isPublicEndpoint(url: string): boolean {
     return url.includes('/login') || url.includes('/register') || 
-           url.includes('/refresh') || url.includes('/logout');
+          url.includes('/api/events/offline') || url.includes('/logout') || 
+           url.includes('/refresh') || url.includes('/logout') || url.includes('/api/events/online'); 
   }
 
   //Para el error 401 cuando expira el token entonces se recarga
@@ -69,7 +70,6 @@ export class AuthInterceptor implements HttpInterceptor {
         }),
         catchError(error => {
           this.isRefreshing = false;
-          this.remote.logout();
           return throwError(() => error);
         })
       );
