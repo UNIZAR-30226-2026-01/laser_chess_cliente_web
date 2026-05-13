@@ -60,7 +60,7 @@ describe('HistoryHall', () => {
         { provide: GameRepository, useValue: gameRepoMock },
         { provide: HistoryService, useValue: historyServiceMock },
         { provide: UserRespository, useValue: userRepoMock },
-        { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) } },
+        { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0), refreshUser$: of(null)  } },
         {
           provide: GameState,
           useValue: {

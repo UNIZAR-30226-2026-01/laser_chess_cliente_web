@@ -16,6 +16,9 @@ import { ChallengeFlowService } from '../../services/challenge-flow';
 import { TimerService } from '../../services/timer-service';
 import { GameState } from '../../utils/game-state';
 import { Websocket } from '../../model/remote/websocket';
+import { NotificationService } from '../../model/notifications/notification';
+
+
 
 const fakeSignal = (initial?: any) => {
   let value = initial;
@@ -43,8 +46,8 @@ describe('Ranking', () => {
   };
 
   const mockTopPlayers: RankingPlayer[] = [
-    { userId: 1, username: 'player1', elo: 2000 },
-    { userId: 2, username: 'player2', elo: 1900 },
+    { userId: 1, avatar: 10, username: 'player1', elo: 2000 },
+    { userId: 2, avatar: 10, username: 'player2', elo: 1900 },
   ];
   const mockUserInfo: UserRankingInfo = { position: 50, elo: 1500 };
   const mockFriends: FriendSummary[] = [
@@ -84,6 +87,10 @@ describe('Ranking', () => {
       providers: [
         provideRouter([]),
         { provide: RankingRepository, useValue: rankingRepoSpy },
+        {
+          provide: NotificationService,
+          useValue: { wakeSocial$: of(null), showWebNotification: vi.fn() }
+        },
         { provide: FriendRespository, useValue: friendRepoSpy },
         { provide: Remote, useValue: remoteSpy },
         {
@@ -111,7 +118,7 @@ describe('Ranking', () => {
         },
         {
           provide: BoardState,
-          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) }
+          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0), refreshUser$: of(null)  }
         },
         {
           provide: ChallengeFlowService,
@@ -156,7 +163,9 @@ describe('Ranking', () => {
           }
         },
       ],
-    }).compileComponents();
+    })
+
+    await TestBed.compileComponents();
 
     fixture = TestBed.createComponent(Ranking);
     component = fixture.componentInstance;
@@ -226,7 +235,7 @@ describe('Ranking', () => {
   // ------------------------------------------------------------------
   describe('openUserInfo', () => {
     it('debería abrir popup para el usuario actual (contexto self)', () => {
-      const currentPlayer: RankingPlayer = { userId: 5, username: 'currentUser', elo: 1500 };
+      const currentPlayer: RankingPlayer = { userId: 5, avatar: 10, username: 'currentUser', elo: 1500 };
       component.openUserInfo(currentPlayer);
       expect(friendRepoSpy.getAllRatings).toHaveBeenCalledWith(5);
       expect(component.selectedUserContext()).toBe('self');
@@ -240,27 +249,27 @@ describe('Ranking', () => {
     });
 
     it('debería abrir popup para un amigo (contexto friend)', () => {
-      const friendPlayer: RankingPlayer = { userId: 2, username: 'player2', elo: 1900 };
+      const friendPlayer: RankingPlayer = { userId: 2, avatar: 10, username: 'player2', elo: 1900 };
       component.openUserInfo(friendPlayer);
       expect(component.selectedUserContext()).toBe('friend');
       expect(component.popUP_userInfo()).toBe(true);
     });
 
     it('debería abrir popup para un usuario con solicitud enviada (contexto sent_request)', () => {
-      const sentPlayer: RankingPlayer = { userId: 3, username: 'player3', elo: 1800 };
+      const sentPlayer: RankingPlayer = { userId: 3, avatar: 10, username: 'player3', elo: 1800 };
       component.openUserInfo(sentPlayer);
       expect(component.selectedUserContext()).toBe('sent_request');
     });
 
     it('debería abrir popup para un usuario sin relación (contexto none)', () => {
-      const otherPlayer: RankingPlayer = { userId: 99, username: 'stranger', elo: 1600 };
+      const otherPlayer: RankingPlayer = { userId: 99, avatar: 10, username: 'stranger', elo: 1600 };
       component.openUserInfo(otherPlayer);
       expect(component.selectedUserContext()).toBe('none');
     });
 
     it('debería manejar error al obtener los ELOs de otro usuario', () => {
       friendRepoSpy.getAllRatings.mockReturnValue(throwError(() => new Error('Ratings error')));
-      const otherPlayer: RankingPlayer = { userId: 99, username: 'stranger', elo: 1600 };
+      const otherPlayer: RankingPlayer = { userId: 99, avatar: 10, username: 'stranger', elo: 1600 };
       component.openUserInfo(otherPlayer);
       expect(component.selectedUserEloBlitz()).toBe(0);
       expect(component.selectedUserEloRapid()).toBe(0);

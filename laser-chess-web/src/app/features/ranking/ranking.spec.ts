@@ -122,7 +122,7 @@ describe('Ranking', () => {
         { provide: UserRespository, useValue: userRepoMock },
         { provide: Websocket, useValue: websocketMock },
         { provide: GameState, useValue: gameStateMock },
-        { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) } },
+        { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0), refreshUser$: of(null)  } },
         { provide: ChallengeFlowService, useValue: challengeFlowMock },
         { provide: TimerService, useValue: timerServiceMock },
       ]

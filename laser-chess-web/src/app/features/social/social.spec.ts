@@ -126,7 +126,7 @@ describe('Social Angular', () => {
         },
         {
           provide: BoardState,
-          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) }
+          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0), refreshUser$: of(null)  }
         },
         {
           provide: Websocket,

@@ -133,7 +133,7 @@ describe('History', () => {
         { provide: HistoryService, useValue: historyMock },
         { provide: GameUtils, useValue: gameUtilsMock },
         { provide: Remote, useValue: remoteMock },
-        { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) } },
+        { provide: BoardState, useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0), refreshUser$: of(null)  } },
         {
           provide: GameState,
           useValue: {

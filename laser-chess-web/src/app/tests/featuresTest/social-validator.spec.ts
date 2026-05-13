@@ -13,6 +13,8 @@ import { TimerService } from '../../services/timer-service';
 import { NotificationService } from '../../model/notifications/notification';
 import { BoardState } from '../../utils/board-state';
 import { Websocket } from '../../model/remote/websocket';
+import { Component } from '@angular/core';
+
 
 const fakeSignal = (initial?: any) => {
   let value = initial;
@@ -117,7 +119,7 @@ describe('Social Validator', () => {
         { provide: GameRepository, useValue: gameRepoSpy },
         {
           provide: BoardState,
-          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0) }
+          useValue: { boardBackgroundUrl: fakeSignal(''), avatarUsuario: fakeSignal(0), refreshUser$: of(null)  }
         },
         { provide: Websocket, useValue: websocketSpy },
         {
@@ -133,7 +135,10 @@ describe('Social Validator', () => {
           }
         }
       ]
-    }).compileComponents();
+    })
+
+    
+    await TestBed.compileComponents();
 
     fixture = TestBed.createComponent(Social);
     component = fixture.componentInstance;
